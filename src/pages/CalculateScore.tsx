@@ -10,7 +10,8 @@ import { Separator } from "@/components/ui/separator";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "@/components/ui/use-toast";
-import { Calculator, Download, Share2, Trophy } from "lucide-react";
+import { Calculator, Download, Share2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ScoreCategory {
   name: string;
@@ -138,7 +139,13 @@ const CalculateScore: React.FC = () => {
                         <span>{category.name}</span>
                         <span>{category.value.toFixed(0)}/100</span>
                       </div>
-                      <Progress className="h-2" value={category.value} indicatorClassName={category.color} />
+                      {/* Fix: Remove indicatorClassName and use className with proper styling */}
+                      <div className="relative h-2 w-full overflow-hidden rounded-full bg-secondary">
+                        <div 
+                          className={`h-full transition-all ${category.color}`}
+                          style={{ width: `${category.value}%` }}
+                        />
+                      </div>
                       <div className="text-xs text-gray-500">
                         Weight: {(category.weight * 100).toFixed(0)}%
                       </div>

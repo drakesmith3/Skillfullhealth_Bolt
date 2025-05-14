@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, Users, Briefcase, GraduationCap, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const JoinCommunity = () => {
   const roles = [
@@ -63,11 +64,11 @@ const JoinCommunity = () => {
         </div>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button className="bg-red-600 hover:bg-red-700 px-8 py-6 text-lg">
-            Sign Up Now
+          <Button className="bg-red-600 hover:bg-red-700 px-8 py-6 text-lg" asChild>
+            <Link to="/signup">Sign Up Now</Link>
           </Button>
-          <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 px-8 py-6 text-lg">
-            Learn More
+          <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 px-8 py-6 text-lg" asChild>
+            <Link to="/blog">Learn More</Link>
           </Button>
         </div>
       </div>
