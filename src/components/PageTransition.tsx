@@ -4,9 +4,13 @@ import gsap from "gsap";
 
 interface PageTransitionProps {
   children: React.ReactNode;
+  delay?: number;
 }
 
-const PageTransition = ({ children }: PageTransitionProps) => {
+const PageTransition: React.FC<PageTransitionProps> = ({ 
+  children,
+  delay = 0
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pageCornerRef = useRef<HTMLDivElement>(null);
   
@@ -22,28 +26,44 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     
     // Create dust particles effect
     if (containerRef.current && pageCornerRef.current) {
+      const particles: HTMLDivElement[] = [];
+      
+      // Create particle elements
       for (let i = 0; i < 8; i++) {
         const particle = document.createElement("div");
         particle.className = "absolute w-1 h-1 rounded-full bg-gray-300 opacity-0";
         pageCornerRef.current.appendChild(particle);
-        
+        particles.push(particle);
+      }
+      
+      // Animate particles
+      particles.forEach(particle => {
         gsap.to(particle, {
           x: gsap.utils.random(-50, 50),
           y: gsap.utils.random(-30, 30),
           opacity: gsap.utils.random(0.3, 0.7),
           duration: gsap.utils.random(1, 2),
-          delay: gsap.utils.random(0, 0.5),
+          delay: gsap.utils.random(0, 0.5) + delay,
           repeat: -1,
           repeatDelay: gsap.utils.random(1, 3),
           ease: "power2.out"
         });
-      }
+      });
+      
+      // Clean up animations and particles on unmount
+      return () => {
+        particles.forEach(particle => {
+          gsap.killTweensOf(particle);
+          if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+          }
+        });
+      };
     }
-    
-  }, []);
+  }, [delay]);
 
   return (
-    <div className="w-full h-full perspective-1000 relative">
+    <div className="w-full h-full perspective-1000 relative" aria-live="polite">
       <div 
         ref={containerRef} 
         className="w-full h-full bg-white rounded-lg p-6 transition-all duration-500 shadow-xl overflow-hidden"
@@ -52,10 +72,11 @@ const PageTransition = ({ children }: PageTransitionProps) => {
         <div 
           ref={pageCornerRef}
           className="absolute top-0 right-0 w-20 h-20 bg-transparent opacity-40"
+          aria-hidden="true"
         />
       </div>
     </div>
   );
 };
 
-export default PageTransition;
+export default React.memo(PageTransition);

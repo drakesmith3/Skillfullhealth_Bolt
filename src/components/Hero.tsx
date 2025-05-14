@@ -1,40 +1,68 @@
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
-const Hero = () => {
+interface HeroProps {
+  isVisible?: boolean;
+}
+
+const Hero: React.FC<HeroProps> = ({ isVisible = true }) => {
   const textRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!textRef.current || !cardRef.current || !bookRef.current) return;
+    // Simulate loading state
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+
+    if (!isVisible || !textRef.current || !cardRef.current || !bookRef.current) {
+      return () => clearTimeout(timer);
+    }
+
+    // Create animation timeline
+    const tl = gsap.timeline();
 
     // Animate hero elements in
-    gsap.fromTo(textRef.current, 
+    tl.fromTo(textRef.current, 
       { y: 50, opacity: 0 },
       { y: 0, opacity: 1, duration: 1, delay: 0.5, ease: "power3.out" }
-    );
-
-    gsap.fromTo(cardRef.current,
+    )
+    .fromTo(cardRef.current,
       { y: 80, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, delay: 0.8, ease: "power3.out" }
-    );
-
-    // Animate the book opening
-    gsap.fromTo(bookRef.current, 
+      { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: "power3.out" },
+      "-=0.5"
+    )
+    .fromTo(bookRef.current, 
       { rotationY: -70, opacity: 0 },
-      { rotationY: 0, opacity: 1, duration: 1.5, delay: 1.2, ease: "back.out(1.5)" }
+      { rotationY: 0, opacity: 1, duration: 1.5, delay: 0.2, ease: "back.out(1.5)" },
+      "-=0.7"
     );
 
-  }, []);
+    // Cleanup function
+    return () => {
+      clearTimeout(timer);
+      tl.kill();
+    };
+  }, [isVisible]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-white">
+        <Loader2 className="w-12 h-12 text-red-600 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-full bg-gradient-to-br from-white to-gray-100 flex flex-col justify-center items-center overflow-hidden p-4">
       {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-red-600/10 blur-3xl"></div>
         <div className="absolute left-20 bottom-20 w-72 h-72 rounded-full bg-amber-400/10 blur-3xl"></div>
       </div>
@@ -80,4 +108,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default React.memo(Hero);
