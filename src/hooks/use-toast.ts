@@ -52,6 +52,9 @@ export function useToast() {
   };
 }
 
-// Export a singleton instance for use in the toast function
-const { toast, dismiss, toasts } = useToast();
-export { toast, dismiss, toasts };
+export const toast = (options: ToastOptions) => {
+  const id = Math.random().toString(36).substring(2, 9);
+  const newToast = { ...options, id, open: true };
+
+  // Logic to handle toast creation
+};

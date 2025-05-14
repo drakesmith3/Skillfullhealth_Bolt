@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import { Toaster as AppToaster } from "./src/components/ui/toaster";
+import { Toaster as SonnerToaster } from "./src/components/ui/sonner";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -18,5 +20,21 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: [
+            "react",
+            "react-dom",
+            "@tanstack/react-query",
+            "gsap",
+            "lucide-react",
+          ],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000, // Adjust the chunk size warning limit
   },
 }));

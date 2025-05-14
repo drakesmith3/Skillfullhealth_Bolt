@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -46,12 +45,14 @@ const Index: React.FC = () => {
     
     try {
       if (!mainRef.current) {
+        console.error("mainRef is not assigned to a DOM element.");
         setIsLoading(false);
         return;
       }
 
       const sections = sectionsRef.current;
-      if (sections.length === 0) {
+      if (!sections || sections.length === 0) {
+        console.error("sectionsRef is empty or not assigned correctly.");
         setIsLoading(false);
         return;
       }
@@ -66,7 +67,7 @@ const Index: React.FC = () => {
           pin: true,
           pinSpacing: true,
           onUpdate: (self) => {
-            // Optional progress update
+            console.log("Scroll progress:", self.progress);
           }
         }
       });
@@ -100,8 +101,7 @@ const Index: React.FC = () => {
             const audio = new Audio('/page-turn.mp3');
             audio.volume = 0.3;
             audio.play().catch((err) => {
-              // Autoplay might be blocked, handled silently
-              console.log("Audio play was prevented due to browser policy");
+              console.warn("Audio play was prevented due to browser policy.", err);
             });
           }, i * 0.5);
         }
