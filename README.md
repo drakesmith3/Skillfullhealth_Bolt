@@ -1,73 +1,130 @@
-# Welcome to your Lovable project
 
-## Project info
+# GLOHSEN - Global Health Services Solutions Network
 
-**URL**: https://lovable.dev/projects/1325d032-51e8-4199-9c93-f623a143a4a2
+![GLOHSEN](https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=400)
 
-## How can I edit this code?
+## Project Overview
 
-There are several ways of editing your application.
+GLOHSEN (Global Health Services Solutions Network) is a comprehensive platform revolutionizing healthcare through connection, education, and excellence. This web application employs cutting-edge parallax scrolling and page-turning animations to create an immersive storytelling experience that guides users through the GLOHSEN ecosystem.
 
-**Use Lovable**
+### Live Demo
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1325d032-51e8-4199-9c93-f623a143a4a2) and start prompting.
+Visit the live site at [https://lovable.dev/projects/1325d032-51e8-4199-9c93-f623a143a4a2](https://lovable.dev/projects/1325d032-51e8-4199-9c93-f623a143a4a2)
 
-Changes made via Lovable will be committed automatically to this repo.
+## Key Features
 
-**Use your preferred IDE**
+- **Immersive Storytelling Experience**: Book-like page turning animations and smooth transitions between content sections
+- **GLOHSEN Score Calculator**: Proprietary algorithm that measures healthcare professionals against global standards
+- **Feedback System**: Platform for patients to share their healthcare experiences and help improve services
+- **Professional Development**: Resources for healthcare students and professionals to enhance their skills
+- **Employment Marketplace**: Connecting qualified healthcare professionals with employers
+- **Educational Games & Quizzes**: Interactive learning resources for healthcare education
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Technology Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **Frontend Framework**: React with TypeScript
+- **Animation Libraries**: GSAP with ScrollTrigger for parallax and page transitions
+- **Styling**: Tailwind CSS with responsive design principles
+- **Component Library**: shadcn/ui for consistent, accessible UI components
+- **State Management**: TanStack Query for data fetching and state management
+- **Routing**: React Router for navigation between pages
+- **Development Environment**: Vite for fast builds and development experience
 
-Follow these steps:
+## Project Structure
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+```
+src/
+├── components/        # Reusable UI components
+│   ├── ui/            # shadcn/ui components
+│   ├── storybook/     # Component documentation and testing
+├── hooks/             # Custom React hooks
+├── lib/               # Utility functions and helpers
+├── pages/             # Page components for routing
+├── App.tsx            # Main application component
+└── main.tsx           # Application entry point
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Key Sections
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. **Header**: Main navigation for the website
+2. **Hero (GLOHSEN STANDARD)**: Introduction to GLOHSEN with the GLOHSEN Score calculator
+3. **How It Works**: Explanation of the GLOHSEN platform functionality
+4. **Feedback**: Patient experience sharing system
+5. **Employers**: Resources for healthcare facilities and recruiters
+6. **Tutors/Advisers**: Platform for healthcare education professionals
+7. **Games & Quizzes**: Interactive learning resources
+8. **Success Stories**: Testimonials and case studies
+9. **Join The GLOHSEN Community**: Call-to-action for user registration
+10. **Footer**: Site-wide links and information
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+## Development Setup
+
+### Prerequisites
+
+- Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+
+# Navigate to project directory
+cd glohsen-website
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Building for Production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Create optimized production build
+npm run build
 
-**Use GitHub Codespaces**
+# Preview production build locally
+npm run preview
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Accessibility Features
 
-## What technologies are used for this project?
+- Semantic HTML structure
+- ARIA attributes where appropriate
+- Keyboard navigation support
+- Screen reader compatibility
+- Color contrast compliance
 
-This project is built with:
+## Performance Optimizations
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Component memoization
+- Lazy loading of page components
+- Image optimization
+- Efficient animations with GSAP
+- TypeScript for code reliability
 
-## How can I deploy this project?
+## Browser Support
 
-Simply open [Lovable](https://lovable.dev/projects/1325d032-51e8-4199-9c93-f623a143a4a2) and click on Share -> Publish.
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+- Mobile browsers (iOS Safari, Android Chrome)
 
-## Can I connect a custom domain to my Lovable project?
+## Contributing
 
-Yes, you can!
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## License
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project is proprietary and confidential. Unauthorized copying, distribution, or use of any part of this codebase is strictly prohibited.
+
+## Contact
+
+For questions or support, please contact the GLOHSEN team at info@glohsen.com

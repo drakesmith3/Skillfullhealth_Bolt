@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,19 +25,22 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto flex justify-between items-center px-4">
-        <a href="/" className="flex items-center">
+        <Link to="/" className="flex items-center">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-800 text-transparent bg-clip-text">
             GLOHSEN
           </h1>
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#about" className="text-black hover:text-red-600 transition-colors">About</a>
-          <a href="#how-it-works" className="text-black hover:text-red-600 transition-colors">How It Works</a>
-          <a href="#employers" className="text-black hover:text-red-600 transition-colors">Employers</a>
-          <a href="#professionals" className="text-black hover:text-red-600 transition-colors">Professionals</a>
-          <Button className="bg-red-600 hover:bg-red-700 text-white">Sign Up</Button>
+          <Link to="/blog" className="text-black hover:text-red-600 transition-colors">Blog</Link>
+          <Link to="/#about" className="text-black hover:text-red-600 transition-colors">About</Link>
+          <Link to="/#how-it-works" className="text-black hover:text-red-600 transition-colors">How It Works</Link>
+          <Link to="/#employers" className="text-black hover:text-red-600 transition-colors">Employers</Link>
+          <Link to="/#professionals" className="text-black hover:text-red-600 transition-colors">Professionals</Link>
+          <Button className="bg-red-600 hover:bg-red-700 text-white" asChild>
+            <Link to="/signup">Sign Up</Link>
+          </Button>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -50,11 +54,14 @@ const Header = () => {
         isMenuOpen ? "translate-x-0" : "translate-x-full"
       }`}>
         <div className="flex flex-col h-full p-8 pt-20">
-          <a href="#about" className="py-3 text-xl border-b" onClick={toggleMenu}>About</a>
-          <a href="#how-it-works" className="py-3 text-xl border-b" onClick={toggleMenu}>How It Works</a>
-          <a href="#employers" className="py-3 text-xl border-b" onClick={toggleMenu}>Employers</a>
-          <a href="#professionals" className="py-3 text-xl border-b" onClick={toggleMenu}>Professionals</a>
-          <Button className="mt-8 bg-red-600 hover:bg-red-700 text-white">Sign Up</Button>
+          <Link to="/blog" className="py-3 text-xl border-b" onClick={toggleMenu}>Blog</Link>
+          <Link to="/#about" className="py-3 text-xl border-b" onClick={toggleMenu}>About</Link>
+          <Link to="/#how-it-works" className="py-3 text-xl border-b" onClick={toggleMenu}>How It Works</Link>
+          <Link to="/#employers" className="py-3 text-xl border-b" onClick={toggleMenu}>Employers</Link>
+          <Link to="/#professionals" className="py-3 text-xl border-b" onClick={toggleMenu}>Professionals</Link>
+          <Link to="/signup" onClick={toggleMenu}>
+            <Button className="mt-8 bg-red-600 hover:bg-red-700 text-white w-full">Sign Up</Button>
+          </Link>
         </div>
       </div>
     </header>

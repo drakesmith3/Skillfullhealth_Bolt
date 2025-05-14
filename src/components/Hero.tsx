@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface HeroProps {
   isVisible?: boolean;
@@ -86,8 +87,8 @@ const Hero: React.FC<HeroProps> = ({ isVisible = true }) => {
               Discover how you measure against the global healthcare standard.
             </p>
             <div className="flex justify-center">
-              <Button className="bg-red-600 hover:bg-red-700 text-lg px-8 py-6">
-                Calculate Your Score
+              <Button className="bg-red-600 hover:bg-red-700 text-lg px-8 py-6" asChild>
+                <Link to="/calculate-score">Calculate Your Score</Link>
               </Button>
             </div>
           </CardContent>

@@ -119,11 +119,10 @@ const Index: React.FC = () => {
       setError("Failed to initialize animations. Please refresh the page.");
       setIsLoading(false);
       
-      // Notify user about the error
+      // Notify user about the error - Fixed: removed 'variant' property
       toast({
         title: "Animation Error",
-        description: "There was a problem setting up page animations. Some features may not work correctly.",
-        variant: "destructive"
+        description: "There was a problem setting up page animations. Some features may not work correctly."
       });
     }
   }, []);

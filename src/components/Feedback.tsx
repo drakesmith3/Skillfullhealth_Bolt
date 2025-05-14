@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Feedback = () => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -110,9 +111,11 @@ const Feedback = () => {
                   </div>
                 </div>
                 
-                <Button className="w-full bg-red-600 hover:bg-red-700 mt-2 feedback-element">
-                  <MessageCircle className="mr-2" size={18} />
-                  Submit Feedback
+                <Button className="w-full bg-red-600 hover:bg-red-700 mt-2 feedback-element" asChild>
+                  <Link to="/feedback">
+                    <MessageCircle className="mr-2" size={18} />
+                    Submit Feedback
+                  </Link>
                 </Button>
               </div>
             </CardContent>
