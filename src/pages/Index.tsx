@@ -65,7 +65,8 @@ const Index: React.FC = () => {
           end: "bottom bottom",
           scrub: 1,
           pin: true,
-          pinSpacing: true,
+          pinSpacing: false, // Disable pinSpacing for Chrome compatibility
+          markers: true, // Enable markers for debugging
           onUpdate: (self) => {
             console.log("Scroll progress:", self.progress);
           }
@@ -105,6 +106,9 @@ const Index: React.FC = () => {
             });
           }, i * 0.5);
         }
+
+        // Add hardware acceleration styles to sections
+        gsap.set(section, { willChange: "transform" });
       });
 
       // Finish loading after animations are set up
@@ -158,53 +162,54 @@ const Index: React.FC = () => {
     );
   }
 
+  // Adjust section styles to ensure proper stacking
   return (
     <>
       <Header />
       <main ref={mainRef} className="relative h-screen overflow-hidden bg-gray-100">
         <ProgressIndicator totalSections={8} />
 
-        <div ref={addToSectionsRef} className="absolute w-full h-full">
+        <div ref={addToSectionsRef} className="relative w-full h-screen">
           <Hero />
         </div>
         
-        <div ref={addToSectionsRef} className="absolute w-full h-full">
+        <div ref={addToSectionsRef} className="relative w-full h-screen">
           <PageTransition>
             <HowItWorks />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="absolute w-full h-full">
+        <div ref={addToSectionsRef} className="relative w-full h-screen">
           <PageTransition delay={0.1}>
             <Feedback />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="absolute w-full h-full">
+        <div ref={addToSectionsRef} className="relative w-full h-screen">
           <PageTransition delay={0.2}>
             <Employers />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="absolute w-full h-full">
+        <div ref={addToSectionsRef} className="relative w-full h-screen">
           <PageTransition delay={0.3}>
             <TutorsAdvisers />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="absolute w-full h-full">
+        <div ref={addToSectionsRef} className="relative w-full h-screen">
           <PageTransition delay={0.4}>
             <GamesQuizzes />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="absolute w-full h-full">
+        <div ref={addToSectionsRef} className="relative w-full h-screen">
           <PageTransition delay={0.5}>
             <SuccessStories />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="absolute w-full h-full">
+        <div ref={addToSectionsRef} className="relative w-full h-screen">
           <PageTransition delay={0.6}>
             <JoinCommunity />
           </PageTransition>
