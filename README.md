@@ -1,168 +1,95 @@
+
 # GLOHSEN - Global Health Services Solutions Network
 
 ![GLOHSEN](https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=400)
 
-## Project Overview
+## Overview
+GLOHSEN is a revolutionary healthcare professional network that connects patients, healthcare professionals, employers, students, and tutors/advisers in an integrated platform. The platform features a cutting-edge UI with a Sudden Shift Parallax Storytelling Effect to provide an immersive user experience.
 
-GLOHSEN (Global Health Services Solutions Network) is a comprehensive platform revolutionizing healthcare through connection, education, and excellence. This web application employs cutting-edge parallax scrolling and page-turning animations to create an immersive storytelling experience that guides users through the GLOHSEN ecosystem.
+## Features
 
-### Vision
+### For Healthcare Professionals
+- Calculate your GLOHSEN Score across 10 key parameters
+- Create a professional profile to showcase skills and certifications
+- Connect with employers for job opportunities
+- Access training resources and certification programs
+- Financial tracking with wallet functionality
 
-HIGH-VALUE 21st CENTURY NETWORK MEMBERS EQUIPPED WITH SKILLS 'FIT FOR THE (AFRICAN) MARKETPLACE'
+### For Patients
+- Provide feedback on healthcare services
+- Find qualified healthcare professionals
+- Track your healthcare journey
 
-## Key Features
+### For Students
+- Access games and quizzes for healthcare education
+- Connect with mentors and tutors
+- Purchase courses from healthcare educators
+- Track learning progress
 
-- **Immersive Storytelling Experience**: Book-like page turning animations with dust particles and sound effects
-- **GLOHSEN Score Calculator**: Proprietary algorithm that measures healthcare professionals against 10 global standards
-- **Employer Criteria Score**: 9-parameter evaluation system for matching professionals with employers
-- **Marketplace of Skills**: Platform for trading medical skills (training, learning, sharing)
-- **Networking Ecosystem**: Connect with healthcare professionals, employers, and mentors
-- **Professional Development**: Resources for healthcare students and professionals to enhance their skills
-- **Employment Marketplace**: Connecting qualified healthcare professionals with employers
-- **Educational Games & Quizzes**: Interactive learning resources for healthcare education
-- **Locum Opportunities**: Short-term and long-term professional placement
-- **Member Benefits**: Access to training, networking, and career advancement
+### For Tutors/Advisers
+- Create and sell courses
+- Mentor students
+- Use AI to enhance teaching capabilities
 
-## Story Arc
+### For Employers
+- Find qualified healthcare professionals using the Employer Criteria Score
+- Track performance metrics of employees
+- Streamline recruitment processes
+- Manage payments and HR workflows
 
-The platform tells a cohesive narrative through interconnected sections:
+## Technical Features
+- Book-like page turning animations
+- Smooth visual transitions between sections
+- Interactive progress indicators
+- Dust particle effects and sound effects
+- Responsive design for all device sizes
+- Wallet functionality for financial transactions
 
-1. **Patient X**: Frustrated by poor service at Hospital Y, leaves feedback on GLOHSEN
-2. **Student A**: Struggling with coursework, connects with Tutor Z through GLOHSEN
-3. **Hospital Y**: Responds to feedback by recruiting upskilled professionals through GLOHSEN
-4. **Employers**: Register on GLOHSEN to access tools for recruitment and workflow management
-5. **Success Stories**: Real-world examples of healthcare transformation through GLOHSEN
-6. **Join the Community**: Call-to-action inviting all stakeholders to find solutions on GLOHSEN
+## GLOHSEN Score System
+The GLOHSEN Score is calculated based on 10 key parameters:
+1. Years of experience
+2. Skills and certifications
+3. Locum jobs executed
+4. Platform activity
+5. Willingness to volunteer or work in diverse conditions
+6. Location
+7. Communication skills and languages
+8. Availability for extended work periods
+9. Short-term availability
+10. Immediate availability to work
 
-## Technology Stack
+## Employer Criteria Score
+The platform features a 9-parameter Employer Criteria Score:
+1. Years of experience requirements
+2. Basic skills certificates needed
+3. Advanced skills certificates needed
+4. Job-related experience requirements
+5. Flexibility in terms
+6. Location preferences
+7. Communication skill requirements
+8. Remote work requirements
+9. Availability requirements
 
-- **Frontend Framework**: React with TypeScript
-- **Animation Libraries**: GSAP with ScrollTrigger for parallax and page transitions, Framer Motion
-- **Styling**: Tailwind CSS with responsive design principles
-- **Component Library**: shadcn/ui for consistent, accessible UI components
-- **State Management**: TanStack Query for data fetching and state management
-- **Routing**: React Router for navigation between pages
-- **Development Environment**: Vite for fast builds and development experience
+## Vision
+GLOHSEN aims to create a HIGH-VALUE 21st CENTURY NETWORK of healthcare professionals equipped with skills 'FIT FOR THE (AFRICAN) MARKETPLACE'. Our platform serves as a marketplace for the trading of medical skills (training, learning, sharing) and networking in an environment of mutual respect and benefits.
 
-## Project Structure
+## Our Maxim
+OBSERVE/SEE one, PERFORM/DO one, TEACH one!
 
-```
-src/
-├── components/        # Reusable UI components
-│   ├── ui/            # shadcn/ui components
-│   ├── storybook/     # Component documentation and testing
-├── hooks/             # Custom React hooks
-├── lib/               # Utility functions and helpers
-├── pages/             # Page components for routing
-├── App.tsx            # Main application component
-└── main.tsx           # Application entry point
-```
+## Getting Started
+To get started with GLOHSEN:
+1. Sign up for an account as a professional, employer, student, or tutor
+2. Complete your profile
+3. Explore the features relevant to your role
+4. Connect with other users in the GLOHSEN community
 
-## Key Sections
-
-1. **Header**: Main navigation for the website
-2. **Hero (GLOHSEN STANDARD)**: Introduction to GLOHSEN with the GLOHSEN Score calculator
-3. **How It Works**: Explanation of the GLOHSEN platform functionality
-4. **Feedback**: Patient experience sharing system
-5. **Employers**: Resources for healthcare facilities and recruiters
-6. **Tutors/Advisers**: Platform for healthcare education professionals
-7. **Games & Quizzes**: Interactive learning resources
-8. **Success Stories**: Testimonials and case studies
-9. **Join The GLOHSEN Community**: Call-to-action for user registration
-10. **Footer**: Site-wide links and information
-
-## GLOHSEN Score Parameters (10 Key Factors)
-
-1. **Professional Experience**: Years of practice in the healthcare field
-2. **Education Level**: Academic qualifications and ongoing education
-3. **Certifications**: Professional certifications and specialized training
-4. **Continuing Education**: Commitment to ongoing learning and development
-5. **Patient Feedback**: Ratings and reviews from patients
-6. **Peer Reviews**: Assessment from other healthcare professionals
-7. **Adaptability**: Willingness to work in different locations and conditions
-8. **Communication Skills**: Including languages spoken and presentation abilities
-9. **Availability**: Timing and notice period for assignments
-10. **Platform Activity**: Contribution to the GLOHSEN community
-
-## Employer Criteria Score (9 Parameters)
-
-1. **Experience Requirements**: Years and quality of relevant experience
-2. **Basic Skills Certificates**: Required baseline certifications
-3. **Advanced Skills Certificates**: Specialized training for the role
-4. **Prior Locum Experience**: Track record in similar positions
-5. **Location Flexibility**: Geographic considerations and travel requirements
-6. **Communication Requirements**: Skills and language proficiency needed
-7. **Awards & Recognition**: Achievements in the healthcare field
-8. **Remote Work Capability**: Ability to work autonomously or remotely
-9. **Availability Timeline**: When the professional can start work
-
-## Visual and Interactive Elements
-
-- **Book-Like Page Turning**: Creates an immersive storytelling experience
-- **Visual Transitions**: Smooth animations between sections
-- **Progress Indicators**: Shows users where they are in the story
-- **Sound Effects**: Paper turning sounds for added realism
-- **Dust Particles**: Visual effects that appear during page transitions
-- **Story Connectors**: Visual elements that link narrative sections
-- **Responsive Design**: Works across all device sizes
-
-## Development Setup
-
-### Prerequisites
-
-- Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone <repository-url>
-
-# Navigate to project directory
-cd glohsen-website
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-## Building for Production
-
-```bash
-# Create optimized production build
-npm run build
-
-# Preview production build locally
-npm run preview
-```
-
-## Accessibility Features
-
-- Semantic HTML structure
-- ARIA attributes where appropriate
-- Keyboard navigation support
-- Screen reader compatibility
-- Color contrast compliance
-- Motion reduction options
-
-## Performance Optimizations
-
-- Component memoization
-- Lazy loading of page components
-- Image optimization
-- Efficient animations with GSAP
-- TypeScript for code reliability
-- Intersection Observer for optimal animation triggers
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers (iOS Safari, Android Chrome)
+## Development
+This project is built using:
+- React with TypeScript for the frontend
+- Tailwind CSS for styling
+- GSAP for animations
+- Framer Motion for UI interactions
+- Shadcn UI components
 
 ## Contributing
 
@@ -175,16 +102,3 @@ npm run preview
 ## Contact
 
 For questions or support, please contact the GLOHSEN team at info@glohsen.com
-
-## Feedback Form Enhancements
-
-The Feedback Form page now includes the following features:
-
-- **Tabs for Different User Groups**: Users can select from three tabs to provide feedback tailored to their role:
-  - Professionals
-  - Tutors
-  - Hospital/Health Facility
-
-- **QR Code for Offline Feedback**: A QR code is displayed on the page, allowing users to easily access the feedback form via their mobile devices, even in offline settings.
-
-These updates aim to improve user accessibility and ensure feedback collection is seamless across various environments.
