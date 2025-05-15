@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -27,35 +28,52 @@ interface SectionRef {
 
 const Index: React.FC = () => {
   const mainRef = useRef<HTMLDivElement>(null);
-  const sectionsRef = useRef<HTMLDivElement[]>([]);
+  const [sectionsRef, setSectionsRef] = useState<HTMLDivElement[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [pageTransitionReady, setPageTransitionReady] = useState<boolean>(false);
 
-  // Add sections to ref array
+  // Add sections to ref array - improved to use useState
   const addToSectionsRef = (el: HTMLDivElement | null) => {
-    if (el && !sectionsRef.current.includes(el)) {
-      sectionsRef.current.push(el);
+    if (el && !sectionsRef.includes(el)) {
+      setSectionsRef(prev => [...prev, el]);
     }
   };
 
-  // Setup the parallax effect
+  // First useEffect - wait for DOM elements to be ready
   useEffect(() => {
-    // Set loading state
-    setIsLoading(true);
+    // Short delay to ensure all refs are properly assigned
+    const timer = setTimeout(() => {
+      setPageTransitionReady(true);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Setup the parallax effect - runs after DOM is ready
+  useEffect(() => {
+    if (!pageTransitionReady) return;
     
     try {
+      console.log("Setting up animations", {
+        mainRef: mainRef.current ? "exists" : "missing",
+        sectionsCount: sectionsRef.length
+      });
+      
       if (!mainRef.current) {
         console.error("mainRef is not assigned to a DOM element.");
         setIsLoading(false);
         return;
       }
 
-      const sections = sectionsRef.current;
-      if (!sections || sections.length === 0) {
+      if (sectionsRef.length === 0) {
         console.error("sectionsRef is empty or not assigned correctly.");
         setIsLoading(false);
         return;
       }
+      
+      // Clear any existing ScrollTrigger instances to prevent conflicts
+      ScrollTrigger.getAll().forEach(st => st.kill());
       
       // Create the main timeline
       const tl = gsap.timeline({
@@ -64,51 +82,63 @@ const Index: React.FC = () => {
           start: "top top",
           end: "bottom bottom",
           scrub: 1,
-          pin: true,
-          pinSpacing: false, // Disable pinSpacing for Chrome compatibility
-          markers: true, // Enable markers for debugging
+          pin: false, // Changed to false to prevent pinning issues
+          markers: false, // Disable markers in production
           onUpdate: (self) => {
-            console.log("Scroll progress:", self.progress);
+            // Optional: track progress for debugging
+            // console.log("Scroll progress:", self.progress);
           }
         }
       });
 
       // Animate each section
-      sections.forEach((section, i) => {
+      sectionsRef.forEach((section, i) => {
         // Skip first section (Hero)
         if (i === 0) return;
         
-        tl.fromTo(section, 
-          { 
-            y: "100%", 
-            opacity: 0,
-            rotation: 2,
-            scale: 0.9,
-          }, 
-          { 
-            y: "0%", 
-            opacity: 1, 
-            rotation: 0,
-            scale: 1,
-            duration: 1,
-            ease: "power3.out",
-          }, 
-          i * 0.5
-        );
-
-        // Add page turn effect
-        if (i > 0) {
-          tl.add(() => {
-            const audio = new Audio('/page-turn.mp3');
-            audio.volume = 0.3;
-            audio.play().catch((err) => {
-              console.warn("Audio play was prevented due to browser policy.", err);
+        // Create individual ScrollTrigger for each section
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top bottom-=100",
+          end: "top center",
+          onEnter: () => {
+            gsap.to(section, { 
+              y: "0%", 
+              opacity: 1, 
+              rotation: 0,
+              scale: 1,
+              duration: 0.8,
+              ease: "power3.out",
+              onComplete: () => {
+                // Play page turn sound
+                const audio = new Audio('/page-turn.mp3');
+                audio.volume = 0.3;
+                audio.play().catch((err) => {
+                  console.warn("Audio play was prevented due to browser policy.", err);
+                });
+              }
             });
-          }, i * 0.5);
-        }
-
-        // Add hardware acceleration styles to sections
-        gsap.set(section, { willChange: "transform" });
+          },
+          onLeaveBack: () => {
+            gsap.to(section, { 
+              y: "100%", 
+              opacity: 0,
+              rotation: 2,
+              scale: 0.9, 
+              duration: 0.8,
+              ease: "power3.in"
+            });
+          }
+        });
+        
+        // Initial state for sections (except first)
+        gsap.set(section, { 
+          y: "100%", 
+          opacity: 0, 
+          rotation: 2,
+          scale: 0.9,
+          willChange: "transform" // Add hardware acceleration
+        });
       });
 
       // Finish loading after animations are set up
@@ -123,13 +153,13 @@ const Index: React.FC = () => {
       setError("Failed to initialize animations. Please refresh the page.");
       setIsLoading(false);
       
-      // Notify user about the error - Fixed: removed 'variant' property
+      // Notify user about the error
       toast({
         title: "Animation Error",
         description: "There was a problem setting up page animations. Some features may not work correctly."
       });
     }
-  }, []);
+  }, [pageTransitionReady, sectionsRef]);
 
   // Show loading screen
   if (isLoading) {
@@ -166,50 +196,50 @@ const Index: React.FC = () => {
   return (
     <>
       <Header />
-      <main ref={mainRef} className="relative h-screen overflow-hidden bg-gray-100">
+      <main ref={mainRef} className="relative min-h-screen overflow-hidden bg-gray-100">
         <ProgressIndicator totalSections={8} />
 
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
+        <div ref={addToSectionsRef} className="relative w-full min-h-screen">
           <Hero />
         </div>
         
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
+        <div ref={addToSectionsRef} className="relative w-full min-h-screen">
           <PageTransition>
             <HowItWorks />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
+        <div ref={addToSectionsRef} className="relative w-full min-h-screen">
           <PageTransition delay={0.1}>
             <Feedback />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
+        <div ref={addToSectionsRef} className="relative w-full min-h-screen">
           <PageTransition delay={0.2}>
             <Employers />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
+        <div ref={addToSectionsRef} className="relative w-full min-h-screen">
           <PageTransition delay={0.3}>
             <TutorsAdvisers />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
+        <div ref={addToSectionsRef} className="relative w-full min-h-screen">
           <PageTransition delay={0.4}>
             <GamesQuizzes />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
+        <div ref={addToSectionsRef} className="relative w-full min-h-screen">
           <PageTransition delay={0.5}>
             <SuccessStories />
           </PageTransition>
         </div>
         
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
+        <div ref={addToSectionsRef} className="relative w-full min-h-screen">
           <PageTransition delay={0.6}>
             <JoinCommunity />
           </PageTransition>
