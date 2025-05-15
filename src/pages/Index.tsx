@@ -16,15 +16,11 @@ import JoinCommunity from "@/components/JoinCommunity";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import ProgressIndicator from "@/components/ProgressIndicator";
-import { Loader2 } from "lucide-react";
+import StoryConnector from "@/components/StoryConnector";
+import { Loader2, RefreshCw } from "lucide-react";
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
-
-interface SectionRef {
-  ref: React.RefObject<HTMLDivElement>;
-  id: string;
-}
 
 const Index: React.FC = () => {
   const mainRef = useRef<HTMLDivElement>(null);
@@ -33,7 +29,7 @@ const Index: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [pageTransitionReady, setPageTransitionReady] = useState<boolean>(false);
 
-  // Add sections to ref array - improved to use useState
+  // Add sections to ref array
   const addToSectionsRef = (el: HTMLDivElement | null) => {
     if (el && !sectionsRef.includes(el)) {
       setSectionsRef(prev => [...prev, el]);
@@ -45,7 +41,7 @@ const Index: React.FC = () => {
     // Short delay to ensure all refs are properly assigned
     const timer = setTimeout(() => {
       setPageTransitionReady(true);
-    }, 500);
+    }, 800);
     
     return () => clearTimeout(timer);
   }, []);
@@ -82,16 +78,12 @@ const Index: React.FC = () => {
           start: "top top",
           end: "bottom bottom",
           scrub: 1,
-          pin: false, // Changed to false to prevent pinning issues
-          markers: false, // Disable markers in production
-          onUpdate: (self) => {
-            // Optional: track progress for debugging
-            // console.log("Scroll progress:", self.progress);
-          }
+          pin: false,
+          markers: false,
         }
       });
 
-      // Animate each section
+      // Animate each section (except first)
       sectionsRef.forEach((section, i) => {
         // Skip first section (Hero)
         if (i === 0) return;
@@ -109,14 +101,6 @@ const Index: React.FC = () => {
               scale: 1,
               duration: 0.8,
               ease: "power3.out",
-              onComplete: () => {
-                // Play page turn sound
-                const audio = new Audio('/page-turn.mp3');
-                audio.volume = 0.3;
-                audio.play().catch((err) => {
-                  console.warn("Audio play was prevented due to browser policy.", err);
-                });
-              }
             });
           },
           onLeaveBack: () => {
@@ -144,6 +128,14 @@ const Index: React.FC = () => {
       // Finish loading after animations are set up
       setIsLoading(false);
 
+      // Welcome notification after loading
+      setTimeout(() => {
+        toast({
+          title: "Welcome to GLOHSEN",
+          description: "Scroll to explore our healthcare professional network",
+        });
+      }, 1500);
+
       // Clean up ScrollTrigger on unmount
       return () => {
         ScrollTrigger.getAll().forEach(st => st.kill());
@@ -156,7 +148,8 @@ const Index: React.FC = () => {
       // Notify user about the error
       toast({
         title: "Animation Error",
-        description: "There was a problem setting up page animations. Some features may not work correctly."
+        description: "There was a problem setting up page animations. Some features may not work correctly.",
+        variant: "destructive"
       });
     }
   }, [pageTransitionReady, sectionsRef]);
@@ -185,6 +178,7 @@ const Index: React.FC = () => {
             className="bg-red-600 hover:bg-red-700"
             onClick={() => window.location.reload()}
           >
+            <RefreshCw className="mr-2 h-4 w-4" />
             Refresh Page
           </Button>
         </div>
@@ -192,7 +186,46 @@ const Index: React.FC = () => {
     );
   }
 
-  // Adjust section styles to ensure proper stacking
+  // Define story connector elements
+  const storyConnectors = [
+    {
+      from: "Introduction",
+      to: "Process",
+      color: "bg-red-600",
+      index: 1
+    },
+    {
+      from: "Patient X",
+      to: "Feedback",
+      color: "bg-amber-500",
+      index: 2
+    },
+    {
+      from: "Feedback",
+      to: "Hospital Y",
+      color: "bg-blue-500",
+      index: 3
+    },
+    {
+      from: "Tutors",
+      to: "Student A",
+      color: "bg-green-500",
+      index: 4
+    },
+    {
+      from: "Skills",
+      to: "Learning",
+      color: "bg-purple-500",
+      index: 5
+    },
+    {
+      from: "Success",
+      to: "Join Us",
+      color: "bg-indigo-500",
+      index: 6
+    }
+  ];
+
   return (
     <>
       <Header />
@@ -204,43 +237,73 @@ const Index: React.FC = () => {
         </div>
         
         <div ref={addToSectionsRef} className="relative w-full min-h-screen">
-          <PageTransition>
+          <PageTransition delay={0.1} color="red-600">
             <HowItWorks />
           </PageTransition>
+          <StoryConnector 
+            from={storyConnectors[0].from} 
+            to={storyConnectors[0].to}
+            color={storyConnectors[0].color}
+          />
         </div>
         
         <div ref={addToSectionsRef} className="relative w-full min-h-screen">
-          <PageTransition delay={0.1}>
+          <PageTransition delay={0.2} color="amber-500">
             <Feedback />
           </PageTransition>
+          <StoryConnector 
+            from={storyConnectors[1].from} 
+            to={storyConnectors[1].to}
+            color={storyConnectors[1].color}
+          />
         </div>
         
         <div ref={addToSectionsRef} className="relative w-full min-h-screen">
-          <PageTransition delay={0.2}>
+          <PageTransition delay={0.3} color="blue-500">
             <Employers />
           </PageTransition>
+          <StoryConnector 
+            from={storyConnectors[2].from} 
+            to={storyConnectors[2].to}
+            color={storyConnectors[2].color}
+          />
         </div>
         
         <div ref={addToSectionsRef} className="relative w-full min-h-screen">
-          <PageTransition delay={0.3}>
+          <PageTransition delay={0.4} color="green-500">
             <TutorsAdvisers />
           </PageTransition>
+          <StoryConnector 
+            from={storyConnectors[3].from} 
+            to={storyConnectors[3].to}
+            color={storyConnectors[3].color}
+          />
         </div>
         
         <div ref={addToSectionsRef} className="relative w-full min-h-screen">
-          <PageTransition delay={0.4}>
+          <PageTransition delay={0.5} color="purple-500">
             <GamesQuizzes />
           </PageTransition>
+          <StoryConnector 
+            from={storyConnectors[4].from} 
+            to={storyConnectors[4].to}
+            color={storyConnectors[4].color}
+          />
         </div>
         
         <div ref={addToSectionsRef} className="relative w-full min-h-screen">
-          <PageTransition delay={0.5}>
+          <PageTransition delay={0.6} color="indigo-500">
             <SuccessStories />
           </PageTransition>
+          <StoryConnector 
+            from={storyConnectors[5].from} 
+            to={storyConnectors[5].to}
+            color={storyConnectors[5].color}
+          />
         </div>
         
         <div ref={addToSectionsRef} className="relative w-full min-h-screen">
-          <PageTransition delay={0.6}>
+          <PageTransition delay={0.7} color="red-600">
             <JoinCommunity />
           </PageTransition>
         </div>
