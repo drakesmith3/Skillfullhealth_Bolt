@@ -16,6 +16,7 @@ import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import { Loader2 } from "lucide-react";
+import ParallaxContainer from "@/components/ParallaxContainer";
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -31,7 +32,7 @@ const Index: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Add sections to ref array
+  // Ensure all sections are registered correctly
   const addToSectionsRef = (el: HTMLDivElement | null) => {
     if (el && !sectionsRef.current.includes(el)) {
       sectionsRef.current.push(el);
@@ -78,7 +79,8 @@ const Index: React.FC = () => {
         // Skip first section (Hero)
         if (i === 0) return;
         
-        tl.fromTo(section, 
+        tl.fromTo(
+          section,
           { 
             y: "100%", 
             opacity: 0,
@@ -93,19 +95,17 @@ const Index: React.FC = () => {
             duration: 1,
             ease: "power3.out",
           }, 
-          i * 0.5
+          `section-${i}` // Use unique labels for each section
         );
 
         // Add page turn effect
-        if (i > 0) {
-          tl.add(() => {
-            const audio = new Audio('/page-turn.mp3');
-            audio.volume = 0.3;
-            audio.play().catch((err) => {
-              console.warn("Audio play was prevented due to browser policy.", err);
-            });
-          }, i * 0.5);
-        }
+        tl.add(() => {
+          const audio = new Audio('/page-turn.mp3');
+          audio.volume = 0.3;
+          audio.play().catch((err) => {
+            console.warn("Audio play was prevented due to browser policy.", err);
+          });
+        }, `section-${i}`);
 
         // Add hardware acceleration styles to sections
         gsap.set(section, { willChange: "transform" });
@@ -166,55 +166,65 @@ const Index: React.FC = () => {
   return (
     <>
       <Header />
-      <main ref={mainRef} className="relative h-screen overflow-hidden bg-gray-100">
-        <ProgressIndicator totalSections={8} />
+      <ParallaxContainer>
+        <main ref={mainRef} className="relative h-screen overflow-hidden bg-gray-100">
+          <ProgressIndicator totalSections={9} />
 
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
-          <Hero />
-        </div>
-        
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
-          <PageTransition>
-            <HowItWorks />
-          </PageTransition>
-        </div>
-        
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
-          <PageTransition delay={0.1}>
-            <Feedback />
-          </PageTransition>
-        </div>
-        
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
-          <PageTransition delay={0.2}>
-            <Employers />
-          </PageTransition>
-        </div>
-        
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
-          <PageTransition delay={0.3}>
-            <TutorsAdvisers />
-          </PageTransition>
-        </div>
-        
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
-          <PageTransition delay={0.4}>
-            <GamesQuizzes />
-          </PageTransition>
-        </div>
-        
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
-          <PageTransition delay={0.5}>
-            <SuccessStories />
-          </PageTransition>
-        </div>
-        
-        <div ref={addToSectionsRef} className="relative w-full h-screen">
-          <PageTransition delay={0.6}>
-            <JoinCommunity />
-          </PageTransition>
-        </div>
-      </main>
+          {/* HERO Section */}
+          <div ref={addToSectionsRef} className="parallax-section relative w-full h-screen">
+            <Hero />
+          </div>
+
+          {/* HOW IT WORKS Section */}
+          <div ref={addToSectionsRef} className="parallax-section relative w-full h-screen">
+            <PageTransition>
+              <HowItWorks />
+            </PageTransition>
+          </div>
+
+          {/* FEEDBACK Section */}
+          <div ref={addToSectionsRef} className="parallax-section relative w-full h-screen">
+            <PageTransition>
+              <Feedback />
+            </PageTransition>
+          </div>
+
+          {/* EMPLOYERS Section */}
+          <div ref={addToSectionsRef} className="parallax-section relative w-full h-screen">
+            <PageTransition>
+              <Employers />
+            </PageTransition>
+          </div>
+
+          {/* TUTORS/ADVISERS Section */}
+          <div ref={addToSectionsRef} className="parallax-section relative w-full h-screen">
+            <PageTransition>
+              <TutorsAdvisers />
+            </PageTransition>
+          </div>
+
+          {/* GAMES and QUIZZES Section */}
+          <div ref={addToSectionsRef} className="parallax-section relative w-full h-screen">
+            <PageTransition>
+              <GamesQuizzes />
+            </PageTransition>
+          </div>
+
+          {/* SUCCESS STORIES Section */}
+          <div ref={addToSectionsRef} className="parallax-section relative w-full h-screen">
+            <PageTransition>
+              <SuccessStories />
+            </PageTransition>
+          </div>
+
+          {/* JOIN THE GLOHSEN COMMUNITY Section */}
+          <div ref={addToSectionsRef} className="parallax-section relative w-full h-screen">
+            <PageTransition>
+              <JoinCommunity />
+            </PageTransition>
+          </div>
+        </main>
+      </ParallaxContainer>
       <Footer />
     </>
   );
