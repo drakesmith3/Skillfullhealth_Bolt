@@ -18,7 +18,15 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'playfair': ['Playfair Display', 'serif'],
+				'montserrat': ['Montserrat', 'sans-serif'],
+			},
 			colors: {
+				'brand-red': '#ea384c',
+				'brand-gold': '#d4af37',
+				'brand-black': '#000000',
+				'brand-offwhite': '#f5f5f5',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
