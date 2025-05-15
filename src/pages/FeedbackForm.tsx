@@ -1,5 +1,5 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,11 +13,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "@/components/ui/use-toast";
 import { MessageCircle, ThumbsUp, ThumbsDown, CheckCircle2, AlertTriangle } from "lucide-react";
+import QRCode from 'react-qr-code';
 
 const FeedbackForm: React.FC = () => {
   const [feedbackType, setFeedbackType] = useState<string>("positive");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [feedbackList, setFeedbackList] = useState<string[]>([]);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState('Professionals');
   
   const hospitalOptions = [
     { value: "hospital-y", label: "Hospital Y" },
@@ -40,6 +44,17 @@ const FeedbackForm: React.FC = () => {
     { value: "other", label: "Other" }
   ];
   
+  const fetchMoreFeedback = () => {
+    // Simulate API call to fetch more feedback
+    setTimeout(() => {
+      const newFeedback = Array.from({ length: 10 }, (_, i) => `Feedback ${feedbackList.length + i + 1}`);
+      setFeedbackList((prev) => [...prev, ...newFeedback]);
+      if (feedbackList.length + newFeedback.length >= 50) {
+        setHasMore(false);
+      }
+    }, 1000);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -58,6 +73,19 @@ const FeedbackForm: React.FC = () => {
   
   const handleNewFeedback = () => {
     setIsSubmitted(false);
+  };
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'Professionals':
+        return <p>Feedback form for Professionals</p>;
+      case 'Tutors':
+        return <p>Feedback form for Tutors</p>;
+      case 'Hospital/Health Facility':
+        return <p>Feedback form for Hospital/Health Facility</p>;
+      default:
+        return null;
+    }
   };
 
   if (isSubmitted) {
@@ -124,6 +152,27 @@ const FeedbackForm: React.FC = () => {
           <p className="text-xl text-gray-700 text-center mb-12 max-w-2xl mx-auto">
             Your voice matters. Help improve healthcare for everyone by providing your honest feedback.
           </p>
+          
+          <div className="tabs mb-6">
+            {['Professionals', 'Tutors', 'Hospital/Health Facility'].map((tab) => (
+              <button
+                key={tab}
+                className={`tab-button ${activeTab === tab ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          
+          <div className="tab-content">
+            {renderTabContent()}
+          </div>
+          
+          <div className="qr-code mt-8">
+            <h2 className="text-xl font-bold mb-4">Scan to Leave Feedback</h2>
+            <QRCode value="https://example.com/feedback" size={128} />
+          </div>
           
           <Card className="shadow-xl border-0">
             <CardHeader>
@@ -354,6 +403,25 @@ const FeedbackForm: React.FC = () => {
               </CardFooter>
             </form>
           </Card>
+        </div>
+        
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold mb-4">Real-Time Feedback</h2>
+          <InfiniteScroll
+            dataLength={feedbackList.length}
+            next={fetchMoreFeedback}
+            hasMore={hasMore}
+            loader={<h4>Loading...</h4>}
+            endMessage={<p className="text-center">No more feedback to display.</p>}
+          >
+            <ul className="space-y-4">
+              {feedbackList.map((feedback, index) => (
+                <li key={index} className="p-4 bg-white shadow rounded-md">
+                  {feedback}
+                </li>
+              ))}
+            </ul>
+          </InfiniteScroll>
         </div>
       </main>
       

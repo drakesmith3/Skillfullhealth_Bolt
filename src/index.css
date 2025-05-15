@@ -99,3 +99,61 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes shine {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animated-shine-text {
+  background-image: linear-gradient(
+    to right,
+    #BF953F 0%, /* Darker Gold */
+    #FCF6BA 20%, /* Light Gold/Cream */
+    #B38728 40%, /* Medium Gold */
+    #FBF5B7 60%, /* Light Gold/Cream */
+    #AA771C 80%, /* Darker Gold */
+    #BF953F 100% /* Darker Gold */
+  );
+  background-size: 200% auto;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shine 5s linear infinite;
+  /* Ensure the text is still readable if animation/gradient fails */
+  /* Fallback color - choose one that fits your theme */
+  /* color: #FFD700;  */ 
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 15s linear infinite;
+}
+
+.bg-size-200 {
+  background-size: 200% 200%;
+}
+
+.animate-gradient {
+  animation: gradientAnimation 3s linear infinite;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
