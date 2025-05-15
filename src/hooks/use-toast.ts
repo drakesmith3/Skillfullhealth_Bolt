@@ -1,14 +1,18 @@
+
 import { useState, useCallback } from 'react';
 
-type ToastProps = {
+export type ToastVariant = "default" | "destructive";
+
+export type ToastProps = {
   id: string;
   title?: string;
   description?: string;
   action?: React.ReactNode;
   open: boolean;
+  variant?: ToastVariant;
 };
 
-type ToastOptions = Omit<ToastProps, 'id' | 'open'>;
+export type ToastOptions = Omit<ToastProps, 'id' | 'open'>;
 
 export function useToast() {
   const [toasts, setToasts] = useState<ToastProps[]>([]);
@@ -52,9 +56,44 @@ export function useToast() {
   };
 }
 
+// Singleton implementation for direct imports
+let toasts: ToastProps[] = [];
+let listeners: Array<() => void> = [];
+
+const notify = () => {
+  listeners.forEach((listener) => {
+    listener();
+  });
+};
+
 export const toast = (options: ToastOptions) => {
   const id = Math.random().toString(36).substring(2, 9);
   const newToast = { ...options, id, open: true };
+  
+  toasts = [...toasts, newToast];
+  notify();
+  
+  return {
+    id,
+    dismiss: () => {
+      toasts = toasts.map((t) => (t.id === id ? { ...t, open: false } : t));
+      notify();
+      
+      // Remove from state after animation completes
+      setTimeout(() => {
+        toasts = toasts.filter((t) => t.id !== id);
+        notify();
+      }, 300);
+    },
+  };
+};
 
-  // Logic to handle toast creation
+// Used by the Toaster component
+export const getToasts = () => toasts;
+
+export const addToastListener = (listener: () => void) => {
+  listeners.push(listener);
+  return () => {
+    listeners = listeners.filter((l) => l !== listener);
+  };
 };

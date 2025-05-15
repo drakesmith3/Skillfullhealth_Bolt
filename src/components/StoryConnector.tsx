@@ -2,6 +2,7 @@
 import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { BookOpen } from "lucide-react";
+import { audioPlayer } from "@/utils/AudioPlayer";
 
 interface StoryConnectorProps {
   from: string;
@@ -61,7 +62,7 @@ const StoryConnector: React.FC<StoryConnectorProps> = ({
       tl.call(() => {
         createDustParticles();
         if (withSound) {
-          playPageTurnSound();
+          audioPlayer.play('/page-turn.mp3', 0.2);
         }
       });
     };
@@ -81,7 +82,6 @@ const StoryConnector: React.FC<StoryConnectorProps> = ({
         particle.className = "absolute rounded-full";
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
-        particle.style.backgroundColor = color.replace("bg-", "");
         particle.style.backgroundColor = getComputedColor();
         particle.style.left = `${50}%`;
         particle.style.top = `${50}%`;
@@ -110,15 +110,6 @@ const StoryConnector: React.FC<StoryConnectorProps> = ({
       if (color.includes("blue")) return "rgba(59, 130, 246, 0.7)";
       if (color.includes("green")) return "rgba(16, 185, 129, 0.7)";
       return "rgba(156, 163, 175, 0.7)"; // Default gray
-    };
-    
-    // Play page turn sound
-    const playPageTurnSound = () => {
-      const audio = new Audio('/page-turn.mp3');
-      audio.volume = 0.2;
-      audio.play().catch((err) => {
-        console.warn("Audio play was prevented due to browser policy.", err);
-      });
     };
     
     // Create observer to trigger animation when element is in view

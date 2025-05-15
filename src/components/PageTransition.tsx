@@ -1,6 +1,7 @@
 
 import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
+import { audioPlayer } from "@/utils/AudioPlayer";
 
 interface PageTransitionProps {
   children: React.ReactNode;
@@ -55,11 +56,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({
         onComplete: () => {
           // Play sound effect when page turn completes
           if (withSound) {
-            const audio = new Audio('/page-turn.mp3');
-            audio.volume = 0.2;
-            audio.play().catch(err => {
-              console.warn("Audio play was prevented due to browser policy.", err);
-            });
+            audioPlayer.play('/page-turn.mp3', 0.2);
           }
           // Create dust particles
           createDustParticles();

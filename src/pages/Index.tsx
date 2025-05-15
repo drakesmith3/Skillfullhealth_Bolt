@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -18,11 +18,13 @@ import PageTransition from "@/components/PageTransition";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import StoryConnector from "@/components/StoryConnector";
 import { Loader2, RefreshCw } from "lucide-react";
+import { audioPlayer } from "@/utils/AudioPlayer";
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
 const Index: React.FC = () => {
+  const { toast } = useToast();
   const mainRef = useRef<HTMLDivElement>(null);
   const [sectionsRef, setSectionsRef] = useState<HTMLDivElement[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -38,6 +40,9 @@ const Index: React.FC = () => {
 
   // First useEffect - wait for DOM elements to be ready
   useEffect(() => {
+    // Preload audio
+    audioPlayer.preload(['/page-turn.mp3']);
+    
     // Short delay to ensure all refs are properly assigned
     const timer = setTimeout(() => {
       setPageTransitionReady(true);
@@ -148,11 +153,10 @@ const Index: React.FC = () => {
       // Notify user about the error
       toast({
         title: "Animation Error",
-        description: "There was a problem setting up page animations. Some features may not work correctly.",
-        variant: "destructive"
+        description: "There was a problem setting up page animations. Some features may not work correctly."
       });
     }
-  }, [pageTransitionReady, sectionsRef]);
+  }, [pageTransitionReady, sectionsRef, toast]);
 
   // Show loading screen
   if (isLoading) {
