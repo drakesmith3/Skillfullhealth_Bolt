@@ -1,9 +1,9 @@
 
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
 import ScrollSound from "../ScrollSound";
 
-const meta: Meta<typeof ScrollSound> = {
+// Define the component story without depending on @storybook/react
+const meta = {
   title: "Components/ScrollSound",
   component: ScrollSound,
   argTypes: {
@@ -12,16 +12,15 @@ const meta: Meta<typeof ScrollSound> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ScrollSound>;
 
-export const Default: Story = {
-  args: {
-    isSoundEnabled: true,
-    toggleSound: () => alert("Toggled sound"),
-  },
-  render: (args) => (
+// Create the default story without using StoryObj
+export function Default() {
+  return (
     <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <ScrollSound {...args} />
+      <ScrollSound 
+        isSoundEnabled={true}
+        toggleSound={() => alert("Toggled sound")}
+      />
     </div>
-  ),
-};
+  );
+}
