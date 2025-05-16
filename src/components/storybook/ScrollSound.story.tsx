@@ -1,23 +1,27 @@
+
 import React from "react";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import ScrollSound from "../ScrollSound";
 
-export default {
+const meta: Meta<typeof ScrollSound> = {
   title: "Components/ScrollSound",
   component: ScrollSound,
   argTypes: {
     isSoundEnabled: { control: { type: "boolean" } },
   },
-} as ComponentMeta<typeof ScrollSound>;
+};
 
-const Template: ComponentStory<typeof ScrollSound> = (args) => (
-  <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-    <ScrollSound {...args} />
-  </div>
-);
+export default meta;
+type Story = StoryObj<typeof ScrollSound>;
 
-export const Default = Template.bind({});
-Default.args = {
-  isSoundEnabled: true,
-  toggleSound: () => alert("Toggled sound"),
+export const Default: Story = {
+  args: {
+    isSoundEnabled: true,
+    toggleSound: () => alert("Toggled sound"),
+  },
+  render: (args) => (
+    <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <ScrollSound {...args} />
+    </div>
+  ),
 };

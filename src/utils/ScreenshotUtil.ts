@@ -1,38 +1,25 @@
 
+import html2canvas from 'html2canvas';
+
 /**
- * Utility for capturing screenshots of the UI
- * (For development and debugging purposes)
+ * Utility for taking screenshots of DOM elements
  */
 export class ScreenshotUtil {
   /**
-   * Capture a screenshot of a DOM element
-   * @param element The DOM element to capture
-   * @param fileName Optional filename for the download
+   * Takes a screenshot of a DOM element
+   * @param element The DOM element to screenshot
+   * @returns Promise resolving to a data URL of the screenshot
    */
-  public static async captureElement(element: HTMLElement, fileName?: string): Promise<void> {
+  static async captureElement(element: HTMLElement): Promise<string> {
     try {
-      // Ensure html2canvas is available
-      const html2canvas = await import('html2canvas').then(module => module.default);
-      
-      // Capture the element
       const canvas = await html2canvas(element, {
         useCORS: true,
         allowTaint: true,
-        scale: window.devicePixelRatio || 1,
+        logging: false,
+        scale: window.devicePixelRatio,
       });
       
-      // Convert to data URL
-      const dataUrl = canvas.toDataURL('image/png');
-      
-      // Download or return the data URL
-      if (fileName) {
-        const link = document.createElement('a');
-        link.download = fileName;
-        link.href = dataUrl;
-        link.click();
-      }
-      
-      return dataUrl;
+      return canvas.toDataURL('image/png');
     } catch (error) {
       console.error('Failed to capture screenshot:', error);
       throw error;
@@ -40,10 +27,21 @@ export class ScreenshotUtil {
   }
   
   /**
-   * Capture viewport as seen by the user
-   * @param fileName Optional filename for the download
+   * Downloads a screenshot of a DOM element
+   * @param element The DOM element to screenshot
+   * @param filename The filename for the downloaded image
    */
-  public static async captureViewport(fileName?: string): Promise<void> {
-    return ScreenshotUtil.captureElement(document.documentElement, fileName);
+  static async downloadElementAsImage(element: HTMLElement, filename: string = 'screenshot.png'): Promise<void> {
+    try {
+      const dataUrl = await this.captureElement(element);
+      
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = filename;
+      link.click();
+    } catch (error) {
+      console.error('Failed to download screenshot:', error);
+      throw error;
+    }
   }
 }

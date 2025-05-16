@@ -145,11 +145,13 @@ const CommunityForum: React.FC = () => {
                 <CardHeader className="p-4 pb-2">
                   <div className="flex justify-between items-center">
                     <div className="flex gap-2">
-                      <Input 
-                        placeholder="Search discussions..." 
-                        className="max-w-xs"
-                        startIcon={<Search size={18} />}
-                      />
+                      <div className="relative max-w-xs">
+                        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input 
+                          placeholder="Search discussions..." 
+                          className="pl-8 max-w-xs"
+                        />
+                      </div>
                       <Button variant="outline" size="sm">
                         <Filter className="mr-1 h-4 w-4" />
                         Filter
