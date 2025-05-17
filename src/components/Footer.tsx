@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, memo } from "react";
+import React, { useRef, useEffect, memo } from "react";
 import { gsap } from "gsap";
 import { Link } from "react-router-dom";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
@@ -38,31 +38,41 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
   const rightCurtainRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<gsap.core.Timeline | null>(null);
+  const footerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!leftCurtainRef.current || !rightCurtainRef.current || !contentRef.current) return;
+    if (!leftCurtainRef.current || !rightCurtainRef.current || !contentRef.current || !footerRef.current) return;
 
     // Create a GSAP context for the animations
     const ctx = gsap.context(() => {
-      gsap.set(leftCurtainRef.current, { xPercent: -100 });
-      gsap.set(rightCurtainRef.current, { xPercent: 100 });
+      // Initially set the curtains offstage
+      gsap.set(leftCurtainRef.current, { xPercent: -100, opacity: 1 });
+      gsap.set(rightCurtainRef.current, { xPercent: 100, opacity: 1 });
       gsap.set(contentRef.current, { opacity: 1 });
       
+      // Create a timeline but don't play it yet
       animationRef.current = gsap.timeline({ paused: true });
 
-      animationRef.current.to([leftCurtainRef.current, rightCurtainRef.current], {
-        xPercent: 0,
-        duration: 1.5,
-        ease: "power2.inOut",
-      }).to(contentRef.current, {
-        opacity: 0.9,
-        duration: 0.5,
-        ease: "power1.in",
-      }, 0);
-    });
+      // When active, bring in the curtains from the sides and fade the content slightly
+      animationRef.current
+        .to([leftCurtainRef.current, rightCurtainRef.current], {
+          xPercent: 0,
+          duration: 1.2,
+          ease: "power2.inOut",
+          stagger: 0.1,
+        })
+        .to(contentRef.current, {
+          opacity: 0.9,
+          duration: 0.4,
+          ease: "power1.in",
+        }, 0);
+    }, footerRef);
 
     return () => {
       ctx.revert(); // Clean up all GSAP animations
+      if (animationRef.current) {
+        animationRef.current.kill();
+      }
     };
   }, []);
 
@@ -80,33 +90,31 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
 
   return (
     <section
+      ref={footerRef}
       className="relative h-screen w-full flex flex-col justify-center items-center bg-black text-white dark:bg-black dark:text-gray-100 overflow-hidden"
       style={{ minHeight: '100vh' }}
     >
-      {/* Opera curtains - removed the green border */}
+      {/* Opera curtains with improved positioning and styling */}
       <div
         ref={leftCurtainRef}
         className="absolute top-0 left-0 w-1/2 h-full bg-red-800 dark:bg-red-900 z-10"
         style={{ 
-          backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 10px, rgba(0,0,0,0) 10px, rgba(0,0,0,0) 20px)',
-          transformOrigin: 'left center',
-          transform: 'translateX(-100%)'
+          backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 20px)',
+          transformOrigin: 'left center'
         }}
-      ></div>
+      />
       <div
         ref={rightCurtainRef}
         className="absolute top-0 right-0 w-1/2 h-full bg-red-800 dark:bg-red-900 z-10"
         style={{ 
-          backgroundImage: 'repeating-linear-gradient(-45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 10px, rgba(0,0,0,0) 10px, rgba(0,0,0,0) 20px)',
-          transformOrigin: 'right center',
-          transform: 'translateX(100%)'
+          backgroundImage: 'repeating-linear-gradient(-45deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 20px)',
+          transformOrigin: 'right center'
         }}
-      ></div>
+      />
 
       <div
         ref={contentRef}
-        className="relative z-20 flex flex-col items-center justify-between w-full h-full py-12 px-4 md:px-8"
-        style={{ willChange: "opacity" }}
+        className="relative z-5 flex flex-col items-center justify-between w-full h-full py-12 px-4 md:px-8"
       >
         <div className="text-center mb-12">
           <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-red-500 via-amber-400 to-red-500 text-transparent bg-clip-text bg-size-200 animate-gradient dark:from-red-400 dark:via-amber-300 dark:to-red-400">
@@ -156,6 +164,18 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
             </ul>
           </div>
 
+          {/* Legal Links Section */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-amber-400 dark:text-amber-300 uppercase">Legal</h3>
+            <ul className="space-y-2">
+              <FooterLinkComponent href="/terms-of-service">Terms of Service</FooterLinkComponent>
+              <FooterLinkComponent href="/privacy-policy">Privacy Policy</FooterLinkComponent>
+              <FooterLinkComponent href="/cookies-policy">Cookies Policy</FooterLinkComponent>
+              <FooterLinkComponent href="/refund-policy">Refund Policy</FooterLinkComponent>
+              <FooterLinkComponent href="/accessibility">Accessibility Statement</FooterLinkComponent>
+            </ul>
+          </div>
+
           {/* FEEDBACK Section */}
           <div>
             <h3 className="text-lg font-semibold mb-4 text-amber-400 dark:text-amber-300 uppercase">Feedback</h3>
@@ -167,23 +187,11 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
               Leave Feedback
             </Link>
           </div>
-
-          {/* POLICIES Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-amber-400 dark:text-amber-300 uppercase">Policies</h3>
-            <ul className="space-y-2">
-              <FooterLinkComponent href="/terms-of-service">Terms of Service</FooterLinkComponent>
-              <FooterLinkComponent href="/privacy-policy">Privacy Policy</FooterLinkComponent>
-              <FooterLinkComponent href="/cookies-policy">Cookies Policy</FooterLinkComponent>
-              <FooterLinkComponent href="/refund-policy">Refund Policy</FooterLinkComponent>
-              <FooterLinkComponent href="/accessibility">Accessibility Statement</FooterLinkComponent>
-            </ul>
-          </div>
         </div>
         
         {/* Social Media Links */}
-        <div className="border-t border-gray-800 pt-8 pb-4">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-gray-800 pt-8 pb-4 w-full">
+          <div className="flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto">
             <div className="mb-6 md:mb-0">
               <p className="text-gray-400 dark:text-gray-500">
                 &copy; {new Date().getFullYear()} GLOHSEN. All rights reserved. Your Journey, Elevated.

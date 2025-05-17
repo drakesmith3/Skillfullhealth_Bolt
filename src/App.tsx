@@ -14,6 +14,12 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import AIActivityAgent from "./components/AIActivityAgent"; 
 import FloatingActionButtons from "./components/FloatingActionButtons";
 import PreHeader from "./components/PreHeader";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CookiesPolicy from "./pages/CookiesPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
+import AccessibilityStatement from "./pages/AccessibilityStatement";
+import ProfessionalDashboard from "./pages/ProfessionalDashboard";
 
 const queryClient = new QueryClient();
 
@@ -35,11 +41,12 @@ const App = () => (
                 <Route path="/employer" element={<ComingSoon title="Employer" />} />
                 <Route path="/tutor" element={<ComingSoon title="Tutor" />} />
                 <Route path="/about" element={<ComingSoon title="About Us" />} />
-                <Route path="/terms-of-service" element={<ComingSoon title="Terms of Service" />} />
-                <Route path="/privacy-policy" element={<ComingSoon title="Privacy Policy" />} />
-                <Route path="/cookies-policy" element={<ComingSoon title="Cookies Policy" />} />
-                <Route path="/refund-policy" element={<ComingSoon title="Refund Policy" />} />
-                <Route path="/accessibility" element={<ComingSoon title="Accessibility Statement" />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/cookies-policy" element={<CookiesPolicy />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/accessibility" element={<AccessibilityStatement />} />
+                <Route path="/dashboard/professional" element={<ProfessionalDashboard />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
