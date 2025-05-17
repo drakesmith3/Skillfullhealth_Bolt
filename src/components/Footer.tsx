@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, memo } from "react";
 import { gsap } from "gsap";
 import { Link } from "react-router-dom";
@@ -37,6 +38,7 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
   const rightCurtainRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<gsap.core.Timeline | null>(null);
+
   useEffect(() => {
     if (!leftCurtainRef.current || !rightCurtainRef.current || !contentRef.current) return;
 
@@ -44,7 +46,9 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
     const ctx = gsap.context(() => {
       gsap.set(leftCurtainRef.current, { xPercent: -100 });
       gsap.set(rightCurtainRef.current, { xPercent: 100 });
-      gsap.set(contentRef.current, { opacity: 1 });      animationRef.current = gsap.timeline({ paused: true });
+      gsap.set(contentRef.current, { opacity: 1 });
+      
+      animationRef.current = gsap.timeline({ paused: true });
 
       animationRef.current.to([leftCurtainRef.current, rightCurtainRef.current], {
         xPercent: 0,
@@ -61,6 +65,7 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
       ctx.revert(); // Clean up all GSAP animations
     };
   }, []);
+
   useEffect(() => {
     if (!animationRef.current) return;
 
@@ -72,11 +77,14 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
       animationRef.current.reverse();
     }
   }, [isActive]);
+
   return (
     <section
       className="relative h-screen w-full flex flex-col justify-center items-center bg-black text-white dark:bg-black dark:text-gray-100 overflow-hidden"
       style={{ minHeight: '100vh' }}
-    >      <div
+    >
+      {/* Opera curtains - removed the green border */}
+      <div
         ref={leftCurtainRef}
         className="absolute top-0 left-0 w-1/2 h-full bg-red-800 dark:bg-red-900 z-10"
         style={{ 
@@ -99,7 +107,8 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
         ref={contentRef}
         className="relative z-20 flex flex-col items-center justify-between w-full h-full py-12 px-4 md:px-8"
         style={{ willChange: "opacity" }}
-      >        <div className="text-center mb-12">
+      >
+        <div className="text-center mb-12">
           <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-red-500 via-amber-400 to-red-500 text-transparent bg-clip-text bg-size-200 animate-gradient dark:from-red-400 dark:via-amber-300 dark:to-red-400">
             The Story Does Not End Here
           </h2>
@@ -163,7 +172,8 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-amber-400 dark:text-amber-300 uppercase">Policies</h3>
             <ul className="space-y-2">
-              <FooterLinkComponent href="/terms-of-service">Terms of Service</FooterLinkComponent>              <FooterLinkComponent href="/privacy-policy">Privacy Policy</FooterLinkComponent>
+              <FooterLinkComponent href="/terms-of-service">Terms of Service</FooterLinkComponent>
+              <FooterLinkComponent href="/privacy-policy">Privacy Policy</FooterLinkComponent>
               <FooterLinkComponent href="/cookies-policy">Cookies Policy</FooterLinkComponent>
               <FooterLinkComponent href="/refund-policy">Refund Policy</FooterLinkComponent>
               <FooterLinkComponent href="/accessibility">Accessibility Statement</FooterLinkComponent>
@@ -188,29 +198,6 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
             </div>
           </div>
         </div>
-
-        {/* Back to top button */}
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-8 right-8 p-3 bg-amber-500 text-black rounded-full shadow-lg hover:bg-amber-600 dark:bg-amber-400 dark:hover:bg-amber-500 dark:text-black transition-colors transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-300"
-          aria-label="Back to Top"
-          title="Back to Top"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 15l7-7 7 7"
-            />
-          </svg>
-        </button>
       </div>
     </section>
   );

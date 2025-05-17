@@ -8,10 +8,12 @@ import Blog from "./pages/Blog";
 import SignUp from "./pages/SignUp";
 import CalculateScore from "./pages/CalculateScore";
 import FeedbackForm from "./pages/FeedbackForm";
-import CommunityForum from "./pages/CommunityForum"; // New page for community discussions
+import CommunityForum from "./pages/CommunityForum";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import AIActivityAgent from "./components/AIActivityAgent"; // Import AI Activity Agent
+import AIActivityAgent from "./components/AIActivityAgent"; 
+import FloatingActionButtons from "./components/FloatingActionButtons";
+import PreHeader from "./components/PreHeader";
 
 const queryClient = new QueryClient();
 
@@ -29,15 +31,39 @@ const App = () => (
                 <Route path="/calculate-score" element={<CalculateScore />} />
                 <Route path="/feedback" element={<FeedbackForm />} />
                 <Route path="/community" element={<CommunityForum />} />
+                <Route path="/professional-student" element={<ComingSoon title="Professional/Student" />} />
+                <Route path="/employer" element={<ComingSoon title="Employer" />} />
+                <Route path="/tutor" element={<ComingSoon title="Tutor" />} />
+                <Route path="/about" element={<ComingSoon title="About Us" />} />
+                <Route path="/terms-of-service" element={<ComingSoon title="Terms of Service" />} />
+                <Route path="/privacy-policy" element={<ComingSoon title="Privacy Policy" />} />
+                <Route path="/cookies-policy" element={<ComingSoon title="Cookies Policy" />} />
+                <Route path="/refund-policy" element={<ComingSoon title="Refund Policy" />} />
+                <Route path="/accessibility" element={<ComingSoon title="Accessibility Statement" />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              <FloatingActionButtons />
             </ErrorBoundary>
           </BrowserRouter>
         </AIActivityAgent>
       </TooltipProvider>
     </QueryClientProvider>
   </ThemeProvider>
+);
+
+// Temporary component for pages under development
+const ComingSoon = ({ title }: { title: string }) => (
+  <div className="min-h-screen flex flex-col items-center justify-center p-4">
+    <PreHeader currentPage={title.toLowerCase()} />
+    <div className="mt-20 text-center">
+      <h1 className="text-4xl font-bold mb-4">{title}</h1>
+      <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">This page is coming soon!</p>
+      <a href="/" className="px-6 py-3 bg-amber-500 text-black rounded-full hover:bg-amber-600 transition-colors">
+        Return to Home
+      </a>
+    </div>
+  </div>
 );
 
 export default App;

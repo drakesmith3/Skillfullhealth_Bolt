@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback, ComponentType } from 'react';
 import Lenis from '@studio-freight/lenis';
 import { gsap } from 'gsap';
@@ -5,17 +6,19 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import Header from '../components/Header';
 import Features from '../components/Features';
-import HowItWorks from '../components/HowItWorks'; // Corrected import
+import HowItWorks from '../components/HowItWorks';
 import Feedback from '../components/Feedback';
 import Employers from '../components/Employers';
 import TutorsAdvisers from '../components/TutorsAdvisers';
-import GamesAndQuizzes from '../components/GamesQuizzes'; // Corrected import path
+import GamesAndQuizzes from '../components/GamesQuizzes';
 import SuccessStories from '../components/SuccessStories';
 import JoinCommunity from '../components/JoinCommunity';
 import Footer from '../components/Footer';
 import ThemeToggle from '../components/ThemeToggle';
 import ScrollSound from '../components/ScrollSound';
 import ProgressIndicator from '../components/ProgressIndicator';
+import StoryAnimations from '../components/StoryAnimations';
+import FloatingActionButtons from '../components/FloatingActionButtons';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,7 +43,6 @@ const sectionsComponents: { component: ComponentType<SectionProps>; name: string
 ];
 
 const sectionNames = sectionsComponents.map(s => s.name);
-
 
 // Easing function for Lenis
 const power2EaseInOut = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -269,11 +271,16 @@ function Index(): JSX.Element {
       <ProgressIndicator
         currentSection={currentSection}
         totalSections={numSections}
-        scrollToSection={scrollToSection} // Changed from scrollToTop
+        scrollToSection={scrollToSection}
         chapterTitles={sectionNames}
       />
       <ScrollSound isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />
-      <ThemeToggle />
+      
+      {/* Add the story animations component that handles butterfly and doodle */}
+      <StoryAnimations 
+        currentSection={currentSection} 
+        totalSections={numSections} 
+      />
       
       <main ref={mainRef} className="w-screen h-screen fixed top-0 left-0 overflow-hidden">
         <div
@@ -285,8 +292,6 @@ function Index(): JSX.Element {
             <section
               key={SectionItem.name}
               className="parallax-section w-screen h-screen flex-shrink-0"
-              // TEMPORARY DIAGNOSTIC STYLE:
-              style={SectionItem.name === "Footer" ? { border: '10px solid limegreen', backgroundColor: 'rgba(50, 205, 50, 0.1)' } : {}}
               ref={(el) => (sectionsRef.current[index] = el)}
             >
               <SectionItem.component
