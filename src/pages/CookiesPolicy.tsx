@@ -1,14 +1,30 @@
-
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PreHeader from '../components/PreHeader';
+import Footer from '../components/Footer'; // Added Footer import
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const CookiesPolicy: React.FC = () => {
+  const [showFooter, setShowFooter] = useState(false);
+  const cleanupRef = useRef(true);
+
+  useEffect(() => {
+    cleanupRef.current = true;
+    const timer = setTimeout(() => {
+      if (cleanupRef.current) {
+        setShowFooter(true);
+      }
+    }, 100); // Short delay, adjust if needed
+    return () => {
+      clearTimeout(timer);
+      cleanupRef.current = false;
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white flex flex-col">
       <PreHeader currentPage="cookies policy" />
       
-      <main className="container mx-auto px-4 py-8 mt-16">
+      <main className="container mx-auto px-4 py-8 mt-16 flex-grow"> {/* Added flex-grow and mt-16 */}
         <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">Cookies Policy</h1>
         
         <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -132,6 +148,7 @@ const CookiesPolicy: React.FC = () => {
           </p>
         </div>
       </main>
+      {showFooter && <Footer isActive={false} />}
     </div>
   );
 };

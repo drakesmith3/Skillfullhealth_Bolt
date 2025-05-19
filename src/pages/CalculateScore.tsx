@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
-import Header from "@/components/Header";
+import PreHeader from "@/components/PreHeader";
 import Footer from "@/components/Footer";
 import { toast } from "@/components/ui/use-toast";
 import { Calculator, Download, Share2 } from "lucide-react";
@@ -84,9 +83,9 @@ const CalculateScore: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <PreHeader currentPage="calculate score" />
       
-      <main className="flex-grow pt-32 pb-16 px-4 bg-gray-50">
+      <main className="flex-grow pt-16 md:pt-24 pb-16 px-4 bg-gray-50 dark:bg-gray-900"> {/* Adjusted pt-16/pt-24 for PreHeader */}
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">
             <span className="bg-gradient-to-r from-red-600 to-amber-500 text-transparent bg-clip-text">
@@ -318,7 +317,7 @@ const CalculateScore: React.FC = () => {
         </div>
       </main>
       
-      <Footer />
+      <Footer isActive={false} />
     </div>
   );
 };

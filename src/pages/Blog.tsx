@@ -1,9 +1,9 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Loader2, Book } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/Header";
+// import Header from "@/components/Header"; // Removed old Header
+import PreHeader from "@/components/PreHeader"; // Added PreHeader
 import Footer from "@/components/Footer";
 import { toast } from "@/components/ui/use-toast";
 
@@ -18,9 +18,13 @@ interface BlogPost {
 }
 
 const Blog: React.FC = () => {
+  // ...existing state...
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showFooter, setShowFooter] = useState(false);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("All");
+  const cleanupRef = useRef<boolean>(false);
+
 
   const categories = ["All", "Healthcare Tips", "Professional Development", "Patient Stories", "Medical Research"];
 
@@ -62,109 +66,121 @@ const Blog: React.FC = () => {
       category: "Healthcare Tips",
       image: "https://images.unsplash.com/photo-1571772996211-2f02c9727629?auto=format&fit=crop&q=80&w=400"
     },
-  ];
-
-  useEffect(() => {
+  ];  useEffect(() => {
+    // Set cleanup ref to false on mount
+    cleanupRef.current = false;
+    
     // Simulate loading data from an API
     const timer = setTimeout(() => {
-      setPosts(mockPosts);
-      setIsLoading(false);
-      
-      // Notify the user the blog has loaded
-      toast({
-        title: "Blog Loaded",
-        description: "Latest healthcare articles have been loaded successfully."
-      });
+      if (!cleanupRef.current) {
+        setPosts(mockPosts);
+        setIsLoading(false);
+        
+        // Show footer after content has loaded
+        const footerTimer = setTimeout(() => {
+          if (!cleanupRef.current) {
+            setShowFooter(true);
+          }
+        }, 300);
+        
+        // Notify the user the blog has loaded
+        toast({
+          title: "Blog Loaded",
+          description: "Latest healthcare articles have been loaded successfully."
+        });
+        
+        return () => {
+          clearTimeout(footerTimer);
+        }
+      }
     }, 1000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      // Mark as unmounted to prevent state updates after unmount
+      cleanupRef.current = true;
+      clearTimeout(timer);
+    };
   }, []);
 
   const filteredPosts = activeCategory === "All" 
     ? posts 
     : posts.filter(post => post.category === activeCategory);
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-red-50 via-amber-50 to-white text-gray-800"> {/* Updated to light red-gold-white gradient */}
+      {/* <Header /> */}
+      <PreHeader currentPage="blog" /> {/* Added PreHeader */}
       
-      <main className="flex-grow pt-32 pb-16 px-4 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col items-center mb-12">
+      <main className="flex-grow pt-20 pb-16 px-4"> {/* Adjusted pt-20 for PreHeader */}
+        <div className="max-w-6xl mx-auto">          <div className="flex flex-col items-center mb-12 animate-fadeIn">
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">
               <span className="bg-gradient-to-r from-red-600 to-amber-500 text-transparent bg-clip-text">
                 GLOHSEN Blog
               </span>
-            </h1>
-            <p className="text-xl text-gray-700 max-w-3xl text-center mb-8">
+            </h1>            <p className="text-xl text-gray-700 max-w-3xl text-center mb-8">
               Insights, news, and stories from the global healthcare community
             </p>
-            
-            {/* Category Filter */}
-            <div className="flex flex-wrap justify-center gap-2 md:gap-4">
-              {categories.map((category) => (
+              {/* Category Filter */}
+            <div className="flex flex-wrap justify-center gap-2 md:gap-4">              {categories.map((category) => (
                 <Button
                   key={category}
                   variant={activeCategory === category ? "default" : "outline"}
-                  className={activeCategory === category ? "bg-red-600 hover:bg-red-700" : "border-red-600 text-red-600 hover:bg-red-50"}
+                  className={activeCategory === category 
+                    ? "bg-red-700 hover:bg-red-800 border-amber-400 transition-all duration-300" 
+                    : "border-red-300 text-red-700 hover:bg-red-50 transition-all duration-300"}
                   onClick={() => setActiveCategory(category)}
                 >
                   {category}
                 </Button>
               ))}
             </div>
-          </div>
-          
-          {isLoading ? (
+          </div>            {isLoading ? (
             <div className="flex justify-center items-center py-16">
-              <Loader2 className="w-12 h-12 text-red-600 animate-spin" />
+              <Loader2 className="w-12 h-12 text-red-700 animate-spin" />
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          ) : (            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredPosts.length > 0 ? (
-                filteredPosts.map((post) => (
-                  <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                    <div className="h-48 overflow-hidden">
+                filteredPosts.map((post, index) => (                  <Card 
+                    key={post.id} 
+                    className="overflow-hidden hover:shadow-lg transition-all duration-300 bg-white border-red-200 transform hover:scale-102 hover:-translate-y-1 animate-fadeIn opacity-0"
+                    style={{
+                      animationDelay: `${index * 0.15}s`
+                    }}
+                  ><div className="h-48 overflow-hidden">
                       <img
                         src={post.image}
                         alt={post.title}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                       />
                     </div>
-                    
-                    <CardHeader>
+                      <CardHeader>
                       <div className="text-sm text-red-600 font-medium mb-1">{post.category}</div>
-                      <CardTitle className="text-xl">{post.title}</CardTitle>
-                      <CardDescription>{post.excerpt}</CardDescription>
+                      <CardTitle className="text-xl text-gray-800">{post.title}</CardTitle>
+                      <CardDescription className="text-gray-600">{post.excerpt}</CardDescription>
                     </CardHeader>
-                    
-                    <CardContent>
-                      <div className="flex items-center text-sm text-gray-500">
+                      <CardContent>
+                      <div className="flex items-center text-sm text-gray-600">
                         <span>By {post.author}</span>
                         <span className="mx-2">•</span>
                         <span>{post.date}</span>
                       </div>
                     </CardContent>
-                    
-                    <CardFooter>
-                      <Button className="bg-red-600 hover:bg-red-700 w-full">
+                      <CardFooter>
+                      <Button className="w-full bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white border border-red-200 transform transition-all duration-300 hover:shadow-red-200/30 hover:shadow-lg">
                         <Book className="mr-2 h-4 w-4" />
                         Read Article
                       </Button>
                     </CardFooter>
                   </Card>
-                ))
-              ) : (
+                ))              ) : (
                 <div className="col-span-full text-center py-16">
-                  <p className="text-gray-500">No articles found in this category.</p>
+                  <p className="text-gray-600">No articles found in this category.</p>
                 </div>
               )}
             </div>
           )}
-        </div>
-      </main>
+        </div>      </main>
       
-      <Footer />
+      {showFooter && <Footer isActive={false} />}
     </div>
   );
 };

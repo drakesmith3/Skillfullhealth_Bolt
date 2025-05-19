@@ -1,209 +1,248 @@
-
-import React, { useRef, useEffect, memo } from "react";
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { ChevronUp, Facebook, Twitter, Linkedin, Instagram, Youtube, Mail, Info } from 'lucide-react'; // Adjusted imports
+import { Button } from "@/components/ui/button";
 import { gsap } from "gsap";
-import { Link } from "react-router-dom";
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
+import ReturnToTopButton from './ReturnToTopButton';
+
+// Import the dust particle creator from Header
+const createDustParticles = (container: HTMLElement | null, count: number, particleColor: string) => {
+  if (!container) return;
+  const containerRect = container.getBoundingClientRect();
+  // Ensure container has dimensions before creating particles
+  if (containerRect.width === 0 || containerRect.height === 0) {
+    return;
+  }
+  for (let i = 0; i < count; i++) {
+    const dust = document.createElement("div");
+    dust.className = "dust-particle";
+    const color = particleColor || "#FFD700";
+    dust.style.backgroundColor = color;
+    dust.style.position = "absolute";
+    dust.style.width = `${Math.random() * 2.5 + 1}px`;
+    dust.style.height = dust.style.width;
+    dust.style.borderRadius = "50%";
+    dust.style.opacity = `${Math.random() * 0.4 + 0.2}`;
+    // Ensure particles are within the bounds of the container
+    dust.style.left = `${Math.random() * containerRect.width}px`;
+    dust.style.top = `${Math.random() * containerRect.height}px`;
+    dust.style.willChange = "transform, opacity";
+    container.appendChild(dust);
+
+    gsap.to(dust, {
+      x: (Math.random() - 0.5) * (containerRect.width / 5),
+      y: (Math.random() - 0.5) * (containerRect.height / 5),
+      opacity: 0,
+      duration: Math.random() * 4 + 3,
+      ease: "power1.inOut",
+      repeat: -1,
+      yoyo: true,
+      delay: Math.random() * 3,
+      onRepeat: () => {
+        gsap.set(dust, {
+          x: (Math.random() - 0.5) * (containerRect.width / 10),
+          y: (Math.random() - 0.5) * (containerRect.height / 10),
+          opacity: Math.random() * 0.4 + 0.2,
+          // Update position on repeat to ensure they stay within potentially resized bounds
+          left: `${Math.random() * containerRect.width}px`,
+          top: `${Math.random() * containerRect.height}px`,
+        });
+      },
+    });
+  }
+};
 
 interface FooterProps {
-  isActive?: boolean;
+  isActive: boolean;
   sectionName?: string;
+  scrollToSection?: (sectionIndex: number) => void;
 }
 
-const FooterLinkComponent: React.FC<{ href: string; children: React.ReactNode }> = ({ href, children }) => (
-  <li>
-    <a
-      href={href}
-      className="text-gray-300 hover:text-white dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-      aria-label={`Navigate to ${children}`}
-    >
-      {children}
-    </a>
-  </li>
-);
-
-const SocialIcon: React.FC<{ href: string; icon: React.ReactNode; label: string }> = ({ href, icon, label }) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-gray-400 hover:text-white transition-colors transform hover:scale-110 hover:-translate-y-1 duration-300"
-    aria-label={label}
-  >
-    {icon}
-  </a>
-);
-
-const Footer: React.FC<FooterProps> = ({ isActive }) => {
-  const leftCurtainRef = useRef<HTMLDivElement>(null);
-  const rightCurtainRef = useRef<HTMLDivElement>(null);
+const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection }) => {  const footerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<gsap.core.Timeline | null>(null);
-  const footerRef = useRef<HTMLElement>(null);
-
+  
+  const [isInitialized, setIsInitialized] = useState(false);
   useEffect(() => {
-    if (!leftCurtainRef.current || !rightCurtainRef.current || !contentRef.current || !footerRef.current) return;
-
-    // Create a GSAP context for the animations
-    const ctx = gsap.context(() => {
-      // Initially set the curtains offstage
-      gsap.set(leftCurtainRef.current, { xPercent: -100, opacity: 1 });
-      gsap.set(rightCurtainRef.current, { xPercent: 100, opacity: 1 });
-      gsap.set(contentRef.current, { opacity: 1 });
+    setIsInitialized(true);
+    
+    // Add dust particles to the footer when initialized
+    if (footerRef.current) {
+      const footerElement = footerRef.current;
+      const particleColor = "#FFD700"; // Gold
       
-      // Create a timeline but don't play it yet
-      animationRef.current = gsap.timeline({ paused: true });
-
-      // When active, bring in the curtains from the sides and fade the content slightly
-      animationRef.current
-        .to([leftCurtainRef.current, rightCurtainRef.current], {
-          xPercent: 0,
-          duration: 1.2,
-          ease: "power2.inOut",
-          stagger: 0.1,
-        })
-        .to(contentRef.current, {
-          opacity: 0.9,
-          duration: 0.4,
-          ease: "power1.in",
-        }, 0);
-    }, footerRef);
-
-    return () => {
-      ctx.revert(); // Clean up all GSAP animations
-      if (animationRef.current) {
-        animationRef.current.kill();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!animationRef.current) return;
-
-    if (isActive) {
-      // Play animation when footer becomes active (visible in viewport)
-      animationRef.current.play();
-    } else {
-      // Reverse animation when footer is no longer active
-      animationRef.current.reverse();
+      // Create a GSAP context for all animations
+      const ctx = gsap.context(() => {
+        // Delay particle creation slightly to ensure container dimensions are available
+        const timer = setTimeout(() => {
+          if (footerElement) {
+            createDustParticles(footerElement, 150, particleColor);
+          }
+        }, 100);
+        
+        return () => {
+          clearTimeout(timer);
+        };
+      }, footerElement);
+      
+      return () => {
+        // Revert the GSAP context to clean up all animations
+        ctx.revert();
+        
+        // Safely remove dust particles
+        if (footerElement) {
+          try {
+            // Get all dust particles
+            const dustParticles = footerElement.querySelectorAll('.dust-particle');
+            // Remove them one by one with additional safety checks
+            dustParticles.forEach(particle => {
+              try {
+                if (particle.parentNode && particle.parentNode === footerElement && footerElement.contains(particle)) {
+                  footerElement.removeChild(particle);
+                }
+              } catch (err) {
+                console.debug('Skipping dust particle cleanup for detached node');
+              }
+            });
+          } catch (error) {
+            console.log('Safe cleanup of dust particles - error handled:', error);
+          }
+        }
+      };
     }
-  }, [isActive]);
+  }, [isInitialized]);
 
-  return (
+  const scrollToTop = () => {
+    if (scrollToSection) {
+      scrollToSection(0); // Scroll to the first section (Header)
+    }
+  };
+
+  const baseClasses = "flex flex-col justify-center items-center bg-black text-white dark:bg-black dark:text-gray-100 overflow-hidden transition-opacity duration-500";
+  const initializedClass = isInitialized ? 'opacity-100' : 'opacity-0';
+  const activeStateClasses = isActive 
+    ? "fixed inset-0 z-[60]" 
+    : "relative w-full h-auto py-16";  return (
     <section
       ref={footerRef}
-      className="relative h-screen w-full flex flex-col justify-center items-center bg-black text-white dark:bg-black dark:text-gray-100 overflow-hidden"
-      style={{ minHeight: '100vh' }}
+      className="relative w-full min-h-[60vh] flex flex-col justify-center items-center text-center p-0 overflow-hidden antialiased bg-black text-white"
+      style={{
+        fontFamily: 'Inter, Segoe UI, Arial, sans-serif',
+        letterSpacing: '0.01em',
+        fontWeight: 400,
+        position: 'relative' // Ensure for absolute positioning of elements
+      }}
     >
-      {/* Opera curtains with improved positioning and styling */}
-      <div
-        ref={leftCurtainRef}
-        className="absolute top-0 left-0 w-1/2 h-full bg-red-800 dark:bg-red-900 z-10"
-        style={{ 
-          backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 20px)',
-          transformOrigin: 'left center'
-        }}
-      />
-      <div
-        ref={rightCurtainRef}
-        className="absolute top-0 right-0 w-1/2 h-full bg-red-800 dark:bg-red-900 z-10"
-        style={{ 
-          backgroundImage: 'repeating-linear-gradient(-45deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 20px)',
-          transformOrigin: 'right center'
-        }}
-      />
-
-      <div
-        ref={contentRef}
-        className="relative z-5 flex flex-col items-center justify-between w-full h-full py-12 px-4 md:px-8"
-      >
-        <div className="text-center mb-12">
-          <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-red-500 via-amber-400 to-red-500 text-transparent bg-clip-text bg-size-200 animate-gradient dark:from-red-400 dark:via-amber-300 dark:to-red-400">
-            The Story Does Not End Here
+      {/* Return to Top Button */}
+      {scrollToSection && <ReturnToTopButton scrollToSection={scrollToSection} />}
+      
+      {/* Footer Header Message */}
+      <div className="w-full py-8 relative z-10">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-center animated-shine-text metallic-gold-text">
+            THE HEALTHCARE STORY DOES NOT END HERE...
           </h2>
-          <p className="text-xl text-gray-300 dark:text-gray-400 mb-8">
-            Your Gloshen Experience Just Began.
-          </p>
+          <p className="text-xl md:text-2xl font-medium text-center mt-3 bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
+            Your GLOHSEN story just began.          </p>
         </div>
-
-        <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10 text-left">
-          {/* CONTACT US Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-amber-400 dark:text-amber-300 uppercase">Contact Us</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <span className="text-amber-400 mr-2">📍</span>
-                <span className="text-gray-300">123 Innovation Square, Tech City, TC 98765</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-amber-400 mr-2">📞</span>
-                <a href="tel:+11234567890" className="text-gray-300 hover:text-white">+1 (123) 456-7890</a>
-              </li>
-              <li className="flex items-start">
-                <span className="text-amber-400 mr-2">✉️</span>
-                <a href="mailto:info@gloshen.com" className="text-gray-300 hover:text-white">info@gloshen.com</a>
-              </li>
-              <li className="flex items-start">
-                <span className="text-amber-400 mr-2">⏰</span>
-                <span className="text-gray-300">Mon-Fri: 9AM-5PM EST</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* QUICK LINKS Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-amber-400 dark:text-amber-300 uppercase">Quick Links</h3>
-            <ul className="space-y-2">
-              <FooterLinkComponent href="/#hero">Home</FooterLinkComponent>
-              <FooterLinkComponent href="/#how-it-works">How It Works</FooterLinkComponent>
-              <FooterLinkComponent href="/#features">Features</FooterLinkComponent>
-              <FooterLinkComponent href="/about">About Us</FooterLinkComponent>
-              <FooterLinkComponent href="/blog">Blog</FooterLinkComponent>
-              <FooterLinkComponent href="/contact">Contact</FooterLinkComponent>
-              <FooterLinkComponent href="/login">Login</FooterLinkComponent>
-              <FooterLinkComponent href="/signup">Sign Up</FooterLinkComponent>
-            </ul>
-          </div>
-
-          {/* Legal Links Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-amber-400 dark:text-amber-300 uppercase">Legal</h3>
-            <ul className="space-y-2">
-              <FooterLinkComponent href="/terms-of-service">Terms of Service</FooterLinkComponent>
-              <FooterLinkComponent href="/privacy-policy">Privacy Policy</FooterLinkComponent>
-              <FooterLinkComponent href="/cookies-policy">Cookies Policy</FooterLinkComponent>
-              <FooterLinkComponent href="/refund-policy">Refund Policy</FooterLinkComponent>
-              <FooterLinkComponent href="/accessibility">Accessibility Statement</FooterLinkComponent>
-            </ul>
-          </div>
-
-          {/* FEEDBACK Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-amber-400 dark:text-amber-300 uppercase">Feedback</h3>
-            <p className="text-gray-300 mb-4">We value your feedback! Help us improve our services.</p>
-            <Link 
-              to="/feedback" 
-              className="inline-block px-6 py-2 bg-amber-500 text-black rounded-full hover:bg-amber-600 transition-colors transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400 dark:bg-amber-400 dark:hover:bg-amber-500 dark:text-black"
-            >
-              Leave Feedback
-            </Link>
+      </div>      <div className="w-full max-w-6xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 text-left">
+        {/* Column 1: Logo & Tagline */}
+        <div className="flex flex-col items-center md:items-start space-y-4">
+          <Link to="/" aria-label="GLOHSEN Home" className="mb-2">
+            <div className="w-16 h-16 rounded-full bg-black shadow-lg flex items-center justify-center border-2 border-[#F9D75D]">
+              <span className="text-2xl font-bold text-[#F9D75D] tracking-widest">G</span>
+            </div>
+          </Link>
+          <span className="text-xl font-semibold text-[#F9D75D] tracking-wide">GLOHSEN</span>
+          <span className="text-base text-gray-300 font-normal">Empowering Healthcare Stories</span>          <div className="flex gap-4 mt-4">
+            <a href="https://facebook.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="transition-colors">
+              <Facebook size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+            </a>
+            <a href="https://twitter.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="transition-colors">
+              <Twitter size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+            </a>
+            <a href="https://linkedin.com/company/glohsen" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="transition-colors">
+              <Linkedin size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+            </a>
+            <a href="https://instagram.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="transition-colors">
+              <Instagram size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+            </a>
+            <a href="https://youtube.com/c/glohsen" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="transition-colors">
+              <Youtube size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+            </a>
           </div>
         </div>
         
-        {/* Social Media Links */}
-        <div className="border-t border-gray-800 pt-8 pb-4 w-full">
-          <div className="flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto">
-            <div className="mb-6 md:mb-0">
-              <p className="text-gray-400 dark:text-gray-500">
-                &copy; {new Date().getFullYear()} GLOHSEN. All rights reserved. Your Journey, Elevated.
-              </p>
-            </div>
-            <div className="flex space-x-6">
-              <SocialIcon href="https://facebook.com" icon={<FaFacebook size={24} />} label="Follow us on Facebook" />
-              <SocialIcon href="https://twitter.com" icon={<FaTwitter size={24} />} label="Follow us on Twitter" />
-              <SocialIcon href="https://instagram.com" icon={<FaInstagram size={24} />} label="Follow us on Instagram" />
-              <SocialIcon href="https://linkedin.com" icon={<FaLinkedin size={24} />} label="Follow us on LinkedIn" />
-              <SocialIcon href="https://youtube.com" icon={<FaYoutube size={24} />} label="Subscribe to our YouTube channel" />
-            </div>
+        {/* Column 2: Quick Links */}
+        <div className="flex flex-col space-y-5">          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Quick Links</h5>
+          <ul className="space-y-3 text-gray-300 text-base">
+            <li><Link to="/" className="hover:text-[#ea384c] transition-colors font-medium">Home</Link></li>
+            <li><Link to="/blog" className="hover:text-[#ea384c] transition-colors font-medium">Blog</Link></li>
+            <li><Link to="/community" className="hover:text-[#ea384c] transition-colors font-medium">Community Forum</Link></li>
+            <li><Link to="/job-board" className="hover:text-[#ea384c] transition-colors font-medium">Job Board</Link></li>
+            <li><Link to="/games-quizzes" className="hover:text-[#ea384c] transition-colors font-medium">Games & Quizzes</Link></li>
+            <li><Link to="/courses" className="hover:text-[#ea384c] transition-colors font-medium">Courses</Link></li>
+          </ul>
+        </div>
+          {/* Column 3: Contact */}
+        <div className="flex flex-col space-y-5">          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Contact</h5>
+          <ul className="space-y-3 text-gray-300 text-base">
+            <li><Link to="/contact" className="hover:text-[#ea384c] transition-colors font-medium">Contact Us</Link></li>
+            <li><Link to="/about" className="hover:text-[#ea384c] transition-colors font-medium">About Us</Link></li>
+            <li><Link to="/help" className="hover:text-[#ea384c] transition-colors font-medium">Support</Link></li>
+            <li><Link to="/help" className="hover:text-[#ea384c] transition-colors font-medium">Help Center</Link></li>
+            <li><Link to="/faq" className="hover:text-[#ea384c] transition-colors font-medium">FAQ</Link></li>
+          </ul>
+        </div>
+        
+        {/* Column 4: Legal */}
+        <div className="flex flex-col space-y-5">
+          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Legal</h5>
+          <ul className="space-y-3 text-gray-300 text-base">
+            <li><Link to="/privacy-policy" className="hover:text-[#ea384c] transition-colors font-medium">Privacy Policy</Link></li>
+            <li><Link to="/terms-of-service" className="hover:text-[#ea384c] transition-colors font-medium">Terms of Service</Link></li>
+            <li><Link to="/cookie-settings" className="hover:text-[#ea384c] transition-colors font-medium">Cookies Settings</Link></li>
+            <li><Link to="/refund-policy" className="hover:text-[#ea384c] transition-colors font-medium">Refund Policy</Link></li>
+            <li><Link to="/accessibility" className="hover:text-[#ea384c] transition-colors font-medium">Accessibility</Link></li>
+          </ul>
+        </div>
+        
+        {/* Column 5: Subscribe for Updates */}
+        <div className="flex flex-col space-y-5">
+          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Subscribe for Updates</h5>
+          <div className="text-gray-300 text-base mb-2">
+            <p>Stay updated with the latest healthcare trends, stories and opportunities.</p>
+          </div>          <div className="flex flex-col gap-3 w-full">
+            <input 
+              type="email" 
+              placeholder="Your email address" 
+              className="px-4 py-3 rounded-md border border-[#444] bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-[#F9D75D] w-full placeholder-gray-500"
+            />
+            <Button className="bg-[#ea384c] hover:bg-[#c4293b] text-white px-6 py-3 w-full font-semibold tracking-wide text-base rounded-md">              SUBSCRIBE
+            </Button>
+          </div>
+        </div>
+        
+        {/* Column 6: Feedback */}
+        <div className="flex flex-col space-y-5">
+          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Feedback</h5>
+          <div className="text-gray-300 text-base mb-2">
+            <p>Because Your Opinions and Feelings Count...</p>
+          </div>
+          <div className="flex flex-col gap-3 w-full">
+            <Link to="/general-feedback" className="w-full flex justify-center">
+              <Button className="bg-[#F9D75D] hover:bg-[#ea384c] text-black hover:text-white px-8 py-4 w-full min-w-[180px] max-w-[240px] font-semibold tracking-wide text-base rounded-md transition-colors whitespace-nowrap">
+                LEAVE A FEEDBACK
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+        {/* Bottom: Copyright & Socials */}      <div className="w-full border-t border-[#333] mt-6">
+        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <span className="text-sm text-gray-500">&copy; {new Date().getFullYear()} GLOHSEN. All rights reserved.</span>
+          
+          <div className="flex items-center gap-6 text-sm text-gray-500">
+            <Link to="/sitemap" className="hover:text-[#F9D75D] transition-colors">Sitemap</Link>
           </div>
         </div>
       </div>
@@ -211,4 +250,4 @@ const Footer: React.FC<FooterProps> = ({ isActive }) => {
   );
 };
 
-export default memo(Footer);
+export default Footer;

@@ -55,13 +55,13 @@ const createDustParticles = (container: HTMLElement | null, count: number, parti
 interface HeaderProps {
   isActive?: boolean;
   sectionName?: string;
+  scrollToSection?: (sectionIndex: number) => void; // Add scrollToSection prop
 }
 
-const Header: React.FC<HeaderProps> = ({ isActive }) => {
+const Header: React.FC<HeaderProps> = ({ isActive, scrollToSection }) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const topBarRef = useRef<HTMLDivElement>(null); // Ref for the top bar
-
   useEffect(() => {
     if (!headerRef.current) return;
     const particleColor = "#FFD700"; // Gold
@@ -98,30 +98,32 @@ const Header: React.FC<HeaderProps> = ({ isActive }) => {
         
       return () => {
           clearTimeout(timer);
-      };
-    }, headerElement); // Attach context to the header element
-
+      };    }, headerElement); // Attach context to the header element
+    
     return () => {
         // Revert the GSAP context to clean up all animations
         ctx.revert();
         
         // Safely remove dust particles
-        // Store particles in a variable before removing context
         if (headerElement) {
-            // Use MutationObserver pattern instead of direct removal
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.removedNodes) {
-                        // Handle removals safely
+            try {
+                // Get all dust particles
+                const dustParticles = headerElement.querySelectorAll('.dust-particle');
+                // Remove them one by one - with additional safety checks
+                dustParticles.forEach(particle => {
+                    try {
+                        // Check if particle is still in the DOM and is a child of headerElement
+                        if (particle.parentNode && particle.parentNode === headerElement && headerElement.contains(particle)) {
+                            headerElement.removeChild(particle);
+                        }
+                    } catch (err) {
+                        // Silently catch and ignore errors for individual particles
+                        console.debug('Skipping dust particle cleanup for detached node');
                     }
                 });
-            });
-            
-            // Start observing before cleanup
-            observer.observe(headerElement, { childList: true });
-            
-            // Then disconnect when done
-            observer.disconnect();
+            } catch (error) {
+                console.log('Safe cleanup of dust particles - error handled:', error);
+            }
         }
     };
   }, []); // Run once on mount
@@ -148,7 +150,7 @@ const Header: React.FC<HeaderProps> = ({ isActive }) => {
     };
   }, [isActive]);
 
-  const goldButtonClasses = "bg-yellow-500 text-black px-5 py-2.5 rounded-md font-semibold hover:bg-red-600 hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl dark:bg-yellow-400 dark:text-black dark:hover:bg-red-500 dark:hover:text-white text-sm";
+  const goldButtonClasses = "bg-[#F9D75D] text-black px-5 py-2.5 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-sm";
 
   return (
     <section
@@ -179,16 +181,35 @@ const Header: React.FC<HeaderProps> = ({ isActive }) => {
 
       {/* Main Content (Centered) */}
       <div ref={contentRef} className="relative z-10 flex flex-col items-center space-y-6 md:space-y-8 opacity-0 px-4">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tight animated-shine-text">
-          WELCOME TO GLOHSEN:<br className="md:hidden"/> YOUR STORY BEGINS HERE
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tight animated-shine-text metallic-gold-text">
+          <span className="micro-interact animated-shine-text metallic-gold-text" style={{display:'inline-block'}}>WELCOME TO GLOHSEN:</span><br className="md:hidden"/> <span className="micro-interact animated-shine-text metallic-gold-text" style={{display:'inline-block'}}>YOUR STORY BEGINS HERE</span>
         </h1>
-        <p className="text-lg sm:text-xl md:text-2xl text-gray-300 dark:text-gray-200 max-w-xl md:max-w-2xl leading-relaxed md:leading-loose">
+        <p className="text-lg sm:text-xl md:text-2xl text-gray-300 dark:text-gray-200 max-w-xl md:max-w-2xl leading-relaxed md:leading-loose micro-interact">
           Embark on a journey of discovery and transformation with GLOHSEN.
           Scroll to explore what awaits.
-        </p>
-        <div className="mt-8 animate-bounce">
+        </p>        {/* Make the bounce container clickable */}
+        <div 
+          className="mt-8 cursor-pointer micro-interact" 
+          onClick={() => {
+            if (scrollToSection) {
+              // Direct call to go to the next section without rebounding
+              scrollToSection(1); // Scroll to the second section (index 1)
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              if (scrollToSection) {
+                scrollToSection(1);
+              }
+            }
+          }}
+          aria-label="Scroll to next section"
+        >
+          {/* Right arrow for horizontal scroll cue */}
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-yellow-400 dark:text-yellow-300">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 5.25l-7.5 7.5-7.5-7.5m15 6l-7.5 7.5-7.5-7.5" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 19.5l7.5-7.5-7.5-7.5m6 15l7.5-7.5-7.5-7.5" />
           </svg>
         </div>
       </div>

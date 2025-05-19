@@ -1,14 +1,14 @@
-
 import React from 'react';
 import PreHeader from '../components/PreHeader';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Footer from '../components/Footer';
 
 const PrivacyPolicy: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white flex flex-col">
       <PreHeader currentPage="privacy policy" />
       
-      <main className="container mx-auto px-4 py-8 mt-16">
+      <main className="container mx-auto px-4 py-8 mt-16 flex-grow">
         <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">Privacy Policy</h1>
         
         <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -136,6 +136,7 @@ const PrivacyPolicy: React.FC = () => {
           </p>
         </div>
       </main>
+      <Footer isActive={false} />
     </div>
   );
 };

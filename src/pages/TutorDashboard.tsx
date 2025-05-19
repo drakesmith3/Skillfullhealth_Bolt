@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import {
@@ -723,12 +724,11 @@ const courses = [
     thumbnail: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&q=80&w=600&h=400",
     status: "Live",
     rating: 4.9,
-    reviews: 78,
-    students: 124,
+    reviews: 78,    students: 124,
     lessons: 12,
     duration: "6 hours",
     price: 79,
-    revenue: 9,826,
+    revenue: 9826,
     completionRate: 86
   },
   {
@@ -743,7 +743,7 @@ const courses = [
     lessons: 15,
     duration: "16 hours",
     price: 299,
-    revenue: 15,548,
+    revenue: 15548,
     completionRate: 92
   },
   {

@@ -1,15 +1,15 @@
-
 import React from 'react';
 import PreHeader from '../components/PreHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Footer from '../components/Footer';
 
 const TermsOfService: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white flex flex-col">
       <PreHeader currentPage="terms of service" />
       
-      <main className="container mx-auto px-4 py-8 mt-16">
+      <main className="container mx-auto px-4 py-8 mt-16 flex-grow">
         <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">Terms of Service & Agreement</h1>
         
         <Tabs defaultValue="general" className="w-full max-w-4xl mx-auto">
@@ -224,6 +224,7 @@ const TermsOfService: React.FC = () => {
           </p>
         </div>
       </main>
+      <Footer isActive={false} />
     </div>
   );
 };

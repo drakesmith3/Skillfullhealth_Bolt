@@ -19,10 +19,12 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = memo(({
   const [showNavigation, setShowNavigation] = useState<boolean>(true);
 
   const handleIndicatorClick = (index: number): void => {
+    console.log(`[ProgressIndicator] Clicked section: ${index}`); // Added log
     scrollToSection(index);
   };
 
   const handleIndicatorMouseEnter = (index: number) => {
+    console.log(`[ProgressIndicator] Mouse enter section: ${index}`); // Added log
     setHoverSection(index);
   };
 

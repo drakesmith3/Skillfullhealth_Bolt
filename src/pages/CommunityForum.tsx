@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import Header from "@/components/Header";
+import PreHeader from "@/components/PreHeader";
 import Footer from "@/components/Footer";
 import { MessageCircle, ThumbsUp, ThumbsDown, Search, Filter, Users, Star } from "lucide-react";
 import { useAIActivity } from "@/components/AIActivityAgent";
@@ -114,10 +113,10 @@ const CommunityForum: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
+      <PreHeader currentPage="discussion" />
       
-      <main className="flex-grow pt-32 pb-16 px-4 bg-gray-50">
+      <main className="flex-grow pt-20 md:pt-24 pb-16 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
@@ -214,7 +213,7 @@ const CommunityForum: React.FC = () => {
                         />
                       )}
                     </TabsContent>
-                    
+
                     <TabsContent value="facilities" className="m-0 pt-2">
                       {isLoading ? (
                         <div className="flex justify-center py-8">
@@ -227,7 +226,7 @@ const CommunityForum: React.FC = () => {
                         />
                       )}
                     </TabsContent>
-                    
+
                     <TabsContent value="tutors" className="m-0 pt-2">
                       {isLoading ? (
                         <div className="flex justify-center py-8">
@@ -252,7 +251,7 @@ const CommunityForum: React.FC = () => {
                   <CardTitle className="text-lg">Community Guidelines</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-2">
-                  <ul className="text-sm space-y-2 text-gray-700">
+                  <ul className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Be respectful to all community members</li>
                     <li>Provide constructive feedback</li>
                     <li>No personal attacks or harassment</li>
@@ -268,36 +267,36 @@ const CommunityForum: React.FC = () => {
                 </CardHeader>
                 <CardContent className="p-4 pt-2">
                   <div className="flex flex-col space-y-2">
-                    <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
+                    <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-300 font-semibold">
                         EM
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">EmergencyMD</p>
-                        <p className="text-xs text-gray-500">31 contributions</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">EmergencyMD</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">31 contributions</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50">
-                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-semibold">
+                    <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-800 flex items-center justify-center text-green-600 dark:text-green-300 font-semibold">
                         HH
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">HeartHealthy</p>
-                        <p className="text-xs text-gray-500">28 contributions</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">HeartHealthy</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">28 contributions</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50">
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-semibold">
+                    <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-800 flex items-center justify-center text-purple-600 dark:text-purple-300 font-semibold">
                         TN
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">TechSavvyNurse</p>
-                        <p className="text-xs text-gray-500">24 contributions</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">TechSavvyNurse</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">24 contributions</p>
                       </div>
                     </div>
                   </div>
                   
-                  <Button variant="ghost" size="sm" className="w-full mt-2">
+                  <Button variant="ghost" size="sm" className="w-full mt-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     <Users className="mr-1 h-4 w-4" />
                     View All Members
                   </Button>
@@ -308,7 +307,7 @@ const CommunityForum: React.FC = () => {
         </div>
       </main>
       
-      <Footer />
+      <Footer isActive={false} />
     </div>
   );
 };
@@ -317,39 +316,39 @@ const CommunityForum: React.FC = () => {
 const DiscussionsList = ({ discussions, onJoin }: { discussions: any[], onJoin: (id: number) => void }) => {
   if (discussions.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
         No discussions found in this category.
       </div>
     );
   }
   
   return (
-    <div className="divide-y">
+    <div className="divide-y dark:divide-gray-700">
       {discussions.map((discussion) => (
-        <div key={discussion.id} className={`px-4 py-4 hover:bg-gray-50 transition-colors ${discussion.isPinned ? 'bg-amber-50' : ''}`}>
+        <div key={discussion.id} className={`px-4 py-4 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${discussion.isPinned ? 'bg-amber-50 dark:bg-amber-900/20' : ''}`}>
           <div className="flex flex-col md:flex-row justify-between">
             <div className="flex space-x-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-amber-500 flex items-center justify-center text-white font-medium flex-shrink-0">
                 {discussion.authorImg}
               </div>
               <div>
-                <h3 className="font-medium text-gray-900">
+                <h3 className="font-medium text-gray-900 dark:text-gray-100">
                   {discussion.isPinned && (
-                    <span className="inline-block bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded mr-2">
+                    <span className="inline-block bg-amber-100 text-amber-800 dark:bg-amber-800 dark:text-amber-100 text-xs px-2 py-0.5 rounded mr-2">
                       Pinned
                     </span>
                   )}
                   {discussion.title}
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Started by {discussion.author} • {discussion.timestamp}
                 </p>
-                <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-2">
                   {discussion.content}
                 </p>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {discussion.tags.map((tag: string) => (
-                    <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded">
+                    <span key={tag} className="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 text-xs px-2 py-0.5 rounded">
                       #{tag}
                     </span>
                   ))}
@@ -358,24 +357,24 @@ const DiscussionsList = ({ discussions, onJoin }: { discussions: any[], onJoin: 
             </div>
             <div className="flex items-center space-x-6 mt-3 md:mt-0 md:ml-4">
               <div className="flex flex-col items-center">
-                <div className="text-sm font-medium">{discussion.replies}</div>
-                <div className="text-xs text-gray-500">Replies</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{discussion.replies}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Replies</div>
               </div>
               <div className="flex flex-col items-center">
-                <div className="text-sm font-medium">{discussion.views}</div>
-                <div className="text-xs text-gray-500">Views</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{discussion.views}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Views</div>
               </div>
               <div className="flex flex-col items-center">
-                <div className="text-sm font-medium flex items-center">
-                  <ThumbsUp size={14} className="mr-1 text-gray-400" />
+                <div className="text-sm font-medium flex items-center text-gray-900 dark:text-gray-100">
+                  <ThumbsUp size={14} className="mr-1 text-gray-400 dark:text-gray-500" />
                   {discussion.likes}
                 </div>
-                <div className="text-xs text-gray-500">Likes</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Likes</div>
               </div>
               <Button 
                 variant="outline" 
                 size="sm"
-                className="ml-2"
+                className="ml-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={() => onJoin(discussion.id)}
               >
                 Join Discussion

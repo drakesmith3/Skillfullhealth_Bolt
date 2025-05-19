@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import Header from "@/components/Header";
+import PreHeader from "@/components/PreHeader"; // Changed from Header
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,11 +7,13 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { Share2, Download, TrendingUp, Award, Zap, Calendar, FileCheck, Book, MessageCircle, Users, Star, ChevronRight } from "lucide-react";
+import { Hospital } from "lucide-react"; // Import Hospital from lucide-react
 
-const GlohsenScoreResults: React.FC = () => {
+const GlohsenScoreResultsPage: React.FC = () => { // Renamed component
   const [score, setScore] = useState<number>(0);
   const [loadingScore, setLoadingScore] = useState<boolean>(true);
   const [animateScore, setAnimateScore] = useState<boolean>(false);
+  const [showFooter, setShowFooter] = useState(false); // Added for delayed footer
   
   // Simulate loading and then animating the score
   useEffect(() => {
@@ -48,11 +49,17 @@ const GlohsenScoreResults: React.FC = () => {
     return () => clearInterval(counter);
   }, [animateScore]);
 
+  // useEffect for showing footer
+  useEffect(() => {
+    const timer = setTimeout(() => setShowFooter(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <div className="min-h-screen flex flex-col bg-f5f5f5"> {/* Added bg-f5f5f5 */}
+      <PreHeader currentPage="glohsen score results" /> {/* Changed to PreHeader */}
       
-      <main className="flex-grow pt-32 pb-16 bg-gray-50 dark:bg-gray-900">
+      <main className="flex-grow pt-16 pb-16 bg-gray-50 dark:bg-gray-900"> {/* Adjusted pt-16 for PreHeader */}
         <div className="container mx-auto px-4">
           {/* Score Overview */}
           <div className="max-w-5xl mx-auto mb-12">
@@ -404,32 +411,9 @@ const GlohsenScoreResults: React.FC = () => {
         </div>
       </main>
       
-      <Footer />
+      {showFooter && <Footer isActive={false} />} {/* Changed to delayed Footer isActive={false} */}
     </div>
   );
 };
 
-// Missing Hospital icon
-const Hospital = (props: any) => (
-  <svg
-    {...props}
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M19 6.5v12h3"></path>
-    <path d="M2 19.5h3"></path>
-    <path d="M12 19.5v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"></path>
-    <path d="M5 19.5V6.a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v14"></path>
-    <path d="M8.5 3v3"></path>
-    <path d="M10 5H7"></path>
-  </svg>
-);
-
-export default GlohsenScoreResults;
+export default GlohsenScoreResultsPage; // Renamed export
