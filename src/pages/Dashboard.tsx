@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare, User, Calendar, Settings, Search, Briefcase, Award, FileText, Bell, ExternalLink, BookOpen, LogOut, CreditCard, ChartBar, Activity, Inbox } from "lucide-react";
+import { Briefcase, User, Award, ChartBar, Activity, Inbox, CreditCard, ExternalLink } from "lucide-react";
 import PreHeader from '@/components/PreHeader';
 import Footer from '@/components/Footer';
 import { Link } from "react-router-dom";
@@ -14,7 +14,7 @@ import JobsHistory from "@/components/dashboard/professionals/JobsHistory";
 import InboxActivities from "@/components/dashboard/professionals/InboxActivities";
 
 const DashboardPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("profile");
   const [showFooter, setShowFooter] = useState(false);
 
   useEffect(() => {
@@ -47,13 +47,13 @@ const DashboardPage: React.FC = () => {
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card className="bg-white/80 backdrop-blur shadow-md hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg flex items-center">
-                  <User className="mr-2 h-5 w-5 text-[#D4AF37]" />
-                  Profile Status
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-medium flex items-center">
+                    <User className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                    Profile Status
+                  </h3>
+                </div>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Profile Completion</span>
@@ -77,13 +77,13 @@ const DashboardPage: React.FC = () => {
             </Card>
             
             <Card className="bg-white/80 backdrop-blur shadow-md hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg flex items-center">
-                  <Award className="mr-2 h-5 w-5 text-[#D4AF37]" />
-                  GLOHSEN Score
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-medium flex items-center">
+                    <Award className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                    GLOHSEN Score
+                  </h3>
+                </div>
                 <div className="flex items-center justify-center">
                   <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#D4AF37] to-amber-300 flex items-center justify-center">
                     <span className="text-3xl font-bold text-white">{glohsenScore}</span>
@@ -100,13 +100,13 @@ const DashboardPage: React.FC = () => {
             </Card>
             
             <Card className="bg-white/80 backdrop-blur shadow-md hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg flex items-center">
-                  <CreditCard className="mr-2 h-5 w-5 text-[#D4AF37]" />
-                  Earnings
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-medium flex items-center">
+                    <CreditCard className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                    Earnings
+                  </h3>
+                </div>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Total Earnings</span>

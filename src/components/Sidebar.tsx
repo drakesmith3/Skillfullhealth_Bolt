@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { User, Briefcase, MessageSquare, Calendar, Settings, Search, Award, FileText, Bell, ExternalLink, BookOpen, LogOut, CreditCard, Gamepad } from "lucide-react";
+import { User, Briefcase, MessageSquare, Calendar, Settings, Search, Award, FileText, Bell, ExternalLink, BookOpen, LogOut, CreditCard, Gamepad, Heart } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import Card3D from "./Card3D";
 

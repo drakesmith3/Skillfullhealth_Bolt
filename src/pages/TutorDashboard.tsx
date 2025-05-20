@@ -1,906 +1,276 @@
 
-import React, { useState } from "react";
-import Header from "@/components/Header";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import React, { useState, useEffect } from 'react';
+import PreHeader from '@/components/PreHeader';
+import Footer from '@/components/Footer';
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { BookOpen, Users, CreditCard, ChartBar, Trophy, FileText, BookMarked, ChevronRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { toast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
-import {
-  BookOpen,
-  Users,
-  DollarSign,
-  Star,
-  Video,
-  Calendar,
-  BarChart,
-  Clock,
-  Plus,
-  PlaySquare,
-  MessageCircle,
-  FileText,
-  Upload,
-  TrendingUp
-} from "lucide-react";
+import Sidebar from "@/components/Sidebar";
 
-const TutorDashboard: React.FC = () => {
-  const [timeframe, setTimeframe] = useState("month");
-  
-  const handleCreateCourse = () => {
-    toast({
-      title: "Course creation started",
-      description: "You've begun creating a new course."
-    });
-  };
-  
+const TutorDashboardPage: React.FC = () => {
+  const [showFooter, setShowFooter] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowFooter(true);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-      <Header />
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+      <PreHeader currentPage="tutor dashboard" userName="Dr. Nkechi" />
       
-      <main className="flex-grow pt-32 pb-16">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      <div className="flex-grow container mx-auto px-4 py-8 mt-16 flex">
+        {/* Sidebar */}
+        <div className="hidden md:block w-1/4 lg:w-1/5 pr-6">
+          <Sidebar />
+        </div>
+        
+        {/* Main content */}
+        <div className="w-full md:w-3/4 lg:w-4/5">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold mb-1">
-                Welcome, Dr. Elizabeth
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Manage your courses and student interactions
-              </p>
-            </div>
-            
-            <div className="mt-4 md:mt-0 flex items-center space-x-4">
-              <Button className="bg-red-600 hover:bg-red-700" onClick={handleCreateCourse}>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Course
-              </Button>
-              <Link to="/courses">
-                <Button variant="outline">View All Courses</Button>
-              </Link>
+              <h1 className="text-3xl font-bold">Tutor Dashboard</h1>
+              <p className="text-lg text-gray-600 dark:text-gray-400">Welcome back, Dr. Nkechi!</p>
             </div>
           </div>
-          
-          {/* Overview Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="border-0 shadow-lg">
+
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Card className="bg-white/80 backdrop-blur shadow-md hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="bg-blue-100 dark:bg-blue-900 p-2 rounded-md">
-                    <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                  </span>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-medium flex items-center">
+                    <BookOpen className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                    Content Status
+                  </h3>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-medium text-gray-500 dark:text-gray-400">Active Courses</h3>
-                  <p className="text-2xl font-bold">5</p>
-                  <p className="text-xs text-blue-600">1 pending review</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Active Courses</span>
+                    <span className="text-green-600 font-semibold">5</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Students</span>
+                    <span className="text-blue-600 font-semibold">124</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Completion Rate</span>
+                    <span className="text-[#D4AF37] font-semibold">85%</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-lg">
+            <Card className="bg-white/80 backdrop-blur shadow-md hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="bg-amber-100 dark:bg-amber-900 p-2 rounded-md">
-                    <Users className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                  </span>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-medium flex items-center">
+                    <Trophy className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                    Adviser Status
+                  </h3>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-medium text-gray-500 dark:text-gray-400">Active Students</h3>
-                  <p className="text-2xl font-bold">248</p>
-                  <p className="text-xs text-amber-600">+32 this month</p>
+                <div className="flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#D4AF37] to-amber-300 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-white">2.5%</div>
+                      <div className="text-xs text-white">Share</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 text-center">
+                  <div className="text-sm">Adviser-Shareholder Network</div>
+                  <div className="font-semibold text-[#EA384C]">Top 10%</div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-lg">
+            <Card className="bg-white/80 backdrop-blur shadow-md hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="bg-green-100 dark:bg-green-900 p-2 rounded-md">
-                    <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  </span>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-medium flex items-center">
+                    <CreditCard className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                    Earnings
+                  </h3>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-medium text-gray-500 dark:text-gray-400">Monthly Revenue</h3>
-                  <p className="text-2xl font-bold">$3,847</p>
-                  <p className="text-xs text-green-600">+12% from last month</p>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-0 shadow-lg">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="bg-purple-100 dark:bg-purple-900 p-2 rounded-md">
-                    <Star className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                  </span>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-medium text-gray-500 dark:text-gray-400">Average Rating</h3>
-                  <p className="text-2xl font-bold">4.8/5</p>
-                  <p className="text-xs text-purple-600">Based on 127 reviews</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Total Earnings</span>
+                    <span className="font-semibold">₦2,500,000</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Pending</span>
+                    <span className="text-amber-600 font-semibold">₦350,000</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Available</span>
+                    <span className="text-green-600 font-semibold">₦180,000</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button size="sm" className="button-3d bg-[#D4AF37] text-black font-bold">Withdraw</Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
-          
-          <Tabs defaultValue="courses" className="space-y-8">
-            <TabsList className="grid grid-cols-4 w-full max-w-md mx-auto">
-              <TabsTrigger value="courses" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
-                Courses
+
+          {/* Dashboard Tabs */}
+          <Tabs defaultValue="overview" className="w-full" value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4 mb-6">
+              <TabsTrigger value="overview" className="flex items-center">
+                <ChartBar className="mr-2 h-4 w-4" /> Overview
               </TabsTrigger>
-              <TabsTrigger value="students" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
-                Students
+              <TabsTrigger value="courses" className="flex items-center">
+                <BookMarked className="mr-2 h-4 w-4" /> My Courses
               </TabsTrigger>
-              <TabsTrigger value="schedule" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
-                Schedule
+              <TabsTrigger value="students" className="flex items-center">
+                <Users className="mr-2 h-4 w-4" /> My Students
               </TabsTrigger>
-              <TabsTrigger value="analytics" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
-                Analytics
+              <TabsTrigger value="earnings" className="flex items-center">
+                <CreditCard className="mr-2 h-4 w-4" /> Earnings
               </TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="courses">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader>
-                      <CardTitle>Your Courses</CardTitle>
-                      <CardDescription>
-                        Manage your published and draft courses
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {courses.map((course) => (
-                        <div key={course.id} className="mb-6 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
-                          <div className="flex flex-col md:flex-row">
-                            <div className="relative md:w-1/3">
-                              <img
-                                src={course.thumbnail}
-                                alt={course.title}
-                                className="w-full h-48 md:h-full object-cover"
-                              />
-                              <div className="absolute bottom-2 left-2">
-                                <Badge className={
-                                  course.status === "Live" ? "bg-green-500" : 
-                                  course.status === "Draft" ? "bg-gray-500" : 
-                                  "bg-amber-500"
-                                }>
-                                  {course.status}
-                                </Badge>
-                              </div>
-                            </div>
-                            <div className="p-4 md:w-2/3">
-                              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                                <h3 className="font-bold text-lg">{course.title}</h3>
-                                <div className="flex items-center mt-1 md:mt-0">
-                                  <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                                  <span className="ml-1">{course.rating} ({course.reviews} reviews)</span>
-                                </div>
-                              </div>
-                              <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
-                                {course.description}
-                              </p>
-                              <div className="flex flex-wrap gap-2 text-xs text-gray-500 dark:text-gray-400 mb-4">
-                                <div className="flex items-center">
-                                  <Users className="h-3 w-3 mr-1" />
-                                  <span>{course.students} students</span>
-                                </div>
-                                <div className="flex items-center">
-                                  <Video className="h-3 w-3 mr-1" />
-                                  <span>{course.lessons} lessons</span>
-                                </div>
-                                <div className="flex items-center">
-                                  <Clock className="h-3 w-3 mr-1" />
-                                  <span>{course.duration}</span>
-                                </div>
-                                <div className="flex items-center">
-                                  <DollarSign className="h-3 w-3 mr-1" />
-                                  <span>${course.price}</span>
-                                </div>
-                              </div>
-                              <div className="flex flex-wrap justify-end gap-2">
-                                <Button variant="outline" size="sm">Edit</Button>
-                                <Button variant="outline" size="sm">Analytics</Button>
-                                <Button size="sm" className="bg-red-600 hover:bg-red-700">Manage Content</Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      
-                      <div className="mt-6 text-center">
-                        <Button onClick={handleCreateCourse} className="bg-red-600 hover:bg-red-700">
-                          <Plus className="mr-2 h-4 w-4" />
-                          Create New Course
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+
+            <TabsContent value="overview" className="space-y-4">
+              <Card className="p-6">
+                <h2 className="text-xl font-bold mb-6 flex items-center">
+                  <ChartBar className="mr-2 h-6 w-6 text-[#D4AF37]" />
+                  Performance Overview
+                </h2>
                 
-                <div className="space-y-6">
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Upcoming Sessions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {upcomingSessions.map((session, index) => (
-                          <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                            <Calendar className="h-10 w-10 text-red-600 dark:text-red-400 flex-shrink-0" />
-                            <div>
-                              <h3 className="font-medium">{session.title}</h3>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">{session.time}</p>
-                              <div className="flex items-center mt-1 text-sm">
-                                <Users className="h-3 w-3 mr-1 text-gray-500" />
-                                <span className="text-gray-600 dark:text-gray-400">{session.attendees} attendees</span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <Button variant="outline" className="w-full mt-4">
-                        View All Sessions
-                      </Button>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Course Ideas</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center">
-                            <TrendingUp className="h-4 w-4 text-green-500 mr-2" />
-                            <span>Advanced Physiology</span>
-                          </div>
-                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                            High Demand
-                          </Badge>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center">
-                            <TrendingUp className="h-4 w-4 text-green-500 mr-2" />
-                            <span>Medical Ethics</span>
-                          </div>
-                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                            High Demand
-                          </Badge>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center">
-                            <TrendingUp className="h-4 w-4 text-amber-500 mr-2" />
-                            <span>Surgical Techniques</span>
-                          </div>
-                          <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                            Medium Demand
-                          </Badge>
-                        </div>
-                        <Input placeholder="Add your course idea..." className="mt-2" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Quick Actions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-2 gap-3">
-                        <Button variant="outline" className="flex items-center justify-center flex-col h-24">
-                          <Upload className="h-6 w-6 mb-1" />
-                          <span>Upload Video</span>
-                        </Button>
-                        <Button variant="outline" className="flex items-center justify-center flex-col h-24">
-                          <FileText className="h-6 w-6 mb-1" />
-                          <span>Create Quiz</span>
-                        </Button>
-                        <Button variant="outline" className="flex items-center justify-center flex-col h-24">
-                          <Calendar className="h-6 w-6 mb-1" />
-                          <span>Schedule Session</span>
-                        </Button>
-                        <Button variant="outline" className="flex items-center justify-center flex-col h-24">
-                          <MessageCircle className="h-6 w-6 mb-1" />
-                          <span>Send Update</span>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="students">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <CardTitle>Students</CardTitle>
-                          <CardDescription>
-                            Students enrolled in your courses
-                          </CardDescription>
-                        </div>
-                        <div className="relative">
-                          <Input placeholder="Search students..." className="w-[200px]" />
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="overflow-x-auto">
-                        <table className="w-full">
-                          <thead>
-                            <tr className="border-b border-gray-200 dark:border-gray-700">
-                              <th className="text-left p-2">Student</th>
-                              <th className="text-left p-2">Course</th>
-                              <th className="text-left p-2">Progress</th>
-                              <th className="text-left p-2">Last Active</th>
-                              <th className="text-left p-2">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {students.map((student) => (
-                              <tr key={student.id} className="border-b border-gray-200 dark:border-gray-700">
-                                <td className="p-2">
-                                  <div className="flex items-center gap-2">
-                                    <Avatar className="h-8 w-8">
-                                      <AvatarImage src={student.avatar} />
-                                      <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
-                                    </Avatar>
-                                    <span className="font-medium">{student.name}</span>
-                                  </div>
-                                </td>
-                                <td className="p-2">{student.course}</td>
-                                <td className="p-2">
-                                  <div className="flex items-center gap-2">
-                                    <Progress value={student.progress} className="h-2 w-24" />
-                                    <span className="text-sm">{student.progress}%</span>
-                                  </div>
-                                </td>
-                                <td className="p-2 text-gray-600 dark:text-gray-400 text-sm">{student.lastActive}</td>
-                                <td className="p-2">
-                                  <div className="flex gap-2">
-                                    <Button variant="outline" size="sm">Message</Button>
-                                    <Button variant="outline" size="sm">View</Button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="mt-6 flex justify-between">
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          Showing 1-10 of 248 students
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Button variant="outline" size="sm" disabled>Previous</Button>
-                          <Button variant="outline" size="sm">Next</Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                <div className="space-y-6">
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Student Engagement</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="font-medium">Completion Rate</span>
-                            <span className="text-gray-500">78%</span>
-                          </div>
-                          <Progress value={78} className="h-2" />
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="font-medium">Quiz Participation</span>
-                            <span className="text-gray-500">92%</span>
-                          </div>
-                          <Progress value={92} className="h-2" />
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="font-medium">Discussion Activity</span>
-                            <span className="text-gray-500">64%</span>
-                          </div>
-                          <Progress value={64} className="h-2" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Recent Questions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {recentQuestions.map((question, index) => (
-                          <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                            <div className="flex justify-between mb-1">
-                              <span className="font-medium">{question.student}</span>
-                              <span className="text-xs text-gray-500">{question.time}</span>
-                            </div>
-                            <p className="text-sm text-gray-700 dark:text-gray-300">{question.question}</p>
-                            <div className="flex justify-end mt-2">
-                              <Button variant="outline" size="sm">Reply</Button>
-                            </div>
-                          </div>
-                        ))}
-                        <Button variant="outline" className="w-full">
-                          View All Questions
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="schedule">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <CardTitle>Upcoming Schedule</CardTitle>
-                          <CardDescription>
-                            Your scheduled live sessions and office hours
-                          </CardDescription>
-                        </div>
-                        <Button variant="outline" className="flex items-center">
-                          <Plus className="h-4 w-4 mr-1" />
-                          Schedule Session
-                        </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-[500px] flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-lg">
-                        <div className="text-center text-gray-500 dark:text-gray-400">
-                          <Calendar className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                          <p>Calendar view would go here</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                <div className="space-y-6">
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Today's Sessions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {todaysSessions.map((session, index) => (
-                          <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="font-medium">{session.title}</span>
-                              <Badge className={
-                                session.status === "Upcoming" ? "bg-amber-500" : 
-                                session.status === "Live" ? "bg-green-500" : 
-                                "bg-gray-500"
-                              }>
-                                {session.status}
-                              </Badge>
-                            </div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">{session.time}</div>
-                            <div className="flex items-center text-sm mt-1">
-                              <Users className="h-3 w-3 mr-1" />
-                              <span>{session.attendees} attendees</span>
-                            </div>
-                            <div className="flex justify-end mt-2">
-                              {session.status === "Upcoming" ? (
-                                <Button size="sm" className="bg-red-600 hover:bg-red-700">Start Session</Button>
-                              ) : session.status === "Live" ? (
-                                <Button size="sm" className="bg-red-600 hover:bg-red-700">Join Now</Button>
-                              ) : (
-                                <Button variant="outline" size="sm">View Recording</Button>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                        {todaysSessions.length === 0 && (
-                          <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                            No sessions scheduled for today
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Office Hours</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {officeHours.map((hour, index) => (
-                          <div key={index} className="flex justify-between items-center">
-                            <div>
-                              <div className="font-medium">{hour.day}</div>
-                              <div className="text-sm text-gray-600 dark:text-gray-400">{hour.time}</div>
-                            </div>
-                            <Button variant="outline" size="sm">Edit</Button>
-                          </div>
-                        ))}
-                        <Button className="w-full bg-red-600 hover:bg-red-700">
-                          <Plus className="h-4 w-4 mr-1" />
-                          Add Office Hours
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="border-0 shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Session Templates</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="p-2 border border-gray-200 dark:border-gray-700 rounded-lg flex justify-between items-center">
-                          <div>
-                            <div className="font-medium">Interactive Q&A</div>
-                            <div className="text-xs text-gray-500">60 minutes</div>
-                          </div>
-                          <Button variant="ghost" size="sm">Use</Button>
-                        </div>
-                        <div className="p-2 border border-gray-200 dark:border-gray-700 rounded-lg flex justify-between items-center">
-                          <div>
-                            <div className="font-medium">Case Study Analysis</div>
-                            <div className="text-xs text-gray-500">45 minutes</div>
-                          </div>
-                          <Button variant="ghost" size="sm">Use</Button>
-                        </div>
-                        <div className="p-2 border border-gray-200 dark:border-gray-700 rounded-lg flex justify-between items-center">
-                          <div>
-                            <div className="font-medium">Exam Review</div>
-                            <div className="text-xs text-gray-500">90 minutes</div>
-                          </div>
-                          <Button variant="ghost" size="sm">Use</Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="analytics">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card className="border-0 shadow-lg">
-                  <CardHeader>
-                    <div className="flex justify-between items-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="space-y-4">
+                    <h3 className="font-medium text-gray-700">Student Engagement</h3>
+                    
+                    <div className="space-y-3">
                       <div>
-                        <CardTitle>Revenue Analytics</CardTitle>
-                        <CardDescription>
-                          Your earnings over time
-                        </CardDescription>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm">Course Completion Rate</span>
+                          <span className="text-sm font-medium">85%</span>
+                        </div>
+                        <Progress value={85} className="h-2" />
                       </div>
-                      <Select defaultValue={timeframe}>
-                        <SelectTrigger className="w-[120px]">
-                          <SelectValue placeholder="Select timeframe" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="week">Weekly</SelectItem>
-                          <SelectItem value="month">Monthly</SelectItem>
-                          <SelectItem value="quarter">Quarterly</SelectItem>
-                          <SelectItem value="year">Yearly</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[300px] flex items-center justify-center">
-                      <div className="text-center text-gray-500 dark:text-gray-400">
-                        <BarChart className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                        <p>Revenue chart would go here</p>
-                        <p className="text-sm">$3,847 this month</p>
+                      
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm">Average Rating</span>
+                          <span className="text-sm font-medium">4.8/5.0</span>
+                        </div>
+                        <Progress value={96} className="h-2" />
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm">Discussion Participation</span>
+                          <span className="text-sm font-medium">72%</span>
+                        </div>
+                        <Progress value={72} className="h-2" />
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="border-0 shadow-lg">
-                  <CardHeader>
-                    <CardTitle>Course Performance</CardTitle>
-                    <CardDescription>
-                      Enrollment and completion statistics
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="border-b border-gray-200 dark:border-gray-700">
-                            <th className="text-left p-2">Course</th>
-                            <th className="text-center p-2">Students</th>
-                            <th className="text-center p-2">Completion</th>
-                            <th className="text-center p-2">Rating</th>
-                            <th className="text-center p-2">Revenue</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {courses.filter(c => c.status === "Live").map((course) => (
-                            <tr key={course.id} className="border-b border-gray-200 dark:border-gray-700">
-                              <td className="p-2 font-medium">{course.title}</td>
-                              <td className="p-2 text-center">{course.students}</td>
-                              <td className="p-2 text-center">{course.completionRate}%</td>
-                              <td className="p-2 text-center">
-                                <div className="flex items-center justify-center">
-                                  <Star className="h-4 w-4 text-amber-500 fill-amber-500 mr-1" />
-                                  <span>{course.rating}</span>
-                                </div>
-                              </td>
-                              <td className="p-2 text-center">${course.revenue}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="border-0 shadow-lg">
-                  <CardHeader>
-                    <CardTitle>Student Demographics</CardTitle>
-                    <CardDescription>
-                      Who your students are and where they're from
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[300px] flex items-center justify-center">
-                      <div className="text-center text-gray-500 dark:text-gray-400">
-                        <BarChart className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                        <p>Demographics chart would go here</p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h3 className="font-medium text-gray-700">Content Metrics</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 rounded-full bg-[#D4AF37]/20 flex items-center justify-center mr-3">
+                            <FileText className="h-5 w-5 text-[#D4AF37]" />
+                          </div>
+                          <div>
+                            <p className="font-medium">Medical Ethics</p>
+                            <p className="text-xs text-gray-500">Most Popular Course</p>
+                          </div>
+                        </div>
+                        <span className="font-medium">56 Students</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                            <Users className="h-5 w-5 text-green-600" />
+                          </div>
+                          <div>
+                            <p className="font-medium">New Enrollments</p>
+                            <p className="text-xs text-gray-500">Last 30 days</p>
+                          </div>
+                        </div>
+                        <span className="font-medium">+24</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                            <BookOpen className="h-5 w-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="font-medium">Course Updates Needed</p>
+                            <p className="text-xs text-gray-500">Annual review required</p>
+                          </div>
+                        </div>
+                        <span className="font-medium">2 Courses</span>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
                 
-                <Card className="border-0 shadow-lg">
-                  <CardHeader>
-                    <CardTitle>Content Engagement</CardTitle>
-                    <CardDescription>
-                      Which content is most engaging to students
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="border-b border-gray-200 dark:border-gray-700">
-                            <th className="text-left p-2">Content</th>
-                            <th className="text-center p-2">Course</th>
-                            <th className="text-center p-2">Views</th>
-                            <th className="text-center p-2">Avg. Time</th>
-                            <th className="text-center p-2">Completion</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {topContent.map((content, index) => (
-                            <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                              <td className="p-2 font-medium">{content.title}</td>
-                              <td className="p-2 text-center">{content.course}</td>
-                              <td className="p-2 text-center">{content.views}</td>
-                              <td className="p-2 text-center">{content.avgTime}</td>
-                              <td className="p-2 text-center">{content.completionRate}%</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                <div>
+                  <h3 className="font-medium text-gray-700 mb-4">Recent Activities</h3>
+                  
+                  <div className="space-y-4">
+                    {[
+                      { action: "New student enrollment", course: "Advanced Trauma Life Support", time: "2 hours ago" },
+                      { action: "Course feedback received", course: "Basic Life Support", time: "Yesterday" },
+                      { action: "Completed course review", course: "Medical Ethics", time: "3 days ago" },
+                    ].map((activity, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <p className="font-medium">{activity.action}</p>
+                          <p className="text-sm text-gray-500">{activity.course}</p>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-xs text-gray-500 mr-2">{activity.time}</span>
+                          <ChevronRight className="h-4 w-4 text-gray-400" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="courses" className="space-y-4">
+              <Card className="p-6">
+                <h2 className="text-xl font-bold mb-6">My Courses</h2>
+                <p className="text-gray-600 mb-4">Courses content will appear here</p>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="students" className="space-y-4">
+              <Card className="p-6">
+                <h2 className="text-xl font-bold mb-6">My Students</h2>
+                <p className="text-gray-600 mb-4">Students management will appear here</p>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="earnings" className="space-y-4">
+              <Card className="p-6">
+                <h2 className="text-xl font-bold mb-6">Earnings History</h2>
+                <p className="text-gray-600 mb-4">Earnings details will appear here</p>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>
-      </main>
+      </div>
+      
+      {showFooter && <Footer isActive={false} />}
     </div>
   );
 };
 
-// Sample data
-const courses = [
-  {
-    id: 1,
-    title: "ClotQuest: Master the Clotting Cascade",
-    description: "An interactive course on understanding the coagulation pathways with gamified lessons.",
-    thumbnail: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&q=80&w=600&h=400",
-    status: "Live",
-    rating: 4.9,
-    reviews: 78,    students: 124,
-    lessons: 12,
-    duration: "6 hours",
-    price: 79,
-    revenue: 9826,
-    completionRate: 86
-  },
-  {
-    id: 2,
-    title: "Advanced Cardiac Life Support (ACLS)",
-    description: "Comprehensive training in managing adult cardiac arrest and cardiovascular emergencies.",
-    thumbnail: "https://images.unsplash.com/photo-1631815587646-b85a51add42e?auto=format&fit=crop&q=80&w=600&h=400",
-    status: "Live",
-    rating: 4.8,
-    reviews: 42,
-    students: 87,
-    lessons: 15,
-    duration: "16 hours",
-    price: 299,
-    revenue: 15548,
-    completionRate: 92
-  },
-  {
-    id: 3,
-    title: "Medical Ethics and Professionalism",
-    description: "Explore contemporary ethical issues in healthcare practice with case studies and discussions.",
-    thumbnail: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=600&h=400",
-    status: "Draft",
-    rating: 0,
-    reviews: 0,
-    students: 0,
-    lessons: 10,
-    duration: "10 hours",
-    price: 149,
-    revenue: 0,
-    completionRate: 0
-  }
-];
-
-const students = [
-  {
-    id: 1,
-    name: "John Smith",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    course: "ClotQuest: Master the Clotting Cascade",
-    progress: 78,
-    lastActive: "Today, 2:45 PM"
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-    course: "Advanced Cardiac Life Support (ACLS)",
-    progress: 32,
-    lastActive: "Yesterday, 11:20 AM"
-  },
-  {
-    id: 3,
-    name: "Michael Chen",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    course: "ClotQuest: Master the Clotting Cascade",
-    progress: 100,
-    lastActive: "May 15, 2025, 3:12 PM"
-  },
-  {
-    id: 4,
-    name: "Emily Davis",
-    avatar: "https://randomuser.me/api/portraits/women/4.jpg",
-    course: "Advanced Cardiac Life Support (ACLS)",
-    progress: 65,
-    lastActive: "Today, 9:30 AM"
-  },
-  {
-    id: 5,
-    name: "Robert Wilson",
-    avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-    course: "ClotQuest: Master the Clotting Cascade",
-    progress: 45,
-    lastActive: "Today, 11:45 AM"
-  },
-];
-
-const upcomingSessions = [
-  {
-    title: "Clotting Cascade Live Q&A",
-    time: "Today, 4:00 PM - 5:00 PM",
-    attendees: 18
-  },
-  {
-    title: "ACLS Case Studies",
-    time: "Tomorrow, 11:00 AM - 12:30 PM",
-    attendees: 24
-  },
-  {
-    title: "One-on-One Mentoring: Sarah Johnson",
-    time: "May 18, 2:00 PM - 2:30 PM",
-    attendees: 1
-  }
-];
-
-const todaysSessions = [
-  {
-    title: "ACLS Protocol Review",
-    time: "10:00 AM - 11:30 AM",
-    status: "Completed",
-    attendees: 32
-  },
-  {
-    title: "Clotting Cascade Live Q&A",
-    time: "4:00 PM - 5:00 PM",
-    status: "Upcoming",
-    attendees: 18
-  }
-];
-
-const recentQuestions = [
-  {
-    student: "John Smith",
-    time: "2 hours ago",
-    question: "In the clotting cascade, what's the difference between intrinsic and extrinsic pathways?"
-  },
-  {
-    student: "Emily Davis",
-    time: "Yesterday",
-    question: "Can you explain how Factor VIII works in the coagulation process?"
-  },
-  {
-    student: "Michael Chen",
-    time: "2 days ago",
-    question: "How do direct oral anticoagulants (DOACs) differ from traditional anticoagulants?"
-  }
-];
-
-const officeHours = [
-  {
-    day: "Monday",
-    time: "1:00 PM - 3:00 PM"
-  },
-  {
-    day: "Wednesday",
-    time: "10:00 AM - 12:00 PM"
-  },
-  {
-    day: "Friday",
-    time: "2:00 PM - 4:00 PM"
-  }
-];
-
-const topContent = [
-  {
-    title: "Intrinsic vs. Extrinsic Pathways",
-    course: "ClotQuest",
-    views: 239,
-    avgTime: "14:22",
-    completionRate: 94
-  },
-  {
-    title: "ACLS Medication Review",
-    course: "ACLS",
-    views: 187,
-    avgTime: "11:45",
-    completionRate: 89
-  },
-  {
-    title: "Clinical Case: Acute MI",
-    course: "ACLS",
-    views: 156,
-    avgTime: "18:32",
-    completionRate: 82
-  },
-  {
-    title: "Factor VIII and Hemophilia",
-    course: "ClotQuest",
-    views: 142,
-    avgTime: "9:17",
-    completionRate: 91
-  }
-];
-
-export default TutorDashboard;
+export default TutorDashboardPage;
