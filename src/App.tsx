@@ -1,3 +1,4 @@
+
 import React from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -33,9 +34,10 @@ import StudentDashboard from "./pages/StudentDashboard";
 import EmployerDashboard from "./pages/EmployerDashboard";
 import TutorDashboard from "./pages/TutorDashboard";
 import CookieSettings from "./pages/CookieSettings";
-import Home from "./pages/Home";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import { Toaster } from "@/components/ui/toaster";
+import DashboardPage from "./pages/Dashboard"; // Import the updated Dashboard component
+import Index from "./pages/Index"; // Import the Index component directly
 
 const queryClient = new QueryClient();
 
@@ -80,52 +82,57 @@ const App = () => {  // Check if we need to redirect based on session storage
       <TooltipProvider>
         <AIActivityAgent>
           <BrowserRouter>
-            <ErrorBoundary>                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/signup" element={<SignUpPage />} />
-                  <Route path="/signin" element={<SignInPage />} />
-                  <Route path="/calculate-score" element={<CalculateScore />} />
-                  <Route path="/feedback" element={<GeneralFeedbackForm />} />
-                  <Route path="/community" element={<CommunityForum />} />
-                  <Route path="/about" element={<AboutUs />} />
-                  <Route path="/faq" element={<FAQ />} />
-                  <Route path="/contact" element={<ContactUs />} />
-                  <Route path="/job-board" element={<JobBoard />} />
-                  <Route path="/courses" element={<CourseEnrollment />} />
-                  <Route path="/employer-criteria" element={<EmployerCriteria />} />
-                  <Route path="/kpi-dashboard" element={<KPIDashboard />} />
-                  <Route path="/glohsen-score-results" element={<GlohsenScoreResults />} />
-                  <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />                  <Route path="/cookie-settings" element={<CookieSettings />} />
-                  
-                  {/* Dashboard routes */}
-                  <Route path="/dashboard/professional" element={<ProfessionalDashboard />} />
-                  <Route path="/dashboard/student" element={<StudentDashboard />} />
-                  <Route path="/dashboard/employer" element={<EmployerDashboard />} />
-                  <Route path="/dashboard/tutor" element={<TutorDashboard />} />
-                    {/* Profile Completion */}
-                  <Route path="/profile-completion" element={<ProfileCompletion />} />
-                  
-                  {/* Legal pages */}
-                  <Route path="/terms-of-service" element={<TermsOfService />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/cookies-policy" element={<CookiesPolicy />} />
-                  <Route path="/refund-policy" element={<RefundPolicy />} />
-                  <Route path="/accessibility" element={<AccessibilityStatement />} />
-                  
-                  {/* Placeholder routes - redirect to proper pages instead of showing ComingSoon */}
-                  <Route path="/professional-student" element={<CalculateScore />} />
-                  <Route path="/employer" element={<EmployerCriteria />} />
-                  <Route path="/tutor" element={<CourseEnrollment />} />
-                  
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-                <FloatingActionButtons />              </ErrorBoundary>
-            </BrowserRouter>
-          </AIActivityAgent>
-        </TooltipProvider>
-      </QueryClientProvider>
+            <ErrorBoundary>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/signin" element={<SignInPage />} />
+                <Route path="/calculate-score" element={<CalculateScore />} />
+                <Route path="/feedback" element={<GeneralFeedbackForm />} />
+                <Route path="/community" element={<CommunityForum />} />
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/contact" element={<ContactUs />} />
+                <Route path="/job-board" element={<JobBoard />} />
+                <Route path="/courses" element={<CourseEnrollment />} />
+                <Route path="/employer-criteria" element={<EmployerCriteria />} />
+                <Route path="/kpi-dashboard" element={<KPIDashboard />} />
+                <Route path="/glohsen-score-results" element={<GlohsenScoreResults />} />
+                <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />
+                <Route path="/cookie-settings" element={<CookieSettings />} />
+                
+                {/* Dashboard routes - updated to use the new Dashboard component */}
+                <Route path="/dashboard/professional" element={<DashboardPage />} />
+                <Route path="/dashboard/student" element={<StudentDashboard />} />
+                <Route path="/dashboard/employer" element={<EmployerDashboard />} />
+                <Route path="/dashboard/tutor" element={<TutorDashboard />} />
+                
+                {/* Profile Completion */}
+                <Route path="/profile-completion" element={<ProfileCompletion />} />
+                
+                {/* Legal pages */}
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/cookies-policy" element={<CookiesPolicy />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/accessibility" element={<AccessibilityStatement />} />
+                
+                {/* Placeholder routes - redirect to proper pages instead of showing ComingSoon */}
+                <Route path="/professional-student" element={<CalculateScore />} />
+                <Route path="/employer" element={<EmployerCriteria />} />
+                <Route path="/tutor" element={<CourseEnrollment />} />
+                
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <FloatingActionButtons />
+            </ErrorBoundary>
+            <Toaster />
+          </BrowserRouter>
+        </AIActivityAgent>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 };
 

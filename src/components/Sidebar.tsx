@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, MessageSquare, User, Calendar, Settings, Search, Briefcase, Award, FileText, Bell, ExternalLink, BookOpen, LogOut } from "lucide-react";
+import { User, Briefcase, MessageSquare, Calendar, Settings, Search, Award, FileText, Bell, ExternalLink, BookOpen, LogOut, CreditCard, Gamepad } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import Card3D from "./Card3D";
 
@@ -27,19 +27,19 @@ const Sidebar = () => {
               <User className="mr-2 h-4 w-4" /> My Profile
             </Button>
           </Link>
-          <Link to="/jobs">
+          <Link to="/dashboard/professional">
             <Button className="w-full button-3d flex justify-start" variant="outline">
-              <Briefcase className="mr-2 h-4 w-4" /> Available Jobs
+              <Briefcase className="mr-2 h-4 w-4" /> My Job Applications
             </Button>
           </Link>
-          <Link to="/applications">
+          <Link to="/dashboard/professional">
             <Button className="w-full button-3d flex justify-start" variant="outline">
-              <FileText className="mr-2 h-4 w-4" /> Applications
+              <CreditCard className="mr-2 h-4 w-4" /> My Transactions
             </Button>
           </Link>
           <Link to="/messages">
             <Button className="w-full button-3d flex justify-start" variant="outline">
-              <MessageSquare className="mr-2 h-4 w-4" /> Messages
+              <MessageSquare className="mr-2 h-4 w-4" /> Inbox/Messages
             </Button>
           </Link>
         </div>
@@ -53,9 +53,16 @@ const Sidebar = () => {
               <BookOpen className="mr-2 h-4 w-4" /> Enroll in New Course
             </Button>
           </Link>
-          <Button className="w-full button-3d flex justify-start" variant="outline">
-            <Award className="mr-2 h-4 w-4" /> My Certifications
-          </Button>
+          <Link to="/games-quizzes">
+            <Button className="w-full button-3d flex justify-start" variant="outline">
+              <Gamepad className="mr-2 h-4 w-4" /> Play Quiz/Games
+            </Button>
+          </Link>
+          <Link to="/profile">
+            <Button className="w-full button-3d flex justify-start" variant="outline">
+              <Award className="mr-2 h-4 w-4" /> My Certifications
+            </Button>
+          </Link>
         </div>
       </Card>
       
