@@ -1,59 +1,91 @@
 
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-
-type Theme = 'light' | 'dark';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
 interface ThemeContextType {
-  theme: Theme;
+  isDark: boolean;
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType>({
+  isDark: false,
+  toggleTheme: () => {}
+});
 
 interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const storedTheme = localStorage.getItem('theme') as Theme | null;
-      if (storedTheme) {
-        return storedTheme;
-      }
-      // Default to system preference if no stored theme
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'light'; // Default for SSR or non-browser environments
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+  // Check if user prefers dark mode or has set it previously
+  const [isDark, setIsDark] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    return savedTheme === 'dark' || (!savedTheme && prefersDark);
   });
 
+  // Apply the theme class to the document whenever the theme changes
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const root = window.document.documentElement;
-      if (theme === 'dark') {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
-      localStorage.setItem('theme', theme);
+    const root = window.document.documentElement;
+    
+    if (isDark) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
-  }, [theme]);
+  }, [isDark]);
+
+  // Listen for system preference changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Only apply system preference if user hasn't manually set a theme
+      if (!localStorage.getItem('theme')) {
+        setIsDark(e.matches);
+      }
+    };
+    
+    // Use the newer addEventListener method with fallback for older browsers
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      // For older browsers
+      mediaQuery.addListener(handleChange);
+      return () => mediaQuery.removeListener(handleChange);
+    }
+  }, []);
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+    setIsDark(prev => !prev);
   };
 
+  // Apply specific styles for dark mode
+  useEffect(() => {
+    const applyDarkModeStyles = () => {
+      // Add any specific CSS variables or styles that need to be updated for dark mode
+      if (isDark) {
+        document.body.style.setProperty('--background-color', '#121212');
+        document.body.style.setProperty('--text-color', '#ffffff');
+        document.body.style.setProperty('--card-bg', '#1e1e1e');
+      } else {
+        document.body.style.removeProperty('--background-color');
+        document.body.style.removeProperty('--text-color');
+        document.body.style.removeProperty('--card-bg');
+      }
+    };
+
+    applyDarkModeStyles();
+  }, [isDark]);
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
-export const useTheme = (): ThemeContextType => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-};
+export default ThemeProvider;

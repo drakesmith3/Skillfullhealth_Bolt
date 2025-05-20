@@ -1,3 +1,4 @@
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AdvancedSkillsCertificates } from './ProfessionalDashboardSections';
 
@@ -84,6 +85,3 @@ describe('AdvancedSkillsCertificates', () => {
     expect(await screen.findByText('Uploading...')).toBeInTheDocument();
   });
 });
-
-"storybook": "storybook dev -p 6006",
-"build-storybook": "storybook build"

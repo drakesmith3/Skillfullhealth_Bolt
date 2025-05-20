@@ -1,5 +1,5 @@
-import React from "react";
 
+import React from "react";
 import { useGlohsenScore } from './GlohsenScoreContext';
 import { Link } from 'react-router-dom';
 
@@ -8,7 +8,9 @@ interface GlohsenScoreResultMockupProps {
 }
 
 const GlohsenScoreResultMockup = ({ showFullReport = true }: GlohsenScoreResultMockupProps) => {
-  const { score } = useGlohsenScore();  if (!score) {
+  const { score } = useGlohsenScore();  
+  
+  if (!score) {
     return (
       <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl border-4 border-[#D4AF37]/30 bg-white/90 backdrop-blur-lg flex flex-col items-center justify-center p-6">
         <h3 className="text-2xl font-bold text-d4af37 mb-2 font-serif">Calculate Your GLOHSEN Score</h3>
@@ -66,5 +68,6 @@ const GlohsenScoreResultMockup = ({ showFullReport = true }: GlohsenScoreResultM
       )}
     </div>
   );
+};
 
 export default GlohsenScoreResultMockup;

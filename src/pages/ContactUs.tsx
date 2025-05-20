@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PreHeader from '../components/PreHeader';
 import Footer from '../components/Footer';
@@ -202,14 +203,19 @@ const ContactUs: React.FC = () => {
             </div>
           </div>
           
-          {/* Google Maps placeholder */}
+          {/* Google Maps integration */}
           <div className="mt-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Our Location</h2>
-            <div className="w-full h-[400px] bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-              <p className="text-center text-gray-500 dark:text-gray-400">
-                Google Maps would be integrated here in a production environment.<br />
-                For privacy and security reasons, it's displayed as a placeholder in this demo.
-              </p>
+            <div className="w-full h-[400px] rounded-lg overflow-hidden">
+              <iframe 
+                title="GLOHSEN Office Location"
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                loading="lazy" 
+                allowFullScreen
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2948.558045549289!2d-71.0993794!3d42.3407931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e3798263a422b5%3A0x262b5d1f9f04e1f0!2s123%20Healthcare%20Ave%2C%20Boston%2C%20MA%2002115!5e0!3m2!1sen!2sus!4v1590161479174!5m2!1sen!2sus"
+              ></iframe>
             </div>
           </div>
           

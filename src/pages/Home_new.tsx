@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback, ComponentType } from 'react';
 import Lenis from '@studio-freight/lenis';
 import { gsap } from 'gsap';
@@ -24,6 +25,7 @@ gsap.registerPlugin(ScrollTrigger);
 export interface SectionProps {
   isActive: boolean;
   sectionName: string;
+  scrollToSection?: (sectionIndex: number) => void;
 }
 
 // Define the sections in the desired story order
@@ -56,6 +58,7 @@ function Home(): JSX.Element {
   const hasInteracted = useRef(false);
   const lastPlayedSectionRef = useRef(-1);
   const isInitializedRef = useRef(false);
+  const headerVisibleRef = useRef(true);
 
   // State
   const [currentSection, setCurrentSection] = useState(0);
@@ -105,6 +108,30 @@ function Home(): JSX.Element {
     };
   }, []);
 
+  // Ensure header is visible for a minimum time and prevent scroll initially
+  useEffect(() => {
+    const preventScroll = (e: Event) => {
+      if (headerVisibleRef.current) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("wheel", preventScroll, { passive: false });
+    window.addEventListener("touchmove", preventScroll, { passive: false });
+    
+    const timer = setTimeout(() => {
+      headerVisibleRef.current = false;
+      window.removeEventListener("wheel", preventScroll);
+      window.removeEventListener("touchmove", preventScroll);
+    }, 6000); // Keep header visible for 6 seconds
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("wheel", preventScroll);
+      window.removeEventListener("touchmove", preventScroll);
+    };
+  }, []);
+
   // Function to scroll to a specific section
   const scrollToSection = useCallback((sectionIndex: number) => {
     if (!lenisRef.current || !mainRef.current) return;
@@ -141,7 +168,9 @@ function Home(): JSX.Element {
     
     setCurrentSection(0);
     currentSectionRef.current = 0;
-  }, []);  // Loading simulation - allows time for resources to load
+  }, []);
+
+  // Loading simulation - allows time for resources to load
   useEffect(() => {
     // Prevent body scrolling while Home component is mounted
     document.body.style.overflow = 'hidden';
@@ -156,6 +185,7 @@ function Home(): JSX.Element {
       document.body.style.overflow = '';
     };
   }, []);
+
   // GSAP and Lenis initialization
   useEffect(() => {
     // Exit if still loading or already initialized
@@ -172,7 +202,9 @@ function Home(): JSX.Element {
     if (!mainElement || !contentElement || numSections === 0) {
       console.error("Missing required elements for scroll setup");
       return undefined;
-    }    // Initialize Lenis for smooth scrolling after a delay
+    }
+    
+    // Initialize Lenis for smooth scrolling after a delay
     // This ensures DOM is fully ready
     const initLenis = () => {
       const lenis = new Lenis({
@@ -211,7 +243,8 @@ function Home(): JSX.Element {
     const setupGsap = () => {
       if (!mainElement || !contentElement) return null;
       
-      const ctx = gsap.context(() => {        // Create timeline with ScrollTrigger
+      const ctx = gsap.context(() => {
+        // Create timeline with ScrollTrigger
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: mainElement,
@@ -222,8 +255,7 @@ function Home(): JSX.Element {
             invalidateOnRefresh: true,
             preventOverlaps: true, // Prevent overlapping animations
             fastScrollEnd: false,  // Disable fast scroll end for smoother experience
-            onEnter: () => console.log("ScrollTrigger onEnter"),
-            onLeave: () => console.log("ScrollTrigger onLeave"),
+            onUpdate: self => {
               // Calculate current section based on scroll progress
               let newSectionIndex = Math.round(self.progress * (numSections - 1));
               newSectionIndex = Math.max(0, Math.min(numSections - 1, newSectionIndex));
@@ -240,7 +272,8 @@ function Home(): JSX.Element {
                   lastPlayedSectionRef.current = newSectionIndex;
                 }
               }
-            },            snap: {
+            },
+            snap: {
               snapTo: (progress) => {
                 if (numSections <= 1) return 0;
                 
@@ -273,7 +306,9 @@ function Home(): JSX.Element {
       }, mainElement);
       
       return ctx;
-    };    // Delay setup slightly to ensure DOM is ready
+    };
+    
+    // Delay setup slightly to ensure DOM is ready
     let gsapCtx: gsap.Context | null = null;
     const initTimeout = setTimeout(() => {
       // Force another delay to ensure the DOM is properly rendered
@@ -344,6 +379,7 @@ function Home(): JSX.Element {
       </div>
     );
   }
+
   // Main content
   return (
     <div className="relative">
@@ -388,16 +424,22 @@ function Home(): JSX.Element {
               key={SectionItem.name}
               className="parallax-section w-screen h-screen flex-shrink-0"
               ref={(el) => (sectionsRef.current[index] = el)}
+              style={{ 
+                opacity: index === currentSection ? 1 : 0.7,
+                transition: "opacity 0.5s ease"
+              }}
             >
               <SectionItem.component
                 isActive={index === currentSection}
                 sectionName={SectionItem.name}
+                scrollToSection={scrollToSection}
               />
             </section>
           ))}
         </div>
       </main>
-        {/* Footer positioned relative to the document flow */}
+      
+      {/* Footer positioned relative to the document flow with increased distance */}
       <div className="relative z-20 mt-[150vh] pointer-events-none">
         <div className="pointer-events-auto">
           <Footer isActive={currentSection === numSections - 1} />
