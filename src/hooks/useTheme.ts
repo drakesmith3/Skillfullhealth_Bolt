@@ -1,19 +1,8 @@
 
-import { useContext } from 'react';
-import { ThemeContext } from '../contexts/ThemeContext';
+// This file is kept for backward compatibility
+// Please use the useTheme function from ThemeContext directly
+import { useTheme as useThemeContext } from '../contexts/ThemeContext';
 
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  
-  // Match the expected interface used in components
-  return {
-    theme: context.isDark ? 'dark' : 'light',
-    toggleTheme: context.toggleTheme
-  };
-};
+export const useTheme = useThemeContext;
 
 export default useTheme;

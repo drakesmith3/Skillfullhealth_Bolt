@@ -11,7 +11,7 @@ interface ButterflyProps {
   isActive: boolean;
 }
 
-// Enhanced 3D Butterfly SVG with BLACK, GOLD, and RED colors, and subtle 3D effects
+// Enhanced 3D Butterfly SVG with RED, GOLD, and BLACK colors, and subtle 3D effects
 const ButterflySVG = ({ className = "", style = {} }) => (
   <svg
     width="120"
@@ -22,11 +22,11 @@ const ButterflySVG = ({ className = "", style = {} }) => (
     className={className}
     style={style}
   >
-    {/* Left Wing (Black with white veins) */}
+    {/* Left Wing (Red with white veins) - Swapped from black to red */}
     <g filter="url(#wingShadow)">
       <path
         d="M60 45 Q20 10 15 60 Q30 70 60 45"
-        fill="url(#blackWing)"
+        fill="url(#redWing)"
         stroke="#FFD700"
         strokeWidth="2.5"
       />
@@ -34,11 +34,11 @@ const ButterflySVG = ({ className = "", style = {} }) => (
       <path d="M60 45 Q30 30 20 55" stroke="#fff" strokeWidth="1.2" />
       <path d="M60 45 Q35 40 25 60" stroke="#fff" strokeWidth="1.2" />
     </g>
-    {/* Right Wing (Black with white veins) */}
+    {/* Right Wing (Red with white veins) - Swapped from black to red */}
     <g filter="url(#wingShadow)">
       <path
         d="M60 45 Q100 10 105 60 Q90 70 60 45"
-        fill="url(#blackWing)"
+        fill="url(#redWing)"
         stroke="#FFD700"
         strokeWidth="2.5"
       />
@@ -64,10 +64,10 @@ const ButterflySVG = ({ className = "", style = {} }) => (
         strokeWidth="2.5"
       />
     </g>
-    {/* Butterfly Body (Red with gold highlight) */}
-    <ellipse cx="60" cy="50" rx="6" ry="22" fill="#ea384c" stroke="#FFD700" strokeWidth="2" />
+    {/* Butterfly Body (Black with gold highlight) - Swapped from red to black */}
+    <ellipse cx="60" cy="50" rx="6" ry="22" fill="#000000" stroke="#FFD700" strokeWidth="2" />
     {/* Head */}
-    <ellipse cx="60" cy="30" rx="7" ry="7" fill="#ea384c" stroke="#FFD700" strokeWidth="2" />
+    <ellipse cx="60" cy="30" rx="7" ry="7" fill="#000000" stroke="#FFD700" strokeWidth="2" />
     {/* Antennae */}
     <path d="M60 25 Q55 10 50 25" stroke="#FFD700" strokeWidth="2" fill="none" />
     <path d="M60 25 Q65 10 70 25" stroke="#FFD700" strokeWidth="2" fill="none" />
@@ -75,9 +75,9 @@ const ButterflySVG = ({ className = "", style = {} }) => (
     <ellipse cx="60" cy="38" rx="2.5" ry="1.2" fill="#fff" opacity="0.5" />
     {/* Filters and Gradients */}
     <defs>
-      <radialGradient id="blackWing" cx="50%" cy="50%" r="70%" fx="50%" fy="40%">
-        <stop offset="0%" stopColor="#333333" />
-        <stop offset="80%" stopColor="#000000" />
+      <radialGradient id="redWing" cx="50%" cy="50%" r="70%" fx="50%" fy="40%">
+        <stop offset="0%" stopColor="#f05662" />
+        <stop offset="80%" stopColor="#ea384c" />
       </radialGradient>
       <radialGradient id="goldWing" cx="50%" cy="50%" r="70%" fx="50%" fy="40%">
         <stop offset="0%" stopColor="#FFD700" />
