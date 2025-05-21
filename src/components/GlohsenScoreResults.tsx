@@ -1,9 +1,10 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Share, Printer, Download, ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useGlohsenScore } from "@/contexts/GlohsenScoreContext";
+import { ScoreBreakdown } from "@/types/score";
 
 const GlohsenScoreResults = () => {
   const { score, history } = useGlohsenScore();
@@ -28,7 +29,8 @@ const GlohsenScoreResults = () => {
     { month: 'May', score: 167, avg: 148 },
     { month: 'Jun', score: 179, avg: 150 }
   ];
-    const criteriaBreakdown = [
+
+  const criteriaBreakdown = [
     { name: "Experience", score: score.experience, maxScore: 10 },
     { name: "Employer Match", score: score.employerMatch, maxScore: 110 },
     { name: "Skills & Certificates", score: score.skills, maxScore: 15 },
@@ -40,16 +42,17 @@ const GlohsenScoreResults = () => {
     { name: "Remote Work", score: score.remoteWork, maxScore: 10 },
     { name: "Availability", score: score.availability, maxScore: 10 }
   ];
-  
-  const totalScore = criteriaBreakdown.reduce((sum, item) => sum + item.score, 0);
-  const maxScore = criteriaBreakdown.reduce((sum, item) => sum + item.maxScore, 0);
+
+  const totalScore = score.total;
+  const maxScore = 200;
   const scorePercentage = (totalScore / maxScore) * 100;
+
   const calculatePerformanceLevel = (score: ScoreBreakdown) => {
     const totalScore = score.total;
-    if (totalScore >= 90) return { level: "Outstanding", percentile: "top 5%" };
-    if (totalScore >= 80) return { level: "Excellent", percentile: "top 15%" };
-    if (totalScore >= 70) return { level: "Very Good", percentile: "top 30%" };
-    if (totalScore >= 60) return { level: "Good", percentile: "top 50%" };
+    if (totalScore >= 150) return { level: "Outstanding", percentile: "top 5%" };
+    if (totalScore >= 120) return { level: "Excellent", percentile: "top 15%" };
+    if (totalScore >= 90) return { level: "Very Good", percentile: "top 30%" };
+    if (totalScore >= 70) return { level: "Good", percentile: "top 50%" };
     return { level: "Average", percentile: "top 75%" };
   };
 

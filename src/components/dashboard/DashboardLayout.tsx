@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import PreHeader from '@/components/PreHeader';
 import Footer from '@/components/Footer';
 import DashboardSidebar from './DashboardSidebar';
+import Butterfly from '@/components/Butterfly';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface DashboardLayoutProps {
   userType: 'professional' | 'student' | 'employer' | 'tutor' | 'client';
@@ -20,6 +22,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children
 }) => {
   const [showFooter, setShowFooter] = useState(false);
+  const [activeSectionIndex, setActiveSectionIndex] = useState(0);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -28,9 +32,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  // Calculate total sections for butterfly animation
+  const totalSections = React.Children.count(children) || 1;
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
       <PreHeader currentPage={`${userType} dashboard`} userName={userName} />
+      
+      {/* Butterfly mascot */}
+      <Butterfly sectionIndex={activeSectionIndex} totalSections={totalSections} isActive={true} />
       
       <div className="flex-grow flex mt-16">
         {/* Sidebar */}

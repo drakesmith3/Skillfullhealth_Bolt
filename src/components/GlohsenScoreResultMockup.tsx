@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useGlohsenScore } from './GlohsenScoreContext';
+import { useGlohsenScore } from '@/contexts/GlohsenScoreContext';
 import { Link } from 'react-router-dom';
 
 interface GlohsenScoreResultMockupProps {

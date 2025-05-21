@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useGlohsenScore } from "@/contexts/GlohsenScoreContext";
+import { CandidateData } from "@/types/score";
 
 interface ScoreCriteria {
   id: string;
@@ -17,14 +19,14 @@ interface ScoreCriteria {
 
 const GlohsenScoreCalculator = () => {
   const { toast } = useToast();
-  const { updateScore, score, candidateData } = useGlohsenScore();
+  const { updateScore } = useGlohsenScore();
   
   const [criteria, setCriteria] = useState<ScoreCriteria[]>([
     {
       id: "experience",
       title: "Years of Experience",
       description: "Number of years working as a healthcare professional.",
-      value: candidateData?.yearsExperience || 3,
+      value: 3,
       maxValue: 10,
       color: "#F9D75D"
     },
@@ -115,7 +117,8 @@ const GlohsenScoreCalculator = () => {
   const totalScore = calculateTotalScore();
   const maxPossibleScore = criteria.reduce((sum, item) => sum + item.maxValue, 0);
   const scorePercentage = Math.round((totalScore / maxPossibleScore) * 100);
-    const handleSubmitScore = () => {
+  
+  const handleSubmitScore = () => {
     try {
       const data: CandidateData = {
         yearsExperience: criteria.find(c => c.id === "experience")?.value || 0,
@@ -127,7 +130,7 @@ const GlohsenScoreCalculator = () => {
         locumJobs: criteria.find(c => c.id === "locum_jobs")?.value || 0,
         platformActivity: criteria.find(c => c.id === "platform_activity")?.value || 0,
         volunteering: {
-          volunteer: criteria.find(c => c.id === "volunteer")?.value > 5,
+          volunteer: (criteria.find(c => c.id === "volunteer")?.value || 0) > 5,
           lesserWage: false,
           distantLocation: false
         },
@@ -137,7 +140,7 @@ const GlohsenScoreCalculator = () => {
           advancedCommunication: true,
           languages: 1
         },
-        remoteWork: criteria.find(c => c.id === "remote")?.value > 5,
+        remoteWork: (criteria.find(c => c.id === "remote")?.value || 0) > 5,
         availability: 'immediate'
       };
       

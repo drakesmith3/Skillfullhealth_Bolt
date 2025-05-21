@@ -1,15 +1,22 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { MessageCircle, Activity, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAsyncAction } from '@/hooks/use-async-action';
-import { animationClasses } from '@/components/ui/animations';
 import type { 
   JoinTheConversationProps, 
   RecentActivityProps, 
-  AdvancedSkillsCertificatesProps 
+  AdvancedSkillsCertificatesProps,
+  Certificate
 } from "@/types/dashboard";
+
+const animationClasses = {
+  fadeIn: 'animate-fade-in',
+  slideUp: 'animate-slide-up',
+  scaleIn: 'animate-scale-in'
+};
 
 export const JoinTheConversation: React.FC<JoinTheConversationProps> = ({
   onJoinForum,
@@ -26,18 +33,18 @@ export const JoinTheConversation: React.FC<JoinTheConversationProps> = ({
           Connect with other professionals, ask questions, and share your insights in the community forum.
         </p>
         <div className="flex gap-3">
-          <Link
-            to="/community"
+          <Button
+            onClick={onJoinForum}
             className="bg-[#D4AF37] hover:bg-[#B22222] text-white font-semibold px-5 py-2 rounded-lg transition-all text-sm"
           >
             Go to Forum
-          </Link>
-          <Link
-            to="/community/new"
+          </Button>
+          <Button
+            onClick={onStartDiscussion}
             className="bg-[#1E2738] hover:bg-[#B22222] text-white font-semibold px-5 py-2 rounded-lg transition-all text-sm"
           >
             Start a Discussion
-          </Link>
+          </Button>
         </div>
       </div>
     </div>
@@ -55,7 +62,7 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [] 
       <ul className="divide-y divide-gray-200">
         {(activities.length ? activities : [
           { text: 'Completed: Advanced Cardiology CME', time: '2 hours ago' },
-          { text: 'Commented on “Best Practices in Telemedicine”', time: '5 hours ago' },
+          { text: 'Commented on "Best Practices in Telemedicine"', time: '5 hours ago' },
           { text: 'Joined the Oncology Group', time: 'Yesterday' }
         ]).map((item, idx) => (
           <li key={idx} className="py-3 flex items-center justify-between">
@@ -76,9 +83,8 @@ export const AdvancedSkillsCertificates: React.FC<AdvancedSkillsCertificatesProp
 }) => {
   const uploadAction = useAsyncAction({
     action: async (file: File, certificateType: string) => {
-      if (onUpload) {
-        await onUpload(file, certificateType);
-      }
+      if (!onUpload) return;
+      await onUpload(file, certificateType);
     },
     successMessage: 'Certificate uploaded successfully',
     errorMessage: 'Failed to upload certificate'
@@ -86,9 +92,8 @@ export const AdvancedSkillsCertificates: React.FC<AdvancedSkillsCertificatesProp
 
   const expiryAction = useAsyncAction({
     action: async (certificateId: string, date: string) => {
-      if (onUpdateExpiry) {
-        await onUpdateExpiry(certificateId, date);
-      }
+      if (!onUpdateExpiry) return;
+      await onUpdateExpiry(certificateId, date);
     },
     successMessage: 'Expiry date updated successfully',
     errorMessage: 'Failed to update expiry date'

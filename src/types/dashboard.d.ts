@@ -76,3 +76,37 @@ export interface ProfessionalProfile {
   glohsenScore?: number;
   profileCompleteness?: number;
 }
+
+export interface JoinTheConversationProps {
+  onJoinForum?: () => void;
+  onStartDiscussion?: () => void;
+}
+
+export interface RecentActivityProps {
+  activities?: Array<{
+    text: string;
+    time: string;
+  }>;
+}
+
+export interface AdvancedSkillsCertificatesProps {
+  certificates?: Certificate[];
+  onUpload?: (file: File, certificateType: string) => Promise<void>;
+  onUpdateExpiry?: (certificateId: string, date: string) => Promise<void>;
+}
+
+export type UserType = 'professional' | 'student' | 'employer' | 'tutor' | 'client';
+
+export interface DashboardMenuGroup {
+  title: string;
+  items: {
+    name: string;
+    icon: React.ReactNode;
+    path: string;
+  }[];
+}
+
+export interface DashboardPageProps {
+  userType: UserType;
+  userName: string;
+}

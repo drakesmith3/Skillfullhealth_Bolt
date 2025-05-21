@@ -1,35 +1,72 @@
 
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
-export function useAsyncAction<T>() {
+interface UseAsyncActionOptions<T> {
+  action: (...args: any[]) => Promise<T>;
+  onSuccess?: (result: T) => void;
+  successMessage?: string;
+  onError?: (error: any) => void;
+  errorMessage?: string;
+}
+
+export function useAsyncAction<T = any>({
+  action,
+  onSuccess,
+  successMessage,
+  onError,
+  errorMessage
+}: UseAsyncActionOptions<T>) {
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<T | null>(null);
+  const [error, setError] = useState<any>(null);
+  const [result, setResult] = useState<T | null>(null);
 
-  const execute = async (
-    asyncFn: () => Promise<T>,
-    onSuccess?: (data: T) => void,
-    onError?: (error: any) => void
-  ) => {
+  const execute = async (...args: any[]): Promise<T> => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const result = await asyncFn();
-      setData(result);
-      if (onSuccess) onSuccess(result);
+      const result = await action(...args);
+      setResult(result);
+      
+      if (successMessage) {
+        toast({
+          title: "Success",
+          description: successMessage,
+        });
+      }
+      
+      if (onSuccess) {
+        onSuccess(result);
+      }
+      
       return result;
-    } catch (err: any) {
-      const errorMessage = err.message || 'An error occurred';
-      setError(errorMessage);
-      if (onError) onError(err);
-      return null;
+    } catch (err) {
+      setError(err);
+      
+      if (errorMessage) {
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+      
+      if (onError) {
+        onError(err);
+      }
+      
+      throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
-  return { execute, isLoading, error, data };
+  return {
+    execute,
+    isLoading,
+    error,
+    result
+  };
 }
-
-export default useAsyncAction;

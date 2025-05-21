@@ -1,166 +1,176 @@
 
+import type { CandidateData, ScoreBreakdown } from '@/types/score';
 import type { ProfessionalProfile } from '@/types/dashboard';
 
-export interface CandidateData {
-  experience: {
-    years: number;
-    positions: string[];
-  };
-  skills: string[];
-  skillLevels: Record<string, number>;
-  certifications: string[];
-  locumJobs: number;
-  platformActivity: {
-    logins: number;
-    applications: number;
-    profileUpdates: number;
-  };
-  volunteering: boolean;
-  location: {
-    city: string;
-    state: string;
-    country: string;
-  };
-  employerMatch: number;
-}
-
-export interface ScoreBreakdown {
-  experience: number;
-  skills: number;
-  locumJobs: number;
-  platformActivity: number;
-  volunteering: number;
-  location: number;
-  employerMatch: number;
-  total: number;
-}
-
-// Calculate GLOHSEN score from candidate data
+// Calculate GLOHSEN score from candidate data using the detailed algorithm
 export const calculateGlohsenScore = (data: CandidateData): ScoreBreakdown => {
-  // Experience score (max 10 points)
-  const experienceScore = Math.min(data.experience.years, 10);
+  // 1. Years of Experience (max 10 points)
+  const experienceScore = calculateExperienceScore(data.yearsExperience);
   
-  // Skills score (max 15 points)
-  const skillsScore = Math.min(
-    Object.values(data.skillLevels).reduce((sum, level) => sum + level, 0) / 2,
-    15
-  );
+  // 2. Employer Match Score (max 110 points)
+  const employerMatchScore = data.employerMatchScore;
   
-  // Locum jobs score (max 10 points)
-  const locumJobsScore = Math.min(data.locumJobs * 2, 10);
+  // 3. Skills and Certificates (max 15 points)
+  const skillsScore = data.skillCertificates.required + data.skillCertificates.additional;
   
-  // Platform activity score (max 10 points)
-  const activityScore = Math.min(
-    (data.platformActivity.logins / 10) + 
-    (data.platformActivity.applications * 2) + 
-    (data.platformActivity.profileUpdates * 3),
-    10
-  );
+  // 4. Locum Jobs (max 10 points)
+  const locumJobsScore = calculateLocumJobsScore(data.locumJobs);
   
-  // Volunteering score (max 10 points)
-  const volunteeringScore = data.volunteering ? 10 : 0;
+  // 5. Platform Activity (max 10 points)
+  const platformActivityScore = Math.min(data.platformActivity, 10);
   
-  // Location score (max 5 points)
-  // This is a simplified location scoring logic
-  const locationScore = data.location.country === 'Nigeria' ? 5 : 3;
+  // 6. Volunteering (max 10 points)
+  const volunteeringScore = calculateVolunteeringScore(data.volunteering);
   
-  // Employer match score (max 110 points)
-  const employerMatchScore = data.employerMatch;
+  // 7. Location Score (max 5 points)
+  const locationScore = Math.min(data.locationProximity, 5);
   
-  // Calculate total score
+  // 8. Awards & Communication (max 10 points)
+  const awardsScore = calculateAwardsScore(data.awards);
+  
+  // 9. Remote Work (max 10 points)
+  const remoteWorkScore = data.remoteWork ? 10 : 3;
+  
+  // 10. Availability (max 10 points)
+  const availabilityScore = calculateAvailabilityScore(data.availability);
+  
+  // Calculate total score (max 200 points)
   const totalScore = 
     experienceScore + 
+    employerMatchScore + 
     skillsScore + 
     locumJobsScore + 
-    activityScore + 
+    platformActivityScore + 
     volunteeringScore + 
-    locationScore +
-    employerMatchScore;
+    locationScore + 
+    awardsScore + 
+    remoteWorkScore + 
+    availabilityScore;
   
   return {
     experience: experienceScore,
+    employerMatch: employerMatchScore,
     skills: skillsScore,
     locumJobs: locumJobsScore,
-    platformActivity: activityScore,
+    platformActivity: platformActivityScore,
     volunteering: volunteeringScore,
     location: locationScore,
-    employerMatch: employerMatchScore,
+    awards: awardsScore,
+    remoteWork: remoteWorkScore,
+    availability: availabilityScore,
     total: totalScore
   };
 };
 
-// Example candidate data to use when no data is provided
-export const calculateExampleCandidate = (): ScoreBreakdown => {
-  const exampleData: CandidateData = {
-    experience: {
-      years: 8,
-      positions: ['Doctor', 'Specialist', 'Consultant']
-    },
-    skills: ['Surgery', 'Diagnosis', 'Patient Care', 'Emergency Medicine'],
-    skillLevels: {
-      'Surgery': 4,
-      'Diagnosis': 5,
-      'Patient Care': 5,
-      'Emergency Medicine': 3
-    },
-    certifications: ['Medical License', 'Basic Life Support', 'Advanced Cardiac Life Support'],
-    locumJobs: 4,
-    platformActivity: {
-      logins: 45,
-      applications: 3,
-      profileUpdates: 2
-    },
-    volunteering: true,
-    location: {
-      city: 'Lagos',
-      state: 'Lagos',
-      country: 'Nigeria'
-    },
-    employerMatch: 85
-  };
-  
-  return calculateGlohsenScore(exampleData);
+// Helper functions for score calculation
+const calculateExperienceScore = (years: number): number => {
+  if (years <= 2) return 1;
+  if (years <= 5) return 3;
+  if (years <= 10) return 6;
+  return 10;
+};
+
+const calculateLocumJobsScore = (jobs: number): number => {
+  if (jobs === 0) return 0;
+  if (jobs <= 2) return 2;
+  if (jobs <= 4) return 4;
+  return 10;
+};
+
+const calculateVolunteeringScore = (volunteering: {
+  volunteer: boolean;
+  lesserWage: boolean;
+  distantLocation: boolean;
+}): number => {
+  let score = 0;
+  if (volunteering.volunteer) score += 3;
+  if (volunteering.lesserWage) score += 3;
+  if (volunteering.distantLocation) score += 4;
+  return score;
+};
+
+const calculateAwardsScore = (awards: {
+  leadershipAwards: number;
+  advancedCommunication: boolean;
+  languages: number;
+}): number => {
+  let score = 0;
+  score += Math.min(awards.leadershipAwards, 4); // Max 4 points
+  if (awards.advancedCommunication) score += 3;
+  score += Math.min(awards.languages, 3); // Max 3 points (1 point per language, up to 3)
+  return Math.min(score, 10); // Cap at 10 points
+};
+
+const calculateAvailabilityScore = (availability: 'immediate' | '1-2weeks' | 'month' | 'unavailable'): number => {
+  switch (availability) {
+    case 'immediate': return 10;
+    case '1-2weeks': return 5;
+    case 'month': return 3;
+    case 'unavailable': return 0;
+    default: return 0;
+  }
+};
+
+// Example candidate data for demonstration
+export const getExampleCandidateData = (): CandidateData => ({
+  yearsExperience: 8,
+  employerMatchScore: 85,
+  skillCertificates: {
+    required: 10,
+    additional: 3
+  },
+  locumJobs: 5,
+  platformActivity: 10,
+  volunteering: {
+    volunteer: true,
+    lesserWage: true,
+    distantLocation: true
+  },
+  locationProximity: 5,
+  awards: {
+    leadershipAwards: 3,
+    advancedCommunication: true,
+    languages: 2
+  },
+  remoteWork: true,
+  availability: 'immediate'
+});
+
+// Calculate example score for demonstration
+export const calculateExampleScore = (): ScoreBreakdown => {
+  return calculateGlohsenScore(getExampleCandidateData());
 };
 
 // Calculate GLOHSEN score from professional profile
 export const calculateScoreFromProfile = (profile: ProfessionalProfile): ScoreBreakdown => {
   // Convert profile to candidate data format
   const candidateData: CandidateData = {
-    experience: {
-      years: profile.experience?.reduce((total, exp) => {
-        // Calculate years in each position
-        const startDate = new Date(exp.startDate);
-        const endDate = exp.current ? new Date() : (exp.endDate ? new Date(exp.endDate) : new Date());
-        const yearDiff = endDate.getFullYear() - startDate.getFullYear();
-        return total + yearDiff;
-      }, 0) || 0,
-      positions: profile.experience?.map(exp => exp.position) || []
+    yearsExperience: profile.experience?.reduce((total, exp) => {
+      const startDate = new Date(exp.startDate);
+      const endDate = exp.current ? new Date() : (exp.endDate ? new Date(exp.endDate) : new Date());
+      const yearDiff = endDate.getFullYear() - startDate.getFullYear();
+      return total + yearDiff;
+    }, 0) || 0,
+    employerMatchScore: profile.glohsenScore ? profile.glohsenScore - 50 : 70, // Example calculation
+    skillCertificates: {
+      required: profile.skills?.length || 0,
+      additional: profile.certificates?.length || 0
     },
-    skills: profile.skills?.map(skill => skill.name) || [],
-    skillLevels: profile.skills?.reduce((obj, skill) => {
-      let level = 1;
-      switch (skill.level) {
-        case 'BEGINNER': level = 1; break;
-        case 'INTERMEDIATE': level = 2; break;
-        case 'ADVANCED': level = 3; break;
-        case 'EXPERT': level = 4; break;
-      }
-      return { ...obj, [skill.name]: level };
-    }, {}) || {},
-    certifications: profile.certificates?.map(cert => cert.name) || [],
     locumJobs: 3, // This would normally come from job history
-    platformActivity: {
-      logins: 30, // This would normally come from platform data
-      applications: 5,
-      profileUpdates: 3
+    platformActivity: 8, // This would normally come from platform data
+    volunteering: {
+      volunteer: true, // This would normally come from profile data
+      lesserWage: false,
+      distantLocation: false
     },
-    volunteering: true, // This would normally come from profile data
-    location: {
-      city: profile.location?.city || '',
-      state: profile.location?.state || '',
-      country: profile.location?.country || ''
+    locationProximity: profile.location?.city ? 5 : 0,
+    awards: {
+      leadershipAwards: profile.awards?.length || 0,
+      advancedCommunication: true,
+      languages: profile.languages?.length || 0
     },
-    employerMatch: profile.glohsenScore ? profile.glohsenScore - 50 : 70 // Just an example calculation
+    remoteWork: true,
+    availability: 'immediate'
   };
   
   return calculateGlohsenScore(candidateData);
