@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Users, CreditCard, ChartBar, Trophy, FileText, BookMarked, ChevronRight } from "lucide-react";
+import { BookOpen, Users, CreditCard, ChartBar, Trophy, FileText, BookMarked, ChevronRight, User, MessageSquare } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import Sidebar from "@/components/Sidebar";
 
@@ -118,20 +118,26 @@ const TutorDashboardPage: React.FC = () => {
             </Card>
           </div>
 
-          {/* Dashboard Tabs */}
+          {/* Dashboard Tabs - updated according to requirements */}
           <Tabs defaultValue="overview" className="w-full" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsList className="grid w-full grid-cols-6 mb-6">
               <TabsTrigger value="overview" className="flex items-center">
                 <ChartBar className="mr-2 h-4 w-4" /> Overview
               </TabsTrigger>
+              <TabsTrigger value="profile" className="flex items-center">
+                <User className="mr-2 h-4 w-4" /> My Profile
+              </TabsTrigger>
               <TabsTrigger value="courses" className="flex items-center">
-                <BookMarked className="mr-2 h-4 w-4" /> My Courses
+                <BookMarked className="mr-2 h-4 w-4" /> My Courses Analytics
               </TabsTrigger>
               <TabsTrigger value="students" className="flex items-center">
-                <Users className="mr-2 h-4 w-4" /> My Students
+                <Users className="mr-2 h-4 w-4" /> My Students Analytics
               </TabsTrigger>
-              <TabsTrigger value="earnings" className="flex items-center">
-                <CreditCard className="mr-2 h-4 w-4" /> Earnings
+              <TabsTrigger value="transactions" className="flex items-center">
+                <CreditCard className="mr-2 h-4 w-4" /> Transactions History
+              </TabsTrigger>
+              <TabsTrigger value="inbox" className="flex items-center">
+                <MessageSquare className="mr-2 h-4 w-4" /> Inbox & Feedback
               </TabsTrigger>
             </TabsList>
 
@@ -244,24 +250,38 @@ const TutorDashboardPage: React.FC = () => {
               </Card>
             </TabsContent>
 
+            <TabsContent value="profile" className="space-y-4">
+              <Card className="p-6">
+                <h2 className="text-xl font-bold mb-6">My Profile</h2>
+                <p className="text-gray-600 mb-4">Profile content will appear here</p>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="courses" className="space-y-4">
               <Card className="p-6">
-                <h2 className="text-xl font-bold mb-6">My Courses</h2>
-                <p className="text-gray-600 mb-4">Courses content will appear here</p>
+                <h2 className="text-xl font-bold mb-6">My Courses Analytics</h2>
+                <p className="text-gray-600 mb-4">Courses analytics content will appear here</p>
               </Card>
             </TabsContent>
 
             <TabsContent value="students" className="space-y-4">
               <Card className="p-6">
-                <h2 className="text-xl font-bold mb-6">My Students</h2>
-                <p className="text-gray-600 mb-4">Students management will appear here</p>
+                <h2 className="text-xl font-bold mb-6">My Students Analytics</h2>
+                <p className="text-gray-600 mb-4">Students analytics content will appear here</p>
               </Card>
             </TabsContent>
 
-            <TabsContent value="earnings" className="space-y-4">
+            <TabsContent value="transactions" className="space-y-4">
               <Card className="p-6">
-                <h2 className="text-xl font-bold mb-6">Earnings History</h2>
-                <p className="text-gray-600 mb-4">Earnings details will appear here</p>
+                <h2 className="text-xl font-bold mb-6">Transactions History</h2>
+                <p className="text-gray-600 mb-4">Transactions details will appear here</p>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="inbox" className="space-y-4">
+              <Card className="p-6">
+                <h2 className="text-xl font-bold mb-6">Inbox & Feedback</h2>
+                <p className="text-gray-600 mb-4">Messages and feedback will appear here</p>
               </Card>
             </TabsContent>
           </Tabs>

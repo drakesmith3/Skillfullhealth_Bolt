@@ -1,194 +1,167 @@
 
-// Define the types for the candidate data and score breakdown
-export interface CandidateData {
-  education: {
-    degree: string;
-    institution: string;
-    graduationYear: number;
-    gpa?: number;
-  }[];
-  experience: {
-    position: string;
-    company: string;
-    startDate: string;
-    endDate?: string;
-    current: boolean;
-    yearsInRole: number;
-  }[];
-  skills: string[];
-  certifications: {
-    name: string;
-    issuer: string;
-    dateObtained: string;
-    expiryDate?: string;
-    active: boolean;
-  }[];
-  publications?: {
-    title: string;
-    publisher: string;
-    datePublished: string;
-    citations?: number;
-  }[];
-  awards?: {
-    name: string;
-    issuer: string;
-    dateReceived: string;
-  }[];
-  platformActivity: {
-    postsCreated: number;
-    commentsGiven: number;
-    likesReceived: number;
-    profileCompleteness: number;
-  };
-  feedback?: {
-    averageRating: number;
-    totalReviews: number;
-  };
-  employerMatch?: {
-    skillsMatch: number;
-    experienceMatch: number;
-    educationMatch: number;
-    certificationMatch: number;
-  };
-}
+import type { ProfessionalProfile } from '@/types/dashboard';
 
-export interface ScoreBreakdown {
-  total: number;
-  education: number;
-  experience: number;
-  skills: number;
-  certifications: number;
-  publications: number;
-  awards: number;
-  platformActivity: number;
-  feedback: number;
+export interface CandidateData {
+  experience: {
+    years: number;
+    positions: string[];
+  };
+  skills: string[];
+  skillLevels: Record<string, number>;
+  certifications: string[];
+  locumJobs: number;
+  platformActivity: {
+    logins: number;
+    applications: number;
+    profileUpdates: number;
+  };
+  volunteering: boolean;
+  location: {
+    city: string;
+    state: string;
+    country: string;
+  };
   employerMatch: number;
 }
 
-// Calculate the GLOHSEN score based on candidate data
+export interface ScoreBreakdown {
+  experience: number;
+  skills: number;
+  locumJobs: number;
+  platformActivity: number;
+  volunteering: number;
+  location: number;
+  employerMatch: number;
+  total: number;
+}
+
+// Calculate GLOHSEN score from candidate data
 export const calculateGlohsenScore = (data: CandidateData): ScoreBreakdown => {
-  // Education score (max 20)
-  const educationScore = calculateEducationScore(data.education);
+  // Experience score (max 10 points)
+  const experienceScore = Math.min(data.experience.years, 10);
   
-  // Experience score (max 35)
-  const experienceScore = calculateExperienceScore(data.experience);
-  
-  // Skills score (max 15)
-  const skillsScore = Math.min(15, data.skills.length * 1.5);
-  
-  // Certifications score (max 15)
-  const certificationsScore = Math.min(15, data.certifications.filter(c => c.active).length * 3);
-  
-  // Publications score (max 10)
-  const publicationsScore = data.publications ? 
-    Math.min(10, data.publications.length * 2) : 0;
-  
-  // Awards score (max 10)
-  const awardsScore = data.awards ? 
-    Math.min(10, data.awards.length * 2.5) : 0;
-  
-  // Platform activity score (max 15)
-  const platformActivityScore = calculatePlatformActivityScore(data.platformActivity);
-  
-  // Feedback score (max 20)
-  const feedbackScore = data.feedback ? 
-    Math.min(20, data.feedback.averageRating * 4) : 0;
-  
-  // Employer match score (max 60)
-  const employerMatchScore = data.employerMatch ? 
-    Math.min(60, 
-      (data.employerMatch.skillsMatch * 20) + 
-      (data.employerMatch.experienceMatch * 20) + 
-      (data.employerMatch.educationMatch * 10) + 
-      (data.employerMatch.certificationMatch * 10)
-    ) : 0;
-  
-  // Calculate total score (max 200)
-  const totalScore = Math.round(
-    educationScore + 
-    experienceScore + 
-    skillsScore + 
-    certificationsScore + 
-    publicationsScore + 
-    awardsScore + 
-    platformActivityScore + 
-    feedbackScore + 
-    employerMatchScore
+  // Skills score (max 15 points)
+  const skillsScore = Math.min(
+    Object.values(data.skillLevels).reduce((sum, level) => sum + level, 0) / 2,
+    15
   );
   
+  // Locum jobs score (max 10 points)
+  const locumJobsScore = Math.min(data.locumJobs * 2, 10);
+  
+  // Platform activity score (max 10 points)
+  const activityScore = Math.min(
+    (data.platformActivity.logins / 10) + 
+    (data.platformActivity.applications * 2) + 
+    (data.platformActivity.profileUpdates * 3),
+    10
+  );
+  
+  // Volunteering score (max 10 points)
+  const volunteeringScore = data.volunteering ? 10 : 0;
+  
+  // Location score (max 5 points)
+  // This is a simplified location scoring logic
+  const locationScore = data.location.country === 'Nigeria' ? 5 : 3;
+  
+  // Employer match score (max 110 points)
+  const employerMatchScore = data.employerMatch;
+  
+  // Calculate total score
+  const totalScore = 
+    experienceScore + 
+    skillsScore + 
+    locumJobsScore + 
+    activityScore + 
+    volunteeringScore + 
+    locationScore +
+    employerMatchScore;
+  
   return {
-    total: totalScore,
-    education: Math.round(educationScore),
-    experience: Math.round(experienceScore),
-    skills: Math.round(skillsScore),
-    certifications: Math.round(certificationsScore),
-    publications: Math.round(publicationsScore),
-    awards: Math.round(awardsScore),
-    platformActivity: Math.round(platformActivityScore),
-    feedback: Math.round(feedbackScore),
-    employerMatch: Math.round(employerMatchScore)
+    experience: experienceScore,
+    skills: skillsScore,
+    locumJobs: locumJobsScore,
+    platformActivity: activityScore,
+    volunteering: volunteeringScore,
+    location: locationScore,
+    employerMatch: employerMatchScore,
+    total: totalScore
   };
 };
 
-// Helper functions
+// Example candidate data to use when no data is provided
+export const calculateExampleCandidate = (): ScoreBreakdown => {
+  const exampleData: CandidateData = {
+    experience: {
+      years: 8,
+      positions: ['Doctor', 'Specialist', 'Consultant']
+    },
+    skills: ['Surgery', 'Diagnosis', 'Patient Care', 'Emergency Medicine'],
+    skillLevels: {
+      'Surgery': 4,
+      'Diagnosis': 5,
+      'Patient Care': 5,
+      'Emergency Medicine': 3
+    },
+    certifications: ['Medical License', 'Basic Life Support', 'Advanced Cardiac Life Support'],
+    locumJobs: 4,
+    platformActivity: {
+      logins: 45,
+      applications: 3,
+      profileUpdates: 2
+    },
+    volunteering: true,
+    location: {
+      city: 'Lagos',
+      state: 'Lagos',
+      country: 'Nigeria'
+    },
+    employerMatch: 85
+  };
+  
+  return calculateGlohsenScore(exampleData);
+};
 
-function calculateEducationScore(education: CandidateData['education']): number {
-  if (!education || education.length === 0) return 0;
+// Calculate GLOHSEN score from professional profile
+export const calculateScoreFromProfile = (profile: ProfessionalProfile): ScoreBreakdown => {
+  // Convert profile to candidate data format
+  const candidateData: CandidateData = {
+    experience: {
+      years: profile.experience?.reduce((total, exp) => {
+        // Calculate years in each position
+        const startDate = new Date(exp.startDate);
+        const endDate = exp.current ? new Date() : (exp.endDate ? new Date(exp.endDate) : new Date());
+        const yearDiff = endDate.getFullYear() - startDate.getFullYear();
+        return total + yearDiff;
+      }, 0) || 0,
+      positions: profile.experience?.map(exp => exp.position) || []
+    },
+    skills: profile.skills?.map(skill => skill.name) || [],
+    skillLevels: profile.skills?.reduce((obj, skill) => {
+      let level = 1;
+      switch (skill.level) {
+        case 'BEGINNER': level = 1; break;
+        case 'INTERMEDIATE': level = 2; break;
+        case 'ADVANCED': level = 3; break;
+        case 'EXPERT': level = 4; break;
+      }
+      return { ...obj, [skill.name]: level };
+    }, {}) || {},
+    certifications: profile.certificates?.map(cert => cert.name) || [],
+    locumJobs: 3, // This would normally come from job history
+    platformActivity: {
+      logins: 30, // This would normally come from platform data
+      applications: 5,
+      profileUpdates: 3
+    },
+    volunteering: true, // This would normally come from profile data
+    location: {
+      city: profile.location?.city || '',
+      state: profile.location?.state || '',
+      country: profile.location?.country || ''
+    },
+    employerMatch: profile.glohsenScore ? profile.glohsenScore - 50 : 70 // Just an example calculation
+  };
   
-  // Weight scores based on degree level
-  let score = 0;
-  for (const edu of education) {
-    if (edu.degree.includes('PhD') || edu.degree.includes('Doctorate')) {
-      score += 20;
-    } else if (edu.degree.includes('Master')) {
-      score += 15;
-    } else if (edu.degree.includes('Bachelor')) {
-      score += 10;
-    } else {
-      score += 5;
-    }
-    
-    // Extra points for GPA if available
-    if (edu.gpa && edu.gpa > 3.5) {
-      score += 2;
-    } else if (edu.gpa && edu.gpa > 3.0) {
-      score += 1;
-    }
-  }
-  
-  return Math.min(20, score);
-}
-
-function calculateExperienceScore(experience: CandidateData['experience']): number {
-  if (!experience || experience.length === 0) return 0;
-  
-  // Calculate total years of experience
-  const totalYears = experience.reduce((sum, exp) => sum + exp.yearsInRole, 0);
-  
-  // Base score from total years
-  let score = Math.min(25, totalYears * 2.5);
-  
-  // Bonus points for leadership positions
-  const leadershipPositions = experience.filter(exp => 
-    exp.position.toLowerCase().includes('manager') || 
-    exp.position.toLowerCase().includes('director') || 
-    exp.position.toLowerCase().includes('head') ||
-    exp.position.toLowerCase().includes('chief') ||
-    exp.position.toLowerCase().includes('lead')
-  );
-  
-  score += Math.min(10, leadershipPositions.length * 3);
-  
-  return Math.min(35, score);
-}
-
-function calculatePlatformActivityScore(activity: CandidateData['platformActivity']): number {
-  if (!activity) return 0;
-  
-  const postScore = Math.min(5, activity.postsCreated * 0.5);
-  const commentScore = Math.min(3, activity.commentsGiven * 0.2);
-  const likesScore = Math.min(2, activity.likesReceived * 0.1);
-  const completenessScore = Math.min(5, activity.profileCompleteness * 0.05);
-  
-  return Math.min(15, postScore + commentScore + likesScore + completenessScore);
-}
+  return calculateGlohsenScore(candidateData);
+};
