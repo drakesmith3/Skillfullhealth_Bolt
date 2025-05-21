@@ -1,5 +1,7 @@
+
 import React from 'react';
-import { useTheme } from '../contexts/ThemeContext'; // Assuming ThemeContext is in src/contexts
+import { useTheme } from '../contexts/ThemeContext';
+import { Moon, Sun } from 'lucide-react';
 
 const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -12,14 +14,10 @@ const ThemeToggle: React.FC = () => {
     >
       {theme === 'light' ? (
         // Moon icon for light theme (to switch to dark)
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
+        <Moon className="h-5 w-5" />
       ) : (
         // Sun icon for dark theme (to switch to light)
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-12.66l-.707.707M5.05 18.95l-.707.707M21 12h-1M4 12H3m15.66-8.66l-.707-.707M6.05 5.05l-.707-.707" />
-        </svg>
+        <Sun className="h-5 w-5" />
       )}
     </button>
   );

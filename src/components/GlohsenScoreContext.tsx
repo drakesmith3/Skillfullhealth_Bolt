@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import type { CandidateData, ScoreBreakdown } from '@/services/scoreCalculator';
 import { calculateGlohsenScore } from '@/services/scoreCalculator';
@@ -59,3 +60,5 @@ export const GlohsenScoreProvider = ({ children }: GlohsenScoreProviderProps) =>
     </GlohsenScoreContext.Provider>
   );
 };
+
+export default GlohsenScoreProvider;

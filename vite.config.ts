@@ -13,6 +13,7 @@ export default defineConfig({
     },
   },
   server: {
+    port: 8080,
     middleware: [
       (req: Request, res: Response, next: NextFunction) => {
         // Custom middleware to handle API requests
