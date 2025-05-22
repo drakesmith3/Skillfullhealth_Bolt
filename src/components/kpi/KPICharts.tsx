@@ -1,415 +1,333 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  BarChart, 
+  ResponsiveContainer, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend,
+  PieChart as RechartsPieChart,
   Pie,
   Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
+  LineChart,
+  Line
 } from 'recharts';
 
 interface KPIChartsProps {
-  type: string;
-  timeFrame: string;
+  type?: 'overview' | 'performance' | 'revenue' | 'growth';
+  timeFrame?: 'weekly' | 'monthly' | 'quarterly' | 'yearly';
 }
 
-const KPICharts: React.FC<KPIChartsProps> = ({ type, timeFrame }) => {
-  // Mock data generation based on chart type and time frame
-  const getChartData = () => {
-    // Overview data with performance, revenue, and growth
-    if (type === 'overview') {
-      if (timeFrame === 'weekly') {
-        return {
-          performance: [
-            { name: 'Mon', value: 65 },
-            { name: 'Tue', value: 72 },
-            { name: 'Wed', value: 68 },
-            { name: 'Thu', value: 75 },
-            { name: 'Fri', value: 80 },
-            { name: 'Sat', value: 78 },
-            { name: 'Sun', value: 82 }
-          ],
-          revenue: [
-            { name: 'Mon', value: 25000 },
-            { name: 'Tue', value: 32000 },
-            { name: 'Wed', value: 28000 },
-            { name: 'Thu', value: 35000 },
-            { name: 'Fri', value: 42000 },
-            { name: 'Sat', value: 48000 },
-            { name: 'Sun', value: 40000 }
-          ],
-          growth: [
-            { name: 'New Clients', value: 35 },
-            { name: 'Returning', value: 45 },
-            { name: 'Referrals', value: 20 }
-          ]
-        };
-      } else if (timeFrame === 'monthly') {
-        return {
-          performance: [
-            { name: 'Week 1', value: 70 },
-            { name: 'Week 2', value: 75 },
-            { name: 'Week 3', value: 82 },
-            { name: 'Week 4', value: 88 }
-          ],
-          revenue: [
-            { name: 'Week 1', value: 220000 },
-            { name: 'Week 2', value: 240000 },
-            { name: 'Week 3', value: 260000 },
-            { name: 'Week 4', value: 280000 }
-          ],
-          growth: [
-            { name: 'New Clients', value: 40 },
-            { name: 'Returning', value: 35 },
-            { name: 'Referrals', value: 25 }
-          ]
-        };
-      } else if (timeFrame === 'quarterly') {
-        return {
-          performance: [
-            { name: 'Month 1', value: 75 },
-            { name: 'Month 2', value: 80 },
-            { name: 'Month 3', value: 88 }
-          ],
-          revenue: [
-            { name: 'Month 1', value: 900000 },
-            { name: 'Month 2', value: 950000 },
-            { name: 'Month 3', value: 1150000 }
-          ],
-          growth: [
-            { name: 'New Clients', value: 45 },
-            { name: 'Returning', value: 30 },
-            { name: 'Referrals', value: 25 }
-          ]
-        };
-      } else {
-        return {
-          performance: [
-            { name: 'Q1', value: 78 },
-            { name: 'Q2', value: 82 },
-            { name: 'Q3', value: 85 },
-            { name: 'Q4', value: 90 }
-          ],
-          revenue: [
-            { name: 'Q1', value: 2800000 },
-            { name: 'Q2', value: 3000000 },
-            { name: 'Q3', value: 3100000 },
-            { name: 'Q4', value: 3500000 }
-          ],
-          growth: [
-            { name: 'New Clients', value: 50 },
-            { name: 'Returning', value: 30 },
-            { name: 'Referrals', value: 20 }
-          ]
-        };
-      }
+type PerformanceData = { name: string; value: number }[];
+type RevenueData = { name: string; value: number }[];
+type GrowthData = { name: string; value: number }[];
+
+type ChartData = {
+  performance: PerformanceData;
+  revenue: RevenueData;
+  growth: GrowthData;
+} | PerformanceData | RevenueData | GrowthData;
+
+const KPICharts: React.FC<KPIChartsProps> = ({ 
+  type = "overview", 
+  timeFrame = "monthly" 
+}) => {
+  // Generate mock data based on time frame
+  const getChartData = (): ChartData => {
+    let performanceData: PerformanceData;
+    let revenueData: RevenueData;
+    let growthData: GrowthData;
+
+    switch(timeFrame) {
+      case 'weekly':
+        performanceData = [
+          { name: 'Mon', value: 85 },
+          { name: 'Tue', value: 78 },
+          { name: 'Wed', value: 92 },
+          { name: 'Thu', value: 80 },
+          { name: 'Fri', value: 88 },
+          { name: 'Sat', value: 72 },
+          { name: 'Sun', value: 65 }
+        ];
+
+        revenueData = [
+          { name: 'Mon', value: 3200 },
+          { name: 'Tue', value: 2800 },
+          { name: 'Wed', value: 3500 },
+          { name: 'Thu', value: 3100 },
+          { name: 'Fri', value: 3800 },
+          { name: 'Sat', value: 2500 },
+          { name: 'Sun', value: 2200 }
+        ];
+
+        growthData = [
+          { name: 'Week Start', value: 100 },
+          { name: 'Current', value: 115 }
+        ];
+        break;
+
+      case 'quarterly':
+        performanceData = [
+          { name: 'Jan', value: 82 },
+          { name: 'Feb', value: 85 },
+          { name: 'Mar', value: 88 },
+          { name: 'Apr', value: 81 },
+          { name: 'May', value: 83 },
+          { name: 'Jun', value: 85 },
+          { name: 'Jul', value: 87 },
+          { name: 'Aug', value: 89 },
+          { name: 'Sep', value: 90 },
+          { name: 'Oct', value: 88 },
+          { name: 'Nov', value: 86 },
+          { name: 'Dec', value: 92 }
+        ];
+
+        revenueData = [
+          { name: 'Jan', value: 10500 },
+          { name: 'Feb', value: 12000 },
+          { name: 'Mar', value: 13500 },
+          { name: 'Apr', value: 12800 },
+          { name: 'May', value: 13200 },
+          { name: 'Jun', value: 14000 },
+          { name: 'Jul', value: 15200 },
+          { name: 'Aug', value: 16500 },
+          { name: 'Sep', value: 17800 },
+          { name: 'Oct', value: 18500 },
+          { name: 'Nov', value: 19200 },
+          { name: 'Dec', value: 21000 }
+        ];
+
+        growthData = [
+          { name: 'Q1', value: 100 },
+          { name: 'Q2', value: 115 },
+          { name: 'Q3', value: 132 },
+          { name: 'Q4', value: 145 }
+        ];
+        break;
+
+      case 'yearly':
+        performanceData = [
+          { name: '2022', value: 75 },
+          { name: '2023', value: 82 },
+          { name: '2024', value: 88 },
+          { name: '2025', value: 90 }
+        ];
+
+        revenueData = [
+          { name: '2022', value: 120000 },
+          { name: '2023', value: 145000 },
+          { name: '2024', value: 182000 },
+          { name: '2025', value: 210000 }
+        ];
+
+        growthData = [
+          { name: '2022', value: 100 },
+          { name: '2023', value: 121 },
+          { name: '2024', value: 152 },
+          { name: '2025', value: 175 }
+        ];
+        break;
+
+      case 'monthly':
+      default:
+        performanceData = [
+          { name: 'Week 1', value: 82 },
+          { name: 'Week 2', value: 85 },
+          { name: 'Week 3', value: 80 },
+          { name: 'Week 4', value: 88 }
+        ];
+
+        revenueData = [
+          { name: 'Week 1', value: 8500 },
+          { name: 'Week 2', value: 9200 },
+          { name: 'Week 3', value: 8800 },
+          { name: 'Week 4', value: 9600 }
+        ];
+
+        growthData = [
+          { name: 'Month Start', value: 100 },
+          { name: 'Current', value: 112 }
+        ];
+        break;
     }
-    
-    // Performance data
-    if (type === 'performance') {
-      if (timeFrame === 'weekly') {
-        return [
-          { name: 'Mon', success: 65, target: 70 },
-          { name: 'Tue', success: 72, target: 70 },
-          { name: 'Wed', success: 68, target: 70 },
-          { name: 'Thu', success: 75, target: 70 },
-          { name: 'Fri', success: 80, target: 70 },
-          { name: 'Sat', success: 78, target: 70 },
-          { name: 'Sun', success: 82, target: 70 }
-        ];
-      } else if (timeFrame === 'monthly') {
-        return [
-          { name: 'Week 1', success: 70, target: 75 },
-          { name: 'Week 2', success: 75, target: 75 },
-          { name: 'Week 3', success: 82, target: 75 },
-          { name: 'Week 4', success: 88, target: 75 }
-        ];
-      } else if (timeFrame === 'quarterly') {
-        return [
-          { name: 'Month 1', success: 75, target: 80 },
-          { name: 'Month 2', success: 80, target: 80 },
-          { name: 'Month 3', success: 88, target: 80 }
-        ];
-      } else {
-        return [
-          { name: 'Q1', success: 78, target: 85 },
-          { name: 'Q2', success: 82, target: 85 },
-          { name: 'Q3', success: 85, target: 85 },
-          { name: 'Q4', success: 90, target: 85 }
-        ];
-      }
-    }
-    
-    // Revenue data
-    if (type === 'revenue') {
-      if (timeFrame === 'weekly') {
-        return [
-          { name: 'Mon', direct: 15000, referral: 10000 },
-          { name: 'Tue', direct: 18000, referral: 14000 },
-          { name: 'Wed', direct: 16000, referral: 12000 },
-          { name: 'Thu', direct: 20000, referral: 15000 },
-          { name: 'Fri', direct: 25000, referral: 17000 },
-          { name: 'Sat', direct: 30000, referral: 18000 },
-          { name: 'Sun', direct: 22000, referral: 18000 }
-        ];
-      } else if (timeFrame === 'monthly') {
-        return [
-          { name: 'Week 1', direct: 120000, referral: 100000 },
-          { name: 'Week 2', direct: 140000, referral: 100000 },
-          { name: 'Week 3', direct: 150000, referral: 110000 },
-          { name: 'Week 4', direct: 160000, referral: 120000 }
-        ];
-      } else if (timeFrame === 'quarterly') {
-        return [
-          { name: 'Month 1', direct: 500000, referral: 400000 },
-          { name: 'Month 2', direct: 550000, referral: 400000 },
-          { name: 'Month 3', direct: 650000, referral: 500000 }
-        ];
-      } else {
-        return [
-          { name: 'Q1', direct: 1600000, referral: 1200000 },
-          { name: 'Q2', direct: 1700000, referral: 1300000 },
-          { name: 'Q3', direct: 1800000, referral: 1300000 },
-          { name: 'Q4', direct: 2000000, referral: 1500000 }
-        ];
-      }
-    }
-    
-    // Growth data
-    if (type === 'growth') {
-      if (timeFrame === 'weekly') {
-        return [
-          { name: 'New Clients', value: 35 },
-          { name: 'Returning', value: 45 },
-          { name: 'Referrals', value: 20 }
-        ];
-      } else if (timeFrame === 'monthly') {
-        return [
-          { name: 'New Clients', value: 40 },
-          { name: 'Returning', value: 35 },
-          { name: 'Referrals', value: 25 }
-        ];
-      } else if (timeFrame === 'quarterly') {
-        return [
-          { name: 'New Clients', value: 45 },
-          { name: 'Returning', value: 30 },
-          { name: 'Referrals', value: 25 }
-        ];
-      } else {
-        return [
-          { name: 'New Clients', value: 50 },
-          { name: 'Returning', value: 30 },
-          { name: 'Referrals', value: 20 }
-        ];
-      }
-    }
-    
-    return [];
+
+    if (type === 'performance') return performanceData;
+    if (type === 'revenue') return revenueData;
+    if (type === 'growth') return growthData;
+
+    return { performance: performanceData, revenue: revenueData, growth: growthData };
   };
 
+  const chartData = getChartData();
+  
   // Colors for charts
-  const COLORS = ['#D4AF37', '#ea384c', '#3498db', '#2ecc71'];
-  
-  // Format currency
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-NG', { 
-      style: 'currency', 
-      currency: 'NGN',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
-  
-  // Custom tooltip formatters
-  const currencyTooltipFormatter = (value: number) => formatCurrency(value);
-  const percentTooltipFormatter = (value: number) => `${value}%`;
+  const COLORS = ['#D4AF37', '#ea384c', '#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-  const renderChart = () => {
-    const data = getChartData();
-    
-    if (type === 'overview') {
-      return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={data.performance}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis domain={[0, 100]} />
-                  <Tooltip formatter={percentTooltipFormatter} />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="value" 
-                    name="Success Rate" 
-                    stroke="#D4AF37" 
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                    activeDot={{ r: 5 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data.revenue}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip formatter={currencyTooltipFormatter} />
-                  <Legend />
-                  <Bar dataKey="value" name="Revenue" fill="#ea384c" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Client Distribution</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={data.growth}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+  return (
+    <div className="space-y-8">
+      {type === 'overview' ? (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Performance</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart
+                    data={Array.isArray(chartData) ? chartData : chartData.performance}
+                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
                   >
-                    {data.growth.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
-      );
-    }
-    
-    if (type === 'performance') {
-      return (
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#D4AF37" name="Performance Score" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Revenue</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <ResponsiveContainer width="100%" height={200}>
+                  <LineChart
+                    data={Array.isArray(chartData) ? chartData : chartData.revenue}
+                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line 
+                      type="monotone" 
+                      dataKey="value" 
+                      stroke="#ea384c" 
+                      name="Revenue" 
+                      strokeWidth={2} 
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Growth</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <ResponsiveContainer width="100%" height={200}>
+                  <RechartsPieChart>
+                    <Tooltip />
+                    <Pie
+                      data={Array.isArray(chartData) ? chartData : chartData.growth}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      nameKey="name"
+                    >
+                      {(Array.isArray(chartData) ? chartData : chartData.growth).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Legend />
+                  </RechartsPieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      ) : type === 'performance' ? (
         <Card>
           <CardHeader>
-            <CardTitle>Success Rate vs Target</CardTitle>
+            <CardTitle>Performance Metrics</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={400}>
-              <LineChart data={data}>
+              <BarChart
+                data={chartData as PerformanceData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip formatter={percentTooltipFormatter} />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#D4AF37" name="Performance Score" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      ) : type === 'revenue' ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue Analysis</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={400}>
+              <LineChart
+                data={chartData as RevenueData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
                 <Legend />
                 <Line 
                   type="monotone" 
-                  dataKey="success" 
-                  name="Success Rate" 
-                  stroke="#D4AF37" 
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                  activeDot={{ r: 5 }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="target" 
-                  name="Target" 
+                  dataKey="value" 
                   stroke="#ea384c" 
-                  strokeDasharray="3 3" 
+                  name="Revenue" 
+                  strokeWidth={2} 
                 />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
-      );
-    }
-    
-    if (type === 'revenue') {
-      return (
+      ) : (
         <Card>
           <CardHeader>
-            <CardTitle>Revenue Breakdown</CardTitle>
+            <CardTitle>Growth Analytics</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip formatter={currencyTooltipFormatter} />
-                <Legend />
-                <Bar dataKey="direct" name="Direct Revenue" fill="#D4AF37" />
-                <Bar dataKey="referral" name="Referral Revenue" fill="#ea384c" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      );
-    }
-    
-    if (type === 'growth') {
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Client Distribution</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <PieChart>
+              <RechartsPieChart>
                 <Pie
-                  data={data}
+                  data={chartData as GrowthData}
                   cx="50%"
                   cy="50%"
-                  labelLine={true}
+                  labelLine={false}
                   outerRadius={150}
                   fill="#8884d8"
                   dataKey="value"
+                  nameKey="name"
                   label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
-                  {data.map((entry, index) => (
+                  {(chartData as GrowthData).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
                 <Legend />
-              </PieChart>
+              </RechartsPieChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
-      );
-    }
-    
-    return null;
-  };
-
-  return renderChart();
+      )}
+    </div>
+  );
 };
 
 export default KPICharts;

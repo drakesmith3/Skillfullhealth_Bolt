@@ -41,3 +41,10 @@ export interface ScoreHistory {
   date: string;
   score: number;
 }
+
+export interface Certificate {
+  name: string;
+  status: "CURRENT" | "EXPIRED" | "PENDING";
+  expiryDate: string;
+  url: string;
+}

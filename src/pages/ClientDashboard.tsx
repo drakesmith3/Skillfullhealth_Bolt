@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, FileText, Activity, Gamepad, Heart, User } from "lucide-react";
+import { MessageSquare, FileText, Gamepad, Users } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { Link } from "react-router-dom";
 
 const ClientDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -15,160 +16,146 @@ const ClientDashboard: React.FC = () => {
       pageTitle="Client Dashboard"
       pageDescription="Welcome back, James!"
     >
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="bg-white/80 shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-medium flex items-center">
-                <MessageSquare className="mr-2 h-5 w-5 text-[#D4AF37]" />
-                Community Engagement
-              </h3>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Forum Posts</span>
-                <span className="text-green-600 font-semibold">23</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Replies</span>
-                <span className="text-amber-600 font-semibold">47</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Likes Received</span>
-                <span className="text-[#D4AF37] font-semibold">112</span>
-              </div>
-              <Button size="sm" className="w-full mt-2">View Community</Button>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-white/80 shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-medium flex items-center">
-                <Activity className="mr-2 h-5 w-5 text-[#D4AF37]" />
-                Health Stats
-              </h3>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Games Played</span>
-                <span className="text-green-600 font-semibold">14</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Quizzes Completed</span>
-                <span className="text-amber-600 font-semibold">7</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Health Score</span>
-                <span className="text-[#D4AF37] font-semibold">82/100</span>
-              </div>
-              <Button size="sm" className="w-full mt-2">Play Games & Quizzes</Button>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-white/80 shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-medium flex items-center">
-                <FileText className="mr-2 h-5 w-5 text-[#D4AF37]" />
-                Feedback Provided
-              </h3>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Professional Reviews</span>
-                <span className="text-green-600 font-semibold">8</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Services Rated</span>
-                <span className="text-amber-600 font-semibold">12</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Influence Points</span>
-                <span className="text-[#D4AF37] font-semibold">340</span>
-              </div>
-              <Button size="sm" className="w-full mt-2">Give Feedback</Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Dashboard Tabs */}
       <Tabs defaultValue="overview" className="w-full" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-5 mb-6">
-          <TabsTrigger value="overview" className="flex items-center">
-            <User className="mr-2 h-4 w-4" /> Overview
-          </TabsTrigger>
-          <TabsTrigger value="games" className="flex items-center">
-            <Gamepad className="mr-2 h-4 w-4" /> Games & Quizzes Analytics
-          </TabsTrigger>
-          <TabsTrigger value="community" className="flex items-center">
-            <MessageSquare className="mr-2 h-4 w-4" /> Community Discussion
-          </TabsTrigger>
-          <TabsTrigger value="inbox" className="flex items-center">
-            <MessageSquare className="mr-2 h-4 w-4" /> Inbox
-          </TabsTrigger>
-          <TabsTrigger value="feedback" className="flex items-center">
-            <FileText className="mr-2 h-4 w-4" /> Feedbacks You Gave
-          </TabsTrigger>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="games">Games & Quizzes Analytics</TabsTrigger>
+          <TabsTrigger value="community">My Community Discussion History</TabsTrigger>
+          <TabsTrigger value="inbox">Inbox</TabsTrigger>
+          <TabsTrigger value="feedback">Feedbacks You Gave</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="shadow-md hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-4 flex items-center">
+                  <Gamepad className="h-5 w-5 text-[#D4AF37] mr-2" />
+                  Game Stats
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Games Played</span>
+                    <span className="font-semibold">12</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Top Score</span>
+                    <span className="font-semibold text-[#D4AF37]">950</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Average Score</span>
+                    <span className="font-semibold">720</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Badges</span>
+                    <span className="font-semibold">5</span>
+                  </div>
+                </div>
+                <Button className="w-full mt-4 bg-[#D4AF37] hover:bg-amber-500 text-black" asChild>
+                  <Link to="/games-quizzes">Play Now</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-md hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-4 flex items-center">
+                  <Users className="h-5 w-5 text-[#D4AF37] mr-2" />
+                  Community
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Discussions Started</span>
+                    <span className="font-semibold">3</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Replies</span>
+                    <span className="font-semibold">28</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Helpful Badges</span>
+                    <span className="font-semibold text-[#D4AF37]">7</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Last Activity</span>
+                    <span className="font-semibold">2 days ago</span>
+                  </div>
+                </div>
+                <Button className="w-full mt-4 bg-[#D4AF37] hover:bg-amber-500 text-black" asChild>
+                  <Link to="/community">Visit Community</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-md hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-4 flex items-center">
+                  <MessageSquare className="h-5 w-5 text-[#D4AF37] mr-2" />
+                  Messages & Feedback
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Unread Messages</span>
+                    <span className="font-semibold text-red-500">2</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Feedback Given</span>
+                    <span className="font-semibold">14</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Average Rating Given</span>
+                    <span className="font-semibold text-[#D4AF37]">4.5/5</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  <Button variant="outline" asChild>
+                    <Link to="/dashboard/client/inbox">Inbox</Link>
+                  </Button>
+                  <Button className="bg-[#D4AF37] hover:bg-amber-500 text-black" asChild>
+                    <Link to="/dashboard/client/feedback">Feedback</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <Card className="shadow-md hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Personal Health Summary</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-medium mb-3">Recent Health Activities</h4>
-                  <div className="space-y-3">
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="flex items-center mb-1">
-                        <Heart className="h-4 w-4 text-[#ea384c] mr-2" />
-                        <span className="font-medium">Exercise Tracker</span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">You've exercised 4 times this week</p>
-                    </div>
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="flex items-center mb-1">
-                        <Activity className="h-4 w-4 text-[#D4AF37] mr-2" />
-                        <span className="font-medium">Health Quiz</span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">You scored 85% on "Nutrition Basics"</p>
-                    </div>
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="flex items-center mb-1">
-                        <MessageSquare className="h-4 w-4 text-green-500 mr-2" />
-                        <span className="font-medium">Community Post</span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">Your question received 5 helpful responses</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-3">Health Recommendations</h4>
-                  <div className="space-y-3">
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <p className="font-medium">Take the Blood Pressure Management Quiz</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Based on your interests in heart health</p>
-                      <Button size="sm" variant="outline" className="mt-2">Start Quiz</Button>
-                    </div>
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <p className="font-medium">Join the "Mental Wellness" Discussion Group</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Connect with others interested in mental health</p>
-                      <Button size="sm" variant="outline" className="mt-2">Join Group</Button>
-                    </div>
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <p className="font-medium">Rate your recent hospital visit</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Share your experience to help others</p>
-                      <Button size="sm" variant="outline" className="mt-2">Add Review</Button>
+              <h3 className="text-xl font-bold mb-4">Recent Activity</h3>
+              <div className="space-y-3">
+                {[
+                  {
+                    activity: "Played Medical Quiz",
+                    date: "Today",
+                    details: "Score: 85/100",
+                    icon: <Gamepad className="h-5 w-5 text-[#D4AF37]" />
+                  },
+                  {
+                    activity: "Replied to discussion",
+                    date: "Yesterday",
+                    details: "'New treatments for hypertension'",
+                    icon: <Users className="h-5 w-5 text-[#D4AF37]" />
+                  },
+                  {
+                    activity: "Gave feedback",
+                    date: "3 days ago",
+                    details: "To Dr. Adeniran - 5/5 stars",
+                    icon: <FileText className="h-5 w-5 text-[#D4AF37]" />
+                  },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                    <div className="mt-1">{item.icon}</div>
+                    <div>
+                      <p className="font-medium">{item.activity}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{item.details}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{item.date}</p>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
+              <Button variant="ghost" className="w-full mt-2">
+                View All Activity
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -176,12 +163,8 @@ const ClientDashboard: React.FC = () => {
         <TabsContent value="games" className="space-y-4">
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Games & Quizzes Analytics</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">View your performance in health games and quizzes.</p>
-              <div className="mt-4">
-                {/* Games & Quizzes Analytics content would go here */}
-                <p>Games & Quizzes analytics content coming soon...</p>
-              </div>
+              <h2 className="text-2xl font-bold mb-4">Games & Quizzes Analytics</h2>
+              <p>Your games and quizzes performance analytics will be shown here.</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -189,12 +172,8 @@ const ClientDashboard: React.FC = () => {
         <TabsContent value="community" className="space-y-4">
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Community Discussion History</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">View your participation in community discussions.</p>
-              <div className="mt-4">
-                {/* Community discussion content would go here */}
-                <p>Community discussion content coming soon...</p>
-              </div>
+              <h2 className="text-2xl font-bold mb-4">Community Discussion History</h2>
+              <p>Your community forum participation history will be shown here.</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -202,12 +181,8 @@ const ClientDashboard: React.FC = () => {
         <TabsContent value="inbox" className="space-y-4">
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Inbox</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">View your messages and notifications.</p>
-              <div className="mt-4">
-                {/* Inbox content would go here */}
-                <p>Inbox content coming soon...</p>
-              </div>
+              <h2 className="text-2xl font-bold mb-4">Inbox</h2>
+              <p>Your messages and notifications will be shown here.</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -215,12 +190,8 @@ const ClientDashboard: React.FC = () => {
         <TabsContent value="feedback" className="space-y-4">
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Feedbacks You Gave</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">Review the feedback you've provided.</p>
-              <div className="mt-4">
-                {/* Feedback content would go here */}
-                <p>Feedback history content coming soon...</p>
-              </div>
+              <h2 className="text-2xl font-bold mb-4">Feedbacks You Gave</h2>
+              <p>History of feedback you've provided to professionals will be shown here.</p>
             </CardContent>
           </Card>
         </TabsContent>

@@ -14,7 +14,7 @@ const Sidebar = () => {
     <div className="space-y-4">
       <Card3D 
         title="LOCUM JOB BOARD" 
-        value={<Link to="/jobs" className="text-black font-bold hover:underline"><Button className="button-3d bg-[#D4AF37] text-black w-full mt-2">VIEW JOBS</Button></Link>} 
+        value="VIEW JOBS" 
         variant="primary"
         className="bg-primary text-white p-4 text-center text-xl rounded-lg shadow-md"
       />
