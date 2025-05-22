@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback, ComponentType } from "react";
 import Lenis from "@studio-freight/lenis";
 import { gsap } from "gsap";
@@ -307,7 +308,7 @@ function Index(): JSX.Element {
       easing: power2EaseInOut,
       wheelMultiplier: 0.8, // Reduced multiplier for smoother scrolling
       touchMultiplier: 1.5,
-      smoothTouch: true,
+      // Remove smoothTouch property which was causing errors
     });
     
     lenisRef.current = lenis;

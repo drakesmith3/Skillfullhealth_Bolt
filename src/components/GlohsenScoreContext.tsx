@@ -1,6 +1,6 @@
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import type { CandidateData, ScoreBreakdown } from '@/services/scoreCalculator';
+import type { CandidateData, ScoreBreakdown } from '@/types/score';
 import { calculateGlohsenScore } from '@/services/scoreCalculator';
 
 interface GlohsenScoreContextType {

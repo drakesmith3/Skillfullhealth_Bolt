@@ -1,7 +1,6 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, PieChart, LineChart, Activity, Calendar, Download, FileText } from "lucide-react";
 import PreHeader from '@/components/PreHeader';
@@ -9,9 +8,12 @@ import Footer from '@/components/Footer';
 import KPISummaryCards from '@/components/kpi/KPISummaryCards';
 import KPICharts from '@/components/kpi/KPICharts';
 
+type ChartType = "overview" | "performance" | "revenue" | "growth";
+type TimeFrame = "weekly" | "monthly" | "quarterly" | "yearly";
+
 const KPITrackingPage: React.FC = () => {
-  const [activeTab, setActiveTab] = React.useState("overview");
-  const [timeFrame, setTimeFrame] = React.useState("monthly");
+  const [activeTab, setActiveTab] = useState<ChartType>("overview");
+  const [timeFrame, setTimeFrame] = useState<TimeFrame>("monthly");
   
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
@@ -37,7 +39,7 @@ const KPITrackingPage: React.FC = () => {
         </div>
 
         <div className="mb-6 flex justify-between">
-          <Tabs defaultValue="monthly" value={timeFrame} onValueChange={setTimeFrame} className="w-auto">
+          <Tabs defaultValue="monthly" value={timeFrame} onValueChange={(value) => setTimeFrame(value as TimeFrame)} className="w-auto">
             <TabsList>
               <TabsTrigger value="weekly">Weekly</TabsTrigger>
               <TabsTrigger value="monthly">Monthly</TabsTrigger>
@@ -50,7 +52,7 @@ const KPITrackingPage: React.FC = () => {
         {/* KPI Summary Cards */}
         <KPISummaryCards timeFrame={timeFrame} />
 
-        <Tabs defaultValue="overview" className="w-full mt-8" value={activeTab} onValueChange={setActiveTab}>
+        <Tabs defaultValue="overview" className="w-full mt-8" value={activeTab} onValueChange={(value) => setActiveTab(value as ChartType)}>
           <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="overview" className="flex items-center">
               <Activity className="mr-2 h-4 w-4" /> Overview

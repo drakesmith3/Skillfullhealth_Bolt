@@ -1,333 +1,150 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { 
   BarChart, 
-  ResponsiveContainer, 
   Bar, 
+  LineChart, 
+  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  Legend,
-  PieChart as RechartsPieChart,
+  Legend, 
+  ResponsiveContainer,
+  PieChart,
   Pie,
-  Cell,
-  LineChart,
-  Line
+  Cell
 } from 'recharts';
 
-interface KPIChartsProps {
-  type?: 'overview' | 'performance' | 'revenue' | 'growth';
-  timeFrame?: 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+// Define prop types with specific allowed values
+export interface KPIChartsProps {
+  type: "overview" | "performance" | "revenue" | "growth";
+  timeFrame: "weekly" | "monthly" | "quarterly" | "yearly";
 }
 
-type PerformanceData = { name: string; value: number }[];
-type RevenueData = { name: string; value: number }[];
-type GrowthData = { name: string; value: number }[];
+const KPICharts: React.FC<KPIChartsProps> = ({ type, timeFrame }) => {
+  // Mock data
+  const performanceData = [
+    { name: 'Jan', actual: 4000, target: 4500 },
+    { name: 'Feb', actual: 3000, target: 4000 },
+    { name: 'Mar', actual: 5000, target: 5000 },
+    { name: 'Apr', actual: 4500, target: 4500 },
+    { name: 'May', actual: 6000, target: 5500 },
+    { name: 'Jun', actual: 5500, target: 5500 },
+  ];
 
-type ChartData = {
-  performance: PerformanceData;
-  revenue: RevenueData;
-  growth: GrowthData;
-} | PerformanceData | RevenueData | GrowthData;
+  const revenueData = [
+    { name: 'Q1', revenue: 10000, expenses: 6000, profit: 4000 },
+    { name: 'Q2', revenue: 12000, expenses: 7000, profit: 5000 },
+    { name: 'Q3', revenue: 9000, expenses: 5000, profit: 4000 },
+    { name: 'Q4', revenue: 15000, expenses: 8000, profit: 7000 },
+  ];
 
-const KPICharts: React.FC<KPIChartsProps> = ({ 
-  type = "overview", 
-  timeFrame = "monthly" 
-}) => {
-  // Generate mock data based on time frame
-  const getChartData = (): ChartData => {
-    let performanceData: PerformanceData;
-    let revenueData: RevenueData;
-    let growthData: GrowthData;
+  const growthData = [
+    { name: 'New Hires', value: 25 },
+    { name: 'Returning', value: 55 },
+    { name: 'Turnover', value: 20 },
+  ];
 
-    switch(timeFrame) {
-      case 'weekly':
-        performanceData = [
-          { name: 'Mon', value: 85 },
-          { name: 'Tue', value: 78 },
-          { name: 'Wed', value: 92 },
-          { name: 'Thu', value: 80 },
-          { name: 'Fri', value: 88 },
-          { name: 'Sat', value: 72 },
-          { name: 'Sun', value: 65 }
-        ];
+  const COLORS = ['#D4AF37', '#ea384c', '#36A2EB', '#22c55e'];
 
-        revenueData = [
-          { name: 'Mon', value: 3200 },
-          { name: 'Tue', value: 2800 },
-          { name: 'Wed', value: 3500 },
-          { name: 'Thu', value: 3100 },
-          { name: 'Fri', value: 3800 },
-          { name: 'Sat', value: 2500 },
-          { name: 'Sun', value: 2200 }
-        ];
-
-        growthData = [
-          { name: 'Week Start', value: 100 },
-          { name: 'Current', value: 115 }
-        ];
-        break;
-
-      case 'quarterly':
-        performanceData = [
-          { name: 'Jan', value: 82 },
-          { name: 'Feb', value: 85 },
-          { name: 'Mar', value: 88 },
-          { name: 'Apr', value: 81 },
-          { name: 'May', value: 83 },
-          { name: 'Jun', value: 85 },
-          { name: 'Jul', value: 87 },
-          { name: 'Aug', value: 89 },
-          { name: 'Sep', value: 90 },
-          { name: 'Oct', value: 88 },
-          { name: 'Nov', value: 86 },
-          { name: 'Dec', value: 92 }
-        ];
-
-        revenueData = [
-          { name: 'Jan', value: 10500 },
-          { name: 'Feb', value: 12000 },
-          { name: 'Mar', value: 13500 },
-          { name: 'Apr', value: 12800 },
-          { name: 'May', value: 13200 },
-          { name: 'Jun', value: 14000 },
-          { name: 'Jul', value: 15200 },
-          { name: 'Aug', value: 16500 },
-          { name: 'Sep', value: 17800 },
-          { name: 'Oct', value: 18500 },
-          { name: 'Nov', value: 19200 },
-          { name: 'Dec', value: 21000 }
-        ];
-
-        growthData = [
-          { name: 'Q1', value: 100 },
-          { name: 'Q2', value: 115 },
-          { name: 'Q3', value: 132 },
-          { name: 'Q4', value: 145 }
-        ];
-        break;
-
-      case 'yearly':
-        performanceData = [
-          { name: '2022', value: 75 },
-          { name: '2023', value: 82 },
-          { name: '2024', value: 88 },
-          { name: '2025', value: 90 }
-        ];
-
-        revenueData = [
-          { name: '2022', value: 120000 },
-          { name: '2023', value: 145000 },
-          { name: '2024', value: 182000 },
-          { name: '2025', value: 210000 }
-        ];
-
-        growthData = [
-          { name: '2022', value: 100 },
-          { name: '2023', value: 121 },
-          { name: '2024', value: 152 },
-          { name: '2025', value: 175 }
-        ];
-        break;
-
-      case 'monthly':
-      default:
-        performanceData = [
-          { name: 'Week 1', value: 82 },
-          { name: 'Week 2', value: 85 },
-          { name: 'Week 3', value: 80 },
-          { name: 'Week 4', value: 88 }
-        ];
-
-        revenueData = [
-          { name: 'Week 1', value: 8500 },
-          { name: 'Week 2', value: 9200 },
-          { name: 'Week 3', value: 8800 },
-          { name: 'Week 4', value: 9600 }
-        ];
-
-        growthData = [
-          { name: 'Month Start', value: 100 },
-          { name: 'Current', value: 112 }
-        ];
-        break;
-    }
-
-    if (type === 'performance') return performanceData;
-    if (type === 'revenue') return revenueData;
-    if (type === 'growth') return growthData;
-
-    return { performance: performanceData, revenue: revenueData, growth: growthData };
-  };
-
-  const chartData = getChartData();
-  
-  // Colors for charts
-  const COLORS = ['#D4AF37', '#ea384c', '#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-  return (
-    <div className="space-y-8">
-      {type === 'overview' ? (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Performance</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart
-                    data={Array.isArray(chartData) ? chartData : chartData.performance}
-                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="#D4AF37" name="Performance Score" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Revenue</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <ResponsiveContainer width="100%" height={200}>
-                  <LineChart
-                    data={Array.isArray(chartData) ? chartData : chartData.revenue}
-                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line 
-                      type="monotone" 
-                      dataKey="value" 
-                      stroke="#ea384c" 
-                      name="Revenue" 
-                      strokeWidth={2} 
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Growth</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <ResponsiveContainer width="100%" height={200}>
-                  <RechartsPieChart>
-                    <Tooltip />
-                    <Pie
-                      data={Array.isArray(chartData) ? chartData : chartData.growth}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      nameKey="name"
-                    >
-                      {(Array.isArray(chartData) ? chartData : chartData.growth).map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Legend />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-        </>
-      ) : type === 'performance' ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Performance Metrics</CardTitle>
-          </CardHeader>
-          <CardContent>
+  // Render the correct chart based on the type prop
+  const renderChart = () => {
+    switch (type) {
+      case 'performance':
+        return (
+          <Card className="p-4">
+            <h3 className="text-lg font-semibold mb-4">Performance Metrics</h3>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart
-                data={chartData as PerformanceData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              >
+              <LineChart data={performanceData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="value" fill="#D4AF37" name="Performance Score" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      ) : type === 'revenue' ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Revenue Analysis</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <LineChart
-                data={chartData as RevenueData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#ea384c" 
-                  name="Revenue" 
-                  strokeWidth={2} 
-                />
+                <Line type="monotone" dataKey="actual" stroke="#D4AF37" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="target" stroke="#ea384c" />
               </LineChart>
             </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Growth Analytics</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </Card>
+        );
+      case 'revenue':
+        return (
+          <Card className="p-4">
+            <h3 className="text-lg font-semibold mb-4">Revenue Analysis</h3>
             <ResponsiveContainer width="100%" height={400}>
-              <RechartsPieChart>
+              <BarChart data={revenueData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="revenue" fill="#D4AF37" />
+                <Bar dataKey="expenses" fill="#ea384c" />
+                <Bar dataKey="profit" fill="#22c55e" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
+        );
+      case 'growth':
+        return (
+          <Card className="p-4">
+            <h3 className="text-lg font-semibold mb-4">Growth Analysis</h3>
+            <ResponsiveContainer width="100%" height={400}>
+              <PieChart>
                 <Pie
-                  data={chartData as GrowthData}
+                  data={growthData}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                   outerRadius={150}
                   fill="#8884d8"
                   dataKey="value"
-                  nameKey="name"
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
-                  {(chartData as GrowthData).map((entry, index) => (
+                  {growthData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
-                <Legend />
-              </RechartsPieChart>
+              </PieChart>
             </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
+          </Card>
+        );
+      default:
+        return (
+          <Card className="p-4">
+            <h3 className="text-lg font-semibold mb-4">Overview Dashboard</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="col-span-1">
+                <ResponsiveContainer width="100%" height={200}>
+                  <LineChart data={performanceData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="actual" stroke="#D4AF37" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="col-span-1">
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={revenueData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="revenue" fill="#ea384c" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </Card>
+        );
+    }
+  };
+
+  return renderChart();
 };
 
 export default KPICharts;

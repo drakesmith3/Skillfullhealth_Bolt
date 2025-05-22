@@ -2,6 +2,9 @@
 import type { CandidateData, ScoreBreakdown } from '@/types/score';
 import type { ProfessionalProfile } from '@/types/dashboard';
 
+// Export these types so they can be imported elsewhere
+export type { CandidateData, ScoreBreakdown };
+
 // Calculate GLOHSEN score from candidate data using the detailed algorithm
 export const calculateGlohsenScore = (data: CandidateData): ScoreBreakdown => {
   // 1. Years of Experience (max 10 points)

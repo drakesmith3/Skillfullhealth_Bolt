@@ -78,7 +78,6 @@ function Home(): JSX.Element {
   useEffect(() => {
     sectionsRef.current = sectionsRef.current.slice(0, numSections);
   }, [numSections]);
-  
   // Loading simulation
   useEffect(() => {
     // Prevent body scrolling while Home component is mounted
@@ -129,8 +128,6 @@ function Home(): JSX.Element {
       }
     };
   }, []);
-  
-  // Fixed scrollToSection function to prevent blank page issue
   const scrollToSection = useCallback((sectionIndex: number) => {
     // Validate section index
     const validIndex = Math.max(0, Math.min(sectionIndex, numSections - 1));
@@ -158,8 +155,7 @@ function Home(): JSX.Element {
     if (mainScrollTriggerRef.current) {
       mainScrollTriggerRef.current.disable();
     }
-    
-    // Play audio if enabled and user has interacted with the page
+      // Play audio if enabled and user has interacted with the page
     if (isSoundEnabled && audioRef.current && hasInteractedRef.current && 
         validIndex !== lastPlayedSectionRef.current) {
       audioRef.current.currentTime = 0;
@@ -167,9 +163,9 @@ function Home(): JSX.Element {
       lastPlayedSectionRef.current = validIndex;
     }
     
-    // Perform the scroll with Lenis - improved timing and easing
+    // Perform the scroll with Lenis
     lenisRef.current.scrollTo(targetScroll, {
-      duration: 1.5, // Slightly longer for smoother animation
+      duration: 1.2,
       easing: power2EaseInOut,
       lock: true,
       force: true,
@@ -183,7 +179,7 @@ function Home(): JSX.Element {
         // Force GSAP update to sync with the new position
         ScrollTrigger.update();
         
-        // Re-enable ScrollTrigger after a longer delay to ensure stability
+        // Re-enable ScrollTrigger after a brief delay
         setTimeout(() => {
           if (mainScrollTriggerRef.current) {
             mainScrollTriggerRef.current.enable();
@@ -191,7 +187,7 @@ function Home(): JSX.Element {
           }
           
           isScrollingRef.current = false;
-        }, 300); // Increased delay for stability
+        }, 100);
       },
     });
   }, [numSections, isSoundEnabled]);
@@ -204,8 +200,7 @@ function Home(): JSX.Element {
     }
     scrollToSection(sectionIndex);
   }, [isReady, scrollToSection]);
-  
-  // Map vertical wheel events to horizontal scroll with snap-to-section feature - improved stability
+  // Map vertical wheel events to horizontal scroll with snap-to-section feature
   useEffect(() => {
     const main = mainRef.current;
     if (!main) return;
@@ -214,19 +209,11 @@ function Home(): JSX.Element {
     let wheelTimeout: NodeJS.Timeout | null = null;
     let wheelCount = 0;
     let lastWheelDirection = 0;
-    let lastWheelTime = 0;
     
     const onWheel = (e: WheelEvent) => {
-      const now = Date.now();
-      const throttleTime = 50; // ms between wheel events to process
-      
-      // Throttle wheel events
-      if (now - lastWheelTime < throttleTime) return;
-      lastWheelTime = now;
-      
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) * 1.5) { // Ensure dominantly vertical scroll
-        // Translate vertical scroll to horizontal with enhanced smoothing
-        main.scrollLeft += e.deltaY * 0.8; // Reduced multiplier for smoother scrolling
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        // Translate vertical scroll to horizontal
+        main.scrollLeft += e.deltaY;
         e.preventDefault();
         
         // Determine scroll direction (positive = down/right, negative = up/left)
@@ -245,9 +232,9 @@ function Home(): JSX.Element {
           clearTimeout(wheelTimeout);
         }
         
-        // Set a timeout to snap to the nearest section after scrolling stops - improved timing
+        // Set a timeout to snap to the nearest section after scrolling stops
         wheelTimeout = setTimeout(() => {
-          // Only snap if we've had enough wheel events in the same direction and not already scrolling
+          // Only snap if we've had enough wheel events in the same direction
           if (wheelCount >= 2 && !isScrollingRef.current) {
             const currentSectionIndex = currentSectionRef.current;
             const targetSection = currentSectionIndex + (direction > 0 ? 1 : -1);
@@ -260,7 +247,7 @@ function Home(): JSX.Element {
           
           // Reset wheel count after snapping
           wheelCount = 0;
-        }, 220); // Increased delay for better detection of scroll ending
+        }, 150); // Delay for snap effect after scrolling stops
       }
     };
     
@@ -279,7 +266,7 @@ function Home(): JSX.Element {
     setIsSoundEnabled(prev => !prev);
   }, []);
 
-  // Main GSAP and Lenis initialization with improved settings
+  // Main GSAP and Lenis initialization
   useEffect(() => {
     if (isLoading || isInitializedRef.current) return;
 
@@ -296,18 +283,15 @@ function Home(): JSX.Element {
       return;
     }
     
-    // Initialize Lenis for smooth scrolling with improved settings
+    // Initialize Lenis for smooth scrolling
     const lenis = new Lenis({
       smoothWheel: true,
       orientation: "horizontal",
       gestureOrientation: "horizontal",
       syncTouch: true,
       infinite: false,
-      duration: 1.8, // Slower for more controlled scrolling
+      duration: 1.5, // Slightly faster for better response
       easing: power2EaseInOut,
-      wheelMultiplier: 0.8, // Reduced multiplier for smoother scrolling
-      touchMultiplier: 1.5,
-      smoothTouch: true,
     });
     
     lenisRef.current = lenis;
@@ -329,17 +313,17 @@ function Home(): JSX.Element {
     
     // Create GSAP context for ScrollTrigger setup
     const gsapCtx = gsap.context(() => {
-      // Create main timeline with ScrollTrigger - improved settings
+      // Create main timeline with ScrollTrigger
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: mainElement,
           pin: true,
-          scrub: 1.2, // Smoother scrubbing
+          scrub: 1, // Smoother scrubbing
           start: "top top",
           end: () => `+=${contentElement.offsetWidth - window.innerWidth}`,
           invalidateOnRefresh: true,
           preventOverlaps: true,
-          fastScrollEnd: true,
+          fastScrollEnd: true, // Enable fast scroll end for quicker snap
           onUpdate: self => {
             if (isScrollingRef.current) return; // Don't update during programmatic scrolling
             
@@ -360,19 +344,17 @@ function Home(): JSX.Element {
                 lastPlayedSectionRef.current = newSectionIndex;
               }
             }
-          },
-          snap: {
+          },          snap: {
             snapTo: progress => {
               if (numSections <= 1) return 0;
               // Calculate the target section based on scroll progress
               const section = Math.round(progress * (numSections - 1));
               return section / (numSections - 1);
             },
-            duration: { min: 0.4, max: 0.8 }, // Slower, smoother snapping
-            delay: 0.2, // Increased delay to prevent immediate snap-back
-            ease: "power2.inOut", // Smoother easing
-            inertia: true, // Enable inertia for natural feel
-            directional: true, // Respect scroll direction
+            duration: { min: 0.3, max: 0.6 }, // Smoother, slower snapping
+            delay: 0.15, // Increased delay to prevent immediate snap-back
+            ease: "power1.inOut", // Smoother easing
+            inertia: false, // Disable inertia to prevent overshooting
           },
         },
       });
@@ -404,7 +386,7 @@ function Home(): JSX.Element {
     setTimeout(() => {
       ScrollTrigger.refresh(true);
       window.dispatchEvent(new Event("resize"));
-    }, 600); // Longer delay for better initialization
+    }, 500);
     
     // Cleanup function
     return () => {
@@ -427,7 +409,7 @@ function Home(): JSX.Element {
       mainScrollTriggerRef.current = null;
       isInitializedRef.current = false;
     };
-  }, [isLoading, numSections, isSoundEnabled]);
+  }, [isLoading, numSections, isSoundEnabled, power2EaseInOut]);
 
   // Handle window resize events to ensure proper layout
   useEffect(() => {
@@ -443,8 +425,7 @@ function Home(): JSX.Element {
   }, [isReady]);
 
   return (
-    <div className="relative">
-      <ProgressIndicator
+    <div className="relative">      <ProgressIndicator
         currentSection={currentSection}
         totalSections={numSections}
         scrollToSection={safeScrollToSection}
@@ -500,8 +481,7 @@ function Home(): JSX.Element {
               boxShadow = '0 2px 8px rgba(0,0,0,0.10)';
               filter = 'none';
             }
-            return (
-              <section
+            return (              <section
                 key={SectionItem.name}
                 className="parallax-section w-screen h-screen flex-shrink-0 flex items-center justify-center"
                 ref={(el) => (sectionsRef.current[index] = el)}
@@ -538,8 +518,7 @@ function Home(): JSX.Element {
                     overflow: 'visible',
                     position: 'relative' // Make sure position is relative for absolute positioning of the return button
                   }}
-                >
-                  <SectionItem.component
+                >                  <SectionItem.component
                     isActive={isActive}
                     sectionName={SectionItem.name}
                     scrollToSection={safeScrollToSection}

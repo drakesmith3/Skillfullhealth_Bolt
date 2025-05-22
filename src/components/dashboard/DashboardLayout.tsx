@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import PreHeader from '@/components/PreHeader';
 import Footer from '@/components/Footer';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -25,8 +26,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children
 }) => {
   const [showFooter, setShowFooter] = useState(false);
-  const [activeSectionIndex, setActiveSectionIndex] = useState(0);
   const { theme } = useTheme();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -57,7 +59,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <PreHeader currentPage={`${userType} dashboard`} userName={userName} />
       
       <div className="flex-grow flex mt-16">
-        {/* Sidebar - Dark styled */}
+        {/* Dark styled sidebar - only visible on lg screens and above */}
         <div className="hidden lg:block w-64 bg-[#1A1F2C] border-r border-gray-700 shadow-lg">
           {renderSidebar()}
         </div>

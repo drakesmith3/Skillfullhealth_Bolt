@@ -5,35 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   User, 
-  GraduationCap,
-  BookOpen, 
-  Gamepad, 
-  Award, 
-  Phone, 
-  Mail,
+  BookOpen,
   Settings, 
   Bell,
   LogOut,
   Users,
+  MessageSquare,
+  Award,
+  MapPin,
+  Mail,
+  Phone,
+  BarChart3,
   CreditCard,
-  FileText,
-  Building
+  Gamepad
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const StudentSidebar = () => {
   // Mock student data
   const student = {
-    name: "Sarah Johnson",
+    name: "Samuel Okafor",
     course: "Medicine",
-    institution: "Lagos Medical School",
-    address: "23 University Road, Lagos",
-    email: "sarah.johnson@med.edu",
-    phone: "+234 801 234 5678",
+    university: "University of Ibadan",
+    address: "College of Medicine, UI, Ibadan",
+    email: "samuel.okafor@ui.edu.ng",
+    phone: "+234 805 678 9012",
     profilePic: "", // Placeholder for profile picture
-    progress: 75,
-    coursesEnrolled: 4,
-    coursesCompleted: 3,
   };
 
   return (
@@ -42,46 +39,43 @@ const StudentSidebar = () => {
         <div className="p-4">
           <div className="flex flex-col items-center space-y-3">
             <Avatar className="h-16 w-16 border-2 border-[#D4AF37]">
-              <AvatarFallback className="bg-[#D4AF37] text-black text-lg">SJ</AvatarFallback>
+              <AvatarFallback className="bg-[#D4AF37] text-black text-lg">SO</AvatarFallback>
               {student.profilePic && <AvatarImage src={student.profilePic} alt={student.name} />}
             </Avatar>
             <div className="text-center">
               <h3 className="font-bold text-lg">{student.name}</h3>
-              <p className="text-sm text-gray-400">{student.course} Student</p>
+              <p className="text-sm text-gray-400">{student.course}</p>
+              <p className="text-xs text-gray-500">{student.university}</p>
             </div>
           </div>
           
           <div className="space-y-2 mt-3">
             <div className="flex items-start gap-2">
-              <GraduationCap className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm">{student.institution}</p>
-            </div>
-            <div className="flex items-start gap-2">
-              <Building className="h-4 w-4 text-gray-400 mt-0.5" />
+              <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
               <p className="text-sm text-gray-300">{student.address}</p>
             </div>
             <div className="flex items-start gap-2">
               <Mail className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm">{student.email}</p>
+              <p className="text-sm text-gray-300">{student.email}</p>
             </div>
             <div className="flex items-start gap-2">
               <Phone className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm">{student.phone}</p>
+              <p className="text-sm text-gray-300">{student.phone}</p>
             </div>
           </div>
 
-          <div className="flex gap-2 pt-3">
-            <Button size="sm" className="flex-1 bg-[#D4AF37] text-black hover:bg-[#C09C30]" asChild>
-              <Link to="/dashboard/student/wallet">Wallet</Link>
+          <div className="flex justify-between pt-3 gap-2">
+            <Button size="sm" variant="outline" className="border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10" asChild>
+              <Link to="/wallet-transaction">Wallet</Link>
             </Button>
-            <Button size="sm" variant="outline" className="flex-1 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10" asChild>
+            <Button size="sm" variant="outline" className="border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10" asChild>
               <Link to="/account-settings">Edit Profile</Link>
             </Button>
           </div>
         </div>
       </Card>
       
-      {/* Student Menu */}
+      {/* Quick Links */}
       <div className="flex-grow overflow-y-auto">
         <h3 className="text-[#ea384c] font-semibold text-xs uppercase mb-2 px-2">Quick Links</h3>
         <div className="space-y-1">
@@ -92,21 +86,21 @@ const StudentSidebar = () => {
           </Link>
           <Link to="/dashboard/student/transactions">
             <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <CreditCard className="mr-2 h-4 w-4" /> Transactions History
+              <CreditCard className="mr-2 h-4 w-4" /> Transaction History
             </Button>
           </Link>
           <Link to="/dashboard/student/performance">
             <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <FileText className="mr-2 h-4 w-4" /> Performance History
+              <BarChart3 className="mr-2 h-4 w-4" /> Performance History
             </Button>
           </Link>
           <Link to="/dashboard/student/inbox">
             <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <Mail className="mr-2 h-4 w-4" /> Inbox/Feedback
+              <MessageSquare className="mr-2 h-4 w-4" /> Inbox/Feedback
             </Button>
           </Link>
         </div>
-        
+
         <h3 className="text-[#ea384c] font-semibold text-xs uppercase mt-4 mb-2 px-2">Courses</h3>
         <div className="space-y-1">
           <Link to="/courses">
@@ -119,7 +113,7 @@ const StudentSidebar = () => {
               <BookOpen className="mr-2 h-4 w-4" /> Your Courses
             </Button>
           </Link>
-          <Link to="/dashboard/student/profile#certifications">
+          <Link to="/dashboard/student/profile">
             <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
               <Award className="mr-2 h-4 w-4" /> My Certifications
             </Button>
@@ -139,7 +133,7 @@ const StudentSidebar = () => {
             </Button>
           </Link>
         </div>
-        
+
         <h3 className="text-[#ea384c] font-semibold text-xs uppercase mt-4 mb-2 px-2">Settings</h3>
         <div className="space-y-1">
           <Link to="/account-settings">

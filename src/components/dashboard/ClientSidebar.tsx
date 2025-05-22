@@ -4,17 +4,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
-  User, 
-  Gamepad,  
-  Phone, 
-  Mail,
   Settings, 
   Bell,
   LogOut,
   Users,
   MessageSquare,
-  FileText,
-  MapPin
+  MapPin,
+  Mail,
+  Phone,
+  Gamepad
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
