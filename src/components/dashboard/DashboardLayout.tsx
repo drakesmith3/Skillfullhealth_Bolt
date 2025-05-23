@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import PreHeader from '@/components/PreHeader';
@@ -9,9 +8,12 @@ import EmployerSidebar from './EmployerSidebar';
 import TutorSidebar from './TutorSidebar';
 import StudentSidebar from './StudentSidebar';
 import ClientSidebar from './ClientSidebar';
+// import AdminSidebar from './AdminSidebar'; // Assuming you have or will create this
+
+export type UserType = 'professional' | 'student' | 'employer' | 'tutor' | 'client' | 'admin';
 
 interface DashboardLayoutProps {
-  userType: 'professional' | 'student' | 'employer' | 'tutor' | 'client';
+  userType: UserType;
   userName: string;
   pageTitle: string;
   pageDescription?: string;
@@ -49,6 +51,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         return <StudentSidebar />;
       case 'client':
         return <ClientSidebar />;
+      // case 'admin': // Uncomment when AdminSidebar is ready
+      //   return <AdminSidebar />;
       default:
         return null;
     }
