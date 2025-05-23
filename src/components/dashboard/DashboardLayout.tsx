@@ -1,14 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import PreHeader from '@/components/PreHeader';
 import Footer from '@/components/Footer';
 import { useTheme } from '@/contexts/ThemeContext';
-import ProfessionalSidebar from './ProfessionalSidebar';
+import ProfessionalSidebarContent from './ProfessionalSidebarContent';
 import EmployerSidebar from './EmployerSidebar';
 import TutorSidebar from './TutorSidebar';
-import StudentSidebar from './StudentSidebar';
+import StudentSidebarContent from './StudentSidebarContent';
 import ClientSidebar from './ClientSidebar';
-// import AdminSidebar from './AdminSidebar'; // Assuming you have or will create this
+import StandardDashboardLayout from './StandardDashboardLayout';
 
 export type UserType = 'professional' | 'student' | 'employer' | 'tutor' | 'client' | 'admin';
 
@@ -27,66 +28,44 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   pageDescription,
   children
 }) => {
-  const [showFooter, setShowFooter] = useState(false);
-  const { theme } = useTheme();
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowFooter(true);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
   const renderSidebar = () => {
     switch (userType) {
       case 'professional':
-        return <ProfessionalSidebar />;
+        return <ProfessionalSidebarContent />;
       case 'employer':
         return <EmployerSidebar />;
       case 'tutor':
         return <TutorSidebar />;
       case 'student':
-        return <StudentSidebar />;
+        return <StudentSidebarContent />;
       case 'client':
         return <ClientSidebar />;
-      // case 'admin': // Uncomment when AdminSidebar is ready
-      //   return <AdminSidebar />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
-      <PreHeader currentPage={`${userType} dashboard`} userName={userName} />
-      
-      <div className="flex-grow flex mt-16">
-        {/* Dark styled sidebar - only visible on lg screens and above */}
-        <div className="hidden lg:block w-64 bg-[#1A1F2C] border-r border-gray-700 shadow-lg">
-          {renderSidebar()}
-        </div>
-        
-        {/* Main content */}
-        <div className="w-full lg:flex-1">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center px-4 py-4 lg:px-8 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+    <StandardDashboardLayout
+      sidebar={renderSidebar()}
+      className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+    >
+      <div className="space-y-6">
+        {/* Welcome Header */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold">{pageTitle}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{pageTitle}</h1>
               {pageDescription && (
-                <p className="text-lg text-gray-600 dark:text-gray-400">{pageDescription}</p>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">{pageDescription}</p>
               )}
             </div>
           </div>
-
-          <div className="px-4 py-6 lg:px-8">
-            {children}
-          </div>
         </div>
+
+        {children}
       </div>
-      
-      {showFooter && <Footer isActive={false} />}
-    </div>
+    </StandardDashboardLayout>
   );
 };
 

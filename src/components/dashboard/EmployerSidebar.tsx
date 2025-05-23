@@ -1,126 +1,164 @@
 
 import React from 'react';
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link, useLocation } from 'react-router-dom';
 import { 
-  User, 
+  Building, 
+  Users, 
   Briefcase, 
-  CreditCard,
+  MessageSquare, 
+  BarChart, 
+  Star, 
   Settings, 
-  Bell,
+  Bell, 
   LogOut,
-  BarChart3,
+  UserPlus,
   FileText,
-  MessageSquare,
-  Building,
-  MapPin,
-  Mail,
-  Phone
-} from "lucide-react";
-import { Link } from "react-router-dom";
+  CreditCard
+} from 'lucide-react';
 
-const EmployerSidebar = () => {
-  // Mock employer data
-  const employer = {
-    name: "James Johnson",
-    facility: "Lagos General Hospital",
-    address: "45 Health Boulevard, Lagos",
-    email: "james.johnson@lgh.com",
-    phone: "+234 801 234 5678",
-    profilePic: "", // Placeholder for profile picture
+const EmployerSidebar: React.FC = () => {
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
+  const getLinkClass = (path: string) => {
+    return `flex items-center space-x-3 p-2 rounded cursor-pointer transition-colors ${
+      isActive(path) 
+        ? 'bg-gray-800 text-red-500' 
+        : 'text-[#D4AF37] hover:text-red-500 hover:bg-gray-800'
+    }`;
   };
 
   return (
-    <div className="h-full flex flex-col p-4 text-white">
-      <Card className="bg-[#232836] border-gray-700 overflow-hidden mb-4">
-        <div className="p-4">
-          <div className="flex flex-col items-center space-y-3">
-            <Avatar className="h-16 w-16 border-2 border-[#D4AF37]">
-              <AvatarFallback className="bg-[#D4AF37] text-black text-lg">JJ</AvatarFallback>
-              {employer.profilePic && <AvatarImage src={employer.profilePic} alt={employer.name} />}
-            </Avatar>
-            <div className="text-center">
-              <h3 className="font-bold text-lg">{employer.name}</h3>
-              <p className="text-sm text-gray-400">{employer.facility}</p>
-            </div>
-          </div>
-          
-          <div className="space-y-2 mt-3">
-            <div className="flex items-start gap-2">
-              <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm text-gray-300">{employer.address}</p>
-            </div>
-            <div className="flex items-start gap-2">
-              <Mail className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm text-gray-300">{employer.email}</p>
-            </div>
-            <div className="flex items-start gap-2">
-              <Phone className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm text-gray-300">{employer.phone}</p>
-            </div>
-          </div>
-
-          <div className="flex justify-between pt-3 gap-2">
-            <Button size="sm" variant="outline" className="border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10" asChild>
-              <Link to="/wallet-transaction">Wallet</Link>
-            </Button>
-            <Button size="sm" variant="outline" className="border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10" asChild>
-              <Link to="/account-settings">Edit Profile</Link>
-            </Button>
-          </div>
-        </div>
-      </Card>
-      
-      {/* Employer Menu */}
-      <div className="flex-grow overflow-y-auto">
-        <h3 className="text-[#ea384c] font-semibold text-xs uppercase mb-2 px-2">Employer Menu</h3>
-        <div className="space-y-1">
-          <Link to="/dashboard/employer">
-            <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <Building className="mr-2 h-4 w-4" /> Dashboard Overview
-            </Button>
+    <>
+      {/* Quick Links Section */}
+      <div className="p-4 border-b border-gray-700">
+        <h3 className="text-red-500 font-semibold mb-4">Facility Management</h3>
+        <nav className="space-y-2">
+          <Link 
+            to="/employer-dashboard"
+            className={getLinkClass('/employer-dashboard')}
+          >
+            <BarChart size={20} />
+            <span>DASHBOARD</span>
           </Link>
-          <Link to="/dashboard/employer/vacancies">
-            <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <Briefcase className="mr-2 h-4 w-4" /> Manage Vacancies
-            </Button>
+          <Link 
+            to="/job-postings"
+            className={getLinkClass('/job-postings')}
+          >
+            <Briefcase size={20} />
+            <span>JOB POSTINGS</span>
           </Link>
-          <Link to="/dashboard/employer/candidates">
-            <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <User className="mr-2 h-4 w-4" /> View Your Candidates
-            </Button>
+          <Link 
+            to="/staff-management"
+            className={getLinkClass('/staff-management')}
+          >
+            <Users size={20} />
+            <span>STAFF MANAGEMENT</span>
           </Link>
-          <Link to="/dashboard/employer/criteria-score">
-            <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <FileText className="mr-2 h-4 w-4" /> Your Match Criteria
-            </Button>
+          <Link 
+            to="/facility-profile"
+            className={getLinkClass('/facility-profile')}
+          >
+            <Building size={20} />
+            <span>FACILITY PROFILE</span>
           </Link>
-          <Link to="/dashboard/employer/kpi">
-            <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <BarChart3 className="mr-2 h-4 w-4" /> KPI Analytics
-            </Button>
-          </Link>
-        </div>
-
-        <h3 className="text-[#ea384c] font-semibold text-xs uppercase mt-4 mb-2 px-2">Settings</h3>
-        <div className="space-y-1">
-          <Link to="/account-settings">
-            <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <Settings className="mr-2 h-4 w-4" /> Account Settings
-            </Button>
-          </Link>
-          <Link to="/notifications">
-            <Button variant="ghost" className="w-full justify-start text-[#D4AF37] hover:bg-gray-700 hover:text-[#ea384c]">
-              <Bell className="mr-2 h-4 w-4" /> Notifications
-            </Button>
-          </Link>
-          <Button variant="ghost" className="w-full justify-start text-red-400 hover:bg-red-900/30 hover:text-red-300">
-            <LogOut className="mr-2 h-4 w-4" /> Log Out
-          </Button>
-        </div>
+        </nav>
       </div>
-    </div>
+
+      {/* Recruitment Section */}
+      <div className="p-4 border-b border-gray-700">
+        <h3 className="text-red-500 font-semibold mb-4">Recruitment</h3>
+        <nav className="space-y-2">
+          <Link 
+            to="/post-job"
+            className={getLinkClass('/post-job')}
+          >
+            <UserPlus size={20} />
+            <span>POST NEW JOB</span>
+          </Link>
+          <Link 
+            to="/applications"
+            className={getLinkClass('/applications')}
+          >
+            <FileText size={20} />
+            <span>VIEW APPLICATIONS</span>
+          </Link>
+          <Link 
+            to="/candidate-search"
+            className={getLinkClass('/candidate-search')}
+          >
+            <Users size={20} />
+            <span>SEARCH CANDIDATES</span>
+          </Link>
+        </nav>
+      </div>
+
+      {/* Analytics Section */}
+      <div className="p-4 border-b border-gray-700">
+        <h3 className="text-red-500 font-semibold mb-4">Analytics</h3>
+        <nav className="space-y-2">
+          <Link 
+            to="/hiring-analytics"
+            className={getLinkClass('/hiring-analytics')}
+          >
+            <BarChart size={20} />
+            <span>HIRING METRICS</span>
+          </Link>
+          <Link 
+            to="/staff-feedback"
+            className={getLinkClass('/staff-feedback')}
+          >
+            <Star size={20} />
+            <span>STAFF FEEDBACK</span>
+          </Link>
+          <Link 
+            to="/payments-billing"
+            className={getLinkClass('/payments-billing')}
+          >
+            <CreditCard size={20} />
+            <span>BILLING & PAYMENTS</span>
+          </Link>
+        </nav>
+      </div>
+
+      {/* Settings Section */}
+      <div className="p-4">
+        <h3 className="text-red-500 font-semibold mb-4">Settings</h3>
+        <nav className="space-y-2">
+          <Link 
+            to="/account-settings/employer"
+            className={getLinkClass('/account-settings/employer')}
+          >
+            <Settings size={20} />
+            <span>ACCOUNT SETTINGS</span>
+          </Link>
+          <Link 
+            to="/notifications/employer"
+            className={getLinkClass('/notifications/employer')}
+          >
+            <Bell size={20} />
+            <span>NOTIFICATIONS</span>
+          </Link>
+          <Link 
+            to="/messages"
+            className={getLinkClass('/messages')}
+          >
+            <MessageSquare size={20} />
+            <span>MESSAGES</span>
+          </Link>
+          <Link 
+            to="/signed-out"
+            className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+          >
+            <LogOut size={20} />
+            <span>LOG OUT</span>
+          </Link>
+        </nav>
+      </div>
+    </>
   );
 };
 
