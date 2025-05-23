@@ -1,9 +1,10 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bell, MessageSquare, Trophy, Calendar, Star } from "lucide-react";
+import { Bell, MessageSquare, Trophy, Calendar, Star, CreditCard, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createDustParticles } from "@/utils/dustParticles";
 
@@ -53,7 +54,7 @@ const ClientNotifications = () => {
   return (
     <div className="min-h-screen flex bg-gray-50">
       {/* Client Sidebar - Consistent GLOHSEN Theme */}
-      <div className="w-64 bg-black text-white relative overflow-hidden">
+      <div ref={sidebarRef} className="w-64 bg-black text-white relative overflow-hidden">
         <div className="p-4 border-b border-gray-700">
           <h3 className="text-red-500 font-semibold mb-4">Client Menu</h3>
           <nav className="space-y-2">

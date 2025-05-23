@@ -74,6 +74,34 @@ class AIActivityAgent {
     this.lastManualUpdate = new Date().toISOString();
   }
 
+  // Manually update featured status of a testimonial
+  public manuallyUpdateFeaturedStatus(testimonialId: number, shouldFeature: boolean): void {
+    try {
+      const allTestimonials = this.getAllTestimonialsFromStorage();
+      const updatedTestimonials = allTestimonials.map(t => {
+        if (t.id === testimonialId) {
+          return {
+            ...t,
+            featured: shouldFeature,
+            isManuallyFeatured: shouldFeature
+          };
+        }
+        return t;
+      });
+      
+      localStorage.setItem('glohsen_all_testimonials', JSON.stringify(updatedTestimonials));
+      
+      // Update featured testimonials
+      const featuredTestimonials = updatedTestimonials.filter(t => t.featured);
+      localStorage.setItem('glohsen_featured_testimonials', JSON.stringify(featuredTestimonials));
+      
+      this.lastManualUpdate = new Date().toISOString();
+      console.log(`Manually updated testimonial ${testimonialId} featured status to ${shouldFeature}`);
+    } catch (error) {
+      console.error('Error manually updating testimonial featured status:', error);
+    }
+  }
+
   // Main function to check and update testimonials
   private async checkAndUpdateTestimonials(force: boolean = false): Promise<void> {
     try {
