@@ -74,6 +74,9 @@ export const medicalSchools = [
   "Imperial College London Faculty of Medicine"
 ];
 
+// User role type definition
+export type UserRole = 'professional' | 'student' | 'employer' | 'tutor' | 'client';
+
 // The main function to be exported for using in the app
 export const getUniversityLists = () => {
   return {

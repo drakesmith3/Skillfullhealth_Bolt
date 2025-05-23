@@ -1,23 +1,19 @@
 
-import { Meta, StoryObj } from '@storybook/react';
-import HowItWorks from '../HowItWorks';
+import React from "react";
+import HowItWorks from "../../components/HowItWorks";
 
+// Define the component story without depending on @storybook/react
 const meta = {
-  title: 'Sections/HowItWorks',
+  title: "Components/HowItWorks",
   component: HowItWorks,
-  tags: ['autodocs'],
   parameters: {
-    layout: 'fullscreen',
-  },
-} satisfies Meta<typeof HowItWorks>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-// Add the required props to match the HowItWorksProps interface
-export const Default: Story = {
-  args: {
-    isActive: true,
-    sectionName: "HowItWorks",
+    layout: "fullscreen",
   },
 };
+
+export default meta;
+
+// Create the default story without using StoryObj
+export function Default() {
+  return <HowItWorks isActive={true} sectionName="HowItWorks" />;
+}

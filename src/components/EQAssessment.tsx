@@ -15,7 +15,16 @@ interface Question {
   type: 'boolean' | 'text';
 }
 
-const EQAssessment: React.FC = () => {
+export interface EQAssessmentResult {
+  answers: Record<string, string>;
+  completionPercentage: number;
+}
+
+interface EQAssessmentProps {
+  onComplete?: (result: EQAssessmentResult) => void;
+}
+
+const EQAssessment: React.FC<EQAssessmentProps> = ({ onComplete }) => {
   const { toast } = useToast();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -74,6 +83,15 @@ const EQAssessment: React.FC = () => {
     }
     
     setIsSubmitted(true);
+    const result: EQAssessmentResult = {
+      answers,
+      completionPercentage: getCompletionPercentage()
+    };
+    
+    if (onComplete) {
+      onComplete(result);
+    }
+    
     toast({
       title: "Assessment Submitted",
       description: "Your EQ assessment has been recorded. Thank you for your participation!"

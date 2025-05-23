@@ -1,153 +1,312 @@
+
 import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { 
+  TrendingUp, 
+  Award, 
+  Users, 
+  BookOpen, 
+  Briefcase, 
+  Target,
+  Star,
+  ChevronRight,
+  Calendar,
+  AlertCircle
+} from "lucide-react";
 import PreHeader from '@/components/PreHeader';
 import Footer from '@/components/Footer';
-import { Award, ChevronRight, Heart } from "lucide-react";
-import GlohsenScoreCalculator from "@/components/GlohsenScoreCalculator";
-import GlohsenScoreResults from "@/components/GlohsenScoreResults";
-import { GlohsenScoreProvider } from "@/components/GlohsenScoreContext";
-import GlohsenScoreResultMockup from "@/components/GlohsenScoreResultMockup";
-import EQAssessment from "@/components/EQAssessment";
-import type { EQAssessmentResult } from "@/components/assessment/types";
+import EQAssessment from '@/components/EQAssessment';
 
-// Actual ShadCN UI component imports - assuming these are correctly set up in the project
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card } from "@/components/ui/card";
-
-// Mocked Sidebar if not a real component, or import if it is
-const Sidebar = () => <div className="p-4 bg-gray-100 rounded shadow">Sidebar Content (Mocked)</div>;
-
-const GlohsenScorePage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [eqResult, setEqResult] = useState<EQAssessmentResult | null>(null);
+const GlohsenScore = () => {
   const [showFooter, setShowFooter] = useState(false);
+  const [currentScore] = useState(847);
+  const [previousScore] = useState(792);
+  const [scoreChange] = useState(currentScore - previousScore);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowFooter(true), 1000);
+    const timer = setTimeout(() => {
+      setShowFooter(true);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleEQComplete = (result: EQAssessmentResult) => {
-    setEqResult(result);
-    setActiveTab("results"); // Switch to results tab after completing EQ assessment
+  const getScoreLevel = (score: number) => {
+    if (score >= 900) return { level: "Expert", color: "text-purple-600", bgColor: "bg-purple-100" };
+    if (score >= 800) return { level: "Advanced", color: "text-blue-600", bgColor: "bg-blue-100" };
+    if (score >= 700) return { level: "Proficient", color: "text-green-600", bgColor: "bg-green-100" };
+    if (score >= 600) return { level: "Competent", color: "text-yellow-600", bgColor: "bg-yellow-100" };
+    return { level: "Developing", color: "text-red-600", bgColor: "bg-red-100" };
   };
-  
+
+  const scoreLevel = getScoreLevel(currentScore);
+
+  const scoreComponents = [
+    {
+      category: "Professional Qualifications",
+      score: 180,
+      maxScore: 200,
+      percentage: 90,
+      icon: Award,
+      description: "Certifications, licenses, and formal qualifications"
+    },
+    {
+      category: "Work Experience",
+      score: 165,
+      maxScore: 200,
+      percentage: 82.5,
+      icon: Briefcase,
+      description: "Years of experience and professional roles"
+    },
+    {
+      category: "Continuing Education",
+      score: 142,
+      maxScore: 200,
+      percentage: 71,
+      icon: BookOpen,
+      description: "CME courses, workshops, and ongoing learning"
+    },
+    {
+      category: "Performance Metrics",
+      score: 158,
+      maxScore: 200,
+      percentage: 79,
+      icon: Target,
+      description: "KPI tracking, patient outcomes, and feedback scores"
+    },
+    {
+      category: "Platform Activity",
+      score: 125,
+      maxScore: 150,
+      percentage: 83.3,
+      icon: Users,
+      description: "Engagement with platform features and community"
+    },
+    {
+      category: "Peer Recognition",
+      score: 77,
+      maxScore: 100,
+      percentage: 77,
+      icon: Star,
+      description: "Reviews, recommendations, and professional network"
+    }
+  ];
+
+  const recentActivities = [
+    { date: "2024-01-15", activity: "Completed Advanced Cardiac Life Support Course", points: "+25 points" },
+    { date: "2024-01-10", activity: "Received 5-star patient feedback", points: "+15 points" },
+    { date: "2024-01-08", activity: "Participated in Medical Conference", points: "+20 points" },
+    { date: "2024-01-05", activity: "Completed quarterly KPI assessment", points: "+10 points" },
+  ];
+
+  const recommendations = [
+    {
+      title: "Complete Pediatric Emergency Medicine Course",
+      description: "Enhance your emergency medicine skills with specialized pediatric training",
+      points: "+30 points",
+      category: "Continuing Education"
+    },
+    {
+      title: "Update Professional Certifications",
+      description: "Renew your BLS and ACLS certifications to maintain current status",
+      points: "+20 points",
+      category: "Professional Qualifications"
+    },
+    {
+      title: "Engage with Community Forum",
+      description: "Participate in professional discussions to boost platform activity",
+      points: "+15 points",
+      category: "Platform Activity"
+    }
+  ];
+
   return (
-    <GlohsenScoreProvider>
-      <div className="flex flex-col min-h-screen bg-f5f5f5">
-        <PreHeader currentPage="glohsen score" />
-        <main className="flex-grow container mx-auto px-4 py-8 mt-16">
-          {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold flex items-center gap-2 text-[#000000e6]">
-              <Award className="h-8 w-8 text-[#D4AF37]" />
-              GLOHSEN Score Dashboard
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Track your professional rating, complete assessments, and view your progress over time.
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <PreHeader currentPage="glohsen score" />
+      
+      <main className="container mx-auto px-4 py-8 mt-16">
+        <div className="max-w-6xl mx-auto space-y-8">
+          {/* Header Section */}
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold">Your GLOHSEN Score</h1>
+            <p className="text-xl text-gray-600 dark:text-gray-400">
+              Global Health Professionals Excellence Network Score
             </p>
           </div>
 
-          <div className="grid grid-cols-12 gap-8">
-            <div className="col-span-12 md:col-span-3">
-              <Sidebar />
-              
-              {/* Quick Stats Card */}
-              <Card className="p-6 mt-6">
-                <h3 className="font-semibold mb-4">Quick Stats</h3>
-                <div className="space-y-4">
-                  <div>
-                    <div className="text-sm text-gray-600">Overall Score</div>
-                    <div className="text-2xl font-bold text-[#D4AF37]">179/200</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600">EQ Score</div>
-                    <div className="text-2xl font-bold text-[#D4AF37]">
-                      {eqResult ? `${eqResult.score}/${eqResult.maxScore}` : 'Not taken'}
+          {/* Current Score Card */}
+          <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold mb-2">Your Current Score</h2>
+                  <div className="flex items-center space-x-4">
+                    <span className="text-6xl font-bold">{currentScore}</span>
+                    <div>
+                      <Badge className={`${scoreLevel.bgColor} ${scoreLevel.color} mb-2`}>
+                        {scoreLevel.level}
+                      </Badge>
+                      <div className="flex items-center text-green-200">
+                        <TrendingUp className="h-4 w-4 mr-1" />
+                        +{scoreChange} from last assessment
+                      </div>
                     </div>
                   </div>
                 </div>
-              </Card>
-            </div>
+                <div className="text-right">
+                  <div className="text-sm opacity-90 mb-2">Out of 1000</div>
+                  <Progress 
+                    value={(currentScore / 1000) * 100} 
+                    className="w-32 h-3 bg-white/20"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            <div className="col-span-12 md:col-span-9">
-              <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid grid-cols-4 mb-8">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="calculator">Calculator</TabsTrigger>
-                  <TabsTrigger value="results">Results & History</TabsTrigger>
-                  <TabsTrigger value="eq">EQ Assessment</TabsTrigger>
-                </TabsList>
-              
-                <TabsContent value="overview" className="mt-0">
-                  <div className="grid gap-8">
-                    <Card className="p-8">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h2 className="text-2xl font-bold mb-4">Welcome to Your GLOHSEN Score Dashboard</h2>
-                          <p className="text-gray-600 mb-6">
-                            Your GLOHSEN Score is a comprehensive evaluation of your professional profile.
-                            Complete all assessments to maximize your score and unlock better opportunities.
-                          </p>
+          <Tabs defaultValue="breakdown" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="breakdown">Score Breakdown</TabsTrigger>
+              <TabsTrigger value="history">Score History</TabsTrigger>
+              <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+              <TabsTrigger value="assessment">EQ Assessment</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="breakdown" className="space-y-6">
+              <div className="grid gap-4">
+                {scoreComponents.map((component, index) => {
+                  const IconComponent = component.icon;
+                  return (
+                    <Card key={index}>
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                              <IconComponent className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-lg">{component.category}</h3>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                {component.description}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-2xl font-bold">
+                              {component.score}/{component.maxScore}
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              {component.percentage.toFixed(1)}%
+                            </div>
+                          </div>
                         </div>
-                        <GlohsenScoreResultMockup showFullReport={true} />
-                      </div>
+                        <div className="mt-4">
+                          <Progress value={component.percentage} className="h-2" />
+                        </div>
+                      </CardContent>
                     </Card>
+                  );
+                })}
+              </div>
+            </TabsContent>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <Card className="p-6">
-                        <h3 className="font-semibold mb-4">Next Steps</h3>
-                        <ul className="space-y-3">
-                          <li className="flex items-center gap-2 text-gray-600">
-                            <ChevronRight className="h-4 w-4 text-[#D4AF37]" />
-                            Complete your EQ Assessment
-                          </li>
-                          <li className="flex items-center gap-2 text-gray-600">
-                            <ChevronRight className="h-4 w-4 text-[#D4AF37]" />
-                            Update your certifications
-                          </li>
-                          <li className="flex items-center gap-2 text-gray-600">
-                            <ChevronRight className="h-4 w-4 text-[#D4AF37]" />
-                            Review your skills inventory
-                          </li>
-                        </ul>
-                      </Card>
-
-                      <Card className="p-6">
-                        <h3 className="font-semibold mb-4">Recent Updates</h3>
-                        <ul className="space-y-3">
-                          <li className="flex items-center gap-2 text-gray-600">
-                            <Heart className="h-4 w-4 text-[#D4AF37]" />
-                            EQ Assessment available
-                          </li>
-                          <li className="flex items-center gap-2 text-gray-600">
-                            <Heart className="h-4 w-4 text-[#D4AF37]" />
-                            New skills added to evaluation
-                          </li>
-                        </ul>
-                      </Card>
-                    </div>
+            <TabsContent value="history" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Score Activities</CardTitle>
+                  <CardDescription>
+                    Track your score changes and improvements over time
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {recentActivities.map((activity, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Calendar className="h-5 w-5 text-gray-400" />
+                          <div>
+                            <div className="font-medium">{activity.activity}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              {activity.date}
+                            </div>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="text-green-600 border-green-600">
+                          {activity.points}
+                        </Badge>
+                      </div>
+                    ))}
                   </div>
-                </TabsContent>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="recommendations" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Improve Your Score</CardTitle>
+                  <CardDescription>
+                    Personalized recommendations to boost your GLOHSEN score
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {recommendations.map((rec, index) => (
+                      <Card key={index} className="border-l-4 border-l-blue-500">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between">
+                            <div className="space-y-2">
+                              <h4 className="font-semibold">{rec.title}</h4>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                {rec.description}
+                              </p>
+                              <Badge variant="secondary">{rec.category}</Badge>
+                            </div>
+                            <div className="text-right">
+                              <Badge className="bg-green-100 text-green-800 mb-2">
+                                {rec.points}
+                              </Badge>
+                              <Button size="sm" className="block">
+                                <ChevronRight className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="assessment" className="space-y-6">
+              <div className="grid gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <AlertCircle className="h-5 w-5 mr-2" />
+                      Complete Your EQ Assessment
+                    </CardTitle>
+                    <CardDescription>
+                      This assessment contributes to your overall GLOHSEN score calculation
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
                 
-                <TabsContent value="calculator" className="mt-0">
-                  <GlohsenScoreCalculator />
-                </TabsContent>
-                
-                <TabsContent value="results" className="mt-0">
-                  <GlohsenScoreResults />
-                </TabsContent>
-                
-                <TabsContent value="eq" className="mt-0">
-                  <EQAssessment onComplete={handleEQComplete} />
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
-        </main>
-        {showFooter && <Footer isActive={false} />}
-      </div>
-    </GlohsenScoreProvider>
+                <EQAssessment />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+      
+      {showFooter && <Footer isActive={false} />}
+    </div>
   );
 };
 
-export default GlohsenScorePage;
+export default GlohsenScore;

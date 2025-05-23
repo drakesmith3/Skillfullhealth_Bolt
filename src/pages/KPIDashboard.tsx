@@ -70,10 +70,10 @@ const KPIDashboardPage: React.FC = () => {
           <p className="text-gray-600 mb-8">Monitor your key performance indicators to improve your GLOHSEN score.</p>
           
           {/* KPI Summary Cards */}
-          <KPISummaryCards />
+          <KPISummaryCards timeFrame={period} />
           
           {/* KPI Charts */}
-          <KPICharts />
+          <KPICharts type="overview" timeFrame={period} />
           
           {/* KPI Entry History */}
           <Card className="mt-6">

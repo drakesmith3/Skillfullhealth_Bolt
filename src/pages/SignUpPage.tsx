@@ -1,273 +1,215 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { UserRole } from '../lib/unis';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { toast } from 'sonner'; // Assuming you're using sonner for toast, adjust if needed
 
-type TabKey = UserRole;
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { type UserRole } from "../lib/unis";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import PreHeader from '../components/PreHeader';
+import Footer from '../components/Footer';
 
-interface SignUpFormData {
-    email: string;
-    password: string;
-    confirmPassword: string;
-    firstName: string;
-    lastName: string;
-    role: UserRole;
-    setup2FA?: boolean; // Added for 2FA
-}
+const SignUpPage: React.FC = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [userType, setUserType] = useState<UserRole>('professional');
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    agreeToTerms: false
+  });
 
-const SignUpPage = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [activeTab, setActiveTab] = useState<TabKey>('STUDENT');
-    const [formData, setFormData] = useState<SignUpFormData>({
-        email: '',
-        password: '',
-        confirmPassword: '',
-        firstName: '',
-        lastName: '',
-        role: 'STUDENT',
-        setup2FA: false // Initialize 2FA option
-    });
-    
-    // Check if we came from a session that should take us to profile completion
-    useEffect(() => {
-        const redirectToProfileCompletion = sessionStorage.getItem('redirectToProfileCompletion');
-        const roleFromStorage = sessionStorage.getItem('userRole');
-        
-        if (redirectToProfileCompletion === 'true' && roleFromStorage) {
-            // Clear session storage flags
-            sessionStorage.removeItem('redirectToProfileCompletion');
-            sessionStorage.removeItem('userRole');
-            
-            // Navigate to profile completion
-            navigate('/profile-completion', { 
-                state: { 
-                    userRole: roleFromStorage as UserRole,
-                    isNewUser: true,
-                    completionPercentage: 0
-                } 
-            });
-        }
-    }, [navigate]);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
 
-    const tabs: { key: TabKey; label: string; description: string }[] = [
-        {
-            key: 'STUDENT',
-            label: 'Students',
-            description: 'Access learning resources and connect with professionals'
-        },
-        {
-            key: 'PROFESSIONAL',
-            label: 'Professionals',
-            description: 'Share your expertise and grow your career'
-        },
-        {
-            key: 'TUTOR',
-            label: 'Tutor/Expert Adviser',
-            description: 'Guide and mentor students in their healthcare journey'
-        },
-        {
-            key: 'EMPLOYER',
-            label: 'Employer',
-            description: 'Find and hire qualified healthcare professionals'
-        },
-        {
-            key: 'CLIENT' as TabKey, // Added Client Tab
-            label: 'Client/Patient',
-            description: 'Access community, share feedback, and play games'
-        }
-    ];    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        // Validate form data
-        if (formData.password !== formData.confirmPassword) {
-            toast.error("Passwords do not match");
-            return;
-        }
-        
-        // Log for debugging
-        console.log("Attempting to create account for role:", formData.role);
-        
-        // Simulate API call for registration
-        try {
-            // Show loading state
-            toast.loading("Creating your account...");
-            
-            // Simulate server delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Dismiss loading toast and show success
-            toast.dismiss();
-            toast.success("Account created successfully!");
-            
-            // Create state object for navigation
-            const profileState = { 
-                userRole: formData.role,
-                isNewUser: true,
-                completionPercentage: 0
-            };
-            
-            console.log("Redirecting to profile completion with state:", profileState);
-            
-            // Set fallback in session storage in case direct navigation fails
-            sessionStorage.setItem('redirectToProfileCompletion', 'true');
-            sessionStorage.setItem('userRole', formData.role);
-            
-            // After successful registration, redirect to profile completion page with state
-            // Use a slight delay to ensure toast is visible before navigation
-            setTimeout(() => {
-                navigate('/profile-completion', { state: profileState });
-            }, 300);
-        } catch (error) {
-            toast.dismiss();
-            toast.error("Registration failed. Please try again.");
-            console.error('Registration error:', error);
-        }
-    };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+    if (!formData.agreeToTerms) {
+      alert('Please agree to the terms and conditions');
+      return;
+    }
+    console.log('Sign up attempt:', { ...formData, userType });
+    // Handle sign up logic here
+  };
 
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl p-8 border border-gray-200"
-                >
-                    <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-                        Create Your Account
-                    </h2>
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <PreHeader currentPage="sign up" />
+      
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 mt-16">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
+            <CardDescription className="text-center">
+              Join the GLOHSEN community today
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="userType">I want to sign up as a</Label>
+                <Select value={userType} onValueChange={(value: UserRole) => setUserType(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select user type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="professional">Professional</SelectItem>
+                    <SelectItem value="student">Student</SelectItem>
+                    <SelectItem value="employer">Employer</SelectItem>
+                    <SelectItem value="tutor">Tutor/Adviser</SelectItem>
+                    <SelectItem value="client">Client</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8"> {/* Changed md:grid-cols-4 to md:grid-cols-5 */}
-                        {tabs.map((tab) => (
-                            <button
-                                key={tab.key}
-                                onClick={() => {
-                                    setActiveTab(tab.key);
-                                    setFormData(prev => ({ ...prev, role: tab.key }));
-                                }}
-                                className={`relative p-4 rounded-lg transition-all duration-200 ${
-                                    activeTab === tab.key
-                                        ? 'bg-primary text-white shadow-lg'
-                                        : 'bg-white text-gray-600 hover:bg-gray-50'
-                                }`}
-                            >
-                                <h3 className="text-lg font-semibold mb-1">{tab.label}</h3>
-                                <p className="text-sm opacity-80">{tab.description}</p>
-                                {activeTab === tab.key && (
-                                    <motion.div
-                                        layoutId="active-tab"
-                                        className="absolute inset-0 bg-primary opacity-10 rounded-lg"
-                                        initial={false}
-                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                    />
-                                )}
-                            </button>
-                        ))}
-                    </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    name="firstName"
+                    placeholder="John"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    name="lastName"
+                    placeholder="Doe"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
 
-                    <AnimatePresence mode="wait">
-                        <motion.form
-                            key={activeTab}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            onSubmit={handleSubmit}
-                            className="space-y-6"
-                        >
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        First Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={formData.firstName}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        Last Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={formData.lastName}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                                    />
-                                </div>
-                            </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    required
-                                    value={formData.email}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                                />
-                            </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="+234 800 000 0000"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Password
-                                </label>
-                                <input
-                                    type="password"
-                                    required
-                                    value={formData.password}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                                />
-                            </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Create a password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Confirm Password
-                                </label>
-                                <input
-                                    type="password"
-                                    required
-                                    value={formData.confirmPassword}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                                />
-                            </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
 
-                            <div className="flex items-center space-x-2 mt-6 mb-2">
-                                <input
-                                    type="checkbox"
-                                    id="setup-2fa"
-                                    checked={formData.setup2FA}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, setup2FA: e.target.checked }))}
-                                    className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
-                                />
-                                <label htmlFor="setup-2fa" className="text-sm text-gray-700">
-                                    Set up Two-Factor Authentication (Recommended)
-                                </label>
-                            </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="agreeToTerms"
+                  name="agreeToTerms"
+                  checked={formData.agreeToTerms}
+                  onCheckedChange={(checked) => 
+                    setFormData(prev => ({ ...prev, agreeToTerms: checked as boolean }))
+                  }
+                />
+                <Label htmlFor="agreeToTerms" className="text-sm">
+                  I agree to the{' '}
+                  <Link to="/terms" className="text-primary hover:underline">
+                    Terms and Conditions
+                  </Link>{' '}
+                  and{' '}
+                  <Link to="/privacy" className="text-primary hover:underline">
+                    Privacy Policy
+                  </Link>
+                </Label>
+              </div>
 
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                            >
-                                Sign Up as {tabs.find(t => t.key === activeTab)?.label}
-                            </motion.button>
-                        </motion.form>
-                    </AnimatePresence>
-                </motion.div>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                Create Account
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-muted-foreground">
+                Already have an account?{' '}
+                <Link to="/signin" className="text-primary hover:underline">
+                  Sign in here
+                </Link>
+              </p>
             </div>
-        </div>
-    );
+          </CardContent>
+        </Card>
+      </div>
+      
+      <Footer isActive={false} />
+    </div>
+  );
 };
 
 export default SignUpPage;
