@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,7 +29,12 @@ const AIAgentStatus: React.FC = () => {
   
   const updateTestimonialStatus = () => {
     const aiAgent = AIActivityAgent.getInstance();
-    setTestimonialStatus(aiAgent.getStatus());
+    const status = aiAgent.getStatus();
+    setTestimonialStatus({
+      active: status.active,
+      lastUpdate: status.lastAutomatedUpdate || status.lastManualUpdate,
+      featuredCount: status.featuredCount
+    });
   };
   
   const updateFeedbackStatus = () => {
@@ -85,6 +91,7 @@ const AIAgentStatus: React.FC = () => {
       setIsUpdatingFeedback(false);
     }
   };
+
   return (
     <div className="space-y-4">
       <Card className="border-[#D4AF37]/20">

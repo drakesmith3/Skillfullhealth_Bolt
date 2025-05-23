@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"; // Added useRef
+import { useState, useEffect, useRef } from "react";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,18 +9,18 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { User, Lock, Bell, Shield, BookOpen, Trophy } from "lucide-react";
-import { Link } from "react-router-dom"; // Added import
-import { createDustParticles } from "@/utils/dustParticles"; // Import the utility
+import { Link } from "react-router-dom";
+import { createDustParticles } from "@/utils/dustParticles";
 
 const TutorAccountSettings = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const sidebarRef = useRef<HTMLDivElement>(null); // Create a ref for the sidebar
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (sidebarRef.current) {
-      const cleanup = createDustParticles(sidebarRef.current);
-      return () => cleanup(); // Cleanup particles on component unmount
+      const { cleanup } = createDustParticles(sidebarRef.current);
+      return () => cleanup();
     }
   }, [sidebarRef]);
 

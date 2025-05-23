@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { User, Lock, Bell, Globe, Shield, Award, Briefcase, Calendar, MapPin } from "lucide-react";
+import { User, Lock, Bell, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createDustParticles } from "@/utils/dustParticles";
 
@@ -19,10 +19,10 @@ const ProfessionalAccountSettings = () => {
 
   useEffect(() => {
     if (sidebarRef.current) {
-      const cleanup = createDustParticles(sidebarRef.current);
-      return () => cleanup();
+      const { cleanup } = createDustParticles(sidebarRef.current);
+      return cleanup;
     }
-  }, [sidebarRef]);
+  }, []);
 
   const handleSave = () => {
     setLoading(true);
@@ -37,51 +37,54 @@ const ProfessionalAccountSettings = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* Professional Sidebar */}
-      <div ref={sidebarRef} className="w-64 bg-black text-white relative overflow-hidden">
+      {/* Professional Sidebar - Consistent GLOHSEN Theme */}
+      <div className="w-64 bg-black text-white">
         <div className="p-4 border-b border-gray-700">
-          <h3 className="text-red-400 font-semibold mb-4">Quick Links</h3>
+          <h3 className="text-red-500 font-semibold mb-4">Professional Hub</h3>
           <nav className="space-y-2">
-            <Link to="/dashboard/professional" state={{ activeTab: 'MY PROFILE' }} className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded cursor-pointer">
+            <div className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors">
               <User size={20} />
               <span>MY PROFILE</span>
-            </Link>
-            <div className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded cursor-pointer">
-              <Briefcase size={20} />
-              <span>MY JOBS HISTORY</span>
             </div>
-            <div className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded cursor-pointer">
+            <div className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors">
+              <Briefcase size={20} />
+              <span>JOB APPLICATIONS</span>
+            </div>
+            <div className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors">
               <Award size={20} />
-              <span>TRANSACTIONS HISTORY</span>
+              <span>GLOHSEN SCORE</span>
             </div>
           </nav>
         </div>
 
         <div className="p-4 border-b border-gray-700">
-          <h3 className="text-red-400 font-semibold mb-4">CME Courses</h3>
+          <h3 className="text-red-500 font-semibold mb-4">Resources</h3>
           <nav className="space-y-2">
-            <div className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded cursor-pointer">
-              <Award size={20} />
-              <span>YOUR COURSES</span>
+            <div className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors">
+              <BookOpen size={20} />
+              <span>COURSES</span>
             </div>
-            <div className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded cursor-pointer">
-              <Award size={20} />
-              <span>MY CERTIFICATIONS</span>
+            <div className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors">
+              <MessageSquare size={20} />
+              <span>COMMUNITY FORUM</span>
             </div>
           </nav>
         </div>
 
         <div className="p-4">
-          <h3 className="text-red-400 font-semibold mb-4">SETTINGS</h3>
+          <h3 className="text-red-500 font-semibold mb-4">SETTINGS</h3>
           <nav className="space-y-2">
-            <div className="flex items-center space-x-3 p-2 bg-gray-700 rounded cursor-pointer">
+            <div className="flex items-center space-x-3 p-2 bg-gray-800 text-red-500 rounded cursor-pointer">
               <User size={20} />
               <span>ACCOUNT SETTINGS</span>
             </div>
-            <div className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded cursor-pointer">
+            <Link
+              to="/notifications/professional"
+              className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+            >
               <Bell size={20} />
               <span>NOTIFICATIONS</span>
-            </div>
+            </Link>
           </nav>
         </div>
       </div>
@@ -94,12 +97,9 @@ const ProfessionalAccountSettings = () => {
           </h1>
           
           <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid grid-cols-5 mb-8">
+            <TabsList className="grid grid-cols-4 mb-8">
               <TabsTrigger value="profile" className="flex gap-2 items-center">
                 <User size={16} /> Profile
-              </TabsTrigger>
-              <TabsTrigger value="professional" className="flex gap-2 items-center">
-                <Award size={16} /> Professional
               </TabsTrigger>
               <TabsTrigger value="security" className="flex gap-2 items-center">
                 <Lock size={16} /> Security
@@ -116,50 +116,27 @@ const ProfessionalAccountSettings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="fullName">Full Name</Label>
-                  <Input id="fullName" defaultValue="OREDOLA ADEOLA" className="mt-1" />
+                  <Input id="fullName" defaultValue="Dr. John Smith" className="mt-1" />
                 </div>
                 <div>
                   <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" defaultValue="oredola@example.com" className="mt-1" />
+                  <Input id="email" type="email" defaultValue="john.123@example.com" className="mt-1" />
                 </div>
                 <div>
                   <Label htmlFor="phone">Phone Number</Label>
                   <Input id="phone" defaultValue="+234 800 123 4567" className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="title">Professional Title</Label>
-                  <Input id="title" defaultValue="MIDWIFE | REGISTERED NURSE" className="mt-1" />
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="professional" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="mdcn">MDCN Number</Label>
-                  <Input id="mdcn" defaultValue="RN-2023-45789" className="mt-1" />
+                  <Label htmlFor="location">Preferred Location</Label>
+                  <Input id="location" defaultValue="Lagos, Nigeria" className="mt-1" />
                 </div>
                 <div>
                   <Label htmlFor="experience">Years of Experience</Label>
-                  <Input id="experience" type="number" defaultValue="8" className="mt-1" />
+                  <Input id="experience" type="number" defaultValue="5" className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="specialty">Specialty</Label>
-                  <select className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white">
-                    <option>Midwifery</option>
-                    <option>Emergency Medicine</option>
-                    <option>Critical Care</option>
-                    <option>Pediatrics</option>
-                  </select>
-                </div>
-                <div>
-                  <Label htmlFor="availability">Availability Status</Label>
-                  <select className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white">
-                    <option>Available Immediately</option>
-                    <option>Available in 1 week</option>
-                    <option>Available in 1 month</option>
-                    <option>Not Available</option>
-                  </select>
+                  <Label htmlFor="specialization">Area of Specialization</Label>
+                  <Input id="specialization" defaultValue="Cardiology" className="mt-1" />
                 </div>
               </div>
               
@@ -168,26 +145,11 @@ const ProfessionalAccountSettings = () => {
                 <textarea 
                   id="bio" 
                   className="w-full rounded-md border border-gray-300 bg-white p-3 mt-1 h-32"
-                  defaultValue="Dedicated registered nurse and midwife with 8 years of experience in critical care, emergency medicine, and maternal health."
+                  defaultValue="Experienced cardiologist dedicated to providing exceptional patient care and advancing the field of cardiology."
                 />
-              </div>
-
-              <div>
-                <Label>Certifications & Licenses</Label>
-                <div className="mt-2 space-y-2">
-                  <div className="flex justify-between items-center p-3 border rounded">
-                    <span>BLS Certification</span>
-                    <Button variant="outline" size="sm">Upload</Button>
-                  </div>
-                  <div className="flex justify-between items-center p-3 border rounded">
-                    <span>Annual Practicing License</span>
-                    <Button variant="outline" size="sm">Upload</Button>
-                  </div>
-                </div>
               </div>
             </TabsContent>
 
-            {/* Security, Notifications, Privacy tabs similar to original but with professional-specific content */}
             <TabsContent value="security" className="space-y-6">
               <div className="space-y-4">
                 <div>
@@ -211,13 +173,13 @@ const ProfessionalAccountSettings = () => {
                 <Separator className="my-6" />
                 
                 <div>
-                  <h3 className="font-semibold mb-3">Professional Verification</h3>
+                  <h3 className="font-semibold mb-3">Two-Factor Authentication</h3>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium">Two-Factor Authentication</p>
-                      <p className="text-sm text-gray-500">Required for all professional accounts</p>
+                      <p className="font-medium">Enable 2FA</p>
+                      <p className="text-xs text-gray-500">Enhanced security for your professional account</p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch />
                   </div>
                 </div>
               </div>
@@ -228,29 +190,22 @@ const ProfessionalAccountSettings = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between border-b pb-2">
                   <div>
-                    <p className="font-medium">Locum Job Alerts</p>
-                    <p className="text-xs text-gray-500">New locum opportunities matching your profile</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between border-b pb-2">
-                  <div>
-                    <p className="font-medium">CME Course Reminders</p>
-                    <p className="text-xs text-gray-500">Continuing education deadlines</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between border-b pb-2">
-                  <div>
-                    <p className="font-medium">License Expiry Alerts</p>
-                    <p className="text-xs text-gray-500">Professional license renewal reminders</p>
+                    <p className="font-medium">Job Application Updates</p>
+                    <p className="text-xs text-gray-500">When your job applications are viewed or updated</p>
                   </div>
                   <Switch defaultChecked />
                 </div>
                 <div className="flex items-center justify-between border-b pb-2">
                   <div>
                     <p className="font-medium">GLOHSEN Score Updates</p>
-                    <p className="text-xs text-gray-500">Changes to your professional score</p>
+                    <p className="text-xs text-gray-500">Changes to your GLOHSEN score and recommendations</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                <div className="flex items-center justify-between border-b pb-2">
+                  <div>
+                    <p className="font-medium">Community Forum Mentions</p>
+                    <p className="text-xs text-gray-500">When you are mentioned in the community forum</p>
                   </div>
                   <Switch defaultChecked />
                 </div>
@@ -260,30 +215,19 @@ const ProfessionalAccountSettings = () => {
             <TabsContent value="privacy" className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold mb-3">Professional Profile Visibility</h3>
+                  <h3 className="font-semibold mb-3">Profile Visibility</h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between border-b pb-2">
                       <div>
-                        <p className="font-medium">Profile Visibility</p>
-                        <p className="text-xs text-gray-500">Control who can see your professional profile</p>
-                      </div>
-                      <select className="rounded-md border border-gray-300 px-2 py-1 text-sm">
-                        <option>All Employers</option>
-                        <option>Verified Employers Only</option>
-                        <option>Private</option>
-                      </select>
-                    </div>
-                    <div className="flex items-center justify-between border-b pb-2">
-                      <div>
-                        <p className="font-medium">Show GLOHSEN Score</p>
-                        <p className="text-xs text-gray-500">Display your professional score publicly</p>
+                        <p className="font-medium">Public Profile</p>
+                        <p className="text-xs text-gray-500">Allow employers to view your full profile</p>
                       </div>
                       <Switch defaultChecked />
                     </div>
                     <div className="flex items-center justify-between pb-2">
                       <div>
                         <p className="font-medium">Contact Information</p>
-                        <p className="text-xs text-gray-500">Allow direct contact from employers</p>
+                        <p className="text-xs text-gray-500">Share your contact details with verified employers</p>
                       </div>
                       <Switch defaultChecked />
                     </div>

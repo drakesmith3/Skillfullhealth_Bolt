@@ -10,19 +10,19 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { User, Lock, Bell, Shield, Building, MapPin, Phone, Mail, Briefcase, Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { createDustParticles } from "@/utils/dustParticles"; // Import the utility
+import { createDustParticles } from "@/utils/dustParticles";
 
 const EmployerAccountSettings = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const sidebarRef = useRef<HTMLDivElement>(null); // Create a ref for the sidebar
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (sidebarRef.current) {
-      const cleanup = createDustParticles(sidebarRef.current);
-      return () => cleanup(); // Cleanup particles on component unmount
+      const { cleanup } = createDustParticles(sidebarRef.current);
+      return cleanup;
     }
-  }, [sidebarRef]);
+  }, []);
 
   const handleSave = () => {
     setLoading(true);

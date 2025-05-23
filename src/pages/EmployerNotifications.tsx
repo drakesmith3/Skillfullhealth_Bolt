@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Bell, Briefcase, User, Building, MessageSquare, CheckCircle, Calendar, Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { createDustParticles } from "@/utils/dustParticles"; // Import the utility
+import { createDustParticles } from "@/utils/dustParticles";
 
 const EmployerNotifications = () => {
   const [notifications, setNotifications] = useState([
@@ -15,14 +15,14 @@ const EmployerNotifications = () => {
     { id: 4, type: 'interview', title: 'Interview Scheduled', message: 'Interview with Dr. Adebayo confirmed for tomorrow 2PM', time: '1 day ago', read: true, priority: 'medium' },
     { id: 5, type: 'review', title: 'Candidate Review', message: 'Please review profile: Professional GLOHSEN Score 85', time: '2 days ago', read: false, priority: 'low' }
   ]);
-  const sidebarRef = useRef<HTMLDivElement>(null); // Create a ref for the sidebar
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (sidebarRef.current) {
-      const cleanup = createDustParticles(sidebarRef.current);
-      return () => cleanup(); // Cleanup particles on component unmount
+      const { cleanup } = createDustParticles(sidebarRef.current);
+      return cleanup;
     }
-  }, [sidebarRef]);
+  }, []);
 
   const markAsRead = (id: number) => {
     setNotifications(prev => prev.map(notif => 
@@ -80,7 +80,7 @@ const EmployerNotifications = () => {
               <span>FEATURED PROFESSIONALS</span>
             </div>
             <div className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors">
-              <CheckCircle size={20} />
+              <Building size={20} />
               <span>HIRING ANALYTICS</span>
             </div>
           </nav>

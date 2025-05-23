@@ -1,7 +1,8 @@
+
 import { gsap } from "gsap";
 
-export const createDustParticles = (container: HTMLElement | null, count: number, particleColor: string) => {
-  if (!container) return;
+export const createDustParticles = (container: HTMLElement | null, count: number = 15, particleColor: string = "#FFD700") => {
+  if (!container) return { cleanup: () => {} };
 
   // Ensure the container has relative or absolute positioning for particles to be positioned correctly.
   const computedStyle = window.getComputedStyle(container);

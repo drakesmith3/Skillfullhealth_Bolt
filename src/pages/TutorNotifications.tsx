@@ -19,10 +19,10 @@ const TutorNotifications = () => {
 
   useEffect(() => {
     if (sidebarRef.current) {
-      const cleanup = createDustParticles(sidebarRef.current);
-      return () => cleanup();
+      const { cleanup } = createDustParticles(sidebarRef.current);
+      return cleanup;
     }
-  }, [sidebarRef]);
+  }, []);
 
   const markAsRead = (id: number) => {
     setNotifications(prev => prev.map(notif => 
