@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import PreHeader from '../components/PreHeader';
 import Footer from '../components/Footer';
 import { type UserRole } from "@/lib/unis";
 
 const SignInPage: React.FC = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState<UserRole>('professional');
   const [formData, setFormData] = useState({
@@ -30,7 +31,17 @@ const SignInPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Sign in attempt:', { ...formData, userType });
-    // Handle sign in logic here
+    
+    // Mock authentication logic
+    if (formData.email && formData.password) {
+      // Set authentication state
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userType', userType);
+      localStorage.setItem('userName', 'User Name'); // Mock user name
+      
+      // Navigate to appropriate dashboard
+      navigate(`/dashboard/${userType}`);
+    }
   };
 
   return (

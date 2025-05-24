@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import PreHeader from '../components/PreHeader';
 import Footer from '../components/Footer';
 
 const SignUpPage: React.FC = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState<UserRole>('professional');
   const [formData, setFormData] = useState({
@@ -44,7 +45,16 @@ const SignUpPage: React.FC = () => {
       return;
     }
     console.log('Sign up attempt:', { ...formData, userType });
-    // Handle sign up logic here
+    
+    // Mock authentication and store user data
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('userType', userType);
+    localStorage.setItem('userName', `${formData.firstName} ${formData.lastName}`);
+    sessionStorage.setItem('userRole', userType);
+    sessionStorage.setItem('redirectToProfileCompletion', 'true');
+    
+    // Navigate to profile completion
+    navigate('/profile-completion');
   };
 
   return (

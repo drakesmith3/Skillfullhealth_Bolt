@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { GlohsenScoreProvider } from "./contexts/GlohsenScoreContext";
@@ -27,6 +28,7 @@ import EmployerPayment from "./pages/EmployerPayment";
 import KPIDashboard from "./pages/KPIDashboard";
 import ProfessionalWallet from "./pages/ProfessionalWallet";
 import TutorWallet from "./pages/TutorWallet";
+import ProfileCompletion from "./pages/ProfileCompletion";
 import DashboardLayout, { UserType } from "./components/dashboard/DashboardLayout";
 
 // Helper functions to interact with localStorage
@@ -39,7 +41,7 @@ const getUserType = (): UserType | null => {
   if (userType && ['professional', 'student', 'employer', 'tutor', 'client', 'admin'].includes(userType)) {
     return userType as UserType;
   }
-  return null; // Or a default UserType like 'student' if appropriate
+  return null;
 };
 
 const getUserName = (): string | null => {
@@ -51,14 +53,11 @@ const getPageTitle = (pathname: string): string => {
   const pathParts = pathname.split('/').filter(part => part);
   if (pathParts.length === 0 && pathname === '/') return "Home";
 
-  // Specific titles for root-level public pages often handled outside DashboardLayout
-  // For pages within layouts, generate titles:
   let title = pathParts
-    .map(part => part.replace(/-/g, ' ')) // Replace hyphens with spaces
-    .map(part => part.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')) // Capitalize each word
-    .join(' > '); // Use ' > ' as a separator for hierarchy
+    .map(part => part.replace(/-/g, ' '))
+    .map(part => part.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))
+    .join(' > ');
 
-  // Custom titles for specific routes
   const customTitles: { [key: string]: string } = {
     "/dashboard/professional": "Professional Dashboard",
     "/dashboard/employer": "Employer Dashboard",
@@ -81,20 +80,18 @@ const getPageTitle = (pathname: string): string => {
     "/games-quizzes": "Games & Quizzes",
     "/blog": "Blog",
     "/feedback": "Feedback",
+    "/profile-completion": "Complete Your Profile",
   };
 
   if (customTitles[pathname]) {
     return customTitles[pathname];
   }
   
-  // Generic dashboard titles
   if (pathname.includes('/dashboard/') && pathname.includes('/notifications')) title = "Notifications";
   if (pathname.includes('/dashboard/') && pathname.includes('/inbox')) title = "Inbox";
 
-
-  return title || "Page"; // Fallback title
+  return title || "Page";
 };
-
 
 // Layout for authenticated users
 const AuthenticatedLayout = () => {
@@ -105,7 +102,6 @@ const AuthenticatedLayout = () => {
   const userType = getUserType();
   const userName = getUserName();
 
-  // Fallback to 'student' if userType is null, though isAuthenticated should prevent this.
   const safeUserType = userType || 'student'; 
   const safeUserName = userName || 'User';
   const pageTitle = getPageTitle(location.pathname);
@@ -133,10 +129,8 @@ const PublicContentLayout = () => {
       </DashboardLayout>
     );
   }
-  // If not authenticated, just render the content without the sidebar
   return <Outlet />;
 };
-
 
 function App() {
   return (
@@ -150,59 +144,52 @@ function App() {
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
+            
+            {/* Profile Completion Route */}
+            <Route path="/profile-completion" element={<ProfileCompletion />} />
 
             {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
             <Route element={<PublicContentLayout />}>
               <Route path="/courses" element={<CourseEnrollment />} />
               <Route path="/job-board" element={<JobBoard />} />
-              <Route path="/jobs" element={<JobBoard />} /> {/* Alias */}
+              <Route path="/jobs" element={<JobBoard />} />
               <Route path="/community-forum" element={<CommunityForum />} />
-              <Route path="/forum" element={<CommunityForum />} /> {/* Alias */}
-              <Route path="/community" element={<CommunityForum />} /> {/* Alias */}
-              <Route path="/discussion" element={<CommunityForum />} /> {/* Alias */}
+              <Route path="/forum" element={<CommunityForum />} />
+              <Route path="/community" element={<CommunityForum />} />
+              <Route path="/discussion" element={<CommunityForum />} />
               <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />
-              <Route path="/games" element={<MedicalGamesQuizzes />} /> {/* Alias */}
-              <Route path="/quizzes" element={<MedicalGamesQuizzes />} /> {/* Alias */}
+              <Route path="/games" element={<MedicalGamesQuizzes />} />
+              <Route path="/quizzes" element={<MedicalGamesQuizzes />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/feedback" element={<GeneralFeedbackForm />} />
             </Route>
 
             {/* Authenticated Routes - Always have sidebar */}
             <Route element={<AuthenticatedLayout />}>
-              {/* Dashboards */}
               <Route path="/dashboard/professional" element={<DashboardPage />} />
               <Route path="/dashboard/employer" element={<EmployerDashboard />} />
               <Route path="/dashboard/tutor" element={<TutorDashboard />} />
               <Route path="/dashboard/student" element={<StudentDashboard />} />
               <Route path="/dashboard/client" element={<ClientDashboard />} />
               
-              {/* Notifications & Inbox */}
               <Route path="/dashboard/:userType/notifications" element={<NotificationsPage />} />
               <Route path="/dashboard/:userType/inbox" element={<NotificationsPage />} />
               
-              {/* Account Settings */}
               <Route path="/account-settings" element={<AccountSettings />} />
               
-              {/* Glohsen Score */}
               <Route path="/score" element={<GlohsenScoreResultsPage />} />
               <Route path="/score/calculate" element={<GlohsenScoreCalculatorPage />} />
               <Route path="/score/details" element={<GlohsenScoreResultsPage />} />
               
-              {/* Employer Specific */}
               <Route path="/employer/criteria" element={<EmployerCriteriaPage />} />
               <Route path="/employer/payment" element={<EmployerPayment />} />
               
-              {/* KPI */}
               <Route path="/kpi-tracking" element={<KPITrackingPage />} />
               <Route path="/kpi-dashboard" element={<KPIDashboard />} />
               
-              {/* Wallets */}
               <Route path="/wallet/professional" element={<ProfessionalWallet />} />
               <Route path="/wallet/tutor" element={<TutorWallet />} />
             </Route>
-            
-            {/* Consider adding a 404 Not Found route here */}
-            {/* <Route path="*" element={<NotFoundPage />} /> */}
           </Routes>
         </Router>
       </GlohsenScoreProvider>
