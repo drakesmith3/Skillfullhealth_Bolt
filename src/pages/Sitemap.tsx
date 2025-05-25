@@ -43,9 +43,7 @@ const Sitemap: React.FC = () => {
         { name: 'Profile Management', path: '/dashboard/professional', description: 'Manage professional profile and credentials' },
         { name: 'Course Progress', path: '/dashboard/professional', description: 'Track learning progress and certifications' },
         { name: 'Job Applications', path: '/dashboard/professional', description: 'Manage job applications and employment history' },
-        { name: 'MLM Referrals', path: '/dashboard/professional', description: 'Multi-level marketing referral system and earnings' },
-        { name: 'Transactions', path: '/dashboard/professional', description: 'Financial transaction history and wallet' },
-        { name: 'Inbox & Feedback', path: '/dashboard/professional', description: 'Messages and client feedback management' }
+        { name: 'MLM Referrals', path: '/dashboard/professional', description: 'Multi-level marketing referral system and earnings' }
       ]
     },
     {
@@ -56,8 +54,7 @@ const Sitemap: React.FC = () => {
         { name: 'Candidate Search', path: '/dashboard/employer', description: 'AI-powered candidate matching and evaluation' },
         { name: 'Job Postings', path: '/dashboard/employer', description: 'Create and manage job vacancy postings' },
         { name: 'Criteria Analytics', path: '/employer/criteria', description: 'Set hiring criteria and score weights' },
-        { name: 'Payment Portal', path: '/employer/payment', description: 'Subscription management and billing' },
-        { name: 'KPI Analytics', path: '/dashboard/employer', description: 'Key performance indicators and insights' }
+        { name: 'Payment Portal', path: '/employer/payment', description: 'Subscription management and billing' }
       ]
     },
     {
@@ -199,7 +196,7 @@ const Sitemap: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
           {siteStructure.map((section, index) => {
             const IconComponent = section.icon;
             return (
@@ -235,11 +232,11 @@ const Sitemap: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4">Platform Statistics</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center">
-                <div className="text-3xl font-bold text-[#ea384c]">13</div>
+                <div className="text-3xl font-bold text-[#ea384c]">14</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Main Sections</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-[#ea384c]">80+</div>
+                <div className="text-3xl font-bold text-[#ea384c]">85+</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Total Pages</div>
               </div>
               <div className="text-center">
