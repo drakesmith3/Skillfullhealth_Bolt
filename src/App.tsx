@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { GlohsenScoreProvider } from "./contexts/GlohsenScoreContext";

@@ -172,7 +172,7 @@ const Header: React.FC<HeaderProps> = ({ isActive, scrollToSection }) => {
 
         {/* Navigation Buttons */}
         <nav className="space-x-3 md:space-x-4">
-          <Link to="/about" className={goldButtonClasses}>ABOUT US</Link>
+          <Link to="/about-us" className={goldButtonClasses}>ABOUT US</Link>
           <Link to="/signin" className={goldButtonClasses}>SIGN IN</Link>
           <Link to="/signup" className={goldButtonClasses}>SIGN UP</Link>
           <Link to="/feedback" className={goldButtonClasses}>LEAVE FEEDBACK</Link>

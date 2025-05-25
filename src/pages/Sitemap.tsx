@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -11,7 +10,7 @@ const Sitemap: React.FC = () => {
       category: "Main Pages",
       pages: [
         { name: "Home", path: "/" },
-        { name: "About Us", path: "/about" },
+        { name: "About Us", path: "/about-us" },
         { name: "Contact", path: "/contact" },
         { name: "Services", path: "/services" },
         { name: "Success Stories", path: "/success-stories" }
