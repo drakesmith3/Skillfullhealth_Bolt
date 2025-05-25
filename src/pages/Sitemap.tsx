@@ -1,157 +1,263 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
-import PreHeader from '@/components/PreHeader';
-import Footer from '@/components/Footer';
+import { Link } from 'react-router-dom';
+import { useTheme } from '@/contexts/ThemeContext';
+import { 
+  Home, User, BookOpen, Briefcase, MessageCircle, Users, Settings, 
+  Star, DollarSign, Activity, BarChart3, Shield, Accessibility,
+  Brain, Globe, Award, Target
+} from 'lucide-react';
 
 const Sitemap: React.FC = () => {
+  const { theme } = useTheme();
+
   const siteStructure = [
     {
-      category: "Main Pages",
+      title: 'Public Pages',
+      icon: Home,
       pages: [
-        { name: "Home", path: "/" },
-        { name: "About Us", path: "/about-us" },
-        { name: "Contact", path: "/contact" },
-        { name: "Services", path: "/services" },
-        { name: "Success Stories", path: "/success-stories" }
+        { name: 'Home', path: '/', description: 'Interactive parallax storytelling homepage with GLOHSEN overview' },
+        { name: 'About Us', path: '/about-us', description: 'Comprehensive information about GLOHSEN platform and mission' },
+        { name: 'Contact Us', path: '/contact-us', description: 'Get in touch with our team and support' },
+        { name: 'Blog', path: '/blog', description: 'Latest healthcare industry insights and platform updates' },
+        { name: 'Sign Up', path: '/signup', description: 'Create a new account with role selection' },
+        { name: 'Login', path: '/login', description: 'Secure user authentication and access' },
+        { name: 'Sitemap', path: '/sitemap', description: 'Complete site structure and navigation guide' }
       ]
     },
     {
-      category: "Authentication",
+      title: 'Learning & Community',
+      icon: BookOpen,
       pages: [
-        { name: "Sign In", path: "/signin" },
-        { name: "Sign Up", path: "/signup" },
-        { name: "Forgot Password", path: "/forgot-password" }
+        { name: 'Courses', path: '/courses', description: 'Browse CME courses, certifications, and learning paths' },
+        { name: 'Community Forum', path: '/community-forum', description: 'Professional networking and discussion platform' },
+        { name: 'Games & Quizzes', path: '/games-quizzes', description: 'Interactive medical learning games and assessments' },
+        { name: 'Job Board', path: '/job-board', description: 'Healthcare job opportunities with AI-powered matching' }
       ]
     },
     {
-      category: "Professional Dashboard",
+      title: 'Professional Dashboard',
+      icon: User,
       pages: [
-        { name: "Professional Dashboard", path: "/professional-dashboard" },
-        { name: "Professional Account Settings", path: "/account-settings/professional" },
-        { name: "Professional Notifications", path: "/notifications/professional" },
-        { name: "GLOHSEN Score", path: "/glohsen-score" },
-        { name: "KPI Dashboard", path: "/kpi-dashboard" }
+        { name: 'Overview', path: '/dashboard/professional', description: 'Professional dashboard with GLOHSEN score and activity' },
+        { name: 'Profile Management', path: '/dashboard/professional', description: 'Manage professional profile and credentials' },
+        { name: 'Course Progress', path: '/dashboard/professional', description: 'Track learning progress and certifications' },
+        { name: 'Job Applications', path: '/dashboard/professional', description: 'Manage job applications and employment history' },
+        { name: 'MLM Referrals', path: '/dashboard/professional', description: 'Multi-level marketing referral system and earnings' }
       ]
     },
     {
-      category: "Employer Dashboard",
+      title: 'Employer Dashboard',
+      icon: Briefcase,
       pages: [
-        { name: "Employer Dashboard", path: "/employer-dashboard" },
-        { name: "Employer Account Settings", path: "/account-settings/employer" },
-        { name: "Employer Notifications", path: "/notifications/employer" },
-        { name: "Employer Criteria", path: "/employer-criteria" }
+        { name: 'Employer Overview', path: '/dashboard/employer', description: 'Facility management and hiring dashboard' },
+        { name: 'Candidate Search', path: '/dashboard/employer', description: 'AI-powered candidate matching and evaluation' },
+        { name: 'Job Postings', path: '/dashboard/employer', description: 'Create and manage job vacancy postings' },
+        { name: 'Criteria Analytics', path: '/employer/criteria', description: 'Set hiring criteria and score weights' },
+        { name: 'Payment Portal', path: '/employer/payment', description: 'Subscription management and billing' }
       ]
     },
     {
-      category: "Student Dashboard",
+      title: 'Tutor Dashboard',
+      icon: Star,
       pages: [
-        { name: "Student Dashboard", path: "/student-dashboard" },
-        { name: "Student Account Settings", path: "/account-settings/student" },
-        { name: "Student Notifications", path: "/notifications/student" }
+        { name: 'Tutor Overview', path: '/dashboard/tutor', description: 'Teaching dashboard with course management' },
+        { name: 'Course Creation', path: '/dashboard/tutor', description: 'Develop and publish educational content' },
+        { name: 'Student Analytics', path: '/dashboard/tutor', description: 'Track student progress and engagement' },
+        { name: 'Content Analytics', path: '/dashboard/tutor', description: 'Course performance and completion rates' },
+        { name: 'Revenue Tracking', path: '/dashboard/tutor', description: 'Earnings from courses and MLM referrals' }
       ]
     },
     {
-      category: "Tutor Dashboard",
+      title: 'Student Dashboard',
+      icon: BookOpen,
       pages: [
-        { name: "Tutor Dashboard", path: "/tutor-dashboard" },
-        { name: "Tutor Account Settings", path: "/account-settings/tutor" },
-        { name: "Tutor Notifications", path: "/notifications/tutor" }
+        { name: 'Student Overview', path: '/dashboard/student', description: 'Learning journey and progress tracking' },
+        { name: 'Enrolled Courses', path: '/dashboard/student', description: 'Active and completed course progress' },
+        { name: 'Achievements', path: '/dashboard/student', description: 'Certificates, badges, and accomplishments' },
+        { name: 'Performance Analytics', path: '/dashboard/student', description: 'Learning analytics and improvement insights' },
+        { name: 'Study Community', path: '/dashboard/student', description: 'Peer interaction and study groups' }
       ]
     },
     {
-      category: "Client Dashboard",
+      title: 'Client Dashboard',
+      icon: Users,
       pages: [
-        { name: "Client Dashboard", path: "/client-dashboard" },
-        { name: "Client Account Settings", path: "/account-settings/client" },
-        { name: "Client Notifications", path: "/notifications/client" }
+        { name: 'Client Overview', path: '/dashboard/client', description: 'Service management and professional connections' },
+        { name: 'Find Professionals', path: '/dashboard/client', description: 'Search and connect with healthcare providers' },
+        { name: 'Service History', path: '/dashboard/client', description: 'Past services and provider interactions' },
+        { name: 'Feedback Management', path: '/dashboard/client', description: 'Rate experiences and provide feedback' },
+        { name: 'Community Access', path: '/dashboard/client', description: 'Discussion forums and peer support' }
       ]
     },
     {
-      category: "Learning & Development",
+      title: 'Analytics & Scoring',
+      icon: BarChart3,
       pages: [
-        { name: "Courses", path: "/courses" },
-        { name: "Medical Quizzes & Games", path: "/medical-quizzes-games" },
-        { name: "Community Forum", path: "/community-forum" }
+        { name: 'GLOHSEN Score Calculator', path: '/score/calculate', description: 'Interactive professional score assessment' },
+        { name: 'Score Results', path: '/score', description: 'Detailed GLOHSEN score breakdown and insights' },
+        { name: 'KPI Tracking', path: '/kpi-tracking', description: 'Monitor key performance indicators' },
+        { name: 'KPI Dashboard', path: '/kpi-dashboard', description: 'Visual analytics and performance metrics' },
+        { name: 'Analytics Dashboard', path: '/analytics', description: 'Comprehensive platform analytics and insights' }
       ]
     },
     {
-      category: "Job Board",
+      title: 'Financial Management',
+      icon: DollarSign,
       pages: [
-        { name: "Job Board", path: "/job-board" },
-        { name: "Post a Job", path: "/post-job" }
+        { name: 'Professional Wallet', path: '/wallet/professional', description: 'Earnings, transactions, and financial history' },
+        { name: 'Tutor Wallet', path: '/wallet/tutor', description: 'Teaching income and MLM commission tracking' },
+        { name: 'MLM System', path: '/mlm', description: 'Multi-level marketing referral management' },
+        { name: 'Payment Processing', path: '/payments', description: 'Secure payment gateway and transactions' }
       ]
     },
     {
-      category: "Admin",
+      title: 'AI-Powered Features',
+      icon: Brain,
       pages: [
-        { name: "Admin Dashboard", path: "/admin" },
-        { name: "General Feedback", path: "/general-feedback" }
+        { name: 'Recommendation Engine', path: '/recommendations', description: 'AI-powered course and job recommendations' },
+        { name: 'Smart Matching', path: '/matching', description: 'Intelligent candidate-employer matching' },
+        { name: 'Activity Tracking', path: '/activity', description: 'AI-powered user behavior analysis' },
+        { name: 'Feedback Routing', path: '/feedback-routing', description: 'Automated feedback processing and routing' }
+      ]
+    },
+    {
+      title: 'Platform Features',
+      icon: Globe,
+      pages: [
+        { name: 'Accessibility Tools', path: '/accessibility', description: 'WCAG-compliant accessibility features' },
+        { name: 'Security Center', path: '/security', description: 'Platform security and privacy settings' },
+        { name: 'Performance Monitoring', path: '/performance', description: 'Real-time performance analytics' },
+        { name: 'Quality Assurance', path: '/quality', description: 'Platform quality metrics and monitoring' }
+      ]
+    },
+    {
+      title: 'Account & Settings',
+      icon: Settings,
+      pages: [
+        { name: 'Account Settings', path: '/account-settings', description: 'Personal account preferences and security' },
+        { name: 'Profile Completion', path: '/profile-completion', description: 'Complete professional profile setup' },
+        { name: 'Notification Settings', path: '/notifications', description: 'Manage communication preferences' },
+        { name: 'Privacy Controls', path: '/privacy', description: 'Data privacy and sharing preferences' },
+        { name: 'Theme Preferences', path: '/theme', description: 'Light/dark mode and visual preferences' }
+      ]
+    },
+    {
+      title: 'Administration',
+      icon: Shield,
+      pages: [
+        { name: 'Admin Dashboard', path: '/admin/dashboard', description: 'System administration and AI agent management' },
+        { name: 'User Management', path: '/admin/users', description: 'Platform user administration' },
+        { name: 'Content Moderation', path: '/admin/content', description: 'Content review and quality control' },
+        { name: 'System Analytics', path: '/admin/analytics', description: 'Platform-wide analytics and insights' },
+        { name: 'AI Agent Control', path: '/admin/agents', description: 'Manage recommendation and routing agents' }
+      ]
+    },
+    {
+      title: 'Support & Feedback',
+      icon: MessageCircle,
+      pages: [
+        { name: 'General Feedback', path: '/feedback', description: 'Share platform experience and suggestions' },
+        { name: 'Help Center', path: '/help', description: 'Documentation and frequently asked questions' },
+        { name: 'Contact Support', path: '/support', description: 'Technical support and customer service' },
+        { name: 'Feature Requests', path: '/feature-requests', description: 'Suggest new features and improvements' },
+        { name: 'Bug Reports', path: '/bug-reports', description: 'Report technical issues and bugs' }
       ]
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <PreHeader currentPage="sitemap" />
-      
-      <div className="container mx-auto px-4 py-8 mt-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Site Map
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Navigate through all sections of the GLOHSEN platform
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {siteStructure.map((section, index) => (
-              <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow">
-                <CardHeader className="bg-gradient-to-r from-red-500 to-[#D4AF37] text-white">
-                  <CardTitle className="text-lg font-semibold">
-                    {section.category}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <ul className="space-y-2">
-                    {section.pages.map((page, pageIndex) => (
-                      <li key={pageIndex}>
-                        <Link
-                          to={page.path}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline transition-colors"
-                        >
-                          {page.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <Card className="inline-block p-6 bg-gradient-to-r from-red-50 to-amber-50 dark:from-red-900/20 dark:to-amber-900/20">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                Need Help Finding Something?
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Can't find what you're looking for? Contact our support team for assistance.
-              </p>
-              <Link
-                to="/contact"
-                className="inline-block bg-[#D4AF37] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#B8941F] transition-colors"
-              >
-                Contact Support
-              </Link>
-            </Card>
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-[#ea384c] mb-4">Complete Site Map</h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Navigate through all pages and features of the GLOHSEN platform. 
+            Discover our comprehensive healthcare professional ecosystem with AI-powered features, 
+            multi-level marketing system, and advanced analytics.
+          </p>
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-[#D4AF37]" />
+              <span>150+ Features</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-[#D4AF37]" />
+              <span>5 User Types</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Brain className="h-4 w-4 text-[#D4AF37]" />
+              <span>3 AI Agents</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Accessibility className="h-4 w-4 text-[#D4AF37]" />
+              <span>WCAG Compliant</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <Footer isActive={false} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+          {siteStructure.map((section, index) => {
+            const IconComponent = section.icon;
+            return (
+              <div key={index} className={`rounded-lg border p-6 hover:shadow-lg transition-shadow ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+                <div className="flex items-center gap-3 mb-4">
+                  <IconComponent className="h-6 w-6 text-[#D4AF37]" />
+                  <h2 className="text-xl font-semibold">{section.title}</h2>
+                </div>
+                <ul className="space-y-3">
+                  {section.pages.map((page, pageIndex) => (
+                    <li key={pageIndex}>
+                      <Link 
+                        to={page.path}
+                        className="block p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+                      >
+                        <div className="font-medium text-[#ea384c] group-hover:text-[#d12e42] transition-colors">
+                          {page.name}
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                          {page.description}
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-16 text-center">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-4">Platform Statistics</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[#ea384c]">14</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Main Sections</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[#ea384c]">85+</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Total Pages</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[#ea384c]">5</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">User Roles</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[#ea384c]">3</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">AI Agents</div>
+              </div>
+            </div>
+          </div>
+          
+          <Link 
+            to="/"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#ea384c] to-[#d12e42] text-white rounded-lg hover:from-[#d12e42] hover:to-[#c02838] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          >
+            <Home className="h-5 w-5" />
+            Return to Home
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };

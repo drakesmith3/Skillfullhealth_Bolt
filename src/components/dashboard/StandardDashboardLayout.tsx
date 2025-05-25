@@ -8,12 +8,14 @@ interface StandardDashboardLayoutProps {
   children: React.ReactNode;
   sidebar: React.ReactNode;
   className?: string;
+  showFooter?: boolean;
 }
 
 const StandardDashboardLayout: React.FC<StandardDashboardLayoutProps> = ({
   children,
   sidebar,
-  className = ""
+  className = "",
+  showFooter = false
 }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +44,7 @@ const StandardDashboardLayout: React.FC<StandardDashboardLayoutProps> = ({
           <main className="flex-1 p-6">
             {children}
           </main>
-          <Footer isActive={false} />
+          {showFooter && <Footer isActive={false} />}
         </div>
       </div>
     </div>

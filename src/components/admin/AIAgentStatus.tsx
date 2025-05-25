@@ -1,12 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bot, RefreshCw, CheckCircle, Clock, MessageSquare, Router, BarChart, UserCheck, AlertCircle, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import AIActivityAgent from '@/services/aiActivityAgent';
-import FeedbackRoutingAgent from '@/services/feedbackRoutingAgent';
+import AIActivityAgentSingleton from '@/services/aiActivityAgent';
+import FeedbackRoutingAgentSingleton from '@/services/feedbackRoutingAgent';
 
 const AIAgentStatus: React.FC = () => {
   // Testimonial Curation Agent state
@@ -28,8 +27,8 @@ const AIAgentStatus: React.FC = () => {
   const [isUpdatingFeedback, setIsUpdatingFeedback] = useState(false);
   
   const updateTestimonialStatus = () => {
-    const aiAgent = AIActivityAgent.getInstance();
-    const status = aiAgent.getStatus();
+    const aiAgent = AIActivityAgentSingleton.getInstance();
+    const status = AIActivityAgentSingleton.getStatus();
     setTestimonialStatus({
       active: status.active,
       lastUpdate: status.lastAutomatedUpdate || status.lastManualUpdate,
@@ -38,11 +37,11 @@ const AIAgentStatus: React.FC = () => {
   };
   
   const updateFeedbackStatus = () => {
-    const feedbackAgent = FeedbackRoutingAgent.getInstance();
-    const stats = feedbackAgent.getRoutingStats();
-    const unmatched = feedbackAgent.getUnmatchedFeedback();
-    const reviewQueue = feedbackAgent.getManualReviewQueue();
-    const entities = feedbackAgent.getUnregisteredEntities();
+    const feedbackAgent = FeedbackRoutingAgentSingleton.getInstance();
+    const stats = FeedbackRoutingAgentSingleton.getRoutingStats();
+    const unmatched = FeedbackRoutingAgentSingleton.getUnmatchedFeedback();
+    const reviewQueue = FeedbackRoutingAgentSingleton.getManualReviewQueue();
+    const entities = FeedbackRoutingAgentSingleton.getUnregisteredEntities();
     
     setFeedbackStatus({
       active: true, // Assuming it's active if we can get stats
@@ -69,8 +68,8 @@ const AIAgentStatus: React.FC = () => {
   const handleForceUpdateTestimonials = async () => {
     setIsUpdatingTestimonials(true);
     try {
-      const aiAgent = AIActivityAgent.getInstance();
-      await aiAgent.forceUpdate();
+      const aiAgent = AIActivityAgentSingleton.getInstance();
+      await AIActivityAgentSingleton.forceUpdate();
       updateTestimonialStatus();
     } catch (error) {
       console.error('Testimonial force update failed:', error);
@@ -82,8 +81,8 @@ const AIAgentStatus: React.FC = () => {
   const handleForceProcessFeedback = async () => {
     setIsUpdatingFeedback(true);
     try {
-      const feedbackAgent = FeedbackRoutingAgent.getInstance();
-      await feedbackAgent.processPendingFeedback();
+      const feedbackAgent = FeedbackRoutingAgentSingleton.getInstance();
+      await FeedbackRoutingAgentSingleton.processPendingFeedback();
       updateFeedbackStatus();
     } catch (error) {
       console.error('Feedback processing failed:', error);

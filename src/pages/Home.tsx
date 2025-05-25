@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback, ComponentType } from "react";
 import Lenis from "@studio-freight/lenis";
 import { gsap } from "gsap";
@@ -45,495 +46,148 @@ const sectionsComponents: { component: ComponentType<SectionProps>; name: string
 
 const sectionNames = sectionsComponents.map(s => s.name);
 
-// Easing function for smooth scrolling
-const power2EaseInOut = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-
-function Home(): JSX.Element { 
-  // Core refs
-  const mainRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const lenisRef = useRef<Lenis | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const currentSectionRef = useRef<number>(0);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const mainScrollTriggerRef = useRef<ScrollTrigger | null>(null); 
-  const sectionsRef = useRef<(HTMLElement | null)[]>([]);
-  const isScrollingRef = useRef(false);
-  const gsapCtxRef = useRef<gsap.Context | null>(null);
-  const isInitializedRef = useRef(false);
-  const lastPlayedSectionRef = useRef<number>(-1);
-  const hasInteractedRef = useRef(false);
-
-  // State
+function Home(): JSX.Element {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
-  const [isReady, setIsReady] = useState(false);
-
-  console.log(`[Home] currentSection state: ${currentSection}`);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  
+  const lenisRef = useRef<Lenis | null>(null);
+  const sectionsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const isScrollingProgrammatically = useRef(false);
 
   const numSections = sectionsComponents.length;
 
-  // Keep sectionsRef in sync with sections
+  // Initialize Lenis smooth scrolling
   useEffect(() => {
-    sectionsRef.current = sectionsRef.current.slice(0, numSections);
+    if (isLoading) return;
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+    });
+
+    lenisRef.current = lenis;
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, [isLoading]);
+
+  // Setup scroll tracking
+  useEffect(() => {
+    if (isLoading || !lenisRef.current) return;
+
+    const handleScroll = () => {
+      if (isScrollingProgrammatically.current) return;
+
+      const container = containerRef.current;
+      if (!container) return;
+
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const totalHeight = container.scrollHeight - windowHeight;
+      
+      if (totalHeight > 0) {
+        const progress = Math.min(Math.max(scrollTop / totalHeight, 0), 1);
+        setScrollProgress(progress);
+        
+        const newSectionIndex = Math.min(
+          Math.floor(progress * numSections),
+          numSections - 1
+        );
+        
+        if (newSectionIndex !== currentSection) {
+          setCurrentSection(newSectionIndex);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isLoading, currentSection, numSections]);
+
+  // Scroll to section function
+  const scrollToSection = useCallback((sectionIndex: number) => {
+    const validIndex = Math.max(0, Math.min(sectionIndex, numSections - 1));
+    const sectionElement = sectionsRef.current[validIndex];
+    
+    if (!sectionElement || !lenisRef.current) return;
+
+    isScrollingProgrammatically.current = true;
+    
+    lenisRef.current.scrollTo(sectionElement, {
+      duration: 1.5,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      onComplete: () => {
+        isScrollingProgrammatically.current = false;
+        setCurrentSection(validIndex);
+      }
+    });
   }, [numSections]);
+
   // Loading simulation
   useEffect(() => {
-    // Prevent body scrolling while Home component is mounted
-    document.body.style.overflow = "hidden";
-    
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500); // Reduced loading time
+    }, 1500);
     
-    return () => {
-      clearTimeout(timer);
-      // Restore scrolling when component unmounts
-      document.body.style.overflow = "";
-    };
+    return () => clearTimeout(timer);
   }, []);
 
-  // Setup interaction tracking
-  useEffect(() => {
-    const markInteraction = () => {
-      hasInteractedRef.current = true;
-      window.removeEventListener("click", markInteraction);
-      window.removeEventListener("keydown", markInteraction);
-      window.removeEventListener("touchstart", markInteraction);
-    };
-    
-    window.addEventListener("click", markInteraction);
-    window.addEventListener("keydown", markInteraction);
-    window.addEventListener("touchstart", markInteraction);
-    
-    return () => {
-      window.removeEventListener("click", markInteraction);
-      window.removeEventListener("keydown", markInteraction);
-      window.removeEventListener("touchstart", markInteraction);
-    };
-  }, []);
-  
-  // Audio setup
-  useEffect(() => {
-    const audio = new Audio("/page-turn.mp3");
-    audio.preload = "auto";
-    audio.volume = 0.3;
-    audioRef.current = audio;
-    
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, []);
-  const scrollToSection = useCallback((sectionIndex: number) => {
-    // Validate section index
-    const validIndex = Math.max(0, Math.min(sectionIndex, numSections - 1));
-    
-    if (!lenisRef.current || !mainRef.current || !contentRef.current) {
-      console.warn("[Home] scrollToSection: Lenis, mainRef or contentRef not ready.");
-      return;
-    }
-    
-    if (isScrollingRef.current) {
-      console.warn("[Home] scrollToSection: Already scrolling, ignoring request.");
-      return;
-    }
-    
-    console.log(`[Home] scrollToSection called with index: ${validIndex}`);
-    
-    isScrollingRef.current = true;
-    
-    const mainWidth = mainRef.current.offsetWidth;
-    const targetScroll = validIndex * mainWidth;
-    
-    console.log(`[Home] Target scroll position: ${targetScroll}`);
-    
-    // Temporarily disable ScrollTrigger to prevent conflicts
-    if (mainScrollTriggerRef.current) {
-      mainScrollTriggerRef.current.disable();
-    }
-      // Play audio if enabled and user has interacted with the page
-    if (isSoundEnabled && audioRef.current && hasInteractedRef.current && 
-        validIndex !== lastPlayedSectionRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(e => console.warn("Audio play failed:", e));
-      lastPlayedSectionRef.current = validIndex;
-    }
-    
-    // Perform the scroll with Lenis
-    lenisRef.current.scrollTo(targetScroll, {
-      duration: 1.2,
-      easing: power2EaseInOut,
-      lock: true,
-      force: true,
-      onComplete: () => {
-        console.log(`[Home] Scroll completed to section ${validIndex}`);
-        
-        // Update all refs and state
-        setCurrentSection(validIndex);
-        currentSectionRef.current = validIndex;
-        
-        // Force GSAP update to sync with the new position
-        ScrollTrigger.update();
-        
-        // Re-enable ScrollTrigger after a brief delay
-        setTimeout(() => {
-          if (mainScrollTriggerRef.current) {
-            mainScrollTriggerRef.current.enable();
-            ScrollTrigger.refresh(true);
-          }
-          
-          isScrollingRef.current = false;
-        }, 100);
-      },
-    });
-  }, [numSections, isSoundEnabled]);
-
-  // Ensure we only expose the scroll function when everything is ready
-  const safeScrollToSection = useCallback((sectionIndex: number) => {
-    if (!isReady) {
-      console.warn('[Home] Attempted scrollToSection before ready.');
-      return;
-    }
-    scrollToSection(sectionIndex);
-  }, [isReady, scrollToSection]);
-  // Map vertical wheel events to horizontal scroll with snap-to-section feature
-  useEffect(() => {
-    const main = mainRef.current;
-    if (!main) return;
-    
-    // Track wheel events for debouncing
-    let wheelTimeout: NodeJS.Timeout | null = null;
-    let wheelCount = 0;
-    let lastWheelDirection = 0;
-    
-    const onWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        // Translate vertical scroll to horizontal
-        main.scrollLeft += e.deltaY;
-        e.preventDefault();
-        
-        // Determine scroll direction (positive = down/right, negative = up/left)
-        const direction = e.deltaY > 0 ? 1 : -1;
-        
-        // If direction changes, reset the counter
-        if (direction !== lastWheelDirection) {
-          wheelCount = 0;
-          lastWheelDirection = direction;
-        }
-        
-        wheelCount++;
-        
-        // Clear existing timeout
-        if (wheelTimeout) {
-          clearTimeout(wheelTimeout);
-        }
-        
-        // Set a timeout to snap to the nearest section after scrolling stops
-        wheelTimeout = setTimeout(() => {
-          // Only snap if we've had enough wheel events in the same direction
-          if (wheelCount >= 2 && !isScrollingRef.current) {
-            const currentSectionIndex = currentSectionRef.current;
-            const targetSection = currentSectionIndex + (direction > 0 ? 1 : -1);
-            
-            // Check bounds
-            if (targetSection >= 0 && targetSection < numSections) {
-              scrollToSection(targetSection);
-            }
-          }
-          
-          // Reset wheel count after snapping
-          wheelCount = 0;
-        }, 150); // Delay for snap effect after scrolling stops
-      }
-    };
-    
-    main.addEventListener('wheel', onWheel, { passive: false });
-    
-    return () => {
-      main.removeEventListener('wheel', onWheel);
-      if (wheelTimeout) {
-        clearTimeout(wheelTimeout);
-      }
-    };
-  }, [numSections, scrollToSection]);
-
-  // Toggle sound function
   const toggleSound = useCallback(() => {
     setIsSoundEnabled(prev => !prev);
   }, []);
 
-  // Main GSAP and Lenis initialization
-  useEffect(() => {
-    if (isLoading || isInitializedRef.current) return;
-
-    console.log("[Home] Initializing GSAP and Lenis for horizontal scrolling...");
-    
-    // Clean up any existing ScrollTrigger instances
-    ScrollTrigger.getAll().forEach(st => st.kill());
-
-    const mainElement = mainRef.current;
-    const contentElement = contentRef.current;
-
-    if (!mainElement || !contentElement || numSections === 0) {
-      console.error(`[Home] Missing required elements for initialization`);
-      return;
-    }
-    
-    // Initialize Lenis for smooth scrolling
-    const lenis = new Lenis({
-      smoothWheel: true,
-      orientation: "horizontal",
-      gestureOrientation: "horizontal",
-      syncTouch: true,
-      infinite: false,
-      duration: 1.5, // Slightly faster for better response
-      easing: power2EaseInOut,
-    });
-    
-    lenisRef.current = lenis;
-    
-    // Connect Lenis to ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-    
-    // Set up GSAP ticker
-    const tickerCallback = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-    
-    gsap.ticker.add(tickerCallback);
-    gsap.ticker.lagSmoothing(0); // Disable lag smoothing for better sync
-    
-    // Start Lenis
-    lenis.start();
-    console.log("[Home] Lenis scrolling initialized");
-    
-    // Create GSAP context for ScrollTrigger setup
-    const gsapCtx = gsap.context(() => {
-      // Create main timeline with ScrollTrigger
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: mainElement,
-          pin: true,
-          scrub: 1, // Smoother scrubbing
-          start: "top top",
-          end: () => `+=${contentElement.offsetWidth - window.innerWidth}`,
-          invalidateOnRefresh: true,
-          preventOverlaps: true,
-          fastScrollEnd: true, // Enable fast scroll end for quicker snap
-          onUpdate: self => {
-            if (isScrollingRef.current) return; // Don't update during programmatic scrolling
-            
-            // Update current section based on scroll progress
-            const rawSection = Math.round(self.progress * (numSections - 1));
-            const newSectionIndex = Math.max(0, Math.min(numSections - 1, rawSection));
-            
-            if (newSectionIndex !== currentSectionRef.current) {
-              console.log(`[Home] ScrollTrigger updating section to: ${newSectionIndex}`);
-              setCurrentSection(newSectionIndex);
-              currentSectionRef.current = newSectionIndex;
-              
-              // Play audio if enabled and user has interacted with the page
-              if (isSoundEnabled && audioRef.current && hasInteractedRef.current &&
-                  newSectionIndex !== lastPlayedSectionRef.current) {
-                audioRef.current.currentTime = 0;
-                audioRef.current.play().catch(e => console.warn("Audio play failed:", e));
-                lastPlayedSectionRef.current = newSectionIndex;
-              }
-            }
-          },          snap: {
-            snapTo: progress => {
-              if (numSections <= 1) return 0;
-              // Calculate the target section based on scroll progress
-              const section = Math.round(progress * (numSections - 1));
-              return section / (numSections - 1);
-            },
-            duration: { min: 0.3, max: 0.6 }, // Smoother, slower snapping
-            delay: 0.15, // Increased delay to prevent immediate snap-back
-            ease: "power1.inOut", // Smoother easing
-            inertia: false, // Disable inertia to prevent overshooting
-          },
-        },
-      });
-      
-      // Add animation to the timeline
-      tl.to(contentElement, {
-        x: () => -Math.max(0, contentElement.offsetWidth - mainElement.offsetWidth),
-        ease: "none",
-      });
-      
-      // Store references
-      tlRef.current = tl;
-      if (tl.scrollTrigger) {
-        mainScrollTriggerRef.current = tl.scrollTrigger;
-      }
-    }, mainElement);
-    
-    // Store GSAP context for cleanup
-    gsapCtxRef.current = gsapCtx;
-    
-    // Mark as initialized and ready
-    isInitializedRef.current = true;
-    setIsReady(true);
-    
-    // Force refresh ScrollTrigger to ensure correct positioning
-    ScrollTrigger.refresh(true);
-    
-    // Second refresh after a delay to handle any DOM updates
-    setTimeout(() => {
-      ScrollTrigger.refresh(true);
-      window.dispatchEvent(new Event("resize"));
-    }, 500);
-    
-    // Cleanup function
-    return () => {
-      console.log("[Home] Cleaning up GSAP and Lenis");
-      gsap.ticker.remove(tickerCallback);
-      
-      if (lenisRef.current) {
-        lenisRef.current.off('scroll', ScrollTrigger.update);
-        lenisRef.current.destroy();
-        lenisRef.current = null;
-      }
-      
-      if (gsapCtxRef.current) {
-        gsapCtxRef.current.revert();
-        gsapCtxRef.current = null;
-      }
-      
-      ScrollTrigger.getAll().forEach(st => st.kill());
-      tlRef.current = null;
-      mainScrollTriggerRef.current = null;
-      isInitializedRef.current = false;
-    };
-  }, [isLoading, numSections, isSoundEnabled, power2EaseInOut]);
-
-  // Handle window resize events to ensure proper layout
-  useEffect(() => {
-    const handleResize = () => {
-      if (isReady && mainScrollTriggerRef.current) {
-        // Refresh ScrollTrigger on resize to maintain proper positions
-        ScrollTrigger.refresh(true);
-      }
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isReady]);
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative">      <ProgressIndicator
+    <div ref={containerRef} className="relative">
+      <ScrollSound isEnabled={isSoundEnabled} onToggle={toggleSound} />
+      <ProgressIndicator 
+        sections={sectionNames}
         currentSection={currentSection}
-        totalSections={numSections}
-        scrollToSection={safeScrollToSection}
-        chapterTitles={sectionNames}
+        onSectionClick={scrollToSection}
       />
-      <ScrollSound 
-        isSoundEnabled={isSoundEnabled} 
-        toggleSound={toggleSound} 
-      />
-      <StoryAnimations
+      <StoryAnimations 
         currentSection={currentSection} 
         totalSections={numSections} 
       />
-      <main 
-        ref={mainRef} 
-        className="w-screen h-screen fixed top-0 left-0 overflow-hidden"
-        style={{ zIndex: 10 }}
-      >
+      <ReturnToTopButton />
+
+      {sectionsComponents.map(({ component: Component, name }, index) => (
         <div
-          ref={contentRef}
-          className="h-full flex flex-nowrap"
-          style={{ 
-            width: `${numSections * 100}vw`,
-            willChange: "transform",
-            transform: "translate3d(0, 0, 0)"
-          }}
+          key={name}
+          ref={(el) => (sectionsRef.current[index] = el)}
+          className="min-h-screen"
+          id={`section-${index}`}
         >
-          {sectionsComponents.map((SectionItem, index) => {
-            const isActive = index === currentSection;
-            // Only apply 3D transform to the section content, not the section container
-            let rotateY = 0;
-            let scale = 1;
-            let skewY = 0;
-            let boxShadow = '0 2px 8px rgba(0,0,0,0.10)';
-            let filter = 'none';
-            const isTurning = Math.abs(index - currentSection) === 1;
-            if (index < currentSection) {
-              rotateY = -180;
-              scale = 0.98;
-              skewY = 2;
-              boxShadow = '0 8px 32px rgba(0,0,0,0.18), 0 1.5px 8px rgba(0,0,0,0.10)';
-              filter = 'brightness(0.98) blur(0.5px)';
-            } else if (index === currentSection) {
-              rotateY = 0;
-              scale = 1;
-              skewY = 0;
-              boxShadow = '0 12px 32px 0 rgba(0,0,0,0.18), 0 0 0 2px #FFD700';
-              filter = 'none';
-            } else {
-              rotateY = 0;
-              scale = 1;
-              skewY = -2;
-              boxShadow = '0 2px 8px rgba(0,0,0,0.10)';
-              filter = 'none';
-            }
-            return (              <section
-                key={SectionItem.name}
-                className="parallax-section w-screen h-screen flex-shrink-0 flex items-center justify-center"
-                ref={(el) => (sectionsRef.current[index] = el)}
-                style={{
-                  opacity: 1,
-                  // No transform here! Only on the inner content below
-                  zIndex: isActive ? 15 : 1,
-                }}
-              >
-                <div
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    transformOrigin: 'left center',
-                    transformStyle: 'preserve-3d',
-                    transform: `rotateY(${rotateY}deg) scale(${scale}) skewY(${skewY}deg)`,
-                    backfaceVisibility: 'hidden',
-                    boxShadow,
-                    filter,
-                    perspective: '1200px',
-                    transition: 'transform 0.9s cubic-bezier(0.77,0,0.175,1), box-shadow 0.7s, filter 0.7s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    // Glassmorphism background for all sections
-                    background: 'linear-gradient(135deg, #ea384c 0%, #F9D75D 50%, #F5F5F5 100%)',
-                    backdropFilter: 'blur(16px) saturate(180%)',
-                    WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-                    borderRadius: '32px',
-                    // Use only the 3D/page-turn boxShadow for animation, not a second one                    border: '1px solid rgba(255,255,255,0.18)',
-                    // Important: Ensure content visibility 
-                    opacity: isActive ? 1 : (index < currentSection) ? 0 : 0.6,
-                    visibility: isActive ? 'visible' : 'visible', // Keep nearby pages partially visible
-                    overflow: 'visible',
-                    position: 'relative' // Make sure position is relative for absolute positioning of the return button
-                  }}
-                >                  <SectionItem.component
-                    isActive={isActive}
-                    sectionName={SectionItem.name}
-                    scrollToSection={safeScrollToSection}
-                  />
-                </div>
-              </section>
-            );
-          })}
+          <Component 
+            isActive={currentSection === index}
+            sectionName={name}
+            scrollToSection={scrollToSection}
+          />
         </div>
-      </main>
-      <div className="relative z-20 mt-[150vh] pointer-events-none">
-        <div className="pointer-events-auto">
-          <Footer isActive={currentSection === numSections - 1} />
-        </div>
-      </div>
+      ))}
     </div>
   );
 }

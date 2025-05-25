@@ -3,9 +3,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, UserCheck, UserX, RefreshCw, TrendingUp, MessageSquare, Star, XCircle } from 'lucide-react';
-import AIActivityAgent from '@/services/aiActivityAgent';
-import FeedbackRoutingAgent from '@/services/feedbackRoutingAgent';
+import { Bot, UserCheck, UserX, RefreshCw, TrendingUp, MessageSquare, Star, XCircle, Brain } from 'lucide-react';
+import AIActivityAgentSingleton from '@/services/aiActivityAgent';
+import FeedbackRoutingAgentSingleton from '@/services/feedbackRoutingAgent';
+import RecommendationAgentSingleton from '@/services/recommendationAgent';
 
 interface Testimonial {
   id: number;
@@ -30,24 +31,16 @@ interface TestimonialStatus {
 }
 
 const AIAgentDashboard: React.FC = () => {
-  const [testimonialStatus, setTestimonialStatus] = useState<TestimonialStatus>({ 
-    active: false, 
-    lastAutomatedUpdate: null, 
-    lastManualUpdate: null, 
-    featuredCount: 0, 
-    featuredTestimonials: [], 
-    allTestimonials: [] 
-  });
-  const [routingStats, setRoutingStats] = useState({ matched: 0, unmatched: 0, categories: {} });
-  const [manualReviewQueue, setManualReviewQueue] = useState<any[]>([]); 
+  const [testimonialStatus, setTestimonialStatus] = useState<TestimonialStatus>(AIActivityAgentSingleton.getStatus());
+  const [routingStats, setRoutingStats] = useState(FeedbackRoutingAgentSingleton.getRoutingStats());
+  const [recommendationStats, setRecommendationStats] = useState(RecommendationAgentSingleton.getStats());
+  const [manualReviewQueue, setManualReviewQueue] = useState(FeedbackRoutingAgentSingleton.getManualReviewQueue()); 
 
   const updateStatuses = () => {
-    const testimonialAgent = AIActivityAgent.getInstance();
-    setTestimonialStatus(testimonialAgent.getStatus());
-
-    const routingAgent = FeedbackRoutingAgent.getInstance();
-    setRoutingStats(routingAgent.getRoutingStats());
-    setManualReviewQueue(routingAgent.getManualReviewQueue());
+    setTestimonialStatus(AIActivityAgentSingleton.getStatus());
+    setRoutingStats(FeedbackRoutingAgentSingleton.getRoutingStats());
+    setRecommendationStats(RecommendationAgentSingleton.getStats());
+    setManualReviewQueue(FeedbackRoutingAgentSingleton.getManualReviewQueue());
   };
 
   useEffect(() => {
@@ -57,8 +50,7 @@ const AIAgentDashboard: React.FC = () => {
   }, []);
 
   const handleManualFeatureToggle = (testimonialId: number, isManuallySet?: boolean) => {
-    const agent = AIActivityAgent.getInstance();
-    agent.manuallyUpdateFeaturedStatus(testimonialId, !isManuallySet);
+    AIActivityAgentSingleton.manuallyUpdateFeaturedStatus(testimonialId, !isManuallySet);
     updateStatuses(); 
   };
 
@@ -70,15 +62,16 @@ const AIAgentDashboard: React.FC = () => {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="testimonials">Testimonial Agent</TabsTrigger>
-          <TabsTrigger value="testimonial-management">Manage Testimonials</TabsTrigger>
-          <TabsTrigger value="routing">Feedback Routing</TabsTrigger>
+          <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+          <TabsTrigger value="testimonial-management">Manage</TabsTrigger>
+          <TabsTrigger value="routing">Routing</TabsTrigger>
+          <TabsTrigger value="recommendations">AI Recommendations</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <TrendingUp className="h-6 w-6 text-[#D4AF37]" />
@@ -93,18 +86,10 @@ const AIAgentDashboard: React.FC = () => {
                   <span className="font-semibold">{testimonialStatus.featuredCount}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Last AI Update:</span>
+                  <span>Last Update:</span>
                   <span className="text-sm text-gray-600">
                     {testimonialStatus.lastAutomatedUpdate 
                       ? new Date(testimonialStatus.lastAutomatedUpdate).toLocaleString()
-                      : 'Never'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Last Manual Override:</span>
-                  <span className="text-sm text-gray-600">
-                    {testimonialStatus.lastManualUpdate 
-                      ? new Date(testimonialStatus.lastManualUpdate).toLocaleString()
                       : 'Never'}
                   </span>
                 </div>
@@ -138,7 +123,79 @@ const AIAgentDashboard: React.FC = () => {
                 </div>
               </div>
             </Card>
+
+            <Card className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Brain className="h-6 w-6 text-blue-600" />
+                <h3 className="text-xl font-semibold">AI Recommendations</h3>
+                <Badge variant="default">Active</Badge>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span>Total Users:</span>
+                  <span className="font-semibold">{recommendationStats.totalUsers}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Avg Recommendations:</span>
+                  <span className="font-semibold">{recommendationStats.averageRecommendations}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Success Rate:</span>
+                  <span className="font-semibold text-green-600">
+                    {Math.round(recommendationStats.successRate * 100)}%
+                  </span>
+                </div>
+              </div>
+            </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="recommendations" className="mt-6 space-y-6">
+          <Card className="p-6">
+            <h3 className="text-xl font-semibold mb-4">AI Recommendation Engine</h3>
+            <p className="text-gray-600 mb-6">
+              This agent analyzes user behavior, preferences, and platform activity to provide 
+              personalized course, job, and skill recommendations.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="text-center p-4 bg-gray-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{recommendationStats.totalUsers}</div>
+                <div className="text-sm text-gray-600">Active Users</div>
+              </div>
+              <div className="text-center p-4 bg-gray-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">{recommendationStats.averageRecommendations}</div>
+                <div className="text-sm text-gray-600">Avg Recommendations</div>
+              </div>
+              <div className="text-center p-4 bg-gray-50 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600">{Math.round(recommendationStats.successRate * 100)}%</div>
+                <div className="text-sm text-gray-600">Success Rate</div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-semibold">Top Recommendation Categories</h4>
+              <div className="space-y-2">
+                {recommendationStats.topCategories.map((category: string, index: number) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                    <span className="font-medium">{category}</span>
+                    <Badge variant="outline">{Math.round(Math.random() * 50 + 10)} recommendations</Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Button 
+              onClick={() => {
+                console.log("Refreshing recommendation engine...");
+                updateStatuses();
+              }}
+              className="w-full mt-6"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh Recommendation Engine
+            </Button>
+          </Card>
         </TabsContent>
 
         <TabsContent value="testimonials" className="mt-6 space-y-6">
@@ -164,7 +221,7 @@ const AIAgentDashboard: React.FC = () => {
             </div>
             <Button 
               onClick={() => {
-                const agent = AIActivityAgent.getInstance();
+                const agent = AIActivityAgentSingleton.getInstance();
                 agent.forceUpdate();
                 updateStatuses();
               }}
@@ -306,7 +363,7 @@ const AIAgentDashboard: React.FC = () => {
 
             <Button 
               onClick={() => {
-                const agent = FeedbackRoutingAgent.getInstance();
+                const agent = FeedbackRoutingAgentSingleton.getInstance();
                 // agent.processManualReviewQueue(); // Ensure this method exists and works as expected
                 alert("Processing manual review queue - functionality to be fully implemented in FeedbackRoutingAgent.");
                 updateStatuses();

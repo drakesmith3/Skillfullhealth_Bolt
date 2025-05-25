@@ -1,397 +1,344 @@
 
-import { UserRole } from "@/lib/unis";
-import { aiActivityAgent, UserActivity } from "./aiActivityAgent";
+export interface UserProfile {
+  userId: string;
+  userType: 'professional' | 'student' | 'client' | 'tutor' | 'employer';
+  specialization: string;
+  experienceLevel: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  interests: string[];
+  completedCourses: string[];
+  preferredLearningStyle: 'visual' | 'auditory' | 'kinesthetic' | 'reading';
+  goals: string[];
+  location: string;
+  glohsenScore: number;
+}
 
-export interface Course {
+export interface Recommendation {
   id: string;
+  type: 'course' | 'job' | 'networking' | 'skill' | 'certification';
   title: string;
   description: string;
-  category: string;
-  difficulty: string;
-  duration: string;
-  price: number;
-  instructor: string;
-  rating: number;
-  tags: string[];
-  enrollmentCount: number;
-  createdDate: string;
-}
-
-export interface CourseRecommendation {
-  course: Course;
-  reason: string;
-  confidence: number;
-  priority: number;
-  recommendationType: 'skill-based' | 'activity-based' | 'peer-based' | 'trending' | 'personalized';
-}
-
-export interface CourseCreationSuggestion {
-  title: string;
-  category: string;
-  demand: number;
-  targetAudience: string[];
-  suggestedInstructor?: string;
+  relevanceScore: number;
   reasoning: string;
+  priority: 'high' | 'medium' | 'low';
+  estimatedTime?: string;
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  category: string;
+}
+
+export interface RecommendationResponse {
+  userId: string;
+  recommendations: Recommendation[];
+  totalRecommendations: number;
+  generatedAt: string;
+  confidence: number;
 }
 
 export class RecommendationAgent {
-  private courses: Course[] = [];
-  private userPreferences: Map<string, any> = new Map();
-  private courseCreationSuggestions: CourseCreationSuggestion[] = [];
+  private userProfiles: Map<string, UserProfile> = new Map();
+  private courses: any[] = [];
+  private jobs: any[] = [];
 
   constructor() {
-    this.initializeMockCourses();
-    this.generateCourseCreationSuggestions();
+    this.initializeMockData();
   }
 
-  private initializeMockCourses(): void {
+  private initializeMockData(): void {
+    // Mock user profile
+    const mockProfile: UserProfile = {
+      userId: 'prof_001',
+      userType: 'professional',
+      specialization: 'Emergency Medicine',
+      experienceLevel: 'intermediate',
+      interests: ['Cardiology', 'Trauma Care', 'Emergency Procedures'],
+      completedCourses: ['BLS_Basic', 'First_Aid'],
+      preferredLearningStyle: 'visual',
+      goals: ['Get ACLS Certification', 'Improve Emergency Response'],
+      location: 'Lagos, Nigeria',
+      glohsenScore: 77
+    };
+
+    this.userProfiles.set('prof_001', mockProfile);
+
+    // Mock courses
     this.courses = [
       {
-        id: '1',
-        title: 'Advanced Cardiac Life Support (ACLS)',
-        description: 'Comprehensive ACLS training for healthcare professionals',
+        id: 'course_001',
+        title: 'Advanced Cardiovascular Life Support (ACLS)',
         category: 'Emergency Medicine',
-        difficulty: 'Advanced',
-        duration: '8 hours',
-        price: 150,
-        instructor: 'Dr. Smith',
-        rating: 4.8,
-        tags: ['cardiology', 'emergency', 'certification'],
-        enrollmentCount: 1250,
-        createdDate: '2024-01-15'
+        difficulty: 'advanced',
+        duration: '16 hours',
+        description: 'Advanced training in cardiac emergency management'
       },
       {
-        id: '2',
-        title: 'Medical Ethics in Clinical Practice',
-        description: 'Essential ethics for healthcare decision-making',
-        category: 'Ethics',
-        difficulty: 'Intermediate',
-        duration: '4 hours',
-        price: 75,
-        instructor: 'Dr. Johnson',
-        rating: 4.6,
-        tags: ['ethics', 'clinical-practice', 'decision-making'],
-        enrollmentCount: 980,
-        createdDate: '2024-02-01'
-      },
-      {
-        id: '3',
-        title: 'Evidence-Based Clinical Decision Making',
-        description: 'Learn to make informed clinical decisions using evidence',
-        category: 'Clinical Skills',
-        difficulty: 'Advanced',
-        duration: '6 hours',
-        price: 120,
-        instructor: 'Dr. Wilson',
-        rating: 4.7,
-        tags: ['evidence-based', 'clinical-skills', 'decision-making'],
-        enrollmentCount: 750,
-        createdDate: '2024-01-30'
-      },
-      {
-        id: '4',
-        title: 'Basic Life Support Refresher',
-        description: 'Update your BLS skills and certification',
+        id: 'course_002',
+        title: 'Trauma Management Essentials',
         category: 'Emergency Medicine',
-        difficulty: 'Basic',
-        duration: '3 hours',
-        price: 50,
-        instructor: 'Nurse Mary',
-        rating: 4.9,
-        tags: ['bls', 'basic', 'refresher'],
-        enrollmentCount: 2100,
-        createdDate: '2024-03-01'
+        difficulty: 'intermediate',
+        duration: '12 hours',
+        description: 'Comprehensive trauma care protocols'
       },
       {
-        id: '5',
-        title: 'Maternal Health and Midwifery Updates',
-        description: 'Latest practices in maternal health and midwifery',
-        category: 'Obstetrics & Gynecology',
-        difficulty: 'Intermediate',
-        duration: '5 hours',
-        price: 100,
-        instructor: 'Dr. Sarah',
-        rating: 4.8,
-        tags: ['maternal-health', 'midwifery', 'updates'],
-        enrollmentCount: 650,
-        createdDate: '2024-02-15'
+        id: 'course_003',
+        title: 'Pediatric Emergency Medicine',
+        category: 'Emergency Medicine',
+        difficulty: 'advanced',
+        duration: '20 hours',
+        description: 'Specialized care for pediatric emergencies'
+      }
+    ];
+
+    // Mock jobs
+    this.jobs = [
+      {
+        id: 'job_001',
+        title: 'Emergency Medicine Physician - Lagos General',
+        location: 'Lagos, Nigeria',
+        type: 'locum',
+        specialization: 'Emergency Medicine',
+        experienceRequired: 'intermediate'
+      },
+      {
+        id: 'job_002',
+        title: 'Trauma Surgeon - Abuja Medical Center',
+        location: 'Abuja, Nigeria',
+        type: 'permanent',
+        specialization: 'Trauma Surgery',
+        experienceRequired: 'advanced'
       }
     ];
   }
 
-  private generateCourseCreationSuggestions(): void {
-    this.courseCreationSuggestions = [
-      {
-        title: 'Telemedicine Best Practices',
-        category: 'Digital Health',
-        demand: 85,
-        targetAudience: ['professional', 'student'],
-        reasoning: 'High search volume for telemedicine content and forum discussions about remote care'
-      },
-      {
-        title: 'Mental Health in Healthcare Workers',
-        category: 'Mental Health',
-        demand: 78,
-        targetAudience: ['professional'],
-        reasoning: 'Increasing forum discussions about burnout and mental health support'
-      },
-      {
-        title: 'Pediatric Emergency Procedures',
-        category: 'Pediatrics',
-        demand: 72,
-        targetAudience: ['professional', 'student'],
-        reasoning: 'Gap identified in pediatric emergency training based on user search patterns'
-      }
-    ];
-  }
-
-  async getPersonalizedCourseRecommendations(
-    userId: string,
-    userType: UserRole,
-    limit: number = 5
-  ): Promise<CourseRecommendation[]> {
-    try {
-      const userActivity = aiActivityAgent.getUserActivity(userId);
-      const activityPatterns = aiActivityAgent.getActivityPatterns(userId);
-      const recommendations: CourseRecommendation[] = [];
-      
-      // Activity-based recommendations
-      if (userActivity) {
-        const activityRecs = this.getActivityBasedRecommendations(userActivity);
-        recommendations.push(...activityRecs);
-      }
-      
-      // Peer-based recommendations
-      const peerRecs = await this.getPeerBasedRecommendations(userId, userType);
-      recommendations.push(...peerRecs);
-      
-      // Trending recommendations
-      const trendingRecs = this.getTrendingRecommendations(userType);
-      recommendations.push(...trendingRecs);
-      
-      // Skill gap recommendations
-      if (userActivity) {
-        const skillRecs = this.getSkillGapRecommendations(userActivity);
-        recommendations.push(...skillRecs);
-      }
-      
-      // Remove duplicates and sort by priority and confidence
-      const uniqueRecs = this.removeDuplicateRecommendations(recommendations);
-      
-      return uniqueRecs
-        .sort((a, b) => b.priority - a.priority || b.confidence - a.confidence)
-        .slice(0, limit);
-    } catch (error) {
-      console.error('Error getting personalized recommendations:', error);
-      return this.getFallbackRecommendations(userType, limit);
-    }
-  }
-
-  private getActivityBasedRecommendations(userActivity: UserActivity): CourseRecommendation[] {
-    const recommendations: CourseRecommendation[] = [];
+  public generateRecommendations(userId: string): RecommendationResponse {
+    const userProfile = this.userProfiles.get(userId);
     
-    // Analyze recent courses for progression
-    userActivity.recentCourses.forEach(courseTitle => {
-      if (courseTitle.includes('BLS') || courseTitle.includes('Basic Life Support')) {
-        const aclsCourse = this.courses.find(c => c.title.includes('ACLS'));
-        if (aclsCourse) {
-          recommendations.push({
-            course: aclsCourse,
-            reason: 'Natural progression from BLS to ACLS certification',
-            confidence: 0.9,
-            priority: 5,
-            recommendationType: 'activity-based'
-          });
-        }
-      }
-    });
-
-    // Analyze quiz patterns
-    userActivity.recentQuizzes.forEach(quiz => {
-      if (quiz.includes('Ethics')) {
-        const ethicsCourse = this.courses.find(c => c.category === 'Ethics');
-        if (ethicsCourse) {
-          recommendations.push({
-            course: ethicsCourse,
-            reason: 'Based on your ethics quiz performance',
-            confidence: 0.8,
-            priority: 4,
-            recommendationType: 'activity-based'
-          });
-        }
-      }
-    });
-
-    // Analyze search history
-    userActivity.searchHistory.forEach(search => {
-      const searchLower = search.toLowerCase();
-      this.courses.forEach(course => {
-        if (course.tags.some(tag => searchLower.includes(tag))) {
-          recommendations.push({
-            course,
-            reason: `Matches your search for "${search}"`,
-            confidence: 0.7,
-            priority: 3,
-            recommendationType: 'activity-based'
-          });
-        }
-      });
-    });
-
-    return recommendations;
-  }
-
-  private async getPeerBasedRecommendations(userId: string, userType: UserRole): Promise<CourseRecommendation[]> {
-    const recommendations: CourseRecommendation[] = [];
-    const similarUsers = aiActivityAgent.getSimilarUsers(userId);
-    
-    // Get popular courses among similar users
-    const coursePopularity = new Map<string, number>();
-    
-    similarUsers.forEach(user => {
-      user.recentCourses.forEach(courseTitle => {
-        const course = this.courses.find(c => c.title === courseTitle);
-        if (course) {
-          coursePopularity.set(course.id, (coursePopularity.get(course.id) || 0) + 1);
-        }
-      });
-    });
-
-    // Convert to recommendations
-    for (const [courseId, popularity] of coursePopularity) {
-      const course = this.courses.find(c => c.id === courseId);
-      if (course && popularity >= 2) {
-        recommendations.push({
-          course,
-          reason: `Popular among ${popularity} similar professionals`,
-          confidence: Math.min(0.9, popularity * 0.3),
-          priority: 4,
-          recommendationType: 'peer-based'
-        });
-      }
+    if (!userProfile) {
+      return {
+        userId,
+        recommendations: [],
+        totalRecommendations: 0,
+        generatedAt: new Date().toISOString(),
+        confidence: 0
+      };
     }
 
-    return recommendations;
-  }
+    const recommendations: Recommendation[] = [];
 
-  private getTrendingRecommendations(userType: UserRole): CourseRecommendation[] {
-    // Sort courses by enrollment count and recent creation
-    const trending = this.courses
-      .sort((a, b) => {
-        const aScore = a.enrollmentCount + (new Date(a.createdDate).getTime() / 1000000);
-        const bScore = b.enrollmentCount + (new Date(b.createdDate).getTime() / 1000000);
-        return bScore - aScore;
-      })
-      .slice(0, 3);
+    // Course recommendations
+    const courseRecs = this.generateCourseRecommendations(userProfile);
+    recommendations.push(...courseRecs);
 
-    return trending.map(course => ({
-      course,
-      reason: `Trending course with ${course.enrollmentCount} enrollments`,
-      confidence: 0.6,
-      priority: 2,
-      recommendationType: 'trending' as const
-    }));
-  }
+    // Job recommendations
+    const jobRecs = this.generateJobRecommendations(userProfile);
+    recommendations.push(...jobRecs);
 
-  private getSkillGapRecommendations(userActivity: UserActivity): CourseRecommendation[] {
-    const recommendations: CourseRecommendation[] = [];
-    
-    // Identify potential skill gaps based on GLOHSEN score
-    if (userActivity.glohsenScore < 80) {
-      // Recommend basic courses for improvement
-      const basicCourses = this.courses.filter(c => c.difficulty === 'Basic');
-      basicCourses.forEach(course => {
-        recommendations.push({
-          course,
-          reason: 'Recommended to improve your GLOHSEN score',
-          confidence: 0.7,
-          priority: 4,
-          recommendationType: 'skill-based'
-        });
-      });
-    }
+    // Skill recommendations
+    const skillRecs = this.generateSkillRecommendations(userProfile);
+    recommendations.push(...skillRecs);
 
-    // Profile completeness recommendations
-    if (userActivity.profileCompleteness < 90) {
-      const profileBoostCourse = this.courses.find(c => c.category === 'Clinical Skills');
-      if (profileBoostCourse) {
-        recommendations.push({
-          course: profileBoostCourse,
-          reason: 'Complete your professional development profile',
-          confidence: 0.8,
-          priority: 3,
-          recommendationType: 'personalized'
-        });
-      }
-    }
+    // Sort by relevance score
+    recommendations.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
-    return recommendations;
-  }
-
-  private removeDuplicateRecommendations(recommendations: CourseRecommendation[]): CourseRecommendation[] {
-    const seen = new Set<string>();
-    return recommendations.filter(rec => {
-      if (seen.has(rec.course.id)) {
-        return false;
-      }
-      seen.add(rec.course.id);
-      return true;
-    });
-  }
-
-  private getFallbackRecommendations(userType: UserRole, limit: number): CourseRecommendation[] {
-    return this.courses.slice(0, limit).map(course => ({
-      course,
-      reason: 'Recommended for healthcare professionals',
-      confidence: 0.5,
-      priority: 1,
-      recommendationType: 'trending' as const
-    }));
-  }
-
-  async getCourseCreationSuggestions(tutorId?: string): Promise<CourseCreationSuggestion[]> {
-    // Return suggestions based on platform needs and user demands
-    return this.courseCreationSuggestions.sort((a, b) => b.demand - a.demand);
-  }
-
-  async getTopRatedCourses(limit: number = 5): Promise<Course[]> {
-    return this.courses
-      .sort((a, b) => b.rating - a.rating)
-      .slice(0, limit);
-  }
-
-  async searchCourses(query: string): Promise<Course[]> {
-    const queryLower = query.toLowerCase();
-    return this.courses.filter(course =>
-      course.title.toLowerCase().includes(queryLower) ||
-      course.description.toLowerCase().includes(queryLower) ||
-      course.category.toLowerCase().includes(queryLower) ||
-      course.tags.some(tag => tag.toLowerCase().includes(queryLower))
-    );
-  }
-
-  // Track user interaction with recommendations
-  trackRecommendationInteraction(userId: string, courseId: string, action: 'view' | 'enroll' | 'dismiss'): void {
-    console.log(`User ${userId} ${action}ed course ${courseId}`);
-    
-    // Update AI activity agent with this interaction
-    const course = this.courses.find(c => c.id === courseId);
-    if (course && action === 'enroll') {
-      aiActivityAgent.trackUserActivity(userId, {
-        recentCourses: [course.title]
-      });
-    }
-  }
-
-  // Get recommendation performance metrics
-  getRecommendationMetrics(): any {
     return {
-      totalRecommendations: this.courses.length,
-      averageRating: this.courses.reduce((sum, course) => sum + course.rating, 0) / this.courses.length,
-      totalEnrollments: this.courses.reduce((sum, course) => sum + course.enrollmentCount, 0),
-      courseCreationSuggestions: this.courseCreationSuggestions.length
+      userId,
+      recommendations: recommendations.slice(0, 10), // Top 10 recommendations
+      totalRecommendations: recommendations.length,
+      generatedAt: new Date().toISOString(),
+      confidence: this.calculateConfidence(userProfile, recommendations)
+    };
+  }
+
+  private generateCourseRecommendations(profile: UserProfile): Recommendation[] {
+    const recommendations: Recommendation[] = [];
+
+    this.courses.forEach(course => {
+      let relevanceScore = 0;
+
+      // Check specialization match
+      if (course.category === profile.specialization) {
+        relevanceScore += 0.4;
+      }
+
+      // Check interest alignment
+      profile.interests.forEach(interest => {
+        if (course.title.toLowerCase().includes(interest.toLowerCase()) ||
+            course.description.toLowerCase().includes(interest.toLowerCase())) {
+          relevanceScore += 0.2;
+        }
+      });
+
+      // Check if not already completed
+      if (!profile.completedCourses.includes(course.id)) {
+        relevanceScore += 0.3;
+      }
+
+      // Check experience level appropriateness
+      if (this.isAppropriateLevel(course.difficulty, profile.experienceLevel)) {
+        relevanceScore += 0.1;
+      }
+
+      if (relevanceScore > 0.3) {
+        recommendations.push({
+          id: `rec_course_${course.id}`,
+          type: 'course',
+          title: course.title,
+          description: course.description,
+          relevanceScore,
+          reasoning: `Matches your specialization in ${profile.specialization} and aligns with your interests`,
+          priority: relevanceScore > 0.7 ? 'high' : relevanceScore > 0.5 ? 'medium' : 'low',
+          estimatedTime: course.duration,
+          difficulty: course.difficulty,
+          category: course.category
+        });
+      }
+    });
+
+    return recommendations;
+  }
+
+  private generateJobRecommendations(profile: UserProfile): Recommendation[] {
+    const recommendations: Recommendation[] = [];
+
+    this.jobs.forEach(job => {
+      let relevanceScore = 0;
+
+      // Location proximity
+      if (job.location.includes(profile.location.split(',')[0])) {
+        relevanceScore += 0.3;
+      }
+
+      // Specialization match
+      if (job.specialization === profile.specialization || 
+          profile.interests.some(interest => 
+            job.title.toLowerCase().includes(interest.toLowerCase()))) {
+        relevanceScore += 0.4;
+      }
+
+      // Experience level match
+      if (this.isAppropriateLevel(job.experienceRequired, profile.experienceLevel)) {
+        relevanceScore += 0.3;
+      }
+
+      if (relevanceScore > 0.4) {
+        recommendations.push({
+          id: `rec_job_${job.id}`,
+          type: 'job',
+          title: job.title,
+          description: `${job.type} position in ${job.location}`,
+          relevanceScore,
+          reasoning: `Matches your location and specialization`,
+          priority: relevanceScore > 0.7 ? 'high' : relevanceScore > 0.5 ? 'medium' : 'low',
+          category: 'Career Opportunities'
+        });
+      }
+    });
+
+    return recommendations;
+  }
+
+  private generateSkillRecommendations(profile: UserProfile): Recommendation[] {
+    const skillRecommendations = [
+      {
+        skill: 'Advanced Cardiac Monitoring',
+        relevance: profile.interests.includes('Cardiology') ? 0.8 : 0.3,
+        description: 'Enhanced cardiac monitoring and interpretation skills'
+      },
+      {
+        skill: 'Telemedicine Proficiency',
+        relevance: 0.6,
+        description: 'Remote consultation and digital health skills'
+      },
+      {
+        skill: 'Leadership in Emergency Settings',
+        relevance: profile.experienceLevel === 'advanced' ? 0.7 : 0.4,
+        description: 'Team leadership during critical situations'
+      }
+    ];
+
+    return skillRecommendations
+      .filter(skill => skill.relevance > 0.4)
+      .map(skill => ({
+        id: `rec_skill_${skill.skill.replace(/\s+/g, '_').toLowerCase()}`,
+        type: 'skill' as const,
+        title: skill.skill,
+        description: skill.description,
+        relevanceScore: skill.relevance,
+        reasoning: 'Based on your current skill gaps and career progression',
+        priority: skill.relevance > 0.7 ? 'high' as const : 'medium' as const,
+        category: 'Skill Development'
+      }));
+  }
+
+  private isAppropriateLevel(requiredLevel: string, userLevel: string): boolean {
+    const levels = ['beginner', 'intermediate', 'advanced', 'expert'];
+    const userIndex = levels.indexOf(userLevel);
+    const requiredIndex = levels.indexOf(requiredLevel);
+    
+    // User should be at the required level or one level below/above
+    return Math.abs(userIndex - requiredIndex) <= 1;
+  }
+
+  private calculateConfidence(profile: UserProfile, recommendations: Recommendation[]): number {
+    if (recommendations.length === 0) return 0;
+    
+    const avgRelevance = recommendations.reduce((sum, rec) => sum + rec.relevanceScore, 0) / recommendations.length;
+    const profileCompleteness = this.calculateProfileCompleteness(profile);
+    
+    return (avgRelevance * 0.7) + (profileCompleteness * 0.3);
+  }
+
+  private calculateProfileCompleteness(profile: UserProfile): number {
+    let completeness = 0;
+    const fields = ['specialization', 'interests', 'goals', 'location'];
+    
+    fields.forEach(field => {
+      if (profile[field as keyof UserProfile] && 
+          (Array.isArray(profile[field as keyof UserProfile]) ? 
+           (profile[field as keyof UserProfile] as any[]).length > 0 : 
+           profile[field as keyof UserProfile])) {
+        completeness += 0.25;
+      }
+    });
+    
+    return completeness;
+  }
+
+  public updateUserProfile(userId: string, updates: Partial<UserProfile>): void {
+    const existing = this.userProfiles.get(userId);
+    if (existing) {
+      this.userProfiles.set(userId, { ...existing, ...updates });
+    }
+  }
+
+  public getRecommendationStats(): any {
+    return {
+      totalUsers: this.userProfiles.size,
+      averageRecommendations: 8.5,
+      topCategories: ['Emergency Medicine', 'Cardiology', 'Trauma Care'],
+      successRate: 0.82
     };
   }
 }
 
 export const recommendationAgent = new RecommendationAgent();
+
+// Singleton pattern for admin dashboard compatibility
+export class RecommendationAgentSingleton {
+  private static instance: RecommendationAgent;
+
+  static getInstance(): RecommendationAgent {
+    if (!RecommendationAgentSingleton.instance) {
+      RecommendationAgentSingleton.instance = new RecommendationAgent();
+    }
+    return RecommendationAgentSingleton.instance;
+  }
+
+  static getStats() {
+    return RecommendationAgentSingleton.getInstance().getRecommendationStats();
+  }
+
+  static generateRecommendations(userId: string) {
+    return RecommendationAgentSingleton.getInstance().generateRecommendations(userId);
+  }
+}
+
+export default RecommendationAgentSingleton;
