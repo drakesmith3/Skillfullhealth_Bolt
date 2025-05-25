@@ -1,4 +1,3 @@
-
 export interface UserActivity {
   userId: string;
   userType: 'professional' | 'student' | 'client' | 'tutor' | 'employer';
@@ -17,6 +16,15 @@ export interface ActivityPattern {
   frequency: number;
   trend: 'increasing' | 'decreasing' | 'stable';
   recommendations: string[];
+}
+
+export interface TestimonialStatus {
+  active: boolean;
+  lastAutomatedUpdate: string | null;
+  lastManualUpdate: string | null;
+  featuredCount: number;
+  featuredTestimonials: any[];
+  allTestimonials: any[];
 }
 
 export class AIActivityAgent {
@@ -266,22 +274,9 @@ export class AIActivityAgent {
     if (totalActivities >= 5) return 'medium';
     return 'low';
   }
-}
 
-export const aiActivityAgent = new AIActivityAgent();
-
-// Add singleton pattern for admin dashboard compatibility
-export class AIActivityAgentSingleton {
-  private static instance: AIActivityAgent;
-
-  static getInstance(): AIActivityAgent {
-    if (!AIActivityAgentSingleton.instance) {
-      AIActivityAgentSingleton.instance = new AIActivityAgent();
-    }
-    return AIActivityAgentSingleton.instance;
-  }
-
-  static getStatus() {
+  // Add missing methods for admin dashboard
+  public getStatus(): TestimonialStatus {
     return {
       active: true,
       lastAutomatedUpdate: new Date().toISOString(),
@@ -342,13 +337,39 @@ export class AIActivityAgentSingleton {
     };
   }
 
-  static async forceUpdate() {
+  public async forceUpdate(): Promise<void> {
     console.log("Force updating testimonials...");
     return Promise.resolve();
   }
 
-  static manuallyUpdateFeaturedStatus(testimonialId: number, featured: boolean) {
+  public manuallyUpdateFeaturedStatus(testimonialId: number, featured: boolean): void {
     console.log(`Manually updating testimonial ${testimonialId} featured status to ${featured}`);
+  }
+}
+
+export const aiActivityAgent = new AIActivityAgent();
+
+// Add singleton pattern for admin dashboard compatibility
+export class AIActivityAgentSingleton {
+  private static instance: AIActivityAgent;
+
+  static getInstance(): AIActivityAgent {
+    if (!AIActivityAgentSingleton.instance) {
+      AIActivityAgentSingleton.instance = new AIActivityAgent();
+    }
+    return AIActivityAgentSingleton.instance;
+  }
+
+  static getStatus() {
+    return AIActivityAgentSingleton.getInstance().getStatus();
+  }
+
+  static async forceUpdate() {
+    return AIActivityAgentSingleton.getInstance().forceUpdate();
+  }
+
+  static manuallyUpdateFeaturedStatus(testimonialId: number, featured: boolean) {
+    return AIActivityAgentSingleton.getInstance().manuallyUpdateFeaturedStatus(testimonialId, featured);
   }
 }
 

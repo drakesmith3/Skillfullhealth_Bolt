@@ -1,4 +1,3 @@
-
 export interface FeedbackSubmission {
   id: string;
   name: string;
@@ -240,6 +239,14 @@ export class FeedbackRoutingAgent {
       manualReviews: 0
     };
   }
+
+  // Add missing method for admin dashboard
+  public getManualReviewQueue(): any[] {
+    return [
+      { id: 3, name: "Dr. Wilson", email: "wilson@hospital.com", confidence: 0.6 },
+      { id: 4, name: "Nurse Patricia", email: "patricia@clinic.com", confidence: 0.7 }
+    ];
+  }
 }
 
 export const feedbackRoutingAgent = new FeedbackRoutingAgent();
@@ -275,9 +282,7 @@ export class FeedbackRoutingAgentSingleton {
   }
 
   static getManualReviewQueue() {
-    return [
-      { id: 3, name: "Dr. Wilson", email: "wilson@hospital.com", confidence: 0.6 }
-    ];
+    return FeedbackRoutingAgentSingleton.getInstance().getManualReviewQueue();
   }
 
   static getUnregisteredEntities() {
