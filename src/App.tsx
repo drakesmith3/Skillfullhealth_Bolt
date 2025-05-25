@@ -29,6 +29,8 @@ import KPIDashboard from "./pages/KPIDashboard";
 import ProfessionalWallet from "./pages/ProfessionalWallet";
 import TutorWallet from "./pages/TutorWallet";
 import ProfileCompletion from "./pages/ProfileCompletion";
+import AdminDashboard from "./pages/AdminDashboard";
+import Sitemap from "./pages/Sitemap";
 import DashboardLayout, { UserType } from "./components/dashboard/DashboardLayout";
 
 // Helper functions to interact with localStorage
@@ -144,9 +146,13 @@ function App() {
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/sitemap" element={<Sitemap />} />
             
             {/* Profile Completion Route */}
             <Route path="/profile-completion" element={<ProfileCompletion />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
             {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
             <Route element={<PublicContentLayout />}>

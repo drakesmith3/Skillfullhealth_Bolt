@@ -1,158 +1,166 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
-import PreHeader from '@/components/PreHeader';
-import Footer from '@/components/Footer';
+import { Link } from 'react-router-dom';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Home, User, BookOpen, Briefcase, MessageCircle, Users, Settings, Star, DollarSign } from 'lucide-react';
 
 const Sitemap: React.FC = () => {
+  const { theme } = useTheme();
+
   const siteStructure = [
     {
-      category: "Main Pages",
+      title: 'Public Pages',
+      icon: Home,
       pages: [
-        { name: "Home", path: "/" },
-        { name: "About Us", path: "/about" },
-        { name: "Contact", path: "/contact" },
-        { name: "Services", path: "/services" },
-        { name: "Success Stories", path: "/success-stories" }
+        { name: 'Home', path: '/', description: 'Main landing page with platform overview' },
+        { name: 'About Us', path: '/about-us', description: 'Information about GLOHSEN platform' },
+        { name: 'Contact Us', path: '/contact-us', description: 'Get in touch with our team' },
+        { name: 'Blog', path: '/blog', description: 'Latest healthcare industry insights' },
+        { name: 'Sign Up', path: '/signup', description: 'Create a new account' },
+        { name: 'Login', path: '/login', description: 'Access your account' }
       ]
     },
     {
-      category: "Authentication",
+      title: 'Community & Learning',
+      icon: BookOpen,
       pages: [
-        { name: "Sign In", path: "/signin" },
-        { name: "Sign Up", path: "/signup" },
-        { name: "Forgot Password", path: "/forgot-password" }
+        { name: 'Courses', path: '/courses', description: 'Browse available courses and certifications' },
+        { name: 'Community Forum', path: '/community-forum', description: 'Connect with healthcare professionals' },
+        { name: 'Games & Quizzes', path: '/games-quizzes', description: 'Interactive learning activities' },
+        { name: 'Job Board', path: '/job-board', description: 'Find healthcare job opportunities' }
       ]
     },
     {
-      category: "Professional Dashboard",
+      title: 'Professional Dashboard',
+      icon: User,
       pages: [
-        { name: "Professional Dashboard", path: "/professional-dashboard" },
-        { name: "Professional Account Settings", path: "/account-settings/professional" },
-        { name: "Professional Notifications", path: "/notifications/professional" },
-        { name: "GLOHSEN Score", path: "/glohsen-score" },
-        { name: "KPI Dashboard", path: "/kpi-dashboard" }
+        { name: 'Overview', path: '/dashboard/professional', description: 'Professional dashboard overview' },
+        { name: 'My Profile', path: '/dashboard/professional', description: 'Manage your professional profile' },
+        { name: 'My Courses', path: '/dashboard/professional', description: 'Track your learning progress' },
+        { name: 'Jobs History', path: '/dashboard/professional', description: 'View your employment history' },
+        { name: 'Transactions', path: '/dashboard/professional', description: 'Financial transaction history' },
+        { name: 'Inbox & Feedback', path: '/dashboard/professional', description: 'Messages and feedback from clients' }
       ]
     },
     {
-      category: "Employer Dashboard",
+      title: 'Employer Dashboard',
+      icon: Briefcase,
       pages: [
-        { name: "Employer Dashboard", path: "/employer-dashboard" },
-        { name: "Employer Account Settings", path: "/account-settings/employer" },
-        { name: "Employer Notifications", path: "/notifications/employer" },
-        { name: "Employer Criteria", path: "/employer-criteria" }
+        { name: 'Employer Dashboard', path: '/dashboard/employer', description: 'Manage your organization' },
+        { name: 'Post Jobs', path: '/dashboard/employer', description: 'Create job postings' },
+        { name: 'Find Professionals', path: '/dashboard/employer', description: 'Search for healthcare talent' },
+        { name: 'Payment Portal', path: '/employer/payment', description: 'Manage subscription and payments' }
       ]
     },
     {
-      category: "Student Dashboard",
+      title: 'Tutor Dashboard',
+      icon: Star,
       pages: [
-        { name: "Student Dashboard", path: "/student-dashboard" },
-        { name: "Student Account Settings", path: "/account-settings/student" },
-        { name: "Student Notifications", path: "/notifications/student" }
+        { name: 'Tutor Dashboard', path: '/dashboard/tutor', description: 'Manage your teaching activities' },
+        { name: 'Create Courses', path: '/dashboard/tutor', description: 'Develop new educational content' },
+        { name: 'Student Progress', path: '/dashboard/tutor', description: 'Track student performance' }
       ]
     },
     {
-      category: "Tutor Dashboard",
+      title: 'Student Dashboard',
+      icon: BookOpen,
       pages: [
-        { name: "Tutor Dashboard", path: "/tutor-dashboard" },
-        { name: "Tutor Account Settings", path: "/account-settings/tutor" },
-        { name: "Tutor Notifications", path: "/notifications/tutor" }
+        { name: 'Student Dashboard', path: '/dashboard/student', description: 'Track your learning journey' },
+        { name: 'Enrolled Courses', path: '/dashboard/student', description: 'View your course progress' },
+        { name: 'Certificates', path: '/dashboard/student', description: 'Download your achievements' }
       ]
     },
     {
-      category: "Client Dashboard",
+      title: 'Client Dashboard',
+      icon: Users,
       pages: [
-        { name: "Client Dashboard", path: "/client-dashboard" },
-        { name: "Client Account Settings", path: "/account-settings/client" },
-        { name: "Client Notifications", path: "/notifications/client" }
+        { name: 'Client Dashboard', path: '/dashboard/client', description: 'Manage your healthcare needs' },
+        { name: 'Find Professionals', path: '/dashboard/client', description: 'Connect with healthcare providers' },
+        { name: 'Feedback & Reviews', path: '/dashboard/client', description: 'Rate your experiences' }
       ]
     },
     {
-      category: "Learning & Development",
+      title: 'Tools & Analytics',
+      icon: Settings,
       pages: [
-        { name: "Courses", path: "/courses" },
-        { name: "Medical Quizzes & Games", path: "/medical-quizzes-games" },
-        { name: "Community Forum", path: "/community-forum" }
+        { name: 'GLOHSEN Score Calculator', path: '/score/calculate', description: 'Calculate your professional score' },
+        { name: 'Score Results', path: '/score', description: 'View your GLOHSEN score breakdown' },
+        { name: 'KPI Tracking', path: '/kpi-tracking', description: 'Monitor key performance indicators' },
+        { name: 'KPI Dashboard', path: '/kpi-dashboard', description: 'Visual analytics dashboard' }
       ]
     },
     {
-      category: "Job Board",
+      title: 'Financial',
+      icon: DollarSign,
       pages: [
-        { name: "Job Board", path: "/job-board" },
-        { name: "Post a Job", path: "/post-job" }
+        { name: 'Professional Wallet', path: '/wallet/professional', description: 'Manage your earnings' },
+        { name: 'Tutor Wallet', path: '/wallet/tutor', description: 'Track teaching income' },
+        { name: 'Employer Criteria', path: '/employer/criteria', description: 'Set hiring requirements' }
       ]
     },
     {
-      category: "Admin",
+      title: 'Support & Feedback',
+      icon: MessageCircle,
       pages: [
-        { name: "Admin Dashboard", path: "/admin" },
-        { name: "General Feedback", path: "/general-feedback" }
+        { name: 'General Feedback', path: '/feedback', description: 'Share your platform experience' },
+        { name: 'Account Settings', path: '/account-settings', description: 'Manage your account preferences' },
+        { name: 'Profile Completion', path: '/profile-completion', description: 'Complete your profile setup' }
       ]
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <PreHeader currentPage="sitemap" />
-      
-      <div className="container mx-auto px-4 py-8 mt-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Site Map
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Navigate through all sections of the GLOHSEN platform
-            </p>
-          </div>
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-[#ea384c] mb-4">Site Map</h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Navigate through all pages and features of the GLOHSEN platform. 
+            Find exactly what you're looking for with our comprehensive site structure.
+          </p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {siteStructure.map((section, index) => (
-              <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow">
-                <CardHeader className="bg-gradient-to-r from-red-500 to-[#D4AF37] text-white">
-                  <CardTitle className="text-lg font-semibold">
-                    {section.category}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <ul className="space-y-2">
-                    {section.pages.map((page, pageIndex) => (
-                      <li key={pageIndex}>
-                        <Link
-                          to={page.path}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline transition-colors"
-                        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {siteStructure.map((section, index) => {
+            const IconComponent = section.icon;
+            return (
+              <div key={index} className={`rounded-lg border p-6 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+                <div className="flex items-center gap-3 mb-4">
+                  <IconComponent className="h-6 w-6 text-[#D4AF37]" />
+                  <h2 className="text-xl font-semibold">{section.title}</h2>
+                </div>
+                <ul className="space-y-3">
+                  {section.pages.map((page, pageIndex) => (
+                    <li key={pageIndex}>
+                      <Link 
+                        to={page.path}
+                        className="block p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <div className="font-medium text-[#ea384c] hover:text-[#d12e42]">
                           {page.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          {page.description}
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
 
-          <div className="mt-12 text-center">
-            <Card className="inline-block p-6 bg-gradient-to-r from-red-50 to-amber-50 dark:from-red-900/20 dark:to-amber-900/20">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                Need Help Finding Something?
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Can't find what you're looking for? Contact our support team for assistance.
-              </p>
-              <Link
-                to="/contact"
-                className="inline-block bg-[#D4AF37] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#B8941F] transition-colors"
-              >
-                Contact Support
-              </Link>
-            </Card>
-          </div>
+        <div className="text-center mt-12">
+          <Link 
+            to="/"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#ea384c] text-white rounded-lg hover:bg-[#d12e42] transition-colors"
+          >
+            <Home className="h-5 w-5" />
+            Return to Home
+          </Link>
         </div>
       </div>
-
-      <Footer isActive={false} />
     </div>
   );
 };

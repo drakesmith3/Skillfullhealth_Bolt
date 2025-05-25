@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Bot, UserCheck, UserX, RefreshCw, TrendingUp, MessageSquare, Star, XCircle } from 'lucide-react';
-import AIActivityAgent from '@/services/aiActivityAgent';
-import FeedbackRoutingAgent from '@/services/feedbackRoutingAgent';
+import AIActivityAgentSingleton from '@/services/aiActivityAgent';
+import FeedbackRoutingAgentSingleton from '@/services/feedbackRoutingAgent';
 
 interface Testimonial {
   id: number;
@@ -42,10 +42,10 @@ const AIAgentDashboard: React.FC = () => {
   const [manualReviewQueue, setManualReviewQueue] = useState<any[]>([]); 
 
   const updateStatuses = () => {
-    const testimonialAgent = AIActivityAgent.getInstance();
+    const testimonialAgent = AIActivityAgentSingleton.getInstance();
     setTestimonialStatus(testimonialAgent.getStatus());
 
-    const routingAgent = FeedbackRoutingAgent.getInstance();
+    const routingAgent = FeedbackRoutingAgentSingleton.getInstance();
     setRoutingStats(routingAgent.getRoutingStats());
     setManualReviewQueue(routingAgent.getManualReviewQueue());
   };
@@ -57,7 +57,7 @@ const AIAgentDashboard: React.FC = () => {
   }, []);
 
   const handleManualFeatureToggle = (testimonialId: number, isManuallySet?: boolean) => {
-    const agent = AIActivityAgent.getInstance();
+    const agent = AIActivityAgentSingleton.getInstance();
     agent.manuallyUpdateFeaturedStatus(testimonialId, !isManuallySet);
     updateStatuses(); 
   };
@@ -164,7 +164,7 @@ const AIAgentDashboard: React.FC = () => {
             </div>
             <Button 
               onClick={() => {
-                const agent = AIActivityAgent.getInstance();
+                const agent = AIActivityAgentSingleton.getInstance();
                 agent.forceUpdate();
                 updateStatuses();
               }}
@@ -306,7 +306,7 @@ const AIAgentDashboard: React.FC = () => {
 
             <Button 
               onClick={() => {
-                const agent = FeedbackRoutingAgent.getInstance();
+                const agent = FeedbackRoutingAgentSingleton.getInstance();
                 // agent.processManualReviewQueue(); // Ensure this method exists and works as expected
                 alert("Processing manual review queue - functionality to be fully implemented in FeedbackRoutingAgent.");
                 updateStatuses();
