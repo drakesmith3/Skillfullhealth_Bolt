@@ -2,6 +2,8 @@
 import { BrowserRouter as Router, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { GlohsenScoreProvider } from "./contexts/GlohsenScoreContext";
+import { AccessibilityProvider } from "./components/accessibility/AccessibilityProvider";
+import { SecurityProvider } from "./components/security/SecurityProvider";
 import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
@@ -83,6 +85,8 @@ const getPageTitle = (pathname: string): string => {
     "/blog": "Blog",
     "/feedback": "Feedback",
     "/profile-completion": "Complete Your Profile",
+    "/admin/dashboard": "Admin Dashboard",
+    "/sitemap": "Site Map",
   };
 
   if (customTitles[pathname]) {
@@ -137,68 +141,72 @@ const PublicContentLayout = () => {
 function App() {
   return (
     <ThemeProvider>
-      <GlohsenScoreProvider>
-        <Router>
-          <Routes>
-            {/* Fully Public Routes - No sidebar */}
-            <Route path="/" element={<Home />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/sitemap" element={<Sitemap />} />
-            
-            {/* Profile Completion Route */}
-            <Route path="/profile-completion" element={<ProfileCompletion />} />
+      <AccessibilityProvider>
+        <SecurityProvider>
+          <GlohsenScoreProvider>
+            <Router>
+              <Routes>
+                {/* Fully Public Routes - No sidebar */}
+                <Route path="/" element={<Home />} />
+                <Route path="/about-us" element={<AboutUs />} />
+                <Route path="/contact-us" element={<ContactUs />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/sitemap" element={<Sitemap />} />
+                
+                {/* Profile Completion Route */}
+                <Route path="/profile-completion" element={<ProfileCompletion />} />
 
-            {/* Admin Routes */}
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                {/* Admin Routes */}
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
-            {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
-            <Route element={<PublicContentLayout />}>
-              <Route path="/courses" element={<CourseEnrollment />} />
-              <Route path="/job-board" element={<JobBoard />} />
-              <Route path="/jobs" element={<JobBoard />} />
-              <Route path="/community-forum" element={<CommunityForum />} />
-              <Route path="/forum" element={<CommunityForum />} />
-              <Route path="/community" element={<CommunityForum />} />
-              <Route path="/discussion" element={<CommunityForum />} />
-              <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />
-              <Route path="/games" element={<MedicalGamesQuizzes />} />
-              <Route path="/quizzes" element={<MedicalGamesQuizzes />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/feedback" element={<GeneralFeedbackForm />} />
-            </Route>
+                {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
+                <Route element={<PublicContentLayout />}>
+                  <Route path="/courses" element={<CourseEnrollment />} />
+                  <Route path="/job-board" element={<JobBoard />} />
+                  <Route path="/jobs" element={<JobBoard />} />
+                  <Route path="/community-forum" element={<CommunityForum />} />
+                  <Route path="/forum" element={<CommunityForum />} />
+                  <Route path="/community" element={<CommunityForum />} />
+                  <Route path="/discussion" element={<CommunityForum />} />
+                  <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />
+                  <Route path="/games" element={<MedicalGamesQuizzes />} />
+                  <Route path="/quizzes" element={<MedicalGamesQuizzes />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/feedback" element={<GeneralFeedbackForm />} />
+                </Route>
 
-            {/* Authenticated Routes - Always have sidebar */}
-            <Route element={<AuthenticatedLayout />}>
-              <Route path="/dashboard/professional" element={<DashboardPage />} />
-              <Route path="/dashboard/employer" element={<EmployerDashboard />} />
-              <Route path="/dashboard/tutor" element={<TutorDashboard />} />
-              <Route path="/dashboard/student" element={<StudentDashboard />} />
-              <Route path="/dashboard/client" element={<ClientDashboard />} />
-              
-              <Route path="/dashboard/:userType/notifications" element={<NotificationsPage />} />
-              <Route path="/dashboard/:userType/inbox" element={<NotificationsPage />} />
-              
-              <Route path="/account-settings" element={<AccountSettings />} />
-              
-              <Route path="/score" element={<GlohsenScoreResultsPage />} />
-              <Route path="/score/calculate" element={<GlohsenScoreCalculatorPage />} />
-              <Route path="/score/details" element={<GlohsenScoreResultsPage />} />
-              
-              <Route path="/employer/criteria" element={<EmployerCriteriaPage />} />
-              <Route path="/employer/payment" element={<EmployerPayment />} />
-              
-              <Route path="/kpi-tracking" element={<KPITrackingPage />} />
-              <Route path="/kpi-dashboard" element={<KPIDashboard />} />
-              
-              <Route path="/wallet/professional" element={<ProfessionalWallet />} />
-              <Route path="/wallet/tutor" element={<TutorWallet />} />
-            </Route>
-          </Routes>
-        </Router>
-      </GlohsenScoreProvider>
+                {/* Authenticated Routes - Always have sidebar */}
+                <Route element={<AuthenticatedLayout />}>
+                  <Route path="/dashboard/professional" element={<DashboardPage />} />
+                  <Route path="/dashboard/employer" element={<EmployerDashboard />} />
+                  <Route path="/dashboard/tutor" element={<TutorDashboard />} />
+                  <Route path="/dashboard/student" element={<StudentDashboard />} />
+                  <Route path="/dashboard/client" element={<ClientDashboard />} />
+                  
+                  <Route path="/dashboard/:userType/notifications" element={<NotificationsPage />} />
+                  <Route path="/dashboard/:userType/inbox" element={<NotificationsPage />} />
+                  
+                  <Route path="/account-settings" element={<AccountSettings />} />
+                  
+                  <Route path="/score" element={<GlohsenScoreResultsPage />} />
+                  <Route path="/score/calculate" element={<GlohsenScoreCalculatorPage />} />
+                  <Route path="/score/details" element={<GlohsenScoreResultsPage />} />
+                  
+                  <Route path="/employer/criteria" element={<EmployerCriteriaPage />} />
+                  <Route path="/employer/payment" element={<EmployerPayment />} />
+                  
+                  <Route path="/kpi-tracking" element={<KPITrackingPage />} />
+                  <Route path="/kpi-dashboard" element={<KPIDashboard />} />
+                  
+                  <Route path="/wallet/professional" element={<ProfessionalWallet />} />
+                  <Route path="/wallet/tutor" element={<TutorWallet />} />
+                </Route>
+              </Routes>
+            </Router>
+          </GlohsenScoreProvider>
+        </SecurityProvider>
+      </AccessibilityProvider>
     </ThemeProvider>
   );
 }
