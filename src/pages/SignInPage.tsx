@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
-import PreHeader from '../components/PreHeader';
+import { Eye, EyeOff, Globe } from "lucide-react";
 import Footer from '../components/Footer';
 import { type UserRole } from "@/lib/unis";
 
@@ -45,23 +44,33 @@ const SignInPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <PreHeader currentPage="sign in" />
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-amber-50 to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Simple Header */}
+      <div className="w-full bg-gradient-to-r from-[#ea384c] via-[#D4AF37] to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 p-4">
+        <div className="container mx-auto flex items-center">
+          <Link to="/" className="flex items-center space-x-2">
+            <Globe className="h-8 w-8 text-white animate-spin" />
+            <span className="text-white text-xl font-bold">GLOHSEN</span>
+          </Link>
+        </div>
+      </div>
       
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 mt-16">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
-            <CardDescription className="text-center">
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <Card className="w-full max-w-md shadow-2xl">
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-[#ea384c] to-[#D4AF37] bg-clip-text text-transparent">
+              Welcome Back
+            </CardTitle>
+            <CardDescription className="text-center text-lg">
               Sign in to your GLOHSEN account
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="userType">I am signing in as a</Label>
+                <Label htmlFor="userType" className="text-base font-semibold">I am signing in as a</Label>
                 <Select value={userType} onValueChange={(value: UserRole) => setUserType(value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-12">
                     <SelectValue placeholder="Select user type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -75,7 +84,7 @@ const SignInPage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-base font-semibold">Email</Label>
                 <Input
                   id="email"
                   name="email"
@@ -84,11 +93,12 @@ const SignInPage: React.FC = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
+                  className="h-12"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-base font-semibold">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -98,6 +108,7 @@ const SignInPage: React.FC = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
+                    className="h-12 pr-12"
                   />
                   <Button
                     type="button"
@@ -116,20 +127,20 @@ const SignInPage: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                <Link to="/forgot-password" className="text-sm text-[#ea384c] hover:underline">
                   Forgot password?
                 </Link>
               </div>
 
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+              <Button type="submit" className="w-full h-12 bg-gradient-to-r from-[#ea384c] to-[#D4AF37] hover:from-[#d12e42] hover:to-[#B8941F] text-white font-semibold">
                 Sign In
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 Don't have an account?{' '}
-                <Link to="/signup" className="text-primary hover:underline">
+                <Link to="/signup" className="text-[#ea384c] hover:underline font-semibold">
                   Sign up here
                 </Link>
               </p>

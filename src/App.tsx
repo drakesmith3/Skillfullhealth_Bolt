@@ -9,7 +9,7 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import DashboardPage from "./pages/Dashboard";
 import SignUp from "./pages/SignUp";
-import Login from "./pages/Login";
+import SignInPage from "./pages/SignInPage";
 import EmployerDashboard from "./pages/EmployerDashboard";
 import TutorDashboard from "./pages/TutorDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
@@ -33,6 +33,7 @@ import TutorWallet from "./pages/TutorWallet";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import AdminDashboard from "./pages/AdminDashboard";
 import Sitemap from "./pages/Sitemap";
+import ActivityHistoryPage from "./pages/ActivityHistoryPage";
 import DashboardLayout, { UserType } from "./components/dashboard/DashboardLayout";
 
 // Helper functions to interact with localStorage
@@ -87,6 +88,9 @@ const getPageTitle = (pathname: string): string => {
     "/profile-completion": "Complete Your Profile",
     "/admin/dashboard": "Admin Dashboard",
     "/sitemap": "Site Map",
+    "/activity": "Activity History",
+    "/signin": "Sign In",
+    "/login": "Sign In"
   };
 
   if (customTitles[pathname]) {
@@ -103,7 +107,7 @@ const getPageTitle = (pathname: string): string => {
 const AuthenticatedLayout = () => {
   const location = useLocation();
   if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/signin" replace />;
   }
   const userType = getUserType();
   const userName = getUserName();
@@ -151,7 +155,8 @@ function App() {
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/contact-us" element={<ContactUs />} />
                 <Route path="/signup" element={<SignUp />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/signin" element={<SignInPage />} />
+                <Route path="/login" element={<SignInPage />} />
                 <Route path="/sitemap" element={<Sitemap />} />
                 
                 {/* Profile Completion Route */}
@@ -201,6 +206,8 @@ function App() {
                   
                   <Route path="/wallet/professional" element={<ProfessionalWallet />} />
                   <Route path="/wallet/tutor" element={<TutorWallet />} />
+                  
+                  <Route path="/activity" element={<ActivityHistoryPage />} />
                 </Route>
               </Routes>
             </Router>
