@@ -1,8 +1,8 @@
 
 import React, { useRef, useEffect } from 'react';
-import { createDustParticles } from '@/utils/dustParticles';
-import PreHeader from '@/components/PreHeader';
-import Footer from '@/components/Footer';
+import { createDustParticles } from '../../utils/dustParticles';
+import PreHeader from '../PreHeader';
+import Footer from '../Footer';
 
 interface StandardDashboardLayoutProps {
   children: React.ReactNode;

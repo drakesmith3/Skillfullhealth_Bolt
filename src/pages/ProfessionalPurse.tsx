@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const TutorWallet = () => {
+const ProfessionalPurse = () => {
   const [amount, setAmount] = useState(0);
   const [bank, setBank] = useState("");
   const [account, setAccount] = useState("");
@@ -23,7 +23,7 @@ const TutorWallet = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F5F5F5] to-white flex flex-col items-center justify-center py-12">
       <Card className="w-full max-w-lg p-8 shadow-2xl border-2 border-[#D4AF37]/30">
-        <h1 className="text-3xl font-bold text-center mb-6 text-d4af37 font-serif">Withdraw Your Tutor/Adviser Earnings</h1>
+        <h1 className="text-3xl font-bold text-center mb-6 text-d4af37 font-serif">Withdraw Your Earnings</h1>
         <form onSubmit={handleWithdraw} className="space-y-6">
           <div>
             <Label htmlFor="amount" className="font-semibold">Amount (₦)</Label>
@@ -72,4 +72,4 @@ const TutorWallet = () => {
   );
 };
 
-export default TutorWallet;
+export default ProfessionalPurse;

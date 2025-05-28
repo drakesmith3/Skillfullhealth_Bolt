@@ -1,27 +1,13 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Share, Printer, Download, ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { useGlohsenScore } from "@/contexts/GlohsenScoreContext";
-import { ScoreBreakdown } from "@/types/score";
 
 const GlohsenScoreResults = () => {
-  const { score, history } = useGlohsenScore();
-
-  if (!score) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-500">No score data available. Please calculate your score first.</p>
-      </div>
-    );
-  }
-
-  const scoreHistory = history.length > 0 ? history.slice(-6).map(h => ({
-    month: new Date(h.date).toLocaleDateString('en-US', { month: 'short' }),
-    score: h.score,
-    avg: Math.round(h.score * 0.9) // Example: industry average is 90% of score
-  })) : [
+  // Sample score history data
+  const scoreHistory = [
     { month: 'Jan', score: 145, avg: 138 },
     { month: 'Feb', score: 149, avg: 140 },
     { month: 'Mar', score: 152, avg: 142 },
@@ -29,35 +15,24 @@ const GlohsenScoreResults = () => {
     { month: 'May', score: 167, avg: 148 },
     { month: 'Jun', score: 179, avg: 150 }
   ];
-
+  
+  // Sample criteria breakdown data
   const criteriaBreakdown = [
-    { name: "Experience", score: score.experience, maxScore: 10 },
-    { name: "Employer Match", score: score.employerMatch, maxScore: 110 },
-    { name: "Skills & Certificates", score: score.skills, maxScore: 15 },
-    { name: "Locum Jobs", score: score.locumJobs, maxScore: 10 },
-    { name: "Platform Activity", score: score.platformActivity, maxScore: 10 },
-    { name: "Volunteering", score: score.volunteering, maxScore: 10 },
-    { name: "Location", score: score.location, maxScore: 5 },
-    { name: "Awards", score: score.awards, maxScore: 10 },
-    { name: "Remote Work", score: score.remoteWork, maxScore: 10 },
-    { name: "Availability", score: score.availability, maxScore: 10 }
+    { name: "Experience", score: 10, maxScore: 10 },
+    { name: "Employer Requests", score: 95, maxScore: 110 },
+    { name: "Skills & Certificates", score: 14, maxScore: 15 },
+    { name: "Locum Jobs", score: 8, maxScore: 10 },
+    { name: "Platform Activity", score: 8, maxScore: 10 },
+    { name: "Volunteer Willingness", score: 9, maxScore: 10 },
+    { name: "Location Proximity", score: 5, maxScore: 5 },
+    { name: "Awards & Skills", score: 10, maxScore: 10 },
+    { name: "Remote Work", score: 10, maxScore: 10 },
+    { name: "Availability", score: 10, maxScore: 10 }
   ];
-
-  const totalScore = score.total;
-  const maxScore = 200;
+  
+  const totalScore = criteriaBreakdown.reduce((sum, item) => sum + item.score, 0);
+  const maxScore = criteriaBreakdown.reduce((sum, item) => sum + item.maxScore, 0);
   const scorePercentage = (totalScore / maxScore) * 100;
-
-  const calculatePerformanceLevel = (score: ScoreBreakdown) => {
-    const totalScore = score.total;
-    if (totalScore >= 150) return { level: "Outstanding", percentile: "top 5%" };
-    if (totalScore >= 120) return { level: "Excellent", percentile: "top 15%" };
-    if (totalScore >= 90) return { level: "Very Good", percentile: "top 30%" };
-    if (totalScore >= 70) return { level: "Good", percentile: "top 50%" };
-    return { level: "Average", percentile: "top 75%" };
-  };
-
-  const performance = calculatePerformanceLevel(score);
-  const lastUpdated = history.length > 0 ? new Date(history[history.length - 1].date).toLocaleDateString() : "Not available";
 
   return (
     <div className="w-full bg-white p-6">
@@ -166,15 +141,16 @@ const GlohsenScoreResults = () => {
                         strokeDasharray={`${scorePercentage}, 100`}
                         strokeLinecap="round"
                       />
-                    </svg>                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                      <div className="text-4xl font-bold text-[#F9D75D]">{score.total}</div>
-                      <div className="text-sm text-gray-500">out of 200</div>
+                    </svg>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                      <div className="text-4xl font-bold text-[#F9D75D]">{totalScore}</div>
+                      <div className="text-sm text-gray-500">out of {maxScore}</div>
                     </div>
                   </div>
                   
                   <div className="text-center mb-4">
-                    <div className="font-bold">{performance.level}</div>
-                    <div className="text-sm text-gray-600">{performance.percentile} of healthcare professionals</div>
+                    <div className="font-bold">Excellent</div>
+                    <div className="text-sm text-gray-600">Top 15% of healthcare professionals</div>
                   </div>
                   
                   <Button className="bg-[#F9D75D] text-black hover:bg-[#F9D75D]/80">

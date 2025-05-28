@@ -182,13 +182,10 @@ function App() {
                 <Route path="/signed-out" element={<SignedOutPage />} />
                 
                 {/* Profile Completion Route */}
-                <Route path="/profile-completion" element={<ProfileCompletion />} />                {/* Admin Routes */}
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/profile-completion" element={<ProfileCompletion />} />
 
-                {/* Account Settings Routes - No sidebar/footer */}
-                <Route path="/account-settings" element={<AccountSettings />} />
-                <Route path="/account-settings/professional" element={<AccountSettings />} />
-                <Route path="/account-settings/:userType" element={<AccountSettings />} />
+                {/* Admin Routes */}
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
                 {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
                 <Route element={<PublicContentLayout />}>
@@ -198,24 +195,26 @@ function App() {
                   <Route path="/community-forum" element={<CommunityForum />} />
                   <Route path="/forum" element={<CommunityForum />} />
                   <Route path="/community" element={<CommunityForum />} />
-                  <Route path="/discussion" element={<CommunityForum />} />                  <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />
-                  <Route path="/medical-quizzes-games" element={<MedicalGamesQuizzes />} />
+                  <Route path="/discussion" element={<CommunityForum />} />
+                  <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />
                   <Route path="/games" element={<MedicalGamesQuizzes />} />
                   <Route path="/quizzes" element={<MedicalGamesQuizzes />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/feedback" element={<GeneralFeedbackForm />} />
-                </Route>                {/* Authenticated Routes - Always have sidebar */}
+                </Route>
+
+                {/* Authenticated Routes - Always have sidebar */}
                 <Route element={<AuthenticatedLayout />}>
-                  <Route path="/professional-dashboard" element={<DashboardPage />} />
                   <Route path="/dashboard/professional" element={<DashboardPage />} />
                   <Route path="/dashboard/employer" element={<EmployerDashboard />} />
-                  <Route path="/dashboard/tutor" element={<TutorDashboard />} />                  <Route path="/dashboard/student" element={<StudentDashboard />} />
+                  <Route path="/dashboard/tutor" element={<TutorDashboard />} />
+                  <Route path="/dashboard/student" element={<StudentDashboard />} />
                   <Route path="/dashboard/client" element={<ClientDashboard />} />
                   
                   <Route path="/dashboard/:userType/notifications" element={<NotificationsPage />} />
                   <Route path="/dashboard/:userType/inbox" element={<NotificationsPage />} />
-                  <Route path="/notifications/professional" element={<NotificationsPage />} />
-                  <Route path="/notifications/:userType" element={<NotificationsPage />} />
+                  
+                  <Route path="/account-settings" element={<AccountSettings />} />
                   <Route path="/score" element={<GlohsenScore />} />
                   <Route path="/score/calculate" element={<GlohsenScore />} />
                   <Route path="/score/details" element={<GlohsenScore />} />

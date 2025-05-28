@@ -1,12 +1,10 @@
-
 import React, { useState, useEffect, useRef, useCallback, ComponentType } from "react";
-import Lenis from "@studio-freight/lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import Header from "../components/Header";
 import Features from "../components/Features";
-import HowItWorks from "../components/HowItWorks";
+import HowItWorks from "../components/HowItWorksWheel";
 import Feedback from "../components/Feedback";
 import Employers from "../components/Employers";
 import TutorsAdvisers from "../components/TutorsAdvisers";
@@ -30,18 +28,37 @@ export interface SectionProps {
   scrollToSection?: (sectionIndex: number) => void;
 }
 
+// Story section titles for horizontal storytelling
+const storyTitles = [
+  "Welcome to GLOHSEN",
+  "Discover Features", 
+  "How It Works",
+  "User Feedback",
+  "For Employers",
+  "Tutors & Advisers",
+  "Games & Quizzes",
+  "Success Stories", 
+  "Join Community",
+  "Contact & Connect"
+];
+
+// Create a wrapper component for Footer with isHomePage prop
+const HomeFooter: React.FC<SectionProps> = (props) => (
+  <Footer {...props} isHomePage={true} />
+);
+
 // Define the sections in the desired story order
-const sectionsComponents: { component: ComponentType<SectionProps>; name: string }[] = [
-  { component: Header as ComponentType<SectionProps>, name: "Header" },
-  { component: withReturnToTopButton(Features as ComponentType<SectionProps>), name: "Features" },
-  { component: withReturnToTopButton(HowItWorks as ComponentType<SectionProps>), name: "HowItWorks" },
-  { component: withReturnToTopButton(Feedback as ComponentType<SectionProps>), name: "Feedback" },
-  { component: withReturnToTopButton(Employers as ComponentType<SectionProps>), name: "Employers" },
-  { component: withReturnToTopButton(TutorsAdvisers as ComponentType<SectionProps>), name: "TutorsAdvisers" },
-  { component: withReturnToTopButton(GamesAndQuizzes as ComponentType<SectionProps>), name: "GamesAndQuizzes" },
-  { component: withReturnToTopButton(SuccessStories as ComponentType<SectionProps>), name: "SuccessStories" },
-  { component: withReturnToTopButton(JoinCommunity as ComponentType<SectionProps>), name: "JoinCommunity" },
-  { component: Footer as ComponentType<SectionProps>, name: "Footer" },
+const sectionsComponents: { component: ComponentType<SectionProps>; name: string; title: string }[] = [
+  { component: Header as ComponentType<SectionProps>, name: "Header", title: storyTitles[0] },
+  { component: withReturnToTopButton(Features as ComponentType<SectionProps>), name: "Features", title: storyTitles[1] },
+  { component: withReturnToTopButton(HowItWorks as ComponentType<SectionProps>), name: "HowItWorks", title: storyTitles[2] },
+  { component: withReturnToTopButton(Feedback as ComponentType<SectionProps>), name: "Feedback", title: storyTitles[3] },
+  { component: withReturnToTopButton(Employers as ComponentType<SectionProps>), name: "Employers", title: storyTitles[4] },
+  { component: withReturnToTopButton(TutorsAdvisers as ComponentType<SectionProps>), name: "TutorsAdvisers", title: storyTitles[5] },
+  { component: withReturnToTopButton(GamesAndQuizzes as ComponentType<SectionProps>), name: "GamesAndQuizzes", title: storyTitles[6] },
+  { component: withReturnToTopButton(SuccessStories as ComponentType<SectionProps>), name: "SuccessStories", title: storyTitles[7] },
+  { component: withReturnToTopButton(JoinCommunity as ComponentType<SectionProps>), name: "JoinCommunity", title: storyTitles[8] },
+  { component: HomeFooter as ComponentType<SectionProps>, name: "Footer", title: storyTitles[9] },
 ];
 
 const sectionNames = sectionsComponents.map(s => s.name);
@@ -51,93 +68,114 @@ function Home(): JSX.Element {
   const [currentSection, setCurrentSection] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
   
-  const lenisRef = useRef<Lenis | null>(null);
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([]);
   const isScrollingProgrammatically = useRef(false);
 
   const numSections = sectionsComponents.length;
 
-  // Initialize Lenis smooth scrolling
+  // Navigate to section function for horizontal storytelling
+  const scrollToSection = useCallback((sectionIndex: number) => {
+    const validIndex = Math.max(0, Math.min(sectionIndex, numSections - 1));
+    
+    if (validIndex === currentSection) return;
+
+    isScrollingProgrammatically.current = true;
+    
+    // Update section immediately with smooth transition via CSS
+    setCurrentSection(validIndex);
+    
+    // Reset programmatic scroll flag after animation
+    setTimeout(() => {
+      isScrollingProgrammatically.current = false;
+    }, 1000);
+  }, [numSections, currentSection]);
+
+  // Setup horizontal navigation and keyboard controls
   useEffect(() => {
     if (isLoading) return;
 
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
-    });
-
-    lenisRef.current = lenis;
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    return () => {
-      lenis.destroy();
-    };
-  }, [isLoading]);
-
-  // Setup scroll tracking
-  useEffect(() => {
-    if (isLoading || !lenisRef.current) return;
-
-    const handleScroll = () => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (isScrollingProgrammatically.current) return;
 
-      const container = containerRef.current;
-      if (!container) return;
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          scrollToSection(Math.max(0, currentSection - 1));
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          scrollToSection(Math.min(numSections - 1, currentSection + 1));
+          break;
+        case 'Home':
+          event.preventDefault();
+          scrollToSection(0);
+          break;
+        case 'End':
+          event.preventDefault();
+          scrollToSection(numSections - 1);
+          break;
+      }
+    };
 
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const totalHeight = container.scrollHeight - windowHeight;
+    // Handle mouse wheel for section navigation
+    const handleWheel = (event: WheelEvent) => {
+      if (isScrollingProgrammatically.current) return;
       
-      if (totalHeight > 0) {
-        const progress = Math.min(Math.max(scrollTop / totalHeight, 0), 1);
-        setScrollProgress(progress);
-        
-        const newSectionIndex = Math.min(
-          Math.floor(progress * numSections),
-          numSections - 1
-        );
-        
-        if (newSectionIndex !== currentSection) {
-          setCurrentSection(newSectionIndex);
+      event.preventDefault();
+      
+      const wheelThreshold = 50;
+      if (Math.abs(event.deltaY) > wheelThreshold || Math.abs(event.deltaX) > wheelThreshold) {
+        if (event.deltaY > 0 || event.deltaX > 0) {
+          // Scroll down/right - go to next section
+          scrollToSection(Math.min(numSections - 1, currentSection + 1));
+        } else {
+          // Scroll up/left - go to previous section
+          scrollToSection(Math.max(0, currentSection - 1));
         }
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isLoading, currentSection, numSections]);
+    // Handle touch/swipe gestures
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-  // Scroll to section function
-  const scrollToSection = useCallback((sectionIndex: number) => {
-    const validIndex = Math.max(0, Math.min(sectionIndex, numSections - 1));
-    const sectionElement = sectionsRef.current[validIndex];
-    
-    if (!sectionElement || !lenisRef.current) return;
+    const handleTouchStart = (event: TouchEvent) => {
+      touchStartX = event.changedTouches[0].screenX;
+    };
 
-    isScrollingProgrammatically.current = true;
-    
-    lenisRef.current.scrollTo(sectionElement, {
-      duration: 1.5,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      onComplete: () => {
-        isScrollingProgrammatically.current = false;
-        setCurrentSection(validIndex);
+    const handleTouchEnd = (event: TouchEvent) => {
+      touchEndX = event.changedTouches[0].screenX;
+      handleSwipe();
+    };
+
+    const handleSwipe = () => {
+      const swipeThreshold = 50;
+      const diff = touchStartX - touchEndX;
+
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+          // Swipe left - go to next section
+          scrollToSection(Math.min(numSections - 1, currentSection + 1));
+        } else {
+          // Swipe right - go to previous section
+          scrollToSection(Math.max(0, currentSection - 1));
+        }
       }
-    });
-  }, [numSections]);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isLoading, currentSection, numSections, scrollToSection]);
 
   // Loading simulation
   useEffect(() => {
@@ -155,39 +193,117 @@ function Home(): JSX.Element {
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-white text-xl">Loading Story...</div>
       </div>
     );
   }
 
   return (
-    <div ref={containerRef} className="relative">
-      <ScrollSound isEnabled={isSoundEnabled} onToggle={toggleSound} />
-      <ProgressIndicator 
-        sections={sectionNames}
+    <div ref={containerRef} className="relative h-screen overflow-hidden">
+      <ScrollSound isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />      <ProgressIndicator 
         currentSection={currentSection}
-        onSectionClick={scrollToSection}
-      />
-      <StoryAnimations 
+        totalSections={numSections}
+        scrollToSection={scrollToSection}
+        chapterTitles={storyTitles}
+      />      <StoryAnimations 
         currentSection={currentSection} 
         totalSections={numSections} 
       />
-      <ReturnToTopButton />
+      {/* Return to top button - only show when not on header section */}
+      {currentSection !== 0 && <ReturnToTopButton scrollToSection={scrollToSection} />}
+      
+      {/* Current section title overlay */}
+      <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-black/50 backdrop-blur-sm rounded-full px-6 py-2">
+          <h1 className="text-white text-lg font-semibold">
+            {sectionsComponents[currentSection]?.title}
+          </h1>
+        </div>
+      </div>      {/* Horizontal storytelling container */}
+      <div 
+        className="flex h-full transition-transform duration-1000 ease-out"
+        style={{ 
+          width: `${numSections * 100}vw`,
+          transform: `translateX(${-currentSection * 100}vw)`
+        }}
+      >
+        {sectionsComponents.map(({ component: Component, name }, index) => (
+          <div
+            key={name}
+            ref={(el) => (sectionsRef.current[index] = el)}
+            className="flex-shrink-0 w-screen h-full relative overflow-y-auto"
+            id={`section-${index}`}
+          >
+            <Component 
+              isActive={currentSection === index}
+              sectionName={name}
+              scrollToSection={scrollToSection}
+            />
+          </div>
+        ))}
+      </div>
 
-      {sectionsComponents.map(({ component: Component, name }, index) => (
-        <div
-          key={name}
-          ref={(el) => (sectionsRef.current[index] = el)}
-          className="min-h-screen"
-          id={`section-${index}`}
-        >
-          <Component 
-            isActive={currentSection === index}
-            sectionName={name}
-            scrollToSection={scrollToSection}
+      {/* Story navigation dots */}
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex space-x-3">
+        {sectionsComponents.map((section, index) => (
+          <button
+            key={index}
+            onClick={() => scrollToSection(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              currentSection === index 
+                ? 'bg-[#ea384c] scale-125 shadow-lg' 
+                : 'bg-white/50 hover:bg-white/70'
+            }`}
+            aria-label={`Go to ${section.title}`}
+            title={section.title}
+          />
+        ))}
+      </div>
+
+      {/* Story progress bar */}
+      <div className="fixed bottom-4 left-4 right-4 z-40">
+        <div className="bg-white/20 rounded-full h-1">
+          <div 
+            className="bg-gradient-to-r from-[#ea384c] to-[#D4AF37] h-1 rounded-full transition-all duration-500"
+            style={{ width: `${((currentSection + 1) / numSections) * 100}%` }}
           />
         </div>
-      ))}
+      </div>
+
+      {/* Navigation arrows */}
+      <div className="fixed top-1/2 left-4 transform -translate-y-1/2 z-40 opacity-70">
+        <button
+          onClick={() => scrollToSection(Math.max(0, currentSection - 1))}
+          disabled={currentSection === 0}
+          className={`w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xl transition-all duration-300 ${
+            currentSection === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/30 hover:scale-110'
+          }`}
+          aria-label="Previous section"
+        >
+          ←
+        </button>
+      </div>
+
+      <div className="fixed top-1/2 right-4 transform -translate-y-1/2 z-40 opacity-70">
+        <button
+          onClick={() => scrollToSection(Math.min(numSections - 1, currentSection + 1))}
+          disabled={currentSection === numSections - 1}
+          className={`w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xl transition-all duration-300 ${
+            currentSection === numSections - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/30 hover:scale-110'
+          }`}
+          aria-label="Next section"
+        >
+          →
+        </button>
+      </div>
+
+      {/* Storytelling instructions overlay */}
+      <div className="fixed bottom-16 right-4 z-40 opacity-50">
+        <div className="bg-black/30 backdrop-blur-sm rounded-lg p-3 text-white text-xs">
+          <div>Use ← → arrows or swipe to navigate</div>
+          <div>Mouse wheel also works</div>
+        </div>
+      </div>
     </div>
   );
 }

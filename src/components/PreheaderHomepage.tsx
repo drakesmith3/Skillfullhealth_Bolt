@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
  * navigation links are always accessible
  */
 const PreheaderHomepage: React.FC = () => {
-  const goldButtonClasses = "bg-[#F9D75D] text-black px-5 py-2.5 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-sm";
+  const goldButtonClasses = "bg-[#F9D75D] text-black px-6 py-3 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-sm";
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 flex justify-between items-center bg-black bg-opacity-50 backdrop-blur-sm">

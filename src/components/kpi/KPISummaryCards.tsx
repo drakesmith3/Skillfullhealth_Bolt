@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Badge } from "../ui/badge";
 import { TrendingUp, TrendingDown, Users, Star, Clock, Award } from "lucide-react";
 
 export interface KPISummaryCardsProps {
@@ -59,7 +59,6 @@ const KPISummaryCards: React.FC<KPISummaryCardsProps> = ({ timeFrame = "30" }) =
       color: "text-[#D4AF37]"
     }
   ];
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
       {kpiData.map((kpi, index) => {
@@ -68,14 +67,22 @@ const KPISummaryCards: React.FC<KPISummaryCardsProps> = ({ timeFrame = "30" }) =
         const isNeutral = kpi.trend === "neutral";
         
         return (
-          <Card key={index} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card 
+            key={index} 
+            size="md" 
+            variant="stats"
+            className="hover:shadow-lg transition-shadow"
+          >
+            <CardHeader 
+              compact 
+              className="flex flex-row items-center justify-between space-y-0 pb-2"
+            >
               <CardTitle className="text-sm font-medium text-gray-600">
                 {kpi.title}
               </CardTitle>
               <IconComponent className={`h-5 w-5 ${kpi.color}`} />
             </CardHeader>
-            <CardContent>
+            <CardContent compact>
               <div className="text-2xl font-bold mb-1">{kpi.value}</div>
               <div className="flex items-center space-x-1">
                 {!isNeutral && (

@@ -1,14 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Users, DollarSign, TrendingUp, Share2, Gift, Award, Copy, Mail } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import mlmSystem from '@/services/mlmSystem';
+import { useToast } from '../../hooks/use-toast';
+import mlmSystem from '../../services/mlmSystem';
 
 interface MLMDashboardProps {
   userId: string;
@@ -68,14 +68,13 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <div className="space-y-6">      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card size="sm" variant="stats">
+          <CardHeader compact className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Referrals</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent compact>
             <div className="text-2xl font-bold">{stats.totalReferrals}</div>
             <p className="text-xs text-muted-foreground">
               {stats.activeReferrals} active
@@ -83,12 +82,12 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card size="sm" variant="stats">
+          <CardHeader compact className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent compact>
             <div className="text-2xl font-bold">₦{stats.totalEarnings.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               ₦{stats.monthlyEarnings.toLocaleString()} this month
@@ -96,12 +95,12 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card size="sm" variant="stats">
+          <CardHeader compact className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Rank Level</CardTitle>
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent compact>
             <div className="flex items-center space-x-2">
               <Badge className={getRankColor(stats.rankLevel)}>
                 {stats.rankLevel}
@@ -116,12 +115,12 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card size="sm" variant="stats">
+          <CardHeader compact className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Potential</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent compact>
             <div className="text-2xl font-bold">
               ₦{mlmSystem.calculatePotentialEarnings(10).toLocaleString()}
             </div>
@@ -138,17 +137,15 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
           <TabsTrigger value="refer">Refer & Earn</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="structure">Commission</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-4">
-          <Card>
-            <CardHeader>
+        </TabsList>        <TabsContent value="overview" className="space-y-4">
+          <Card size="lg" variant="default">
+            <CardHeader compact>
               <CardTitle>Referral Performance</CardTitle>
               <CardDescription>
                 Your referral network and earnings overview
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent compact>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -189,17 +186,15 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="refer" className="space-y-4">
-          <Card>
-            <CardHeader>
+        </TabsContent>        <TabsContent value="refer" className="space-y-4">
+          <Card size="lg" variant="default">
+            <CardHeader compact>
               <CardTitle>Refer New Members</CardTitle>
               <CardDescription>
                 Share GLOHSEN with healthcare professionals and earn rewards
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent compact className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="referral-code">Your Referral Code</Label>
                 <div className="flex space-x-2">
@@ -245,17 +240,15 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="history" className="space-y-4">
-          <Card>
-            <CardHeader>
+        </TabsContent>        <TabsContent value="history" className="space-y-4">
+          <Card size="lg" variant="default">
+            <CardHeader compact>
               <CardTitle>Referral History</CardTitle>
               <CardDescription>
                 Track all your referrals and their status
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent compact>
               <div className="space-y-2">
                 {referralHistory.map((referral, index) => (
                   <div key={index} className="flex items-center justify-between p-4 border rounded">
@@ -286,17 +279,15 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="structure" className="space-y-4">
-          <Card>
-            <CardHeader>
+        </TabsContent>        <TabsContent value="structure" className="space-y-4">
+          <Card size="lg" variant="default">
+            <CardHeader compact>
               <CardTitle>Commission Structure</CardTitle>
               <CardDescription>
                 Understand how you earn from referrals
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent compact>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center p-4 border rounded">

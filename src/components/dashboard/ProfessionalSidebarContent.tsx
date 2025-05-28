@@ -15,8 +15,11 @@ import {
 
 const ProfessionalSidebarContent: React.FC = () => {
   const location = useLocation();
-
   const isActive = (path: string) => {
+    // For professional dashboard routes, check both paths
+    if (path === '/professional-dashboard') {
+      return location.pathname === '/professional-dashboard' || location.pathname === '/dashboard/professional';
+    }
     return location.pathname === path;
   };
 
@@ -32,8 +35,7 @@ const ProfessionalSidebarContent: React.FC = () => {
     <>
       {/* Quick Links Section */}
       <div className="p-4 border-b border-gray-700">
-        <h3 className="text-red-500 font-semibold mb-4">Quick Links</h3>
-        <nav className="space-y-2">
+        <h3 className="text-red-500 font-semibold mb-4">Quick Links</h3>        <nav className="space-y-2">
           <Link 
             to="/professional-dashboard"
             state={{ activeTab: 'profile' }}
@@ -79,8 +81,7 @@ const ProfessionalSidebarContent: React.FC = () => {
           >
             <BookOpen size={20} />
             <span>ENROLL IN NEW COURSE</span>
-          </Link>
-          <Link 
+          </Link>          <Link 
             to="/professional-dashboard"
             state={{ activeTab: 'courses' }}
             className={getLinkClass('/professional-dashboard')}
@@ -95,24 +96,21 @@ const ProfessionalSidebarContent: React.FC = () => {
           >
             <Award size={20} />
             <span>MY CERTIFICATIONS</span>
-          </Link>
-          <Link 
-            to="/medical-quizzes-games"
-            className={getLinkClass('/medical-quizzes-games')}
+          </Link><Link 
+            to="/games-quizzes"
+            className={getLinkClass('/games-quizzes')}
           >
             <Trophy size={20} />
             <span>PLAY GAMES/QUIZZES</span>
           </Link>
         </nav>
-      </div>
-
-      {/* GLOHSEN Score Section */}
+      </div>      {/* GLOHSEN Score Section */}
       <div className="p-4 border-b border-gray-700">
         <h3 className="text-red-500 font-semibold mb-4">GLOHSEN Score</h3>
         <nav className="space-y-2">
           <Link 
-            to="/glohsen-score"
-            className={getLinkClass('/glohsen-score')}
+            to="/score"
+            className={getLinkClass('/score')}
           >
             <Trophy size={20} />
             <span>VIEW MY SCORE</span>

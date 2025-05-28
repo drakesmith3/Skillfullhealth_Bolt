@@ -56,12 +56,39 @@ interface FooterProps {
   isActive: boolean;
   sectionName?: string;
   scrollToSection?: (sectionIndex: number) => void;
+  isHomePage?: boolean; // Add prop to determine if this is the home page
 }
 
-const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection }) => {  const footerRef = useRef<HTMLDivElement>(null);
+const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection, isHomePage = false }) => {  const footerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   
   const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Dynamic font sizing based on isHomePage (50% increase for home page)
+  const fontSizes = isHomePage ? {
+    headerTitle: "text-3xl md:text-4xl", // 50% increase from text-lg md:text-xl
+    headerSubtitle: "text-xl md:text-2xl", // 50% increase from text-base md:text-lg
+    sectionHeading: "text-xl", // 50% increase from text-base
+    bodyText: "text-lg", // 50% increase from text-sm
+    logoText: "text-2xl", // 50% increase from text-lg
+    brandName: "text-xl", // 50% increase from text-base
+    tagline: "text-base", // 50% increase from text-sm
+    socialIconSize: 24, // 50% increase from 16
+    buttonText: "text-lg", // 50% increase from text-sm
+    copyrightText: "text-base" // 50% increase from text-xs
+  } : {
+    headerTitle: "text-lg md:text-xl",
+    headerSubtitle: "text-base md:text-lg",
+    sectionHeading: "text-base",
+    bodyText: "text-sm",
+    logoText: "text-lg",
+    brandName: "text-base",
+    tagline: "text-sm",
+    socialIconSize: 16,
+    buttonText: "text-sm",
+    copyrightText: "text-xs"
+  };
+  
   useEffect(() => {
     setIsInitialized(true);
     
@@ -110,21 +137,22 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection 
       };
     }
   }, [isInitialized]);
-
   const scrollToTop = () => {
     if (scrollToSection) {
       scrollToSection(0); // Scroll to the first section (Header)
     }
   };
 
+  // Determine container classes based on whether this is the home page
+  const containerClasses = isHomePage && isActive 
+    ? "fixed inset-0 w-screen h-screen flex flex-col justify-center items-center text-center p-0 overflow-hidden antialiased bg-black text-white z-[60]"
+    : "relative w-full min-h-[36vh] flex flex-col justify-center items-center text-center p-0 overflow-hidden antialiased bg-black text-white";
+
   const baseClasses = "flex flex-col justify-center items-center bg-black text-white dark:bg-black dark:text-gray-100 overflow-hidden transition-opacity duration-500";
-  const initializedClass = isInitialized ? 'opacity-100' : 'opacity-0';
-  const activeStateClasses = isActive 
-    ? "fixed inset-0 z-[60]" 
-    : "relative w-full h-auto py-16";  return (
+  const initializedClass = isInitialized ? 'opacity-100' : 'opacity-0';  return (
     <section
       ref={footerRef}
-      className="relative w-full min-h-[60vh] flex flex-col justify-center items-center text-center p-0 overflow-hidden antialiased bg-black text-white"
+      className={containerClasses}
       style={{
         fontFamily: 'Inter, Segoe UI, Arial, sans-serif',
         letterSpacing: '0.01em',
@@ -136,45 +164,44 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection 
       {scrollToSection && <ReturnToTopButton scrollToSection={scrollToSection} />}
       
       {/* Footer Header Message */}
-      <div className="w-full py-8 relative z-10">
+      <div className="w-full py-4 relative z-10">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-center animated-shine-text metallic-gold-text">
+          <h2 className={`font-bold text-center animated-shine-text metallic-gold-text ${fontSizes.headerTitle}`}>
             THE HEALTHCARE STORY DOES NOT END HERE...
           </h2>
-          <p className="text-xl md:text-2xl font-medium text-center mt-3 bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
+          <p className={`mt-2 text-center bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text ${fontSizes.headerSubtitle}`}>
             Your GLOHSEN story just began.          </p>
         </div>
-      </div>      <div className="w-full max-w-6xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 text-left">
-        {/* Column 1: Logo & Tagline */}
-        <div className="flex flex-col items-center md:items-start space-y-4">
-          <Link to="/" aria-label="GLOHSEN Home" className="mb-2">
-            <div className="w-16 h-16 rounded-full bg-black shadow-lg flex items-center justify-center border-2 border-[#F9D75D]">
-              <span className="text-2xl font-bold text-[#F9D75D] tracking-widest">G</span>
+      </div>      <div className="w-full max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 text-left">        {/* Column 1: Logo & Tagline */}
+        <div className="flex flex-col items-center md:items-start space-y-2">
+          <Link to="/" aria-label="GLOHSEN Home" className="mb-1">
+            <div className="w-12 h-12 rounded-full bg-black shadow-lg flex items-center justify-center border-2 border-[#F9D75D]">
+              <span className={`font-bold text-[#F9D75D] tracking-widest ${fontSizes.logoText}`}>G</span>
             </div>
           </Link>
-          <span className="text-xl font-semibold text-[#F9D75D] tracking-wide">GLOHSEN</span>
-          <span className="text-base text-gray-300 font-normal">Empowering Healthcare Stories</span>          <div className="flex gap-4 mt-4">
+          <span className={`font-semibold text-[#F9D75D] tracking-wide ${fontSizes.brandName}`}>GLOHSEN</span>
+          <span className={`text-gray-300 font-normal ${fontSizes.tagline}`}>Empowering Healthcare Stories</span>
+          <div className="flex gap-3 mt-2">
             <a href="https://facebook.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="transition-colors">
-              <Facebook size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+              <Facebook size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
             <a href="https://twitter.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="transition-colors">
-              <Twitter size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+              <Twitter size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
             <a href="https://linkedin.com/company/glohsen" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="transition-colors">
-              <Linkedin size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+              <Linkedin size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
             <a href="https://instagram.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="transition-colors">
-              <Instagram size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+              <Instagram size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
             <a href="https://youtube.com/c/glohsen" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="transition-colors">
-              <Youtube size={18} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
+              <Youtube size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
           </div>
         </div>
-        
-        {/* Column 2: Quick Links */}
-        <div className="flex flex-col space-y-5">          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Quick Links</h5>
-          <ul className="space-y-3 text-gray-300 text-base">
+          {/* Column 2: Quick Links */}
+        <div className="flex flex-col space-y-3">
+          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Quick Links</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
             <li><Link to="/" className="hover:text-[#ea384c] transition-colors font-medium">Home</Link></li>
             <li><Link to="/blog" className="hover:text-[#ea384c] transition-colors font-medium">Blog</Link></li>
             <li><Link to="/community" className="hover:text-[#ea384c] transition-colors font-medium">Community Forum</Link></li>
@@ -182,22 +209,18 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection 
             <li><Link to="/games-quizzes" className="hover:text-[#ea384c] transition-colors font-medium">Games & Quizzes</Link></li>
             <li><Link to="/courses" className="hover:text-[#ea384c] transition-colors font-medium">Courses</Link></li>
           </ul>
-        </div>
-          {/* Column 3: Contact */}
-        <div className="flex flex-col space-y-5">          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Contact</h5>
-          <ul className="space-y-3 text-gray-300 text-base">
+        </div>        {/* Column 3: Contact */}
+        <div className="flex flex-col space-y-3">
+          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Contact</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
             <li><Link to="/contact" className="hover:text-[#ea384c] transition-colors font-medium">Contact Us</Link></li>
             <li><Link to="/about-us" className="hover:text-[#ea384c] transition-colors font-medium">About Us</Link></li>
             <li><Link to="/help" className="hover:text-[#ea384c] transition-colors font-medium">Support</Link></li>
-            <li><Link to="/help" className="hover:text-[#ea384c] transition-colors font-medium">Help Center</Link></li>
             <li><Link to="/faq" className="hover:text-[#ea384c] transition-colors font-medium">FAQ</Link></li>
           </ul>
         </div>
-        
-        {/* Column 4: Legal */}
-        <div className="flex flex-col space-y-5">
-          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Legal</h5>
-          <ul className="space-y-3 text-gray-300 text-base">
+          {/* Column 4: Legal */}
+        <div className="flex flex-col space-y-3">
+          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Legal</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
             <li><Link to="/privacy-policy" className="hover:text-[#ea384c] transition-colors font-medium">Privacy Policy</Link></li>
             <li><Link to="/terms-of-service" className="hover:text-[#ea384c] transition-colors font-medium">Terms of Service</Link></li>
             <li><Link to="/cookie-settings" className="hover:text-[#ea384c] transition-colors font-medium">Cookies Settings</Link></li>
@@ -205,43 +228,37 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection 
             <li><Link to="/accessibility" className="hover:text-[#ea384c] transition-colors font-medium">Accessibility</Link></li>
           </ul>
         </div>
-        
-        {/* Column 5: Subscribe for Updates */}
-        <div className="flex flex-col space-y-5">
-          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Subscribe for Updates</h5>
-          <div className="text-gray-300 text-base mb-2">
+          {/* Column 5: Subscribe for Updates */}
+        <div className="flex flex-col space-y-3">
+          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Subscribe for Updates</h5>          <div className={`text-gray-300 ${fontSizes.bodyText} mb-1`}>
             <p>Stay updated with the latest healthcare trends, stories and opportunities.</p>
-          </div>          <div className="flex flex-col gap-3 w-full">
-            <input 
+          </div>
+          <div className="flex flex-col gap-2 w-full">            <input 
               type="email" 
               placeholder="Your email address" 
-              className="px-4 py-3 rounded-md border border-[#444] bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-[#F9D75D] w-full placeholder-gray-500"
+              className={`px-3 py-2 rounded-md border border-[#444] bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-[#F9D75D] w-full placeholder-gray-500 ${fontSizes.bodyText}`}
             />
-            <Button className="bg-[#ea384c] hover:bg-[#c4293b] text-white px-6 py-3 w-full font-semibold tracking-wide text-base rounded-md">              SUBSCRIBE
+            <Button className={`bg-[#ea384c] hover:bg-[#c4293b] text-white px-4 py-2 w-full font-semibold tracking-wide ${fontSizes.buttonText} rounded-md`}>
+              SUBSCRIBE
             </Button>
           </div>
         </div>
-        
-        {/* Column 6: Feedback */}
-        <div className="flex flex-col space-y-5">
-          <h5 className="text-lg font-semibold text-[#F9D75D] tracking-wide border-b border-[#333] pb-2">Feedback</h5>
-          <div className="text-gray-300 text-base mb-2">
+          {/* Column 6: Feedback */}
+        <div className="flex flex-col space-y-3">
+          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Feedback</h5>          <div className={`text-gray-300 ${fontSizes.bodyText} mb-1`}>
             <p>Because Your Opinions and Feelings Count...</p>
           </div>
-          <div className="flex flex-col gap-3 w-full">
-            <Link to="/general-feedback" className="w-full flex justify-center">
-              <Button className="bg-[#F9D75D] hover:bg-[#ea384c] text-black hover:text-white px-8 py-4 w-full min-w-[180px] max-w-[240px] font-semibold tracking-wide text-base rounded-md transition-colors whitespace-nowrap">
+          <div className="flex flex-col gap-2 w-full">            <Link to="/general-feedback" className="w-full flex justify-center">              <Button className={`bg-[#F9D75D] hover:bg-[#ea384c] text-black hover:text-white px-8 py-4 w-full min-w-[180px] max-w-[220px] font-semibold tracking-wide ${fontSizes.buttonText} rounded-md transition-colors whitespace-nowrap`}>
                 LEAVE A FEEDBACK
               </Button>
             </Link>
           </div>
         </div>
-      </div>
-        {/* Bottom: Copyright & Socials */}      <div className="w-full border-t border-[#333] mt-6">
-        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <span className="text-sm text-gray-500">&copy; {new Date().getFullYear()} GLOHSEN. All rights reserved.</span>
-          
-          <div className="flex items-center gap-6 text-sm text-gray-500">
+      </div>        {/* Bottom: Copyright & Socials */}
+      <div className="w-full border-t border-[#333] mt-4">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
+          <span className={`text-gray-500 ${fontSizes.copyrightText}`}>&copy; {new Date().getFullYear()} GLOHSEN. All rights reserved.</span>
+            <div className={`flex items-center gap-4 ${fontSizes.bodyText} text-gray-500`}>
             <Link to="/sitemap" className="hover:text-[#F9D75D] transition-colors">Sitemap</Link>
           </div>
         </div>

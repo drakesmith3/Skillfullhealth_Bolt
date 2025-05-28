@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Users, Target, Award, Globe, Heart, Shield, 
-  Lightbulb, TrendingUp, BookOpen, Briefcase 
+  Lightbulb, TrendingUp, BookOpen, Briefcase, Clock
 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
@@ -14,26 +13,68 @@ import Footer from '@/components/Footer';
 const AboutUs: React.FC = () => {
   const { theme } = useTheme();
 
-  const teamMembers = [
-    {
-      name: "Dr. Sarah Johnson",
-      role: "CEO & Founder",
-      image: "/api/placeholder/300/400",
-      bio: "Leading healthcare innovation with 15+ years experience"
-    },
-    {
-      name: "Michael Chen",
-      role: "CTO",
-      image: "/api/placeholder/300/400", 
-      bio: "Technology visionary specializing in AI and healthcare systems"
-    },
-    {
-      name: "Dr. Amara Okafor",
-      role: "Chief Medical Officer",
-      image: "/api/placeholder/300/400",
-      bio: "Ensuring clinical excellence and professional standards"
-    }
-  ];
+  
+const teamMembers = [
+  {
+    name: "Dr. Olusiji Olawumi",
+    role: "Founder & CEO",
+    image: "/lovable-uploads/efbf957b-a127-4121-86b8-51528f7983af.png",
+    bio: "Visionary leader, medical doctor, and digital transformation advocate. Passionate about empowering African professionals through technology and education."
+  },
+  {
+    name: "C Wizard",
+    role: "Chief Technology Officer",
+    image: "/lovable-uploads/c96b664a-9865-407e-b314-656ff3ecc937.png",
+    bio: "Full-stack engineer and AI enthusiast, driving the technical vision and product innovation for the GLOHSEN platform."
+  },
+  {
+    name: "Olufemi Agbaje",
+    role: "Head of Product & Partnerships",
+    image: "/lovable-uploads/592ef409-e389-494f-a557-6179279a4414.png",
+    bio: "Product strategist and partnership builder, connecting GLOHSEN with key stakeholders across Africa."
+  },
+  // Add more team members as needed
+];
+
+const timeline = [
+  {
+    year: "2020",
+    title: "Foundation",
+    desc: "Platform launch with core matching algorithms and initial user acquisition.",
+    icon: BookOpen
+  },
+  {
+    year: "2021",
+    title: "Growth & Community Building",
+    desc: "Expanded user base, introduced community forums, and hosted first webinar series.",
+    icon: Users
+  },
+  {
+    year: "2022",
+    title: "Series A Funding & Feature Expansion",
+    desc: "Secured funding, launched mobile app, and integrated advanced CME course modules.",
+    icon: TrendingUp
+  },
+  {
+    year: "2023",
+    title: "AI Integration & Partnership Development",
+    desc: "Implemented AI-powered job matching and GLOHSEN score; forged key industry partnerships.",
+    icon: Lightbulb
+  },
+  {
+    year: "2024",
+    title: "Global Reach & Impact Focus",
+    desc: "Expanded services to new regions, focusing on underserved areas and impact metrics.",
+    icon: Globe
+  },
+  {
+    year: "2025",
+    title: "Healthcare Innovation Award",
+    desc: "Recognized for contributions to healthcare technology and professional development.",
+    icon: Award
+  }
+  // Add more timeline events as the company grows
+];
 
   const values = [
     {
@@ -216,18 +257,43 @@ const AboutUs: React.FC = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {teamMembers.map((member, index) => (
-                <Card key={index} className={`overflow-hidden hover:shadow-lg transition-shadow ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-                  <div className="h-64 bg-gradient-to-br from-[#ea384c] to-[#D4AF37]"></div>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
-                    <p className="text-[#ea384c] font-medium mb-3">{member.role}</p>
-                    <p className="leading-relaxed">{member.bio}</p>
-                  </CardContent>
-                </Card>
-              ))}
+           <section className="mb-16">
+        <h2 className="text-2xl font-bold mb-6 text-primary-dark text-center">Our Journey: 10-Year Timeline</h2>
+        <div className="flex flex-col items-center">
+          <div className="relative w-full max-w-3xl flex flex-col items-center">
+            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#D4AF37] to-[#F5F5F5] z-0" style={{transform:'translateX(-50%)'}}></div>
+            {timeline.map((item, idx) => (
+              <div key={item.year} className="relative z-10 flex items-center w-full mb-8">
+                <div className={`w-1/2 ${idx%2===0 ? 'pr-8 justify-end flex' : 'pl-8 justify-start flex'}`}> 
+                  <div className="bg-white rounded-xl shadow-xl border-2 border-[#D4AF37]/30 px-6 py-4 max-w-xs">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Clock className="h-4 w-4 text-d4af37" />
+                      <span className="font-bold text-d4af37">{item.year}</span>
+                    </div>
+                    <div className="font-semibold text-primary-dark">{item.title}</div>
+                    <div className="text-gray-600 text-sm">{item.desc}</div>
+                  </div>
+                </div>
+                <div className="w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="mb-16">
+        <h2 className="text-2xl font-bold mb-6 text-primary-dark text-center">Meet the Team</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {teamMembers.map(member => (
+            <div key={member.name} className="bg-white rounded-xl shadow-2xl p-6 flex flex-col items-center text-center hover:scale-105 transition-transform duration-300">
+              <img src={member.image} alt={member.name} className="w-28 h-28 rounded-full object-cover mb-4 border-4 border-[#D4AF37]/40 shadow-lg" />
+              <h3 className="font-bold text-lg text-d4af37 mb-1">{member.name}</h3>
+              <p className="text-sm font-semibold text-gray-700 mb-2">{member.role}</p>
+              <p className="text-gray-600 text-sm">{member.bio}</p>
             </div>
+          ))}
+        </div>
+      </section>
+    
           </div>
         </section>
 

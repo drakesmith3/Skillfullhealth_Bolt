@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import AnimatedBook from './AnimatedBook';
 import StakeholderTree from './StakeholderTree';
+import { useTheme } from '../contexts/ThemeContext';
 
-// Define a CSS style block to ensure components are visible
+// Define a CSS style block to ensure components are visible (removed AnimatedBook overrides)
 const ForceVisibilityStyle = () => (
   <style dangerouslySetInnerHTML={{
-    __html: `
-      /* Force visibility of key components */
+    __html: `      /* Force visibility of key components */
       .stakeholder-tree-container, .animated-book-container {
         opacity: 1 !important;
         visibility: visible !important;
@@ -15,7 +15,7 @@ const ForceVisibilityStyle = () => (
         z-index: 10;
       }
       
-      .animated-book-container svg, .stakeholder-tree-container svg {
+      .stakeholder-tree-container svg {
         min-height: 400px;
         min-width: 300px;
       }
@@ -31,6 +31,7 @@ interface FeaturesProps {
 const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'book' | 'tree'>('book');
+  const { isDark } = useTheme();
   // Effect for animations when section becomes active
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -82,16 +83,16 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
       }, 500);
     }
   }, [isActive, activeTab]);
-
-  return (
-    <div 
+  return (    <div 
       ref={sectionRef}
       className={`relative min-h-screen w-full flex flex-col justify-center items-center py-16 transition-opacity duration-1000 ${isActive ? 'opacity-100' : 'opacity-0'}`}
       style={{
-        background: 'linear-gradient(135deg, #111111 0%, #3a0000 100%)',
+        background: isDark 
+          ? 'linear-gradient(135deg, #1a1a1a 0%, #4a1a1a 30%, #2a2a2a 70%, #0f0f0f 100%)'
+          : 'linear-gradient(135deg, #fef7f0 0%, #fce4d6 20%, #f9d5d5 40%, #f5e6dc 60%, #fefefe 100%)',
         zIndex: isActive ? 20 : 0, // Ensure active section has higher z-index
         visibility: isActive ? 'visible' : 'hidden', // Add visibility toggle
-        transitionProperty: 'opacity, visibility',
+        transitionProperty: 'opacity, visibility, background',
         transitionDuration: '1000ms'
       }}
     >
@@ -104,7 +105,7 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
         </span>
       </h2>
       
-      <p className="text-lg md:text-xl text-gray-300 max-w-4xl text-center mb-8 px-4">
+      <p className="text-lg md:text-xl text-black-700 max-w-4xl text-center mb-8 px-4">
         GLOHSEN connects healthcare stakeholders through an integrated platform designed to elevate standards and foster professional growth.
       </p>
       
@@ -125,7 +126,7 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
             className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors duration-300 ${
               activeTab === 'tree' 
                 ? 'bg-gradient-to-r from-amber-500 to-red-600 text-white shadow-lg' 
-                : 'text-gray-400 hover:text-white'
+                : 'text-gray-400 hover:text-black-700'
             }`}
           >
             Stakeholder Map
@@ -151,8 +152,9 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
             }}
           >
             <AnimatedBook />
-          </div>
-          <p className="text-gray-300 text-center mt-4 max-w-lg">
+          </div>          <p className={`text-center mt-4 max-w-lg ${
+            isDark ? 'text-gray-500' : 'text-gray-700'
+          }`}>
             Click through our interactive book to explore the features available to each stakeholder group.
           </p>
         </div>
@@ -176,8 +178,10 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
             }}
           >
             <StakeholderTree />
-          </div>
-          <p className="text-gray-300 text-center mt-4 max-w-lg">            <span className="hidden md:inline">Hover over</span>
+          </div>          <p className={`text-center mt-4 max-w-lg ${
+            isDark ? 'text-gray-300' : 'text-gray-700'
+          }`}>
+            <span className="hidden md:inline">Hover over</span>
             <span className="md:hidden">Tap on</span> each node to learn how GLOHSEN connects with different healthcare stakeholders.
           </p>
         </div>

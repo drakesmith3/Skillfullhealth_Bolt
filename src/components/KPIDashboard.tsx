@@ -1,9 +1,9 @@
 
 import React, { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card } from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Calendar, Filter, Plus, ChevronLeft, ChevronRight, Star, Printer, Download } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { PieChart, Pie, Cell, Legend } from "recharts";
@@ -61,10 +61,9 @@ const KPIDashboard = () => {
       feedback: 4.9
     }
   ];
-  
-  // Render 5 stars for rating
+    // Render 5 stars for rating
   const renderStars = (rating: number) => {
-    const stars = [];
+    const stars: JSX.Element[] = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     

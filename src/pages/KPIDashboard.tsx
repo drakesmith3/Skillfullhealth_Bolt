@@ -1,16 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import PreHeader from '@/components/PreHeader';
-import Footer from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import PreHeader from '../components/PreHeader';
+import Footer from '../components/Footer';
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Calendar, Filter, Plus } from "lucide-react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import KPISummaryCards from '@/components/kpi/KPISummaryCards';
-import KPICharts from '@/components/kpi/KPICharts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Badge } from "../components/ui/badge";
+import KPISummaryCards from '../components/kpi/KPISummaryCards';
+import KPICharts from '../components/kpi/KPICharts';
 
 const KPIDashboardPage: React.FC = () => {
   const [showFooter, setShowFooter] = useState(false);
@@ -74,9 +74,8 @@ const KPIDashboardPage: React.FC = () => {
           
           {/* KPI Charts */}
           <KPICharts type="overview" timeFrame={period} />
-          
-          {/* KPI Entry History */}
-          <Card className="mt-6">
+            {/* KPI Entry History */}
+          <Card size="lg" variant="default" className="mt-6">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-xl">KPI Entry History</CardTitle>
               <Input 

@@ -45,8 +45,8 @@ const ProfileDashboard = () => {
     "Surgery",
   ];
 
-  const basicSkillOptions = ["BASIC", "INTERMEDIATE", "ADVANCED"];
-  const advancedSkillOptions = ["ADVANCED", "BASIC", "NONE"];
+  const compulsorySkillOptions = ["BASIC", "INTERMEDIATE", "ADVANCED"];
+  const complementarySkillOptions = ["ADVANCED", "BASIC", "NONE"];
   
   const availabilityOptions = [
     "Yes, immediately",
@@ -67,8 +67,8 @@ const ProfileDashboard = () => {
 
         {/* Name and Title Section */}
         <div className="col-span-12 md:col-span-6 p-4 border-r">
-          <h1 className="text-xl font-bold">OREDOLA ADEOLA</h1>
-          <p className="text-sm mt-2">MIDWIFE | REGISTERED NURSE</p>
+          <h1 className="text-xl font-bold">OLUSIJI OLAWUMI</h1>
+          <p className="text-sm mt-2">DOCTOR | OCCUPATIONAL HEALTH PHYSICIAN</p>
           <div className="mt-2 flex items-center">
             <p className="text-sm mr-2">MDCN: MD12345</p>
             <a 

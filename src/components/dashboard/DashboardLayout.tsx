@@ -1,7 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import PreHeader from '@/components/PreHeader';
+import React from 'react';
 import Footer from '@/components/Footer';
 import { useTheme } from '@/contexts/ThemeContext';
 import ProfessionalSidebarContent from './ProfessionalSidebarContent';
@@ -43,13 +40,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       default:
         return null;
     }
-  };
-
-  return (
+  };  return (
     <StandardDashboardLayout
       sidebar={renderSidebar()}
       className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
-      showFooter={false}
+      showFooter={true}
     >
       <div className="space-y-6">
         {/* Welcome Header */}

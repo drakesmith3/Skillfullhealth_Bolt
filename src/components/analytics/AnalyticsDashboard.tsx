@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Button } from "../ui/button";
 import { BarChart3, TrendingUp, Users, Activity, Download } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
@@ -42,16 +42,17 @@ const AnalyticsDashboard: React.FC = () => {
           <Button variant="outline" size="sm" onClick={() => setTimeRange('90d')}>90D</Button>
           <Button size="sm"><Download className="h-4 w-4 mr-2" />Export</Button>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      </div>      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiData.map((item, index) => (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card key={index} size="md" variant="dashboard">
+            <CardHeader 
+              compact 
+              className="flex flex-row items-center justify-between space-y-0 pb-2"
+            >
               <CardTitle className="text-sm font-medium">{item.name}</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent>
+            <CardContent compact>
               <div className="text-2xl font-bold">{item.value.toLocaleString()}</div>
               <p className={`text-xs ${item.change > 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {item.change > 0 ? '+' : ''}{item.change}% from last period
@@ -66,10 +67,8 @@ const AnalyticsDashboard: React.FC = () => {
           <TabsTrigger value="engagement">User Engagement</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="content">Content Analytics</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="engagement">
-          <Card>
+        </TabsList>        <TabsContent value="engagement">
+          <Card size="xl" variant="default">
             <CardHeader>
               <CardTitle>Weekly Engagement Trends</CardTitle>
             </CardHeader>
@@ -90,7 +89,7 @@ const AnalyticsDashboard: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="performance">
-          <Card>
+          <Card size="xl" variant="default">
             <CardHeader>
               <CardTitle>Performance Metrics</CardTitle>
             </CardHeader>
@@ -109,7 +108,7 @@ const AnalyticsDashboard: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="content">
-          <Card>
+          <Card size="lg" variant="default">
             <CardHeader>
               <CardTitle>Content Performance</CardTitle>
             </CardHeader>

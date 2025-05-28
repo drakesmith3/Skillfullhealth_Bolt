@@ -1,16 +1,15 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { testimonialCurationAgent } from '@/services/testimonialCurationAgent';
-import { feedbackRoutingAgent } from '@/services/feedbackRoutingAgent';
-import { recommendationAgent } from '@/services/recommendationAgent';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Badge } from "../ui/badge";
+import { testimonialCurationAgent } from '../../services/testimonialCurationAgent';
+import { feedbackRoutingAgent } from '../../services/feedbackRoutingAgent';
+import { recommendationAgent } from '../../services/recommendationAgent';
 
 const AdminDashboard: React.FC = () => {
   const [newTestimonial, setNewTestimonial] = useState({
@@ -51,34 +50,32 @@ const AdminDashboard: React.FC = () => {
             <TabsTrigger value="testimonials">Testimonial Agent</TabsTrigger>
             <TabsTrigger value="feedback">Feedback Routing</TabsTrigger>
             <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
-          </TabsList>
-
-          {/* Testimonial Curation Agent */}
+          </TabsList>          {/* Testimonial Curation Agent */}
           <TabsContent value="testimonials" className="space-y-6">
-            <Card>
+            <Card size="lg" variant="default">
               <CardHeader>
                 <CardTitle>Testimonial Curation Agent</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card>
-                    <CardContent className="p-4">
+                  <Card size="md" variant="stats">
+                    <CardContent compact className="p-4">
                       <div className="text-2xl font-bold text-[#D4AF37]">
                         {testimonialCurationAgent.getAllTestimonials().length}
                       </div>
                       <div className="text-sm text-gray-600">Total Testimonials</div>
                     </CardContent>
                   </Card>
-                  <Card>
-                    <CardContent className="p-4">
+                  <Card size="md" variant="stats">
+                    <CardContent compact className="p-4">
                       <div className="text-2xl font-bold text-[#EA384C]">
                         {testimonialCurationAgent.getManualTestimonials().length}
                       </div>
                       <div className="text-sm text-gray-600">Manual Entries</div>
                     </CardContent>
                   </Card>
-                  <Card>
-                    <CardContent className="p-4">
+                  <Card size="md" variant="stats">
+                    <CardContent compact className="p-4">
                       <div className="text-2xl font-bold text-green-600">
                         {testimonialCurationAgent.getCuratedTestimonials().length}
                       </div>
@@ -87,7 +84,7 @@ const AdminDashboard: React.FC = () => {
                   </Card>
                 </div>
 
-                <Card>
+                <Card size="lg" variant="default">
                   <CardHeader>
                     <CardTitle>Add Manual Testimonial</CardTitle>
                   </CardHeader>

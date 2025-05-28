@@ -3,10 +3,12 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, UserCheck, UserX, RefreshCw, TrendingUp, MessageSquare, Star, XCircle, Brain } from 'lucide-react';
+import { Bot, UserCheck, UserX, RefreshCw, TrendingUp, MessageSquare, Star, XCircle, Brain, Users, DollarSign, Award, AlertCircle, Shield, Settings, Download } from 'lucide-react';
 import AIActivityAgentSingleton from '@/services/aiActivityAgent';
 import FeedbackRoutingAgentSingleton from '@/services/feedbackRoutingAgent';
 import RecommendationAgentSingleton from '@/services/recommendationAgent';
+import mlmSystem from '@/services/mlmSystem';
+import mlmAdminService from '@/services/mlmAdminService';
 
 interface Testimonial {
   id: number;
@@ -35,6 +37,12 @@ const AIAgentDashboard: React.FC = () => {
   const [routingStats, setRoutingStats] = useState(FeedbackRoutingAgentSingleton.getRoutingStats());
   const [recommendationStats, setRecommendationStats] = useState(RecommendationAgentSingleton.getStats());
   const [manualReviewQueue, setManualReviewQueue] = useState(FeedbackRoutingAgentSingleton.getManualReviewQueue()); 
+    // MLM Management State
+  const [mlmStats, setMlmStats] = useState(mlmAdminService.getAdminStats());
+  const [mlmTopPerformers, setMlmTopPerformers] = useState(mlmAdminService.getTopPerformers(5));
+  const [mlmTransactions, setMlmTransactions] = useState(mlmAdminService.getRecentTransactions(10));
+  const [isProcessingPayouts, setIsProcessingPayouts] = useState(false);
+  const [isRunningFraudDetection, setIsRunningFraudDetection] = useState(false);
 
   const updateStatuses = () => {
     setTestimonialStatus(AIActivityAgentSingleton.getStatus());
@@ -59,15 +67,14 @@ const AIAgentDashboard: React.FC = () => {
       <div className="flex items-center gap-3 mb-6">
         <Bot className="h-8 w-8 text-[#D4AF37]" />
         <h1 className="text-3xl font-bold">AI Activity Agent Dashboard</h1>
-      </div>
-
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+      </div>      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
           <TabsTrigger value="testimonial-management">Manage</TabsTrigger>
           <TabsTrigger value="routing">Routing</TabsTrigger>
           <TabsTrigger value="recommendations">AI Recommendations</TabsTrigger>
+          <TabsTrigger value="mlm-management">MLM Management</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
@@ -359,9 +366,7 @@ const AIAgentDashboard: React.FC = () => {
                   ))}
                 </div>
               </div>
-            )}
-
-            <Button 
+            )}            <Button 
               onClick={() => {
                 const agent = FeedbackRoutingAgentSingleton.getInstance();
                 // agent.processManualReviewQueue(); // Ensure this method exists and works as expected
@@ -374,6 +379,246 @@ const AIAgentDashboard: React.FC = () => {
               <RefreshCw className="h-4 w-4 mr-2" />
               Process {manualReviewQueue.length} Pending Feedback Item(s)
             </Button>
+          </Card>
+        </TabsContent>        {/* MLM Management Tab */}
+        <TabsContent value="mlm-management" className="mt-6 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <Card className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Users className="h-6 w-6 text-blue-600" />
+                <h3 className="text-xl font-semibold">Total Users</h3>
+              </div>
+              <div className="text-3xl font-bold text-blue-600">{mlmStats.totalUsers}</div>
+              <div className="text-sm text-gray-600 mt-2">Registered in MLM system</div>
+              <div className="text-xs text-green-600 mt-1">+{mlmStats.monthlyGrowth}% this month</div>
+            </Card>
+
+            <Card className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <TrendingUp className="h-6 w-6 text-green-600" />
+                <h3 className="text-xl font-semibold">Total Referrals</h3>
+              </div>
+              <div className="text-3xl font-bold text-green-600">{mlmStats.totalReferrals}</div>
+              <div className="text-sm text-gray-600 mt-2">Successful referrals</div>
+            </Card>
+
+            <Card className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <DollarSign className="h-6 w-6 text-[#D4AF37]" />
+                <h3 className="text-xl font-semibold">Total Commissions</h3>
+              </div>
+              <div className="text-3xl font-bold text-[#D4AF37]">₦{mlmStats.totalCommissions.toLocaleString()}</div>
+              <div className="text-sm text-gray-600 mt-2">Paid out to affiliates</div>
+              <div className="text-xs text-orange-600 mt-1">₦{mlmStats.commissionsPending.toLocaleString()} pending</div>
+            </Card>
+
+            <Card className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Award className="h-6 w-6 text-purple-600" />
+                <h3 className="text-xl font-semibold">Active Networks</h3>
+              </div>
+              <div className="text-3xl font-bold text-purple-600">{mlmStats.activeNetworks}</div>
+              <div className="text-sm text-gray-600 mt-2">Multi-level networks</div>
+              {mlmStats.fraudAlerts > 0 && (
+                <div className="text-xs text-red-600 mt-1 flex items-center">
+                  <AlertCircle className="h-3 w-3 mr-1" />
+                  {mlmStats.fraudAlerts} fraud alerts
+                </div>
+              )}
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Top Performers */}
+            <Card className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Star className="h-6 w-6 text-[#D4AF37]" />
+                <h3 className="text-xl font-semibold">Top Performers</h3>
+              </div>
+              <div className="space-y-4">
+                {mlmTopPerformers.map((performer, index) => (
+                  <div key={performer.userId} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-8 h-8 bg-[#D4AF37] text-black rounded-full font-bold">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">{performer.name}</h4>
+                        <p className="text-sm text-gray-600">{performer.totalReferrals} referrals • {performer.rank} rank</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-green-600">₦{performer.totalEarnings.toLocaleString()}</div>
+                      <div className="text-sm text-gray-600">Total earnings</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* MLM System Controls */}
+            <Card className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Settings className="h-6 w-6 text-gray-600" />
+                <h3 className="text-xl font-semibold">System Controls</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <h4 className="font-semibold text-blue-800 dark:text-blue-300 mb-2">Commission Structure</h4>
+                  <div className="text-sm space-y-1">
+                    <div className="flex justify-between">
+                      <span>Level 1 (Direct):</span>
+                      <span className="font-semibold">25%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Level 2:</span>
+                      <span className="font-semibold">10%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Level 3:</span>
+                      <span className="font-semibold">5%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Button 
+                    onClick={async () => {
+                      try {
+                        const result = await mlmAdminService.generateMLMReport();
+                        alert(result);
+                      } catch (error) {
+                        alert('Failed to generate report');
+                      }
+                    }}
+                    className="w-full" 
+                    variant="outline"
+                  >
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    Generate MLM Report
+                  </Button>
+                  
+                  <Button 
+                    onClick={async () => {
+                      setIsProcessingPayouts(true);
+                      try {
+                        const result = await mlmAdminService.processCommissionPayouts();
+                        alert(`Processed: ${result.processed}, Failed: ${result.failed}, Total: ${result.total}`);
+                      } catch (error) {
+                        alert('Failed to process payouts');
+                      } finally {
+                        setIsProcessingPayouts(false);
+                      }
+                    }}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    disabled={isProcessingPayouts}
+                  >
+                    <DollarSign className="h-4 w-4 mr-2" />
+                    {isProcessingPayouts ? 'Processing...' : 'Process Commission Payouts'}
+                  </Button>
+                  
+                  <Button 
+                    onClick={async () => {
+                      setIsRunningFraudDetection(true);
+                      try {
+                        const result = await mlmAdminService.runFraudDetection();
+                        alert(`Flagged: ${result.flagged}, Cleared: ${result.cleared}, Total checked: ${result.total}`);
+                      } catch (error) {
+                        alert('Failed to run fraud detection');
+                      } finally {
+                        setIsRunningFraudDetection(false);
+                      }
+                    }}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    disabled={isRunningFraudDetection}
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    {isRunningFraudDetection ? 'Scanning...' : 'Run Fraud Detection'}
+                  </Button>
+
+                  <Button 
+                    onClick={async () => {
+                      try {
+                        const result = await mlmAdminService.exportMLMData('excel');
+                        alert(result);
+                      } catch (error) {
+                        alert('Failed to export data');
+                      }
+                    }}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Export MLM Data
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Recent MLM Transactions */}
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertCircle className="h-6 w-6 text-orange-600" />
+              <h3 className="text-xl font-semibold">Recent MLM Transactions</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-800">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                  {mlmTransactions.map((transaction) => (
+                    <tr key={transaction.id}>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{transaction.userName}</div>
+                        <div className="text-xs text-gray-500">{transaction.userId}</div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900 dark:text-gray-300 capitalize">{transaction.type}</div>
+                        {transaction.level && (
+                          <div className="text-xs text-gray-500">Level {transaction.level}</div>
+                        )}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className={`text-sm font-semibold ${
+                          transaction.type === 'payout' ? 'text-red-600' : 'text-green-600'
+                        }`}>
+                          {transaction.type === 'payout' ? '-' : '+'}₦{transaction.amount.toLocaleString()}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="text-sm text-gray-900 dark:text-gray-300">{transaction.description}</div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {new Date(transaction.timestamp).toLocaleDateString()}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(transaction.timestamp).toLocaleTimeString()}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <Badge className={
+                          transaction.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          transaction.status === 'failed' ? 'bg-red-100 text-red-800' :
+                          'bg-orange-100 text-orange-800'
+                        }>
+                          {transaction.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </Card>
         </TabsContent>
       </Tabs>

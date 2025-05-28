@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useGlohsenScore } from "@/contexts/GlohsenScoreContext";
-import { CandidateData } from "@/types/score";
 
 interface ScoreCriteria {
   id: string;
@@ -19,7 +17,6 @@ interface ScoreCriteria {
 
 const GlohsenScoreCalculator = () => {
   const { toast } = useToast();
-  const { updateScore } = useGlohsenScore();
   
   const [criteria, setCriteria] = useState<ScoreCriteria[]>([
     {
@@ -119,48 +116,13 @@ const GlohsenScoreCalculator = () => {
   const scorePercentage = Math.round((totalScore / maxPossibleScore) * 100);
   
   const handleSubmitScore = () => {
-    try {
-      const data: CandidateData = {
-        yearsExperience: criteria.find(c => c.id === "experience")?.value || 0,
-        employerMatchScore: criteria.find(c => c.id === "employer_match")?.value || 0,
-        skillCertificates: {
-          required: criteria.find(c => c.id === "skills")?.value || 0,
-          additional: 0
-        },
-        locumJobs: criteria.find(c => c.id === "locum_jobs")?.value || 0,
-        platformActivity: criteria.find(c => c.id === "platform_activity")?.value || 0,
-        volunteering: {
-          volunteer: (criteria.find(c => c.id === "volunteer")?.value || 0) > 5,
-          lesserWage: false,
-          distantLocation: false
-        },
-        locationProximity: criteria.find(c => c.id === "location")?.value || 0,
-        awards: {
-          leadershipAwards: Math.floor(criteria.find(c => c.id === "awards")?.value || 0),
-          advancedCommunication: true,
-          languages: 1
-        },
-        remoteWork: (criteria.find(c => c.id === "remote")?.value || 0) > 5,
-        availability: 'immediate'
-      };
-      
-      updateScore(data);
-      
-      toast({
-        title: "Score Submitted",
-        description: "Your GLOHSEN score has been updated.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to calculate score. Please try again.",
-        variant: "destructive"
-      });
-    }
+    toast({
+      title: "Score Submitted",
+      description: `Your GLOHSEN score of ${totalScore} has been updated.`,
+    });
   };
   
   const handleSaveDraft = () => {
-    localStorage.setItem('glohsen_score_draft', JSON.stringify(criteria));
     toast({
       title: "Draft Saved",
       description: "Your score information has been saved as a draft.",

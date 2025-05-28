@@ -12,7 +12,7 @@ GLOHSEN is a comprehensive healthcare professional platform designed to connect 
 - Continuing Medical Education (CME) courses with certifications
 - Interactive game-based learning and quizzes
 - MLM referral system with multi-level rewards
-- Wallet and transaction history management
+- Purse and transaction history management
 - Community forum access and networking
 - KPI tracking and analytics dashboard
 
@@ -38,7 +38,7 @@ GLOHSEN is a comprehensive healthcare professional platform designed to connect 
 - Performance analytics and certification management
 - Game-based learning platform
 - Community access and peer interaction
-- Digital wallet for transactions
+- Digital purse for transactions
 - Achievement tracking
 
 ### For Clients
@@ -114,6 +114,16 @@ Multi-level marketing system with:
 - **Level 3**: 5% commission on third-level referrals
 - **Bonus Tiers**: Bronze (5 refs), Silver (15 refs), Gold (30 refs), Platinum (50 refs)
 - Real-time tracking and payment processing
+
+#### MLM Admin Management
+Comprehensive admin oversight features:
+- **Network Visualization**: Interactive tree view of referral networks
+- **Performance Analytics**: Top performers tracking and rankings
+- **Commission Management**: Automated payout processing and fraud detection
+- **Transaction Monitoring**: Real-time transaction logging and status tracking
+- **System Controls**: Commission rate adjustments and system configuration
+- **Data Export**: MLM data export in multiple formats (CSV, Excel, PDF)
+- **Fraud Detection**: Automated suspicious activity detection and alerts
 
 ## 🛡️ Security & Accessibility
 
@@ -308,7 +318,7 @@ npm run preview
 - `/score` - Score results and analytics
 - `/kpi-tracking` - Performance tracking
 - `/kpi-dashboard` - Visual analytics
-- `/wallet/{userType}` - Financial management
+- `/purse/{userType}` - Financial management
 - `/account-settings` - User preferences
 - `/feedback` - Platform feedback
 
