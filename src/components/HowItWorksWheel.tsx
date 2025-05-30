@@ -492,10 +492,10 @@ return (
             zIndex: 1,
             transformStyle: "preserve-3d",            background: isDark
               ? "transparent"
-              : "conic-gradient(from 0deg, #D4AF37 0%, #666666 25%, #D4AF37 50%, #666666 75%, #D4AF37 100%)", // GOLD-GRAY gradient (lighter than black)
+              : "conic-gradient(from 0deg, #1A1A1A 0%, #333333 50%, #1A1A1A 100%)", // Light mode: Black gradient
             boxShadow: isDark
               ? "0 20px 60px 0 rgba(40,20,80,0.35), 0 0 100px 12px #B8860B inset, 0 0 180px 5px rgba(184,134,11,0.15)"
-              : "0 25px 80px 0 rgba(212,175,55,0.25), 0 0 120px 15px #D4AF37 inset, 0 0 200px 8px rgba(212,175,55,0.15), 0 0 300px 12px rgba(102,102,102,0.08)", // Updated shadow for gold-gray gradient
+              : "0 25px 80px 0 rgba(10,10,10,0.25), 0 0 120px 15px #2C2C2C inset, 0 0 200px 8px rgba(10,10,10,0.15)", // Adjusted shadow for black wheel
             border: isDark
               ? "none"
               : "3px solid transparent",
@@ -550,9 +550,9 @@ return (
                   animation: `counter-rotate ${getRotationDuration()}s linear infinite`,
                   animationDirection: rotationSpeed >= 0 ? "normal" : "reverse",
                   background: isDark
-                    ? "linear-gradient(135deg, #000000 0%, #1a1a1a 60%, #333333 100%)" // Black gradient for dark mode
-                    : "linear-gradient(135deg, #D4AF37 0%, #AA8C2C 100%)",
-                  color: isDark ? "#FFD700" : "#FFFFFF", // Gold text in dark mode
+                    ? "linear-gradient(135deg, #000000 0%, #1a1a1a 60%, #333333 100%)" // Dark mode: Black gradient
+                    : "#1A1A1A", // Light mode: Dark grey background for contrast
+                  color: isDark ? "#FFD700" : "#FFD700", // Light mode: Gold text color for numbers
                   width: "50px",
                   height: "50px",
                   borderRadius: "50%",
@@ -562,12 +562,12 @@ return (
                   fontWeight: "bold",
                   fontSize: "18px",
                   boxShadow: isDark
-                    ? "0 7px 22px rgba(255,215,0,0.35), 0 0 25px 4px rgba(255,215,0,0.18) inset, 0 0 15px #FFD700" // Gold neon glow
-                    : "0 6px 20px rgba(212,175,55,0.3), 0 0 20px 3px rgba(212,175,55,0.15) inset",
-                  border: isDark ? "2px solid rgba(255,215,0,0.4)" : "2px solid rgba(255,255,255,0.8)", // Gold border in dark mode
+                    ? "0 7px 22px rgba(255,215,0,0.35), 0 0 25px 4px rgba(255,215,0,0.18) inset, 0 0 15px #FFD700"
+                    : "0 6px 20px rgba(0,0,0,0.4), 0 0 10px 2px rgba(255,215,0,0.3) inset", // Light mode: Adjusted shadow for dark bg
+                  border: isDark ? "2px solid rgba(255,215,0,0.4)" : "2px solid rgba(255,215,0,0.5)", // Light mode: Gold border
                   backdropFilter: "blur(10px)",                  textShadow: isDark 
-                    ? "0 0 8px #FFD700, 0 0 16px #D4AF37" // Gold neon text glow
-                    : "none",
+                    ? "0 0 8px #FFD700, 0 0 16px #D4AF37"
+                    : "0 0 5px #FFD700", // Light mode: Subtle gold text glow
                 }}
               >
                 {step.id}
@@ -602,8 +602,8 @@ return (
                     width: 60,
                     height: 60,
                     background: isDark
-                      ? "linear-gradient(135deg, rgba(184,134,11,0.4) 0%, rgba(40,20,80,0.35) 100%)" // Updated dark mode background
-                      : "rgba(244,233,201,0.3)",
+                      ? "linear-gradient(135deg, rgba(184,134,11,0.4) 0%, rgba(40,20,80,0.35) 100%)" // Dark mode background
+                      : "linear-gradient(135deg, #FFD700, #DC143C, #000000)", // Light mode: GOLD-RED-BLACK gradient
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
@@ -611,9 +611,9 @@ return (
                     margin: "0 auto 15px",
                     backdropFilter: "blur(8px)",
                     boxShadow: isDark
-                      ? "0 9px 18px rgba(184,134,11,0.18), 0 0 25px 4px rgba(184,134,11,0.1) inset" // Updated dark mode boxShadow
+                      ? "0 9px 18px rgba(184,134,11,0.18), 0 0 25px 4px rgba(184,134,11,0.1) inset"
                       : "0 8px 15px rgba(212,175,55,0.1)",
-                    border: isDark ? "1px solid rgba(200,200,220,0.25)" : "1px solid rgba(255,255,255,0.5)", // Updated dark mode border
+                    border: isDark ? "1px solid rgba(200,200,220,0.25)" : "1px solid rgba(255,255,255,0.5)",
                   }}
                 >
                   <svg
@@ -622,10 +622,11 @@ return (
                     style={{
                       width: 30,
                       height: 30,
-                      fill: "#D4AF37",
+                      fill: isDark ? "#D4AF37" : "#FFFFFF", // Light mode: White icon fill for contrast
                       filter: isDark
                         ? "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))"
                         : "drop-shadow(0px 2px 2px rgba(0,0,0,0.1))",
+                      animation: isDark ? 'none' : 'iconPulse 2s infinite ease-in-out',
                     }}
                   >
                     <path d={step.icon} />
@@ -649,7 +650,7 @@ return (
                     style={{
                       fontWeight: isDark ? 700 : 900, // Much bolder in light mode
                       fontSize: 18, // Reduced from 22 for better proportion
-                      marginBottom: 10,                      color: isDark ? "#DC143C" : "#333", // Bolder red color for dark mode
+                      marginBottom: 10,                      color: isDark ? "#DC143C" : "#B8860B", // Light mode: Gold, Dark mode: Bolder red color
                       textShadow: isDark 
                         ? "0 0 15px #DC143C, 0 0 30px #FF0000, 0 0 45px #DC143C, 0 0 60px #B22222" // Stronger red neon glow
                         : "0px 2px 4px rgba(0,0,0,0.3), 0px 1px 2px rgba(255,255,255,0.8)", // Stronger shadow for light mode
@@ -666,7 +667,7 @@ return (
                     className="step-desc"
                     style={{
                       fontSize: 14,
-                      color: isDark ? "#FFD700" : "#444", // Gold neon color for dark mode
+                      color: isDark ? "#FFD700" : "#B8860B", // Light mode: Gold, Dark mode: Gold neon color
                       marginBottom: 20,
                       lineHeight: 1.6,
                       textAlign: "center",
@@ -685,20 +686,21 @@ return (
                     className="get-started-btn metallic-shine-btn"
                     style={{
                       background: isDark 
-                        ? "linear-gradient(135deg, #000000, #1a1a1a, #333333)" // Black gradient for dark mode
-                        : "linear-gradient(135deg, #D4AF37, #AA8C2C)",
-                      color: isDark ? "#F5F5F5" : "#fff", // Off-white text in dark mode                     border: "none",
+                        ? "linear-gradient(135deg, #FFD700, #B8860B)" // Dark mode: Gold gradient
+                        : "linear-gradient(135deg, #CFB53B, #B8860B, #CFB53B)", // Light mode: Metallic gold gradient
+                      color: isDark ? "#000000" : "#FFFFFF", // Dark mode: Black text, Light mode: White text
+                      border: "none",
                       padding: "12px 20px",
                       width: "160px",
                       margin: "0 auto",
                       borderRadius: 8,
-                      fontWeight: isDark ? 700 : 800, // Bolder in light mode
+                      fontWeight: isDark ? 700 : 800,
                       fontSize: 14,
                       letterSpacing: 0.8,
                       cursor: "pointer",
                       transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                       boxShadow: isDark
-                        ? "0 6px 20px rgba(0,0,0,0.6), 0 0 25px 5px rgba(255,255,255,0.1) inset, 0 0 15px #FFFFFF" // Black with white neon glow
+                        ? "0 6px 20px rgba(0,0,0,0.6), 0 0 25px 5px rgba(255,255,255,0.1) inset, 0 0 15px #FFFFFF"
                         : "0 4px 15px rgba(212,175,55,0.3)",
                       display: "block",
                       position: "relative",
@@ -708,8 +710,9 @@ return (
                       WebkitFontSmoothing: "antialiased",
                       textAlign: "center",
                       textShadow: isDark 
-                        ? "0 0 8px #F5F5F5, 0 0 16px #FFFFFF" // Off-white neon text glow
-                        : "0px 1px 2px rgba(0,0,0,0.2)", // Stronger text shadow for light mode
+                        ? "none" // Dark mode: No text shadow
+                        : "0px 1px 2px rgba(0,0,0,0.2)",
+                      animation: isDark ? 'none' : 'buttonShine 2.5s infinite ease-in-out',
                     }}
                     onClick={() => handleStepClick(step.id)}
                   >
@@ -723,7 +726,9 @@ return (
           ))}
         </div>
       </div>{/* Enhanced CSS with synchronized timing and glassmorphism */}
-      <style>{`        /* Keyframes for rotation and floating particles */
+      <style>
+        {`
+        /* Keyframes for rotation and floating particles */
         @keyframes rotate { 
           0% { transform: rotate(0deg); } 
           100% { transform: rotate(360deg); } 
@@ -789,6 +794,25 @@ return (
           }
         }
         
+        @keyframes buttonShine {
+          0%, 100% {
+            box-shadow: 0 4px 15px rgba(207, 181, 59, 0.3), 0 0 5px rgba(207, 181, 59, 0.2) inset;
+          }
+          50% {
+            box-shadow: 0 6px 20px rgba(207, 181, 59, 0.5), 0 0 15px rgba(207, 181, 59, 0.4) inset;
+          }
+        }
+        @keyframes iconPulse {
+          0%, 100% {
+            transform: scale(1);
+            filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.1)) brightness(1);
+          }
+          50% {
+            transform: scale(1.15);
+            filter: drop-shadow(0px 3px 4px rgba(0,0,0,0.2)) brightness(1.2);
+          }
+        }
+        
         /* Enhanced metallic heading with theme support */
         .metallic-heading {
           background: ${isDark 
@@ -838,16 +862,16 @@ return (
         .step-card {
           background: ${isDark 
             ? 'rgba(30,39,56,0.6)' 
-            : 'rgba(255,255,255,0.45)'};
+            : '#FFFFFF'}; /* Light mode: Solid white background */
           border-radius: 20px;
           box-shadow: ${isDark
             ? '0 15px 50px 0 rgba(31,38,135,0.35), 0 0 40px 6px #D4AF37 inset, 0 0 80px 2px rgba(212,175,55,0.1)'
-            : '0 12px 40px 0 rgba(31,38,135,0.22), 0 0 32px 4px #D4AF37 inset'};
+            : '0 10px 25px rgba(0, 0, 0, 0.1)'}; /* Light mode: Adjusted shadow for white card */
           border: ${isDark 
             ? '2px solid rgba(212,175,55,0.3)' 
-            : '2.5px solid rgba(212,175,55,0.18)'};
-          backdrop-filter: blur(${isDark ? '25px' : '18px'}) saturate(${isDark ? '220%' : '180%'});
-          -webkit-backdrop-filter: blur(${isDark ? '25px' : '18px'}) saturate(${isDark ? '220%' : '180%'});
+            : '1px solid #D4AF37'}; /* Light mode: Subtle gold border */
+          backdrop-filter: ${isDark ? 'blur(25px) saturate(220%)' : 'none'}; /* Light mode: No backdrop filter */
+          -webkit-backdrop-filter: ${isDark ? 'blur(25px) saturate(220%)' : 'none'}; /* Light mode: No backdrop filter */
           transition: all 0.5s cubic-bezier(.4,2,.3,1);
         }
         
@@ -855,22 +879,11 @@ return (
           transform: rotateY(${isDark ? '10deg' : '8deg'}) scale(1.08) translateY(-12px);
           box-shadow: ${isDark
             ? '0 30px 80px 0 rgba(31,38,135,0.45), 0 0 60px 12px #D4AF37 inset, 0 0 120px 5px rgba(212,175,55,0.2)'
-            : '0 24px 60px 0 rgba(31,38,135,0.28), 0 0 48px 8px #D4AF37 inset'};
-          border-color: ${isDark ? 'rgba(212,175,55,0.5)' : 'rgba(212,175,55,0.3)'};
+            : '0 15px 35px rgba(0, 0, 0, 0.15)'}; /* Light mode: Adjusted hover shadow */
+          border-color: ${isDark ? 'rgba(212,175,55,0.5)' : '#B8860B'}; /* Light mode: Darker gold border on hover */
         }
         
-        /* Enhanced step icon styling */
-        .step-icon {
-          transition: all 0.5s cubic-bezier(.4,2,.3,1);
-        }
-        
-        .step-card:hover .step-icon {
-          transform: rotateZ(15deg) scale(1.15);
-          box-shadow: ${isDark
-            ? '0 15px 35px rgba(212,175,55,0.4), 0 0 30px 5px #D4AF37 inset'
-            : '0 12px 30px rgba(212,175,55,0.3), 0 0 25px 4px #D4AF37 inset'};
-        }
-          /* Enhanced button styling with metallic shine effect */
+        /* Enhanced button styling with metallic shine effect */
         .metallic-shine-btn {
           position: relative;
           overflow: hidden;
