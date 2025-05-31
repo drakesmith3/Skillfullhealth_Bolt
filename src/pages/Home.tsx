@@ -33,7 +33,7 @@ const storyTitles = [
   "Welcome to GLOHSEN",
   "Discover Features", 
   "How It Works",
-  "User Feedback",
+  "Client Feedback",
   "For Employers",
   "Tutors & Advisers",
   "Games & Quizzes",
@@ -208,18 +208,16 @@ function Home(): JSX.Element {
       />      <StoryAnimations 
         currentSection={currentSection} 
         totalSections={numSections} 
-      />
-      {/* Return to top button - only show when not on header section */}
+      />      {/* Return to top button - only show when not on header section */}
       {currentSection !== 0 && <ReturnToTopButton scrollToSection={scrollToSection} />}
-      
-      {/* Current section title overlay */}
-      <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-black/50 backdrop-blur-sm rounded-full px-6 py-2">
-          <h1 className="text-white text-lg font-semibold">
+        {/* Current section title overlay */}
+      <div className="fixed top-1/2 left-8 transform -translate-y-1/2 z-50 opacity-30">
+        <div className="bg-black/20 backdrop-blur-sm rounded-full px-4 py-1">
+          <h1 className="text-white/70 text-sm font-medium">
             {sectionsComponents[currentSection]?.title}
           </h1>
         </div>
-      </div>      {/* Horizontal storytelling container */}
+      </div>{/* Horizontal storytelling container */}
       <div 
         className="flex h-full transition-transform duration-1000 ease-out"
         style={{ 
