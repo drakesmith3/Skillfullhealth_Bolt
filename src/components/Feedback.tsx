@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -45,99 +44,99 @@ const Feedback = ({ isActive = false }) => {
   }, []);
 
   // Enhanced floating background particles and 3D elements animation
-  useEffect(() => {
-    if (!isActive) return;
+  // useEffect(() => {
+  //   if (!isActive) return;
 
-    const createFloatingParticle = () => {
-      const particle = document.createElement('div');
-      particle.className = 'floating-dust-particle';
-      particle.style.cssText = `
-        position: absolute;
-        width: ${Math.random() * 4 + 2}px;
-        height: ${Math.random() * 4 + 2}px;
-        background: ${isDark 
-          ? 'radial-gradient(circle, rgba(220,20,60,0.6) 0%, rgba(212,175,55,0.4) 50%, rgba(255,255,255,0.1) 100%)'
-          : 'radial-gradient(circle, rgba(220,20,60,0.4) 0%, rgba(212,175,55,0.3) 50%, rgba(0,0,0,0.1) 100%)'};
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 1;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        animation: dustFloat ${Math.random() * 10 + 8}s linear infinite;
-        box-shadow: 0 0 ${Math.random() * 8 + 4}px rgba(220,20,60,0.3);
-      `;
+  //   // const createFloatingParticle = () => {
+  //   //   const particle = document.createElement(\\\'div\\\');
+  //   //   particle.className = \\\'floating-dust-particle\\\';
+  //   //   particle.style.cssText = `
+  //   //     position: absolute;
+  //   //     width: ${Math.random() * 4 + 2}px;
+  //   //     height: ${Math.random() * 4 + 2}px;
+  //   //     background: ${isDark 
+  //   //       ? \\\'radial-gradient(circle, rgba(220,20,60,0.6) 0%, rgba(212,175,55,0.4) 50%, rgba(255,255,255,0.1) 100%)\\\'
+  //   //       : \\\'radial-gradient(circle, rgba(220,20,60,0.4) 0%, rgba(212,175,55,0.3) 50%, rgba(0,0,0,0.1) 100%)\\\'};
+  //   //     border-radius: 50%;
+  //   //     pointer-events: none;
+  //   //     z-index: 1;
+  //   //     left: ${Math.random() * 100}%;
+  //   //     top: ${Math.random() * 100}%;
+  //   //     animation: dustFloat ${Math.random() * 10 + 8}s linear infinite;
+  //   //     box-shadow: 0 0 ${Math.random() * 8 + 4}px rgba(220,20,60,0.3);
+  //   //   `;
       
-      const container = document.querySelector('.floating-dust-container');
-      if (container) {
-        container.appendChild(particle);
+  //   //   const container = document.querySelector(\\\'.floating-dust-container\\\');
+  //   //   if (container) {
+  //   //     container.appendChild(particle);
         
-        setTimeout(() => {
-          if (particle.parentNode) {
-            particle.parentNode.removeChild(particle);
-          }
-        }, 18000);
-      }
-    };
+  //   //     setTimeout(() => {
+  //   //       if (particle.parentNode) {
+  //   //         particle.parentNode.removeChild(particle);
+  //   //       }
+  //   //     }, 18000);
+  //   //   }
+  //   // };
 
-    const create3DMovingObject = () => {
-      const colors = ['#DC143C', '#D4AF37', '#000000'];
-      const shapes = ['diamond', 'hexagon', 'triangle'];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const shape = shapes[Math.floor(Math.random() * shapes.length)];
+  //   // const create3DMovingObject = () => {
+  //   //   const colors = [\\\'#DC143C\\\', \\\'#D4AF37\\\', \\\'#000000\\\'];
+  //   //   const shapes = [\\\'diamond\\\', \\\'hexagon\\\', \\\'triangle\\\'];
+  //   //   const color = colors[Math.floor(Math.random() * colors.length)];
+  //   //   const shape = shapes[Math.floor(Math.random() * shapes.length)];
       
-      const element = document.createElement('div');
-      element.className = `moving-3d-object ${shape}`;
-      element.style.cssText = `
-        position: absolute;
-        width: ${Math.random() * 24 + 12}px;
-        height: ${Math.random() * 24 + 12}px;
-        background: ${color === '#DC143C' 
-          ? 'linear-gradient(45deg, #DC143C, #B91C1C, #8B0000)'
-          : color === '#D4AF37'
-          ? 'linear-gradient(45deg, #D4AF37, #FFD700, #B8860B)'
-          : 'linear-gradient(45deg, #000000, #1a1a1a, #333333)'};
-        ${shape === 'diamond' ? 'transform: rotate(45deg);' : ''}
-        ${shape === 'hexagon' ? 'clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);' : ''}
-        ${shape === 'triangle' ? 'clip-path: polygon(50% 0%, 0% 100%, 100% 100%);' : ''}
-        pointer-events: none;
-        z-index: 0;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        animation: hyperModernMove ${Math.random() * 15 + 10}s linear infinite;
-        transform-style: preserve-3d;
-        box-shadow: 0 0 20px ${color}60;
-        opacity: 0.8;
-      `;
+  //   //   const element = document.createElement(\\\'div\\\');
+  //   //   element.className = `moving-3d-object ${shape}`;
+  //   //   element.style.cssText = `
+  //   //     position: absolute;
+  //   //     width: ${Math.random() * 24 + 12}px;
+  //   //     height: ${Math.random() * 24 + 12}px;
+  //   //     background: ${color === \\\'#DC143C\\\' 
+  //   //       ? \\\'linear-gradient(45deg, #DC143C, #B91C1C, #8B0000)\\\'
+  //   //       : color === \\\'#D4AF37\\\'
+  //   //       ? \\\'linear-gradient(45deg, #D4AF37, #FFD700, #B8860B)\\\'
+  //   //       : \\\'linear-gradient(45deg, #000000, #1a1a1a, #333333)\\\'};
+  //   //     ${shape === \\\'diamond\\\' ? \\\'transform: rotate(45deg);\\\' : \\\'\\\'}
+  //   //     ${shape === \\\'hexagon\\\' ? \\\'clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);\\\' : \\\'\\\'}
+  //   //     ${shape === \\\'triangle\\\' ? \\\'clip-path: polygon(50% 0%, 0% 100%, 100% 100%);\\\' : \\\'\\\'}
+  //   //     pointer-events: none;
+  //   //     z-index: 0;
+  //   //     left: ${Math.random() * 100}%;
+  //   //     top: ${Math.random() * 100}%;
+  //   //     animation: hyperModernMove ${Math.random() * 15 + 10}s linear infinite;
+  //   //     transform-style: preserve-3d;
+  //   //     box-shadow: 0 0 20px ${color}60;
+  //   //     opacity: 0.8;
+  //   //   `;
       
-      const container = document.querySelector('.moving-3d-container');
-      if (container) {
-        container.appendChild(element);
+  //   //   const container = document.querySelector(\\\'.moving-3d-container\\\');
+  //   //   if (container) {
+  //   //     container.appendChild(element);
         
-        setTimeout(() => {
-          if (element.parentNode) {
-            element.parentNode.removeChild(element);
-          }
-        }, 25000);
-      }
-    };
+  //   //     setTimeout(() => {
+  //   //       if (element.parentNode) {
+  //   //         element.parentNode.removeChild(element);
+  //   //       }
+  //   //     }, 25000);
+  //   //   }
+  //   // };
 
-    const dustInterval = setInterval(createFloatingParticle, 600);
-    const objectInterval = setInterval(create3DMovingObject, 1500);
+  //   // const dustInterval = setInterval(createFloatingParticle, 600);
+  //   // const objectInterval = setInterval(create3DMovingObject, 1500);
     
-    // Create initial batch
-    for (let i = 0; i < 10; i++) {
-      setTimeout(createFloatingParticle, i * 150);
-    }
+  //   // // Create initial batch
+  //   // for (let i = 0; i < 10; i++) {
+  //   //   setTimeout(createFloatingParticle, i * 150);
+  //   // }
     
-    for (let i = 0; i < 6; i++) {
-      setTimeout(create3DMovingObject, i * 500);
-    }
+  //   // for (let i = 0; i < 6; i++) {
+  //   //   setTimeout(create3DMovingObject, i * 500);
+  //   // }
 
-    return () => {
-      clearInterval(dustInterval);
-      clearInterval(objectInterval);
-    };
-  }, [isActive, isDark]);
+  //   // return () => {
+  //   //   clearInterval(dustInterval);
+  //   //   clearInterval(objectInterval);
+  //   // };
+  // }, [isActive, isDark]);
   return (
     <div 
       className="w-full h-full relative overflow-hidden flex flex-col justify-center items-center p-4 md:p-8 transition-all duration-1000"
@@ -149,10 +148,10 @@ const Feedback = ({ isActive = false }) => {
       }}
     >
       {/* Floating Dust Particles Container */}
-      <div className="floating-dust-container absolute inset-0 pointer-events-none" />
+      {/* <div className="floating-dust-container absolute inset-0 pointer-events-none" /> */}
       
       {/* 3D Moving Objects Container */}
-      <div className="moving-3d-container absolute inset-0 pointer-events-none" />
+      {/* <div className="moving-3d-container absolute inset-0 pointer-events-none" /> */}
       
       {/* Enhanced background overlay */}
       <div className={`absolute inset-0 opacity-20 ${
@@ -420,7 +419,7 @@ const Feedback = ({ isActive = false }) => {
 
       {/* Enhanced CSS Animations */}
       <style>{`
-        @keyframes dustFloat {
+        /* @keyframes dustFloat {
           0% { 
             transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.5);
             opacity: 0;
@@ -464,7 +463,7 @@ const Feedback = ({ isActive = false }) => {
             transform: translateY(-10vh) translateX(-20px) rotateX(360deg) rotateY(360deg) rotateZ(360deg) scale(1.3);
             opacity: 0;
           }
-        }
+        } */
         
         /* Enhanced microinteractions */
         .feedback-element {
@@ -476,7 +475,7 @@ const Feedback = ({ isActive = false }) => {
         }
         
         /* Floating particles */
-        .floating-dust-particle {
+        /* .floating-dust-particle {
           will-change: transform, opacity;
           pointer-events: none;
         }
@@ -484,7 +483,7 @@ const Feedback = ({ isActive = false }) => {
         .moving-3d-object {
           will-change: transform, opacity;
           pointer-events: none;
-        }
+        } */
         
         /* Enhanced card hover effects */
         .feedback-element .bg-white:hover {

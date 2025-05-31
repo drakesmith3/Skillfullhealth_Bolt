@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -44,99 +43,99 @@ const TutorsAdvisers = ({ isActive = false }) => {
   }, []);
 
   // Enhanced floating background particles and 3D elements animation
-  useEffect(() => {
-    if (!isActive) return;
+  // useEffect(() => {
+  //   if (!isActive) return;
 
-    const createFloatingDust = () => {
-      const particle = document.createElement('div');
-      particle.className = 'floating-tutors-dust';
-      particle.style.cssText = `
-        position: absolute;
-        width: ${Math.random() * 6 + 4}px;
-        height: ${Math.random() * 6 + 4}px;
-        background: ${isDark 
-          ? 'radial-gradient(circle, rgba(220,20,60,0.8) 0%, rgba(212,175,55,0.6) 30%, rgba(0,0,0,0.4) 100%)'
-          : 'radial-gradient(circle, rgba(220,20,60,0.6) 0%, rgba(212,175,55,0.5) 30%, rgba(0,0,0,0.3) 100%)'};
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 1;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        animation: tutorsDustFloat ${Math.random() * 14 + 12}s linear infinite;
-        box-shadow: 0 0 ${Math.random() * 12 + 8}px rgba(220,20,60,0.5);
-      `;
+  //   const createFloatingDust = () => {
+  //     const particle = document.createElement('div');
+  //     particle.className = 'floating-tutors-dust';
+  //     particle.style.cssText = `
+  //       position: absolute;
+  //       width: ${Math.random() * 6 + 4}px;
+  //       height: ${Math.random() * 6 + 4}px;
+  //       background: ${isDark 
+  //         ? 'radial-gradient(circle, rgba(220,20,60,0.8) 0%, rgba(212,175,55,0.6) 30%, rgba(0,0,0,0.4) 100%)'
+  //         : 'radial-gradient(circle, rgba(220,20,60,0.6) 0%, rgba(212,175,55,0.5) 30%, rgba(0,0,0,0.3) 100%)'};
+  //       border-radius: 50%;
+  //       pointer-events: none;
+  //       z-index: 1;
+  //       left: ${Math.random() * 100}%;
+  //       top: ${Math.random() * 100}%;
+  //       animation: tutorsDustFloat ${Math.random() * 14 + 12}s linear infinite;
+  //       box-shadow: 0 0 ${Math.random() * 12 + 8}px rgba(220,20,60,0.5);
+  //     `;
       
-      const container = document.querySelector('.tutors-dust-container');
-      if (container) {
-        container.appendChild(particle);
+  //     const container = document.querySelector('.tutors-dust-container');
+  //     if (container) {
+  //       container.appendChild(particle);
         
-        setTimeout(() => {
-          if (particle.parentNode) {
-            particle.parentNode.removeChild(particle);
-          }
-        }, 26000);
-      }
-    };
+  //       setTimeout(() => {
+  //         if (particle.parentNode) {
+  //           particle.parentNode.removeChild(particle);
+  //         }
+  //       }, 26000);
+  //     }
+  //   };
 
-    const createEducationObject = () => {
-      const objects = ['book', 'graduation', 'lightbulb'];
-      const colors = ['#DC143C', '#D4AF37', '#000000'];
-      const object = objects[Math.floor(Math.random() * objects.length)];
-      const color = colors[Math.floor(Math.random() * colors.length)];
+  //   const createEducationObject = () => {
+  //     const objects = ['book', 'graduation', 'lightbulb'];
+  //     const colors = ['#DC143C', '#D4AF37', '#000000'];
+  //     const object = objects[Math.floor(Math.random() * objects.length)];
+  //     const color = colors[Math.floor(Math.random() * colors.length)];
       
-      const element = document.createElement('div');
-      element.className = `education-3d-object ${object}`;
-      element.style.cssText = `
-        position: absolute;
-        width: ${Math.random() * 32 + 20}px;
-        height: ${Math.random() * 32 + 20}px;
-        background: ${color === '#DC143C' 
-          ? 'linear-gradient(135deg, #DC143C, #B91C1C, #8B0000)'
-          : color === '#D4AF37'
-          ? 'linear-gradient(135deg, #D4AF37, #FFD700, #B8860B)'
-          : 'linear-gradient(135deg, #000000, #2a2a2a, #1a1a1a)'};
-        ${object === 'book' ? 'border-radius: 4px;' : ''}
-        ${object === 'graduation' ? 'clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);' : ''}
-        ${object === 'lightbulb' ? 'border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;' : ''}
-        pointer-events: none;
-        z-index: 0;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        animation: educationMove ${Math.random() * 20 + 14}s linear infinite;
-        transform-style: preserve-3d;
-        box-shadow: 0 0 30px ${color}80;
-        opacity: 0.8;
-      `;
+  //     const element = document.createElement('div');
+  //     element.className = `education-3d-object ${object}`;
+  //     element.style.cssText = `
+  //       position: absolute;
+  //       width: ${Math.random() * 32 + 20}px;
+  //       height: ${Math.random() * 32 + 20}px;
+  //       background: ${color === '#DC143C' 
+  //         ? 'linear-gradient(135deg, #DC143C, #B91C1C, #8B0000)'
+  //         : color === '#D4AF37'
+  //         ? 'linear-gradient(135deg, #D4AF37, #FFD700, #B8860B)'
+  //         : 'linear-gradient(135deg, #000000, #2a2a2a, #1a1a1a)'};
+  //       ${object === 'book' ? 'border-radius: 4px;' : ''}
+  //       ${object === 'graduation' ? 'clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);' : ''}
+  //       ${object === 'lightbulb' ? 'border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;' : ''}
+  //       pointer-events: none;
+  //       z-index: 0;
+  //       left: ${Math.random() * 100}%;
+  //       top: ${Math.random() * 100}%;
+  //       animation: educationMove ${Math.random() * 20 + 14}s linear infinite;
+  //       transform-style: preserve-3d;
+  //       box-shadow: 0 0 30px ${color}80;
+  //       opacity: 0.8;
+  //     `;
       
-      const container = document.querySelector('.education-3d-container');
-      if (container) {
-        container.appendChild(element);
+  //     const container = document.querySelector('.education-3d-container');
+  //     if (container) {
+  //       container.appendChild(element);
         
-        setTimeout(() => {
-          if (element.parentNode) {
-            element.parentNode.removeChild(element);
-          }
-        }, 34000);
-      }
-    };
+  //       setTimeout(() => {
+  //         if (element.parentNode) {
+  //           element.parentNode.removeChild(element);
+  //         }
+  //       }, 34000);
+  //     }
+  //   };
 
-    const dustInterval = setInterval(createFloatingDust, 600);
-    const objectInterval = setInterval(createEducationObject, 2000);
+  //   const dustInterval = setInterval(createFloatingDust, 600);
+  //   const objectInterval = setInterval(createEducationObject, 2000);
     
-    // Create initial batch
-    for (let i = 0; i < 10; i++) {
-      setTimeout(createFloatingDust, i * 180);
-    }
+  //   // Create initial batch
+  //   for (let i = 0; i < 10; i++) {
+  //     setTimeout(createFloatingDust, i * 180);
+  //   }
     
-    for (let i = 0; i < 5; i++) {
-      setTimeout(createEducationObject, i * 700);
-    }
+  //   for (let i = 0; i < 5; i++) {
+  //     setTimeout(createEducationObject, i * 700);
+  //   }
 
-    return () => {
-      clearInterval(dustInterval);
-      clearInterval(objectInterval);
-    };
-  }, [isActive, isDark]);
+  //   return () => {
+  //     clearInterval(dustInterval);
+  //     clearInterval(objectInterval);
+  //   };
+  // }, [isActive, isDark]);
   return (
     <div 
       ref={containerRef}
@@ -149,10 +148,11 @@ const TutorsAdvisers = ({ isActive = false }) => {
       }}
     >
       {/* Background Elements */}
-      <div className="tutors-dust-container absolute inset-0 pointer-events-none z-0"></div>
-      <div className="education-3d-container absolute inset-0 pointer-events-none z-0"></div>      {/* CSS Animations */}
+      {/* <div className="tutors-dust-container absolute inset-0 pointer-events-none z-0"></div> */}
+      {/* <div className="education-3d-container absolute inset-0 pointer-events-none z-0"></div> */}
+      {/* CSS Animations */}
       <style>{`
-        @keyframes tutorsDustFloat {
+        /* @keyframes tutorsDustFloat {
           0% {
             transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.7);
             opacity: 0;
@@ -192,9 +192,9 @@ const TutorsAdvisers = ({ isActive = false }) => {
             transform: translateY(-35vh) translateX(-35px) rotateY(360deg) rotateX(120deg) scale(0.7);
             opacity: 0;
           }
-        }
+        } */
 
-        .education-3d-object {
+        /* .education-3d-object {
           filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
           transform-style: preserve-3d;
         }
@@ -229,7 +229,7 @@ const TutorsAdvisers = ({ isActive = false }) => {
         .floating-tutors-dust {
           filter: blur(0.6px);
           animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
-        }
+        } */
       `}</style>
 
       <h2 className={`text-3xl md:text-4xl font-bold mb-10 text-center z-10 relative ${isDark ? 'text-white' : 'text-gray-800'}`}>

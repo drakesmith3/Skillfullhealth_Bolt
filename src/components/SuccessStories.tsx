@@ -1,12 +1,147 @@
-
 import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Star, MessageCircle, User } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 
-const SuccessStories = ({ isActive = false }) => {
+gsap.registerPlugin(ScrollTrigger);
+
+// Enhanced 3D Styles for Success Stories
+const Professional3DSuccessStyles = () => (
+  <style dangerouslySetInnerHTML={{
+    __html: `
+      .success-3d-container {
+        perspective: 1200px;
+        transform-style: preserve-3d;
+      }
+      
+      .success-card-3d {
+        transform-style: preserve-3d;
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+        animation: testimonialFloat 8s ease-in-out infinite;
+      }
+      
+      .success-card-3d:hover {
+        transform: translateY(-15px) rotateX(8deg) rotateY(8deg) scale(1.02);
+        animation-play-state: paused;
+      }
+      
+      .success-title-3d {
+        transform-style: preserve-3d;
+        animation: titleFloat 6s ease-in-out infinite;
+        text-shadow: 
+          0 2px 0 rgba(220, 20, 60, 0.6),
+          0 4px 0 rgba(212, 175, 55, 0.5),
+          0 6px 0 rgba(0, 0, 0, 0.3);
+      }
+      
+      .success-star-3d {
+        animation: starTwinkle 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+      }
+      
+      .success-floating-element {
+        position: absolute;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.7;
+        animation: successDustFloat 25s linear infinite;
+      }
+      
+      .success-dust-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      
+      @keyframes successDustFloat {
+        0%, 100% {
+          transform: translateY(0px) rotateX(0deg) rotateY(0deg) scale(1);
+          opacity: 0.7;
+        }
+        25% {
+          transform: translateY(-30px) rotateX(15deg) rotateY(90deg) scale(1.2);
+          opacity: 1;
+        }
+        50% {
+          transform: translateY(-60px) rotateX(0deg) rotateY(180deg) scale(0.8);
+          opacity: 0.5;
+        }
+        75% {
+          transform: translateY(-30px) rotateX(-15deg) rotateY(270deg) scale(1.1);
+          opacity: 0.8;
+        }
+      }
+      
+      @keyframes testimonialFloat {
+        0%, 100% {
+          transform: translateY(0px) rotateX(0deg);
+        }
+        33% {
+          transform: translateY(-8px) rotateX(2deg);
+        }
+        66% {
+          transform: translateY(-4px) rotateX(-1deg);
+        }
+      }
+      
+      @keyframes starTwinkle {
+        0%, 100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 0.9;
+        }
+        25% {
+          transform: scale(1.3) rotate(90deg);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(0.7) rotate(180deg);
+          opacity: 0.7;
+        }
+        75% {
+          transform: scale(1.1) rotate(270deg);
+          opacity: 0.95;
+        }
+      }
+      
+      @keyframes titleFloat {
+        0%, 100% {
+          transform: translateY(0px) rotateX(0deg);
+        }
+        50% {
+          transform: translateY(-8px) rotateX(3deg);
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .success-card-3d:hover {
+          transform: translateY(-8px) rotateX(3deg) rotateY(3deg) scale(1.01);
+        }
+      }
+      
+      @media (prefers-reduced-motion: reduce) {
+        .success-floating-element,
+        .success-title-3d,
+        .success-card-3d,
+        .success-star-3d {
+          animation: none;
+        }
+      }
+    `
+  }} />
+);
+
+interface SuccessStoriesProps {
+  isActive?: boolean;
+}
+
+const SuccessStories: React.FC<SuccessStoriesProps> = ({ isActive = false }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const testimonialsRef = useRef<HTMLDivElement>(null);
@@ -36,72 +171,27 @@ const SuccessStories = ({ isActive = false }) => {
     
   }, []);
 
-  // Enhanced floating background particles and 3D elements animation
+  // Enhanced floating background elements animation
   useEffect(() => {
     if (!isActive) return;
 
-    const createFloatingDust = () => {
-      const particle = document.createElement('div');
-      particle.className = 'floating-success-dust';
-      particle.style.cssText = `
-        position: absolute;
-        width: ${Math.random() * 6 + 4}px;
-        height: ${Math.random() * 6 + 4}px;
-        background: ${isDark 
-          ? 'radial-gradient(circle, rgba(220,20,60,0.8) 0%, rgba(212,175,55,0.6) 30%, rgba(0,0,0,0.4) 100%)'
-          : 'radial-gradient(circle, rgba(220,20,60,0.6) 0%, rgba(212,175,55,0.5) 30%, rgba(0,0,0,0.3) 100%)'};
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 1;
+    const createFloatingElement = () => {
+      const element = document.createElement('div');
+      element.className = 'success-floating-element';
+      
+      const symbols = ['⭐', '🏆', '📜', '💎', '🎯', '✨'];
+      const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+      
+      element.innerHTML = symbol;
+      element.style.cssText = `
         left: ${Math.random() * 100}%;
         top: ${Math.random() * 100}%;
-        animation: successDustFloat ${Math.random() * 15 + 13}s linear infinite;
-        box-shadow: 0 0 ${Math.random() * 12 + 8}px rgba(220,20,60,0.5);
+        font-size: ${Math.random() * 25 + 15}px;
+        animation-delay: ${Math.random() * 25}s;
+        animation-duration: ${Math.random() * 15 + 20}s;
       `;
       
       const container = document.querySelector('.success-dust-container');
-      if (container) {
-        container.appendChild(particle);
-        
-        setTimeout(() => {
-          if (particle.parentNode) {
-            particle.parentNode.removeChild(particle);
-          }
-        }, 28000);
-      }
-    };
-
-    const createSuccessObject = () => {
-      const objects = ['trophy', 'medal', 'certificate'];
-      const colors = ['#DC143C', '#D4AF37', '#000000'];
-      const object = objects[Math.floor(Math.random() * objects.length)];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      
-      const element = document.createElement('div');
-      element.className = `success-3d-object ${object}`;
-      element.style.cssText = `
-        position: absolute;
-        width: ${Math.random() * 30 + 18}px;
-        height: ${Math.random() * 30 + 18}px;
-        background: ${color === '#DC143C' 
-          ? 'linear-gradient(135deg, #DC143C, #B91C1C, #8B0000)'
-          : color === '#D4AF37'
-          ? 'linear-gradient(135deg, #D4AF37, #FFD700, #B8860B)'
-          : 'linear-gradient(135deg, #000000, #2a2a2a, #1a1a1a)'};
-        ${object === 'trophy' ? 'clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);' : ''}
-        ${object === 'medal' ? 'border-radius: 50%;' : ''}
-        ${object === 'certificate' ? 'border-radius: 4px;' : ''}
-        pointer-events: none;
-        z-index: 0;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        animation: successMove ${Math.random() * 19 + 15}s linear infinite;
-        transform-style: preserve-3d;
-        box-shadow: 0 0 28px ${color}85;
-        opacity: 0.8;
-      `;
-      
-      const container = document.querySelector('.success-3d-container');
       if (container) {
         container.appendChild(element);
         
@@ -109,54 +199,47 @@ const SuccessStories = ({ isActive = false }) => {
           if (element.parentNode) {
             element.parentNode.removeChild(element);
           }
-        }, 34000);
+        }, 35000);
       }
     };
 
-    const dustInterval = setInterval(createFloatingDust, 650);
-    const objectInterval = setInterval(createSuccessObject, 1900);
+    // Create initial elements
+    const elementCount = window.innerWidth > 768 ? 10 : 5;
     
-    // Create initial batch
-    for (let i = 0; i < 9; i++) {
-      setTimeout(createFloatingDust, i * 200);
-    }
-    
-    for (let i = 0; i < 4; i++) {
-      setTimeout(createSuccessObject, i * 750);
+    for (let i = 0; i < elementCount; i++) {
+      setTimeout(() => createFloatingElement(), Math.random() * 5000);
     }
 
+    // Continue creating elements periodically
+    const floatingInterval = setInterval(createFloatingElement, 4000);
+
     return () => {
-      clearInterval(dustInterval);
-      clearInterval(objectInterval);
+      clearInterval(floatingInterval);
     };
-  }, [isActive, isDark]);
+  }, [isActive]);
 
   const testimonials = [
     {
       name: "Dr. Sarah Chen",
       role: "Cardiologist",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=150&q=80",
       quote: "My GLOHSEN score helped me stand out in a competitive job market. I'm now working at my dream hospital!",
       rating: 5
     },
     {
       name: "Hospital Y",
       role: "Healthcare Facility",
-      image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=150&q=80",
       quote: "After implementing GLOHSEN's recommendations, our patient satisfaction scores increased by 42%.",
       rating: 5
     },
     {
       name: "Nursing Student A",
       role: "Final Year Student",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=150&q=80",
       quote: "The interactive courses and mentorship from Tutor Z helped me ace my exams and secure a placement.",
       rating: 5
     },
     {
       name: "Professor Z",
       role: "Physiology Tutor",
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=150&q=80",
       quote: "I've been able to reach more students and make a bigger impact through GLOHSEN's platform.",
       rating: 5
     }
@@ -164,161 +247,90 @@ const SuccessStories = ({ isActive = false }) => {
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full relative flex flex-col justify-center items-center p-4 md:p-8 overflow-hidden"
+      className="success-3d-container w-full min-h-screen relative flex flex-col justify-center items-center py-8 md:py-12 px-4 overflow-hidden"
       style={{
         background: isDark 
           ? 'linear-gradient(135deg, #1a0a0a 0%, #2d1515 25%, #1f1611 50%, #0a0a0a 75%, #1a0a0a 100%)'
           : 'linear-gradient(135deg, #fef7f0 0%, #fbeee8 25%, #f5efe8 50%, #f8f3ee 75%, #fef7f0 100%)',
-        transition: 'background 0.5s ease-in-out'
+        transition: 'background 0.5s ease-in-out',
       }}
     >
-      {/* Background Elements */}
+      {/* Professional 3D Styles */}
+      <Professional3DSuccessStyles />
+      
+      {/* Background floating elements container */}
       <div className="success-dust-container absolute inset-0 pointer-events-none z-0"></div>
-      <div className="success-3d-container absolute inset-0 pointer-events-none z-0"></div>
-
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes successDustFloat {
-          0% {
-            transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.8);
-            opacity: 0;
-          }
-          12% {
-            opacity: 1;
-          }
-          50% {
-            transform: translateY(50vh) translateX(32px) rotate(180deg) scale(1.15);
-            opacity: 0.8;
-          }
-          88% {
-            opacity: 0.3;
-          }
-          100% {
-            transform: translateY(-22vh) translateX(-22px) rotate(360deg) scale(0.9);
-            opacity: 0;
-          }
-        }
-
-        @keyframes successMove {
-          0% {
-            transform: translateY(100vh) translateX(0) rotateY(0deg) rotateX(0deg) scale(0.6);
-            opacity: 0.3;
-          }
-          20% {
-            opacity: 0.9;
-          }
-          50% {
-            transform: translateY(50vh) translateX(42px) rotateY(180deg) rotateX(45deg) scale(1.25);
-            opacity: 1;
-          }
-          80% {
-            opacity: 0.6;
-          }
-          100% {
-            transform: translateY(-32vh) translateX(-32px) rotateY(360deg) rotateX(90deg) scale(0.75);
-            opacity: 0;
-          }
-        }
-
-        .success-3d-object {
-          filter: drop-shadow(0 9px 18px rgba(0,0,0,0.4));
-          transform-style: preserve-3d;
-        }
-
-        .success-3d-object.trophy {
-          clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
-          background: linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%);
-          box-shadow: 
-            inset 3px 3px 6px rgba(255,255,255,0.3),
-            inset -3px -3px 6px rgba(0,0,0,0.2),
-            0 0 28px rgba(212,175,55,0.85);
-        }
-
-        .success-3d-object.medal {
-          border-radius: 50%;
-          background: linear-gradient(135deg, #DC143C 0%, #B91C1C 50%, #8B0000 100%);
-          box-shadow: 
-            inset 3px 3px 6px rgba(255,255,255,0.2),
-            inset -3px -3px 6px rgba(0,0,0,0.3),
-            0 0 28px rgba(220,20,60,0.85);
-        }
-
-        .success-3d-object.certificate {
-          border-radius: 4px;
-          background: linear-gradient(135deg, #000000 0%, #2a2a2a 50%, #1a1a1a 100%);
-          box-shadow: 
-            inset 2px 2px 4px rgba(255,255,255,0.1),
-            inset -2px -2px 4px rgba(0,0,0,0.5),
-            0 0 28px rgba(0,0,0,0.85);
-        }
-
-        .floating-success-dust {
-          filter: blur(0.5px);
-          animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-      `}</style>
 
       <h2 
         ref={titleRef}
-        className={`text-3xl md:text-4xl font-bold mb-10 text-center z-10 relative ${isDark ? 'text-white' : 'text-gray-800'}`}
+        className="success-title-3d text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl font-bold mb-8 sm:mb-12 text-center"
       >
-        Success Stories
-      </h2>      
-      <ScrollArea className={`w-full max-w-4xl h-[400px] rounded-lg px-4 z-10 relative ${isDark ? 'bg-gray-800/20' : 'bg-white/20'}`}>
+        <span className="bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
+          SUCCESS STORIES
+        </span>
+      </h2>
         <div 
-          ref={testimonialsRef}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
-          {testimonials.map((testimonial, index) => (
-            <Card 
-              key={index} 
-              className={`border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:scale-105 ${
-                isDark ? 'bg-gray-800' : 'bg-white'
-              }`}
-            >
-              <CardContent className="p-0">
-                <div className="bg-gradient-to-r from-red-600 to-amber-500 p-1"></div>
-                <div className="p-6">
-                  <div className="flex items-start mb-4">
-                    <img 
-                      src={testimonial.image} 
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover mr-4 shadow-lg"
-                    />
-                    <div>
-                      <h3 className={`font-bold text-lg ${isDark ? 'text-white' : 'text-gray-800'}`}>{testimonial.name}</h3>
-                      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{testimonial.role}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="relative mb-6">
-                    <MessageCircle className={`absolute top-0 left-0 h-6 w-6 transform -translate-x-1 ${
-                      isDark ? 'text-red-300' : 'text-red-100'
-                    }`} />
-                    <p className={`pl-5 italic ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                      "{testimonial.quote}"
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
-                    <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Verified Member</span>
-                  </div>
+        ref={testimonialsRef}
+        className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 flex-grow"
+      >
+        {testimonials.map((testimonial, index) => (
+          <Card 
+            key={index} 
+            className="success-card-3d p-4 sm:p-6 border-0 shadow-lg hover:shadow-2xl transition-all duration-500"
+            style={{
+              background: isDark
+                ? 'rgba(45, 21, 21, 0.3)'
+                : 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(15px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}
+          >
+            <CardContent className="space-y-4">
+              <div className="flex items-center space-x-2 mb-3">
+                <User className="h-10 w-10 text-amber-500" />
+                <div>
+                  <p className={`font-semibold text-sm sm:text-base ${
+                    isDark ? 'text-gray-100' : 'text-gray-900'
+                  }`}>
+                    {testimonial.name}
+                  </p>
+                  <p className={`text-xs sm:text-sm ${
+                    isDark ? 'text-gray-400' : 'text-gray-600'
+                  }`}>
+                    {testimonial.role}
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </ScrollArea>
-      
-      <div className="flex items-center justify-center mt-8 z-10 relative">
-        <div className={`w-2 h-2 rounded-full mx-1 ${isDark ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
-        <div className="w-2 h-2 bg-red-600 rounded-full mx-1"></div>
-        <div className={`w-2 h-2 rounded-full mx-1 ${isDark ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
+              </div>
+              
+              <div className="flex space-x-1 mb-3">                {[...Array(testimonial.rating)].map((_, starIndex) => (
+                  <Star 
+                    key={starIndex} 
+                    className="success-star-3d h-4 w-4 sm:h-5 sm:w-5 text-yellow-400 fill-current"
+                  />
+                ))}
+              </div>
+              
+              <ScrollArea className="h-24 sm:h-32">
+                <p className={`text-xs sm:text-sm leading-relaxed ${
+                  isDark ? 'text-gray-300' : 'text-gray-700'
+                }`}>
+                  "{testimonial.quote}"
+                </p>
+              </ScrollArea>
+              
+              <div className="flex items-center justify-between pt-2">
+                <MessageCircle className={`h-4 w-4 ${
+                  isDark ? 'text-gray-500' : 'text-gray-400'
+                }`} />
+                <span className={`text-xs ${
+                  isDark ? 'text-gray-500' : 'text-gray-500'
+                }`}>
+                  Verified Review
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );

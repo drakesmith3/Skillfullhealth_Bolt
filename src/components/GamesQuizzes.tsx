@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +5,52 @@ import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Play } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
+
+// Enhanced 3D Styles for Games & Quizzes
+const GamesQuizzes3DStyles = () => (
+  <style dangerouslySetInnerHTML={{
+    __html: `
+      .games-floating-elements-container {
+        perspective: 1200px;
+        transform-style: preserve-3d;
+      }
+      
+      .games-floating-element {
+        position: absolute;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.7;
+        animation: gamesDustFloat 25s linear infinite; /* Assuming gamesDustFloat is defined elsewhere or will be */
+      }
+      
+      /* Keyframes for gamesDustFloat - copied and adapted if not present */
+      @keyframes gamesDustFloat {
+        0%, 100% {
+          transform: translateY(0px) rotateX(0deg) rotateY(0deg) scale(1);
+          opacity: 0.7;
+        }
+        25% {
+          transform: translateY(-30px) rotateX(15deg) rotateY(90deg) scale(1.2);
+          opacity: 1;
+        }
+        50% {
+          transform: translateY(-60px) rotateX(0deg) rotateY(180deg) scale(0.8);
+          opacity: 0.5;
+        }
+        75% {
+          transform: translateY(-30px) rotateX(-15deg) rotateY(270deg) scale(1.1);
+          opacity: 0.8;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .games-floating-element {
+          animation: none;
+        }
+      }
+    `
+  }} />
+);
 
 const GamesQuizzes = ({ isActive = false }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -132,6 +177,58 @@ const GamesQuizzes = ({ isActive = false }) => {
     };
   }, [isActive, isDark]);
 
+  // Floating background elements from SuccessStories.tsx
+  useEffect(() => {
+    if (!isActive) return;
+
+    const createFloatingElement = () => {
+      const element = document.createElement('div');
+      element.className = 'games-floating-element'; // Use the new class name
+      
+      // Symbols for GamesQuizzes - can be customized
+      const symbols = ['🎮', '🎲', '🧩', '💡', '🏆', '✨']; 
+      const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+      
+      element.innerHTML = symbol;
+      element.style.cssText = `
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+        font-size: ${Math.random() * 25 + 15}px; /* Match SuccessStories */
+        animation-delay: ${Math.random() * 25}s; /* Match SuccessStories */
+        animation-duration: ${Math.random() * 15 + 20}s; /* Match SuccessStories */
+      `;
+      
+      // Ensure this container exists or adapt to an existing one
+      const container = document.querySelector('.games-floating-elements-container'); 
+      if (container) {
+        container.appendChild(element);
+        
+        setTimeout(() => {
+          if (element.parentNode) {
+            element.parentNode.removeChild(element);
+          }
+        }, 35000); // Match SuccessStories
+      }
+    };
+
+    // Create initial elements
+    const elementCount = window.innerWidth > 768 ? 10 : 5; // Match SuccessStories
+    
+    for (let i = 0; i < elementCount; i++) {
+      setTimeout(() => createFloatingElement(), Math.random() * 5000); // Match SuccessStories
+    }
+
+    // Continue creating elements periodically
+    const floatingInterval = setInterval(createFloatingElement, 4000); // Match SuccessStories
+
+    return () => {
+      clearInterval(floatingInterval);
+      // Ensure all elements are removed on cleanup
+      const elements = document.querySelectorAll('.games-floating-element');
+      elements.forEach(el => el.remove());
+    };
+  }, [isActive, isDark]); // Added isDark dependency as it might be used in styles
+
   const games = [
     {
       title: "ClotQuest",
@@ -163,7 +260,13 @@ const GamesQuizzes = ({ isActive = false }) => {
         transition: 'background 0.5s ease-in-out'
       }}
     >
-      {/* Background Elements */}
+      {/* Professional 3D Styles for Games & Quizzes */}
+      <GamesQuizzes3DStyles />
+
+      {/* Container for new floating elements */}
+      <div className="games-floating-elements-container absolute inset-0 pointer-events-none z-0"></div>
+
+      {/* Background Elements - Keep existing ones if they serve a different purpose */}
       <div className="games-dust-container absolute inset-0 pointer-events-none z-0"></div>
       <div className="game-3d-container absolute inset-0 pointer-events-none z-0"></div>      {/* CSS Animations */}
       <style>{`

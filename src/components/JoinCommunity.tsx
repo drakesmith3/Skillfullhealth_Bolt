@@ -1,5 +1,4 @@
-
-import React, { useRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, Users, Briefcase, GraduationCap, MessageCircle } from "lucide-react";
@@ -10,7 +9,7 @@ const JoinCommunity = ({ isActive = false }) => {
   const { isDark } = useTheme();
 
   // Enhanced floating background particles and 3D elements animation
-  useEffect(() => {
+  /* useEffect(() => {
     if (!isActive) return;
 
     const createFloatingDust = () => {
@@ -102,7 +101,7 @@ const JoinCommunity = ({ isActive = false }) => {
       clearInterval(dustInterval);
       clearInterval(objectInterval);
     };
-  }, [isActive, isDark]);
+  }, [isActive, isDark]); */
   const roles = [
     {
       icon: <User className="h-8 w-8 text-red-600" />,
@@ -141,12 +140,12 @@ const JoinCommunity = ({ isActive = false }) => {
       }}
     >
       {/* Background Elements */}
-      <div className="community-dust-container absolute inset-0 pointer-events-none z-0"></div>
-      <div className="community-3d-container absolute inset-0 pointer-events-none z-0"></div>
+      {/* <div className="community-dust-container absolute inset-0 pointer-events-none z-0"></div> */}
+      {/* <div className="community-3d-container absolute inset-0 pointer-events-none z-0"></div> */}
 
       {/* CSS Animations */}
       <style>{`
-        @keyframes communityDustFloat {
+        /* @keyframes communityDustFloat {
           0% {
             transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.5);
             opacity: 0;
@@ -186,9 +185,9 @@ const JoinCommunity = ({ isActive = false }) => {
             transform: translateY(-45vh) translateX(-45px) rotateY(360deg) rotateX(240deg) scale(0.5);
             opacity: 0;
           }
-        }
+        } */
 
-        .community-3d-object {
+        /* .community-3d-object {
           filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6));
           transform-style: preserve-3d;
         }
@@ -223,7 +222,7 @@ const JoinCommunity = ({ isActive = false }) => {
         .floating-community-dust {
           filter: blur(0.8px);
           animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
-        }
+        } */
       `}</style>
 
       <div className="relative max-w-6xl mx-auto text-center z-10">
