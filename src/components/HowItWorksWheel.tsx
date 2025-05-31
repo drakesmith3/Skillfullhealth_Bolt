@@ -760,9 +760,10 @@ const HowItWorksWheel: React.FC<SectionProps> = ({ isActive, sectionName, scroll
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"                    style={{
-                      width: 'min(30px, 3.75vw)',
-                      height: 'min(30px, 3.75vw)',
+                    viewBox="0 0 24 24"
+                    style={{
+                      width: 30,
+                      height: 30,
                       fill: isDark ? "#D4AF37" : "#FFFFFF", // Light mode: White icon fill for contrast
                       filter: isDark
                         ? "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))"
@@ -1079,6 +1080,7 @@ const HowItWorksWheel: React.FC<SectionProps> = ({ isActive, sectionName, scroll
         @keyframes iconPulse {
           0%, 100% {
             transform: scale(1);
+
             filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.1)) brightness(1);
           }
           50% {
@@ -1505,7 +1507,7 @@ const HowItWorksWheel: React.FC<SectionProps> = ({ isActive, sectionName, scroll
             }
             
             .step-desc {
-              font-size: 13px !important;
+              fontSize: 13px !important;
             }
             
             .get-started-btn {
