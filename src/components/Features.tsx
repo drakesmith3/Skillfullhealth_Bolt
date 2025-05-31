@@ -142,10 +142,8 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
             minHeight: 'auto',
           }}
         >
-          {/* Reduced margin in className below*/}
-          <h3 className="text-md sm:text-lg text-amber-400 font-semibold mb-1 sm:mb-1">Interactive Book</h3>
-          <div 
-            className="w-full animated-book-container mb-2" // Keep a small bottom margin for the container itself
+          {/* Reduced margin in className below*/}          <h3 className="text-md sm:text-lg text-amber-400 font-semibold mb-1 sm:mb-1">Interactive Book</h3>          <div 
+            className="w-full animated-book-container mb-16" // Significantly increased bottom margin
             style={{
               position: 'relative',
               minHeight: 'min(400px, 60vh)', // Increased height for book container
@@ -154,12 +152,20 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
           >
             <AnimatedBook />
           </div>
-          {/* Ensure text is visible and has space */}
-          <p className={`text-center mt-3 max-w-md text-xs sm:text-sm ${ // Increased top margin for text
-            isDark ? 'text-gray-500' : 'text-gray-700'
-          }`}>
-            Click through our interactive book to explore the features available to each stakeholder group.
-          </p>
+          {/* Text positioned much further below the book to completely avoid overlap */}
+          <div className="w-full flex justify-center mt-16 px-4" style={{ marginTop: '4rem' }}>
+            <p className={`text-center max-w-md text-xs sm:text-sm ${ 
+              isDark ? 'text-gray-500' : 'text-gray-700'
+            }`}
+            style={{
+              position: 'relative',
+              zIndex: 10,
+              marginTop: '3rem', // Much larger additional margin
+              paddingTop: '2rem' // Extra padding at the top
+            }}>
+              Discover the core principles and opportunities within the GLOHSEN ecosystem. Each page unfolds a new dimension of our commitment to healthcare excellence.
+            </p>
+          </div>
         </div>
 
         {/* Right side: Stakeholder Tree with enhanced 3D design */}

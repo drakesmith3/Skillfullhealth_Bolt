@@ -99,13 +99,12 @@ const Sitemap: React.FC = () => {
         { name: 'KPI Dashboard', path: '/kpi-dashboard', description: 'Visual analytics and performance metrics' },
         { name: 'Analytics Dashboard', path: '/analytics', description: 'Comprehensive platform analytics and insights' }
       ]
-    },
-    {
+    },    {
       title: 'Financial Management',
       icon: DollarSign,
       pages: [
-        { name: 'Professional Wallet', path: '/wallet/professional', description: 'Earnings, transactions, and financial history' },
-        { name: 'Tutor Wallet', path: '/wallet/tutor', description: 'Teaching income and MLM commission tracking' },
+        { name: 'Professional Purse', path: '/wallet/professional', description: 'Earnings, transactions, and financial history' },
+        { name: 'Tutor Purse', path: '/wallet/tutor', description: 'Teaching income and MLM commission tracking' },
         { name: 'MLM System', path: '/mlm', description: 'Multi-level marketing referral management' },
         { name: 'Payment Processing', path: '/payments', description: 'Secure payment gateway and transactions' }
       ]
@@ -125,9 +124,8 @@ const Sitemap: React.FC = () => {
       icon: Globe,
       pages: [
         { name: 'Accessibility Tools', path: '/accessibility', description: 'WCAG-compliant accessibility features' },
-        { name: 'Security Center', path: '/security', description: 'Platform security and privacy settings' },
-        { name: 'Performance Monitoring', path: '/performance', description: 'Real-time performance analytics' },
-        { name: 'Quality Assurance', path: '/quality', description: 'Platform quality metrics and monitoring' }
+        { name: 'Security Center', path: '/security-center', description: 'Platform security and privacy settings' },
+        { name: 'Quality Assurance', path: '/quality-assurance', description: 'Platform quality metrics and monitoring' }
       ]
     },
     {
@@ -156,9 +154,9 @@ const Sitemap: React.FC = () => {
       title: 'Support & Feedback',
       icon: MessageCircle,
       pages: [
-        { name: 'General Feedback', path: '/feedback', description: 'Share platform experience and suggestions' },
-        { name: 'Help Center', path: '/help', description: 'Documentation and frequently asked questions' },
-        { name: 'Contact Support', path: '/support', description: 'Technical support and customer service' },
+        { name: 'General Feedback', path: '/general-feedback', description: 'Share platform experience and suggestions' },
+        { name: 'Help Center', path: '/faq', description: 'Documentation and frequently asked questions' },
+        { name: 'Contact Support', path: '/contact', description: 'Technical support and customer service' },
         { name: 'Feature Requests', path: '/feature-requests', description: 'Suggest new features and improvements' },
         { name: 'Bug Reports', path: '/bug-reports', description: 'Report technical issues and bugs' }
       ]
@@ -224,6 +222,33 @@ const Sitemap: React.FC = () => {
               </div>
             );
           })}
+        </div>
+
+        {/* Handbooks Section */}
+        <div className="mt-16 mb-12">
+          <h2 className="text-2xl font-bold mb-4 text-[#ea384c]">User Handbooks</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center">
+              <h3 className="text-lg font-semibold mb-2 text-[#d12e42]">Professional Handbook</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-3 text-center">A comprehensive guide for healthcare professionals on the GLOHSEN platform.</p>
+              <Link to="/ProfessionalsHandbook" className="px-4 py-2 bg-[#ea384c] text-white rounded hover:bg-[#d12e42]">View</Link>
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center">
+              <h3 className="text-lg font-semibold mb-2 text-[#d12e42]">Employer Handbook</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-3 text-center">A comprehensive guide for employers and organizations on the GLOHSEN platform.</p>
+              <Link to="/EmployersHandbook" className="px-4 py-2 bg-[#ea384c] text-white rounded hover:bg-[#d12e42]">View</Link>
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center">
+              <h3 className="text-lg font-semibold mb-2 text-[#d12e42]">Tutor Handbook</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-3 text-center">A comprehensive guide for tutors and creators on the GLOHSEN platform.</p>
+              <Link to="/TutorsHandbook" className="px-4 py-2 bg-[#ea384c] text-white rounded hover:bg-[#d12e42]">View</Link>
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center">
+              <h3 className="text-lg font-semibold mb-2 text-[#d12e42]">Student Handbook</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-3 text-center">A comprehensive guide for students and learners on the GLOHSEN platform.</p>
+              <Link to="/StudentsHandbook" className="px-4 py-2 bg-[#ea384c] text-white rounded hover:bg-[#d12e42]">View</Link>
+            </div>
+          </div>
         </div>
 
         <div className="mt-16 text-center">

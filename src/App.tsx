@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -39,6 +40,17 @@ import DashboardLayout, { UserType } from "./components/dashboard/DashboardLayou
 import SignedOutPage from "./pages/SignedOutPage";
 import MLMDashboard from "./components/dashboard/MLMDashboard";
 import MLMTreePage from "./pages/MLMTreePage";
+import ProfessionalsHandbook from './pages/ProfessionalsHandbook';
+import EmployersHandbook from './pages/EmployersHandbook';
+import TutorsHandbook from './pages/TutorsHandbook';
+import StudentsHandbook from './pages/StudentsHandbook';
+import FAQPage from "./pages/FAQ";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookieSettings from "./pages/CookieSettings";
+import RefundPolicy from "./pages/RefundPolicy";
+import AccessibilityStatement from "./pages/AccessibilityStatement";
+import Support from "./pages/Support";
 
 // Helper functions to interact with localStorage
 const isAuthenticated = (): boolean => {
@@ -204,6 +216,18 @@ function App() {
                   <Route path="/quizzes" element={<MedicalGamesQuizzes />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/feedback" element={<GeneralFeedbackForm />} />
+                  <Route path="/ProfessionalsHandbook" element={<ProfessionalsHandbook />} />
+                  <Route path="/EmployersHandbook" element={<EmployersHandbook />} />
+                  <Route path="/TutorsHandbook" element={<TutorsHandbook />} />
+                  <Route path="/StudentsHandbook" element={<StudentsHandbook />} />
+                  <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="/cookie-settings" element={<CookieSettings />} />
+                  <Route path="/refund-policy" element={<RefundPolicy />} />
+                  <Route path="/accessibility" element={<AccessibilityStatement />} />
+                  <Route path="/support" element={<Support />} />
+                  <Route path="/general-feedback" element={<GeneralFeedbackForm />} />
                 </Route>                {/* Authenticated Routes - Always have sidebar */}
                 <Route element={<AuthenticatedLayout />}>
                   <Route path="/professional-dashboard" element={<DashboardPage />} />

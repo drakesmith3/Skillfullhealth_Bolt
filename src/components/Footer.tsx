@@ -172,8 +172,8 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
           <p className={`mt-2 text-center bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text ${fontSizes.headerSubtitle}`}>
             Your GLOHSEN story just began.          </p>
         </div>
-      </div>      <div className="w-full max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 text-left">        {/* Column 1: Logo & Tagline */}
-        <div className="flex flex-col items-center md:items-start space-y-2">
+      </div>      <div className="w-full max-w-screen-2xl mx-auto px-16 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-16 text-left">        {/* Each column below gets extra spacing and separation for a professional look */}
+        <div className="flex flex-col items-center md:items-start space-y-3 px-4 min-w-[210px] md:mr-8">
           <Link to="/" aria-label="GLOHSEN Home" className="mb-1">
             <div className="w-12 h-12 rounded-full bg-black shadow-lg flex items-center justify-center border-2 border-[#F9D75D]">
               <span className={`font-bold text-[#F9D75D] tracking-widest ${fontSizes.logoText}`}>G</span>
@@ -199,8 +199,7 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
             </a>
           </div>
         </div>
-          {/* Column 2: Quick Links */}
-        <div className="flex flex-col space-y-3">
+        <div className="flex flex-col space-y-4 px-4 md:ml-4 flex-[1.5]">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Quick Links</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
             <li><Link to="/" className="hover:text-[#ea384c] transition-colors font-medium">Home</Link></li>
             <li><Link to="/blog" className="hover:text-[#ea384c] transition-colors font-medium">Blog</Link></li>
@@ -209,17 +208,16 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
             <li><Link to="/games-quizzes" className="hover:text-[#ea384c] transition-colors font-medium">Games & Quizzes</Link></li>
             <li><Link to="/courses" className="hover:text-[#ea384c] transition-colors font-medium">Courses</Link></li>
           </ul>
-        </div>        {/* Column 3: Contact */}
-        <div className="flex flex-col space-y-3">
+        </div>
+        <div className="flex flex-col space-y-4 px-4">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Contact</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
-            <li><Link to="/contact" className="hover:text-[#ea384c] transition-colors font-medium">Contact Us</Link></li>
+            <li><Link to="/contact-us" className="hover:text-[#ea384c] transition-colors font-medium">Contact Us</Link></li>
             <li><Link to="/about-us" className="hover:text-[#ea384c] transition-colors font-medium">About Us</Link></li>
-            <li><Link to="/help" className="hover:text-[#ea384c] transition-colors font-medium">Support</Link></li>
+            <li><Link to="/support" className="hover:text-[#ea384c] transition-colors font-medium">Support</Link></li>
             <li><Link to="/faq" className="hover:text-[#ea384c] transition-colors font-medium">FAQ</Link></li>
           </ul>
         </div>
-          {/* Column 4: Legal */}
-        <div className="flex flex-col space-y-3">
+        <div className="flex flex-col space-y-4 px-4">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Legal</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
             <li><Link to="/privacy-policy" className="hover:text-[#ea384c] transition-colors font-medium">Privacy Policy</Link></li>
             <li><Link to="/terms-of-service" className="hover:text-[#ea384c] transition-colors font-medium">Terms of Service</Link></li>
@@ -228,31 +226,43 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
             <li><Link to="/accessibility" className="hover:text-[#ea384c] transition-colors font-medium">Accessibility</Link></li>
           </ul>
         </div>
-          {/* Column 5: Subscribe for Updates */}
-        <div className="flex flex-col space-y-3">
-          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Subscribe for Updates</h5>          <div className={`text-gray-300 ${fontSizes.bodyText} mb-1`}>
+        <div className="flex flex-col space-y-4 px-4 flex-[1.5]">
+          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Handbooks</h5>
+          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
+            <li><Link to="/ProfessionalsHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Professional Handbook</Link></li>
+            <li><Link to="/EmployersHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Employer Handbook</Link></li>
+            <li><Link to="/TutorsHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Tutor Handbook</Link></li>
+            <li><Link to="/StudentsHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Student Handbook</Link></li>
+          </ul>
+        </div>
+        <div className="flex flex-col space-y-2 px-22 flex-[2.3]">
+          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Subscribe for Updates</h5>
+          <div className={`text-gray-300 ${fontSizes.bodyText} mb-1`}>
             <p>Stay updated with the latest healthcare trends, stories and opportunities.</p>
           </div>
-          <div className="flex flex-col gap-2 w-full">            <input 
-              type="email" 
-              placeholder="Your email address" 
-              className={`px-3 py-2 rounded-md border border-[#444] bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-[#F9D75D] w-full placeholder-gray-500 ${fontSizes.bodyText}`}
+          <div className="flex flex-col gap-3 w-full items-center">
+            <input
+              type="email"
+              placeholder="Your email address"
+              className={`px-3 py-1 rounded-md border border-[#444] bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-[#F9D75D] w-[1360px] max-w-full mx-auto placeholder-gray-500 ${fontSizes.bodyText}`}
             />
-            <Button className={`bg-[#ea384c] hover:bg-[#c4293b] text-white px-4 py-2 w-full font-semibold tracking-wide ${fontSizes.buttonText} rounded-md`}>
+            <Button className={`bg-[#ea384c] hover:bg-[#c4293b] text-white px-6 py-4 w-[100px] max-w-full mx-auto font-semibold tracking-wide ${fontSizes.buttonText} rounded-md`}>
               SUBSCRIBE
             </Button>
           </div>
         </div>
-          {/* Column 6: Feedback */}
-        <div className="flex flex-col space-y-3">
+        <div className="flex flex-col space-y-4 px-4">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Feedback</h5>          <div className={`text-gray-300 ${fontSizes.bodyText} mb-1`}>
             <p>Because Your Opinions and Feelings Count...</p>
           </div>
-          <div className="flex flex-col gap-2 w-full">            <Link to="/general-feedback" className="w-full flex justify-center">              <Button className={`bg-[#F9D75D] hover:bg-[#ea384c] text-black hover:text-white px-8 py-4 w-full min-w-[180px] max-w-[220px] font-semibold tracking-wide ${fontSizes.buttonText} rounded-md transition-colors whitespace-nowrap`}>
+          <div className="flex flex-col gap-2 w-full">            <Link to="/general-feedback" className="w-full flex justify-center">              <Button className={`bg-[#F9D75D] hover:bg-[#ea384c] text-black hover:text-white px-8 py-4 w-full min-w-[145px] max-w-[155px] font-semibold tracking-wide ${fontSizes.buttonText} rounded-md transition-colors whitespace-nowrap`}>
                 LEAVE A FEEDBACK
               </Button>
             </Link>
           </div>
+        </div>
+        <div className="flex flex-col space-y-4 px-4">
+          {/* ...(Optional future column, currently empty for spacing)... */}
         </div>
       </div>        {/* Bottom: Copyright & Socials */}
       <div className="w-full border-t border-[#333] mt-4">
