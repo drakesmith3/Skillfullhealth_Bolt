@@ -139,22 +139,23 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
             opacity: 1, 
             visibility: 'visible',
             position: 'relative',
-            minHeight: 'auto' // Allow content to define height
+            minHeight: 'auto',
           }}
         >
           {/* Reduced margin in className below*/}
           <h3 className="text-md sm:text-lg text-amber-400 font-semibold mb-1 sm:mb-1">Interactive Book</h3>
           <div 
-            className="w-full animated-book-container mb-4" // Increased bottom margin to mb-4
+            className="w-full animated-book-container mb-2" // Keep a small bottom margin for the container itself
             style={{
               position: 'relative',
-              minHeight: 'min(300px, 50vh)', 
-              height: 'min(300px, 50vh)' // Reduced height
+              minHeight: 'min(400px, 60vh)', // Increased height for book container
+              height: 'min(400px, 60vh)'    // Increased height for book container
             }}
           >
             <AnimatedBook />
           </div>
-          <p className={`text-center mt-2 max-w-md text-xs sm:text-sm ${ // Increased top margin to mt-2
+          {/* Ensure text is visible and has space */}
+          <p className={`text-center mt-3 max-w-md text-xs sm:text-sm ${ // Increased top margin for text
             isDark ? 'text-gray-500' : 'text-gray-700'
           }`}>
             Click through our interactive book to explore the features available to each stakeholder group.
@@ -162,7 +163,6 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
         </div>
 
         {/* Right side: Stakeholder Tree with enhanced 3D design */}
-        {/* Reduced padding in className below*/}
         <div 
           className={`features-card-3d flex flex-col items-center ${
             activeTab === 'book' ? 'hidden lg:flex' : 'flex'
@@ -171,23 +171,23 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
             opacity: 1,
             visibility: 'visible',
             position: 'relative',
-            minHeight: 'auto' // Allow content to define height
+            minHeight: 'auto' 
           }}
         >
-          {/* Reduced margin in className below*/}
           <h3 className="text-md sm:text-lg text-amber-400 font-semibold mb-1 sm:mb-1">Stakeholder Relationship Tree</h3>
           <div 
-            className="w-full stakeholder-tree-container mb-4" // Increased bottom margin to mb-4
+            className="w-full stakeholder-tree-container mb-2" // Keep a small bottom margin for the container itself
             style={{ 
               position: 'relative',
               overflow: 'visible',
-              minHeight: 'min(300px, 50vh)', 
-              height: 'min(300px, 50vh)' // Reduced height
+              minHeight: 'min(550px, 75vh)', // Significantly increased height for tree container
+              height: 'min(550px, 75vh)'    // Significantly increased height for tree container
             }}
           >
             <StakeholderTree />
           </div>
-          <p className={`text-center mt-2 max-w-md text-xs sm:text-sm ${ // Increased top margin to mt-2
+          {/* Ensure text is visible and has space */}
+          <p className={`text-center mt-3 max-w-md text-xs sm:text-sm ${ // Increased top margin for text
             isDark ? 'text-gray-300' : 'text-gray-700'
           }`}>
             <span className="hidden md:inline">Hover over</span>
