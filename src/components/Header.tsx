@@ -161,18 +161,22 @@ const Header: React.FC<HeaderProps> = ({ isActive, scrollToSection }) => {
       {/* Top Bar for Logo and Navigation */}
       <div 
         ref={topBarRef}
-        className="absolute top-0 left-0 right-0 z-20 p-4 md:p-6 flex justify-between items-center opacity-0 transform -translate-y-5"
-      >        {/* Logo (3D Hyper-Realistic Rotating Earth) */}
-        <Link to="/" aria-label="GLOHSEN Home">
+        className="absolute top-0 left-0 right-0 z-20 p-3 sm:p-4 md:p-6 flex flex-col sm:flex-row justify-between items-center opacity-0 transform -translate-y-5 gap-3 sm:gap-0"
+      >
+        {/* Logo (3D Hyper-Realistic Rotating Earth) */}
+        <Link to="/" aria-label="GLOHSEN Home" className="flex-shrink-0">
           <Logo3DHyperRealistic size={56} className="flex-shrink-0" />
-        </Link>{/* Navigation Buttons */}
-        <nav className="space-x-3 md:space-x-4">          <Link to="/about-us" className={goldButtonClasses}>ABOUT US</Link>
-          <Link to="/signin" className={goldButtonClasses}>SIGN IN</Link>
-          <Link to="/signup" className={goldButtonClasses}>SIGN UP</Link>
-          <Link to="/feedback" className={goldButtonClasses}>LEAVE FEEDBACK</Link>
+        </Link>
+
+        {/* Navigation Buttons */}
+        <nav className="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-3 md:gap-4 max-w-full">
+          <Link to="/about-us" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`}>ABOUT US</Link>
+          <Link to="/signin" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`}>SIGN IN</Link>
+          <Link to="/signup" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`}>SIGN UP</Link>
+          <Link to="/feedback" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`}>LEAVE FEEDBACK</Link>
           <Link 
             to="/games-quizzes" 
-            className="bg-[#FFD700] text-black px-5 py-2.5 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-sm"
+            className="bg-[#FFD700] text-black px-3 py-2 sm:px-4 md:px-5 md:py-2.5 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-xs sm:text-sm"
           >
             GAMES & QUIZZES
           </Link>
@@ -180,11 +184,13 @@ const Header: React.FC<HeaderProps> = ({ isActive, scrollToSection }) => {
       </div>
 
       {/* Main Content (Centered) */}
-      <div ref={contentRef} className="relative z-10 flex flex-col items-center space-y-6 md:space-y-8 opacity-0 px-4">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tight animated-shine-text metallic-gold-text">
-          <span className="micro-interact animated-shine-text metallic-gold-text" style={{display:'inline-block'}}>WELCOME TO GLOHSEN:</span><br className="md:hidden"/> <span className="micro-interact animated-shine-text metallic-gold-text" style={{display:'inline-block'}}>YOUR STORY BEGINS HERE</span>
+      <div ref={contentRef} className="relative z-10 flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 opacity-0 px-4 max-w-7xl mx-auto">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight animated-shine-text metallic-gold-text text-center">
+          <span className="micro-interact animated-shine-text metallic-gold-text block sm:inline">WELCOME TO GLOHSEN:</span>
+          <br className="hidden sm:block"/> 
+          <span className="micro-interact animated-shine-text metallic-gold-text block sm:inline">YOUR STORY BEGINS HERE</span>
         </h1>
-        <p className="text-lg sm:text-xl md:text-2xl text-gray-300 dark:text-gray-200 max-w-xl md:max-w-2xl leading-relaxed md:leading-loose micro-interact">
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 dark:text-gray-200 max-w-sm sm:max-w-xl md:max-w-2xl leading-relaxed md:leading-loose micro-interact text-center">
           Embark on a Journey of Fun & Transformation with GLOHSEN.
           Scroll to explore what awaits.
         </p>        {/* Make the bounce container clickable */}

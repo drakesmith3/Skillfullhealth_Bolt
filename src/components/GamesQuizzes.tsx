@@ -248,11 +248,10 @@ const GamesQuizzes = ({ isActive = false }) => {
       image: "https://images.unsplash.com/photo-1473091534298-04dcbce3278c?auto=format&fit=crop&w=500&q=80",
       color: "from-blue-500 to-blue-600"
     }
-  ];
-  return (
+  ];  return (
     <div 
       ref={containerRef}
-      className="w-full h-full relative flex flex-col justify-center items-center p-4 md:p-8 overflow-hidden"
+      className="w-full h-full relative flex flex-col justify-center items-center p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden min-h-screen"
       style={{
         background: isDark 
           ? 'linear-gradient(135deg, #1a0a0a 0%, #2d1515 25%, #1f1611 50%, #0a0a0a 75%, #1a0a0a 100%)'
@@ -348,23 +347,23 @@ const GamesQuizzes = ({ isActive = false }) => {
           filter: blur(0.7px);
           animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
-      `}</style>
-
-      <h2 
+      `}</style>      <h2 
         ref={titleRef}
-        className={`text-3xl md:text-4xl font-bold mb-10 text-center z-10 relative ${isDark ? 'text-white' : 'text-gray-800'}`}
+        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center z-10 relative px-2 sm:px-4"
       >
-        Games & Quizzes
-      </h2>      
-      <Carousel className="w-full max-w-5xl z-10 relative">
+        <span className="bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
+          GAMES & QUIZZES
+        </span>
+      </h2>
+      <Carousel className="w-full max-w-5xl z-10 relative px-2 sm:px-4">
         <CarouselContent>
           {games.map((game, index) => (
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-              <div className="p-2">
+              <div className="p-1 sm:p-2">
                 <Card className={`border-0 overflow-hidden transition-all duration-300 cursor-pointer h-full shadow-xl hover:shadow-2xl ${
                   isDark ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
                 }`}>
-                  <div className="relative h-48">
+                  <div className="relative h-40 sm:h-48">
                     <div className={`absolute inset-0 bg-gradient-to-b ${game.color} opacity-60`}></div>
                     <img 
                       src={game.image}
@@ -373,15 +372,15 @@ const GamesQuizzes = ({ isActive = false }) => {
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Button 
-                        className="rounded-full w-12 h-12 p-0 bg-white text-gray-800 hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+                        className="rounded-full w-10 h-10 sm:w-12 sm:h-12 p-0 bg-white text-gray-800 hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
                       >
-                        <Play className="h-6 w-6 ml-1" />
+                        <Play className="h-4 w-4 sm:h-6 sm:w-6 ml-1" />
                       </Button>
                     </div>
                   </div>
-                  <CardContent className="p-4">
-                    <h3 className={`text-xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>{game.title}</h3>
-                    <p className={`text-sm mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{game.description}</p>
+                  <CardContent className="p-3 sm:p-4">
+                    <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>{game.title}</h3>
+                    <p className={`text-xs sm:text-sm mb-3 sm:mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{game.description}</p>
                     <div className="flex items-center justify-between">
                       <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>4.8 ★★★★★</span>
                       <span className={`text-xs px-2 py-1 rounded ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'}`}>Educational</span>
@@ -392,17 +391,17 @@ const GamesQuizzes = ({ isActive = false }) => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <div className="flex justify-center mt-6">
-          <CarouselPrevious className="relative -left-0 mr-4" />
+        <div className="flex justify-center mt-4 sm:mt-6">
+          <CarouselPrevious className="relative -left-0 mr-2 sm:mr-4" />
           <CarouselNext className="relative -right-0" />
         </div>
       </Carousel>
       
-      <div className="mt-10 max-w-md text-center z-10 relative">
-        <p className={`mb-6 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+      <div className="mt-6 sm:mt-8 lg:mt-10 max-w-md text-center z-10 relative px-2 sm:px-4">
+        <p className={`mb-4 sm:mb-6 text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
           Our gamified learning experiences make complex medical concepts easy to understand and remember.
         </p>
-        <Button className={`transition-all duration-300 shadow-lg hover:shadow-xl ${
+        <Button className={`transition-all duration-300 shadow-lg hover:shadow-xl px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base ${
           isDark ? 'bg-white text-gray-800 hover:bg-gray-100' : 'bg-red-600 text-white hover:bg-red-700'
         }`}>
           Explore All Games

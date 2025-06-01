@@ -142,11 +142,10 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
       scrollToSection(0); // Scroll to the first section (Header)
     }
   };
-
   // Determine container classes based on whether this is the home page
   const containerClasses = isHomePage && isActive 
-    ? "fixed inset-0 w-screen h-screen flex flex-col justify-center items-center text-center p-0 overflow-hidden antialiased bg-black text-white z-[60]"
-    : "relative w-full min-h-[36vh] flex flex-col justify-center items-center text-center p-0 overflow-hidden antialiased bg-black text-white";
+    ? "fixed inset-0 w-screen h-screen flex flex-col justify-start items-center text-center p-4 overflow-y-auto antialiased bg-black text-white z-[60]"
+    : "relative w-full min-h-[36vh] flex flex-col justify-center items-center text-center p-4 overflow-hidden antialiased bg-black text-white";
 
   const baseClasses = "flex flex-col justify-center items-center bg-black text-white dark:bg-black dark:text-gray-100 overflow-hidden transition-opacity duration-500";
   const initializedClass = isInitialized ? 'opacity-100' : 'opacity-0';  return (
@@ -162,18 +161,17 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
     >
       {/* Return to Top Button */}
       {scrollToSection && <ReturnToTopButton scrollToSection={scrollToSection} />}
-      
-      {/* Footer Header Message */}
+        {/* Footer Header Message */}
       <div className="w-full py-4 relative z-10">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className={`font-bold text-center animated-shine-text metallic-gold-text ${fontSizes.headerTitle}`}>
             THE HEALTHCARE STORY DOES NOT END HERE...
           </h2>
           <p className={`mt-2 text-center bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text ${fontSizes.headerSubtitle}`}>
             Your GLOHSEN story just began.          </p>
         </div>
-      </div>      <div className="w-full max-w-screen-2xl mx-auto px-16 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-16 text-left">        {/* Each column below gets extra spacing and separation for a professional look */}
-        <div className="flex flex-col items-center md:items-start space-y-3 px-4 min-w-[210px] md:mr-8">
+      </div>      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6 text-left">{/* Each column below gets extra spacing and separation for a professional look */}
+        <div className="flex flex-col items-center sm:items-start space-y-3 col-span-1">
           <Link to="/" aria-label="GLOHSEN Home" className="mb-1">
             <div className="w-12 h-12 rounded-full bg-black shadow-lg flex items-center justify-center border-2 border-[#F9D75D]">
               <span className={`font-bold text-[#F9D75D] tracking-widest ${fontSizes.logoText}`}>G</span>
@@ -199,7 +197,7 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
             </a>
           </div>
         </div>
-        <div className="flex flex-col space-y-4 px-4 md:ml-4 flex-[1.5]">
+        <div className="flex flex-col space-y-4 col-span-1">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Quick Links</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
             <li><Link to="/" className="hover:text-[#ea384c] transition-colors font-medium">Home</Link></li>
             <li><Link to="/blog" className="hover:text-[#ea384c] transition-colors font-medium">Blog</Link></li>
@@ -209,7 +207,7 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
             <li><Link to="/courses" className="hover:text-[#ea384c] transition-colors font-medium">Courses</Link></li>
           </ul>
         </div>
-        <div className="flex flex-col space-y-4 px-4">
+        <div className="flex flex-col space-y-4 col-span-1">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Contact</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
             <li><Link to="/contact-us" className="hover:text-[#ea384c] transition-colors font-medium">Contact Us</Link></li>
             <li><Link to="/about-us" className="hover:text-[#ea384c] transition-colors font-medium">About Us</Link></li>
@@ -217,7 +215,7 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
             <li><Link to="/faq" className="hover:text-[#ea384c] transition-colors font-medium">FAQ</Link></li>
           </ul>
         </div>
-        <div className="flex flex-col space-y-4 px-4">
+        <div className="flex flex-col space-y-4 col-span-1">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Legal</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
             <li><Link to="/privacy-policy" className="hover:text-[#ea384c] transition-colors font-medium">Privacy Policy</Link></li>
             <li><Link to="/terms-of-service" className="hover:text-[#ea384c] transition-colors font-medium">Terms of Service</Link></li>
@@ -226,7 +224,7 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
             <li><Link to="/accessibility" className="hover:text-[#ea384c] transition-colors font-medium">Accessibility</Link></li>
           </ul>
         </div>
-        <div className="flex flex-col space-y-4 px-4 flex-[1.5]">
+        <div className="flex flex-col space-y-4 col-span-1">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Handbooks</h5>
           <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
             <li><Link to="/ProfessionalsHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Professional Handbook</Link></li>
@@ -234,39 +232,49 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
             <li><Link to="/TutorsHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Tutor Handbook</Link></li>
             <li><Link to="/StudentsHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Student Handbook</Link></li>
           </ul>
-        </div>
-        <div className="flex flex-col space-y-2 px-22 flex-[2.3]">
+        </div>        <div className="flex flex-col space-y-4 col-span-1">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Subscribe for Updates</h5>
-          <div className={`text-gray-300 ${fontSizes.bodyText} mb-1`}>
+          <div className={`text-gray-300 ${fontSizes.bodyText} mb-2`}>
             <p>Stay updated with the latest healthcare trends, stories and opportunities.</p>
           </div>
-          <div className="flex flex-col gap-3 w-full items-center">
+          <div className="flex flex-col gap-3 w-full">
             <input
               type="email"
               placeholder="Your email address"
-              className={`px-3 py-1 rounded-md border border-[#444] bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-[#F9D75D] w-[1360px] max-w-full mx-auto placeholder-gray-500 ${fontSizes.bodyText}`}
+              className={`px-3 py-2 rounded-md border border-[#444] bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-[#F9D75D] w-full placeholder-gray-500 ${fontSizes.bodyText}`}
             />
-            <Button className={`bg-[#ea384c] hover:bg-[#c4293b] text-white px-6 py-4 w-[100px] max-w-full mx-auto font-semibold tracking-wide ${fontSizes.buttonText} rounded-md`}>
+            <Button className={`bg-[#ea384c] hover:bg-[#c4293b] text-white px-4 py-2 w-full font-semibold tracking-wide ${fontSizes.buttonText} rounded-md`}>
               SUBSCRIBE
             </Button>
           </div>
         </div>
-        <div className="flex flex-col space-y-4 px-4">
-          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Feedback</h5>          <div className={`text-gray-300 ${fontSizes.bodyText} mb-1`}>
+        <div className="flex flex-col space-y-4 col-span-1">
+          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Feedback</h5>
+          <div className={`text-gray-300 ${fontSizes.bodyText} mb-2`}>
             <p>Because Your Opinions and Feelings Count...</p>
-          </div>
-          <div className="flex flex-col gap-2 w-full">            <Link to="/general-feedback" className="w-full flex justify-center">              <Button className={`bg-[#F9D75D] hover:bg-[#ea384c] text-black hover:text-white px-8 py-4 w-full min-w-[145px] max-w-[155px] font-semibold tracking-wide ${fontSizes.buttonText} rounded-md transition-colors whitespace-nowrap`}>
+          </div>          <div className="flex flex-col gap-2 w-full">
+            <Link to="/general-feedback" className="w-full block">
+              <Button 
+                className="bg-[#F9D75D] hover:bg-[#ea384c] text-black hover:text-white w-full font-semibold tracking-wide rounded-md transition-colors"
+                style={{ 
+                  padding: '12px 8px', 
+                  fontSize: isHomePage ? '0.9rem' : '0.8rem',
+                  minWidth: '100%',
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  whiteSpace: 'nowrap'
+                }}
+              >
                 LEAVE A FEEDBACK
               </Button>
             </Link>
           </div>
         </div>
-        <div className="flex flex-col space-y-4 px-4">
-          {/* ...(Optional future column, currently empty for spacing)... */}
-        </div>
       </div>        {/* Bottom: Copyright & Socials */}
       <div className="w-full border-t border-[#333] mt-4">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
           <span className={`text-gray-500 ${fontSizes.copyrightText}`}>&copy; {new Date().getFullYear()} GLOHSEN. All rights reserved.</span>
             <div className={`flex items-center gap-4 ${fontSizes.bodyText} text-gray-500`}>
             <Link to="/sitemap" className="hover:text-[#F9D75D] transition-colors">Sitemap</Link>

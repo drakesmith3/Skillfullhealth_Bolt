@@ -130,16 +130,16 @@ const TutorsAdvisers = ({ isActive = false }) => {
   //   for (let i = 0; i < 5; i++) {
   //     setTimeout(createEducationObject, i * 700);
   //   }
-
   //   return () => {
   //     clearInterval(dustInterval);
   //     clearInterval(objectInterval);
   //   };
   // }, [isActive, isDark]);
+
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full relative flex flex-col items-center justify-center p-4 md:p-8 overflow-hidden"
+      className="w-full h-full relative flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden min-h-screen"
       style={{
         background: isDark 
           ? 'linear-gradient(135deg, #1a0a0a 0%, #2d1515 25%, #1f1611 50%, #0a0a0a 75%, #1a0a0a 100%)'
@@ -230,28 +230,28 @@ const TutorsAdvisers = ({ isActive = false }) => {
           filter: blur(0.6px);
           animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
         } */
-      `}</style>
-
-      <h2 className={`text-3xl md:text-4xl font-bold mb-10 text-center z-10 relative ${isDark ? 'text-white' : 'text-gray-800'}`}>
-        Empowering Tutors & Students
-      </h2>      
-      <div className="w-full max-w-6xl flex flex-col md:flex-row items-center justify-center gap-8 z-10 relative">
-        <div className="relative w-full md:w-2/3 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12">
+      `}</style>      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center z-10 relative px-2 sm:px-4">
+        <span className="bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
+          TUTORS & ADVISERS
+        </span>
+      </h2>
+      <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 z-10 relative px-2 sm:px-4">
+        <div className="relative w-full lg:w-2/3 flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12">
           {/* Tutor */}
           <div ref={tutorRef} className="relative">
-            <div className="bg-white p-3 rounded-full shadow-xl z-10">
+            <div className="bg-white p-2 sm:p-3 rounded-full shadow-xl z-10">
               <img 
                 src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=300&q=80" 
                 alt="Professor teaching" 
-                className="w-40 h-40 object-cover rounded-full"
+                className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-full"
               />
             </div>
-            <div className="absolute top-0 right-0 bg-amber-500 text-white text-sm font-medium px-2 py-1 rounded-full shadow-md z-20">
+            <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs sm:text-sm font-medium px-2 py-1 rounded-full shadow-md z-20">
               Tutor Z
             </div>
             <div className="absolute -bottom-2 -right-2 flex">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                <Star key={star} className="h-3 w-3 sm:h-4 sm:w-4 fill-amber-400 text-amber-400" />
               ))}
             </div>
           </div>
@@ -259,43 +259,43 @@ const TutorsAdvisers = ({ isActive = false }) => {
           {/* Connection Arrow */}
           <div 
             ref={arrowRef}
-            className="hidden md:block w-20 h-4 bg-red-600 shadow-lg"
+            className="hidden lg:block w-16 xl:w-20 h-3 sm:h-4 bg-red-600 shadow-lg"
           ></div>
           
           {/* Student */}
-          <div ref={studentRef} className="relative mt-8 md:mt-0">
-            <div className="bg-white p-3 rounded-full shadow-xl z-10">
+          <div ref={studentRef} className="relative">
+            <div className="bg-white p-2 sm:p-3 rounded-full shadow-xl z-10">
               <img 
                 src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=300&q=80" 
                 alt="Nursing student" 
-                className="w-40 h-40 object-cover rounded-full"
+                className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-full"
               />
             </div>
-            <div className="absolute top-0 right-0 bg-red-600 text-white text-sm font-medium px-2 py-1 rounded-full shadow-md z-20">
+            <div className="absolute top-0 right-0 bg-red-600 text-white text-xs sm:text-sm font-medium px-2 py-1 rounded-full shadow-md z-20">
               Student A
             </div>
-            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md text-sm text-gray-700 whitespace-nowrap">
+            <div className="absolute -bottom-3 sm:-bottom-4 left-1/2 transform -translate-x-1/2 bg-white px-2 sm:px-3 py-1 rounded-full shadow-md text-xs sm:text-sm text-gray-700 whitespace-nowrap">
               Nursing Student
             </div>
           </div>
         </div>
         
-        <div ref={contentRef} className="w-full md:w-1/3 mt-8 md:mt-0">
-          <h3 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>The Clotting Cascade Course</h3>
+        <div ref={contentRef} className="w-full lg:w-1/3 mt-6 lg:mt-0 px-2 sm:px-4">
+          <h3 className={`text-lg sm:text-xl lg:text-2xl font-bold mb-3 sm:mb-4 text-center lg:text-left ${isDark ? 'text-white' : 'text-gray-800'}`}>The Clotting Cascade Course</h3>
           
-          <p className={`mb-6 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`mb-4 sm:mb-6 text-sm sm:text-base text-center lg:text-left ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
             Student A was struggling with understanding the blood clotting process. Through GLOHSEN, she connected with Tutor Z, who specializes in Nursing Physiology.
           </p>
           
-          <div className={`border-l-4 border-amber-500 p-4 mb-6 ${isDark ? 'bg-amber-900/20' : 'bg-amber-50'}`}>
-            <p className={`italic ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+          <div className={`border-l-4 border-amber-500 p-3 sm:p-4 mb-4 sm:mb-6 ${isDark ? 'bg-amber-900/20' : 'bg-amber-50'}`}>
+            <p className={`italic text-sm sm:text-base ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
               "The interactive CLOTQUEST game made understanding the complex clotting cascade simple and fun!"
             </p>
-            <p className={`text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>- Student A</p>
+            <p className={`text-xs sm:text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>- Student A</p>
           </div>
           
-          <Button className="bg-amber-500 hover:bg-amber-600 w-full shadow-lg transition-all duration-300 hover:shadow-xl">
-            <GraduationCap className="mr-2" />
+          <Button className="bg-amber-500 hover:bg-amber-600 w-full shadow-lg transition-all duration-300 hover:shadow-xl py-2 sm:py-3 text-sm sm:text-base">
+            <GraduationCap className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
             Explore Courses
           </Button>
         </div>

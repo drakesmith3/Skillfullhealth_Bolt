@@ -49,6 +49,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookieSettings from "./pages/CookieSettings";
 import RefundPolicy from "./pages/RefundPolicy";
+import Testimonials from "./pages/Testimonials";
 import AccessibilityStatement from "./pages/AccessibilityStatement";
 import Support from "./pages/Support";
 
@@ -183,10 +184,10 @@ function App() {
           <GlohsenScoreProvider>
             <Router>
               <Routes>
-                {/* Fully Public Routes - No sidebar */}
-                <Route path="/" element={<Home />} />
+                {/* Fully Public Routes - No sidebar */}                <Route path="/" element={<Home />} />
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/contact-us" element={<ContactUs />} />
+                <Route path="/testimonials" element={<Testimonials />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/signin" element={<SignInPage />} />
                 <Route path="/login" element={<SignInPage />} />

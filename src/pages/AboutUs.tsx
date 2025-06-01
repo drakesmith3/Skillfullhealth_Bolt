@@ -18,19 +18,19 @@ const teamMembers = [
   {
     name: "Dr. Olusiji Olawumi",
     role: "Founder & CEO",
-    image: "/lovable-uploads/efbf957b-a127-4121-86b8-51528f7983af.png",
+    image: "/efbf957b-a127-4121-86b8-51528f7983af.png",
     bio: "Visionary leader, medical doctor, and digital transformation advocate. Passionate about empowering African professionals through technology and education."
   },
   {
     name: "C Wizard",
     role: "Chief Technology Officer",
-    image: "/lovable-uploads/c96b664a-9865-407e-b314-656ff3ecc937.png",
+    image: "/c96b664a-9865-407e-b314-656ff3ecc937.png",
     bio: "Full-stack engineer and AI enthusiast, driving the technical vision and product innovation for the GLOHSEN platform."
   },
   {
     name: "Olufemi Agbaje",
     role: "Head of Product & Partnerships",
-    image: "/lovable-uploads/592ef409-e389-494f-a557-6179279a4414.png",
+    image: "/592ef409-e389-494f-a557-6179279a4414.png",
     bio: "Product strategist and partnership builder, connecting GLOHSEN with key stakeholders across Africa."
   },
   // Add more team members as needed
@@ -116,7 +116,7 @@ const timeline = [
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-5xl font-bold mb-6">About GLOHSEN</h1>
             <p className="text-xl max-w-3xl mx-auto leading-relaxed">
-              Transforming healthcare delivery through innovative technology, 
+              Transforming healthcare delivery through Clinet-driven Feedback, innovative technology, 
               connecting qualified professionals with opportunities worldwide.
             </p>
           </div>
@@ -258,7 +258,7 @@ const timeline = [
             </div>
             
            <section className="mb-16">
-        <h2 className="text-2xl font-bold mb-6 text-primary-dark text-center">Our Journey: 10-Year Timeline</h2>
+        <h2 className="text-2xl font-bold mb-6 text-primary-dark text-center">Our Journey: 5-Year Timeline</h2>
         <div className="flex flex-col items-center">
           <div className="relative w-full max-w-3xl flex flex-col items-center">
             <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#D4AF37] to-[#F5F5F5] z-0" style={{transform:'translateX(-50%)'}}></div>

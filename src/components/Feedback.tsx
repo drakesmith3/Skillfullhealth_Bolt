@@ -133,13 +133,13 @@ const Feedback = ({ isActive = false }) => {
   //   // }
 
   //   // return () => {
-  //   //   clearInterval(dustInterval);
-  //   //   clearInterval(objectInterval);
+  //   //   clearInterval(dustInterval);  //   //   clearInterval(objectInterval);
   //   // };
   // }, [isActive, isDark]);
+  
   return (
     <div 
-      className="w-full h-full relative overflow-hidden flex flex-col justify-center items-center p-4 md:p-8 transition-all duration-1000"
+      className="w-full h-full relative overflow-hidden flex flex-col justify-center items-center py-4 sm:py-6 md:py-8 lg:py-12 px-2 sm:px-4 md:px-8 transition-all duration-1000"
       style={{
         background: isDark 
           ? 'linear-gradient(135deg, #1a1a1a 0%, #4a1a1a 25%, #2a2a2a 50%, #1a0a0a 75%, #0f0f0f 100%)'
@@ -158,61 +158,57 @@ const Feedback = ({ isActive = false }) => {
         isDark 
           ? 'bg-gradient-to-br from-red-900/30 via-yellow-900/20 to-black/40'
           : 'bg-gradient-to-br from-red-50/40 via-yellow-50/30 to-gray-50/20'
-      }`} />
-
-      <h2 className={`text-3xl md:text-4xl font-bold mb-8 text-center relative z-10 transition-all duration-500 ${
-        isDark ? 'text-red-400' : 'text-red-600'
-      }`}>
-        Your Voice Matters
+      }`} />      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center relative z-10 transition-all duration-500 px-2 sm:px-4">
+        <span className="bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
+          USER FEEDBACK
+        </span>
       </h2>
       
-      <div className="w-full max-w-6xl flex flex-col md:flex-row items-center justify-center gap-8">
-        {/* Character and speech bubble */}
-        <div className="relative w-full md:w-1/2 flex justify-center">
+      <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-8">        {/* Character and speech bubble */}
+        <div className="relative w-full lg:w-1/2 flex justify-center px-2 sm:px-4">
           <div ref={characterRef} className="relative z-10">
             <img 
               src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400" 
               alt="Healthcare professional" 
-              className="w-56 h-56 object-cover rounded-full border-4 border-white shadow-xl"
+              className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 object-cover rounded-full border-4 border-white shadow-xl"
             />
           </div>
           
           <div 
             ref={speechBubbleRef}
-            className="absolute top-6 right-10 md:right-0 bg-white p-4 rounded-xl shadow-lg max-w-xs z-20"
+            className="absolute top-2 sm:top-4 md:top-6 right-2 sm:right-6 md:right-10 lg:right-0 bg-white p-2 sm:p-3 md:p-4 rounded-xl shadow-lg max-w-[200px] sm:max-w-xs z-20"
           >
-            <p className="text-gray-800 mb-0">
+            <p className="text-gray-800 mb-0 text-xs sm:text-sm">
               "I waited for hours at Hospital Y, and the doctor barely spent 2 minutes with me. No one listened to my concerns!"
             </p>
-            <div className="absolute -bottom-3 left-10 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-white"></div>
+            <div className="absolute -bottom-2 sm:-bottom-3 left-6 sm:left-10 w-0 h-0 border-l-4 border-r-4 border-t-4 sm:border-l-8 sm:border-r-8 sm:border-t-8 border-transparent border-t-white"></div>
           </div>
         </div>
-        
-        {/* Feedback form */}
-        <div ref={cardRef} className="w-full md:w-1/2 max-w-md">
+          {/* Feedback form */}
+        <div ref={cardRef} className="w-full lg:w-1/2 max-w-md px-2 sm:px-0">
           <Card className="shadow-xl border-0">
-            <CardHeader className="bg-gradient-to-r from-red-600 to-amber-500 text-white p-4 rounded-t-lg">
-              <h3 className="text-2xl font-bold feedback-element">Share Your Experience</h3>
-              <p className="text-gray-100 feedback-element">
+            <CardHeader className="bg-gradient-to-r from-red-600 to-amber-500 text-white p-3 sm:p-4 rounded-t-lg">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold feedback-element">Share Your Experience</h3>
+              <p className="text-gray-100 feedback-element text-sm sm:text-base">
                 Your feedback helps improve healthcare services for everyone.
               </p>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="mb-6 feedback-element">
+            <CardContent className="p-4 sm:p-6">
+              <div className="mb-4 sm:mb-6 feedback-element">
                 <Tabs 
                   defaultValue="facilities" 
                   value={activeTab} 
                   onValueChange={setActiveTab}
                   className="w-full"
                 >
-                  <TabsList className="grid grid-cols-3 w-full mb-4">
-                    <TabsTrigger value="professionals" className="text-xs md:text-sm">
+                  <TabsList className="grid grid-cols-3 w-full mb-3 sm:mb-4 h-8 sm:h-10">
+                    <TabsTrigger value="professionals" className="text-xs sm:text-sm px-1 sm:px-3">
                       Professionals
                     </TabsTrigger>
-                    <TabsTrigger value="facilities" className="text-xs md:text-sm">
+                    <TabsTrigger value="facilities" className="text-xs sm:text-sm px-1 sm:px-3">
                       Hospitals/Facilities
                     </TabsTrigger>
-                    <TabsTrigger value="tutors" className="text-xs md:text-sm">
+                    <TabsTrigger value="tutors" className="text-xs sm:text-sm px-1 sm:px-3">
                       Tutors/Advisers
                     </TabsTrigger>
                   </TabsList>
@@ -401,15 +397,16 @@ const Feedback = ({ isActive = false }) => {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star key={star} className="text-amber-400" size={14} fill="currentColor" />
                 ))}
-              </div>
-              <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 h-6">
+              </div>              <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 h-6">
                 <MessageCircle size={14} />
                 Join Discussion
               </Button>
             </div>
           </div>
         </div>
-      </div>      <div className="w-full max-w-6xl mt-8 flex justify-center">
+      </div>
+      
+      <div className="w-full max-w-6xl mt-8 flex justify-center">
         <Link to="/feedback">
           <Button className="bg-red-600 hover:bg-red-700">
             View All Feedback
