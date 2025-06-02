@@ -390,7 +390,7 @@ const Testimonials = () => {
           </div>        </div>
       </div>
       
-      <Footer />
+      <Footer isActive={true} />
     </div>
   );
 };

@@ -1,50 +1,148 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Play } from "lucide-react";
+import { Play, Heart, Eye, Target, Users, ChevronLeft, ChevronRight, Brain, Dna, Activity, HeartPulse, Pill, Syringe, Stethoscope } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
+import { Link, useNavigate } from "react-router-dom";
 
-// Enhanced 3D Styles for Games & Quizzes
+// Enhanced Glassmorphism 3D Styles for Games & Quizzes
 const GamesQuizzes3DStyles = () => (
   <style dangerouslySetInnerHTML={{
     __html: `
-      .games-floating-elements-container {
-        perspective: 1200px;
+      .glassmorphism-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 
+          0 25px 45px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      
+      .glassmorphism-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(25px);
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 
+          0 35px 60px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3),
+          0 0 50px rgba(220, 20, 60, 0.2);
+      }
+      
+      .dark .glassmorphism-card {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 
+          0 25px 45px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+      
+      .dark .glassmorphism-card:hover {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 
+          0 35px 60px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15),
+          0 0 50px rgba(212, 175, 55, 0.3);
+      }
+      
+      .parallax-3d {
         transform-style: preserve-3d;
+        perspective: 1000px;
       }
       
-      .games-floating-element {
-        position: absolute;
-        pointer-events: none;
-        z-index: 1;
-        opacity: 0.7;
-        animation: gamesDustFloat 25s linear infinite; /* Assuming gamesDustFloat is defined elsewhere or will be */
+      .carousel-auto-rotate {
+        animation: autoSlide 7s infinite linear;
       }
-      
-      /* Keyframes for gamesDustFloat - copied and adapted if not present */
-      @keyframes gamesDustFloat {
+        @keyframes autoSlide {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-33.33%); }
+        50% { transform: translateX(-66.66%); }
+        75% { transform: translateX(-100%); }
+        100% { transform: translateX(0); }
+      }
+        @keyframes floatParallax {
         0%, 100% {
-          transform: translateY(0px) rotateX(0deg) rotateY(0deg) scale(1);
-          opacity: 0.7;
-        }
-        25% {
-          transform: translateY(-30px) rotateX(15deg) rotateY(90deg) scale(1.2);
-          opacity: 1;
+          transform: translateY(0px) rotateZ(0deg);
+          opacity: 0.8;
         }
         50% {
-          transform: translateY(-60px) rotateX(0deg) rotateY(180deg) scale(0.8);
-          opacity: 0.5;
-        }
-        75% {
-          transform: translateY(-30px) rotateX(-15deg) rotateY(270deg) scale(1.1);
-          opacity: 0.8;
+          transform: translateY(-20px) rotateZ(180deg);
+          opacity: 1;
         }
       }
 
-      @media (prefers-reduced-motion: reduce) {
-        .games-floating-element {
+      /* Shine animation for buttons */
+      @keyframes shineLeft {
+        0% {
+          transform: translateX(-100%) skewX(-15deg);
+        }
+        100% {
+          transform: translateX(200%) skewX(-15deg);
+        }
+      }
+
+      .quiz-button-gold {
+        background: linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #DAA520;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+      }
+
+      .quiz-button-gold:hover {
+        background: linear-gradient(135deg, #DC143C 0%, #B22222 50%, #8B0000 100%);
+        border-color: #DC143C;
+        box-shadow: 0 6px 20px rgba(220, 20, 60, 0.4);
+        transform: translateY(-2px);
+      }
+
+      .quiz-button-gold::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: all 0.5s;
+      }
+
+      .quiz-button-gold:hover::before {
+        animation: shineLeft 0.6s ease-in-out;
+      }
+
+      .quiz-nav-button {
+        background: linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%);
+        border: 1px solid #DAA520;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .quiz-nav-button:hover {
+        background: linear-gradient(135deg, #DC143C 0%, #B22222 50%, #8B0000 100%);
+        border-color: #DC143C;
+        transform: scale(1.05);
+      }
+
+      .quiz-nav-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: all 0.5s;
+      }
+
+      .quiz-nav-button:hover::before {
+        animation: shineLeft 0.6s ease-in-out;
+      }      @media (prefers-reduced-motion: reduce) {
+        .carousel-auto-rotate, .quiz-button-gold::before, .quiz-nav-button::before {
           animation: none;
         }
       }
@@ -56,8 +154,96 @@ const GamesQuizzes = ({ isActive = false }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const { isDark } = useTheme();
-  
+    // New Medical Games Data
+  const games = [
+    {
+      title: "ImmunoQuest",
+      description: "Embark on an immune system adventure to understand how your body fights infections and diseases.",
+      image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=500&q=80",
+      color: "from-red-500 to-red-600",
+      icon: Target,
+      category: "Immunology",
+      difficulty: "Intermediate",
+      players: "12.5k+"
+    },
+    {
+      title: "Ultrasound Quiz",
+      description: "Master medical imaging interpretation with real ultrasound cases and diagnostic challenges.",
+      image: "https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?auto=format&fit=crop&w=500&q=80",
+      color: "from-blue-500 to-blue-600",
+      icon: Eye,
+      category: "Radiology",
+      difficulty: "Advanced",
+      players: "8.3k+"
+    },
+    {
+      title: "Blood Group/Genotype Genetics Game",
+      description: "Explore heredity patterns and genetic inheritance through interactive blood typing scenarios.",
+      image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=500&q=80",
+      color: "from-purple-500 to-purple-600",
+      icon: Heart,
+      category: "Genetics",
+      difficulty: "Beginner",
+      players: "15.7k+"
+    },
+    {
+      title: "Neonatal Jaundice Quiz",
+      description: "Learn to identify, assess, and manage newborn jaundice through clinical case studies.",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=500&q=80",
+      color: "from-amber-500 to-amber-600",
+      icon: Users,
+      category: "Pediatrics",
+      difficulty: "Intermediate",
+      players: "6.9k+"
+    },
+    {
+      title: "ClotQuest",
+      description: "Master the human clotting cascade through an interactive adventure game.",
+      image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=500&q=80",
+      color: "from-red-500 to-red-600",
+      icon: Target,
+      category: "Hematology",
+      difficulty: "Advanced",
+      players: "9.2k+"
+    },
+    {
+      title: "DiagnosisDetective",
+      description: "Put your diagnostic skills to the test with real-world medical mysteries.",
+      image: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=500&q=80",
+      color: "from-amber-500 to-amber-600",
+      icon: Eye,
+      category: "Diagnostics",
+      difficulty: "Expert",
+      players: "7.8k+"
+    },
+    {
+      title: "PharmFrenzy",
+      description: "Race against time to match medications with the right conditions.",
+      image: "https://images.unsplash.com/photo-1473091534298-04dcbce3278c?auto=format&fit=crop&w=500&q=80",
+      color: "from-blue-500 to-blue-600",
+      icon: Users,
+      category: "Pharmacology",
+      difficulty: "Intermediate",
+      players: "11.4k+"
+    }
+  ];
+
+  // Auto-rotation effect
+  useEffect(() => {
+    if (!isActive || isPaused) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % games.length);
+    }, 7000); // 7 seconds auto-rotation
+
+    return () => clearInterval(interval);
+  }, [isActive, isPaused, games.length]);
+
+  // GSAP Animations
   useEffect(() => {
     if (!containerRef.current || !titleRef.current || !cardsRef.current) return;
     
@@ -79,176 +265,17 @@ const GamesQuizzes = ({ isActive = false }) => {
         { y: 0, opacity: 1, stagger: 0.15, duration: 0.6, ease: "back.out(1.4)" },
         "-=0.4"
       );
-    
-  }, []);
+      }, []);
 
-  // Enhanced floating background particles and 3D elements animation
-  useEffect(() => {
-    if (!isActive) return;
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % games.length);
+  };
 
-    const createFloatingDust = () => {
-      const particle = document.createElement('div');
-      particle.className = 'floating-games-dust';
-      particle.style.cssText = `
-        position: absolute;
-        width: ${Math.random() * 7 + 5}px;
-        height: ${Math.random() * 7 + 5}px;
-        background: ${isDark 
-          ? 'radial-gradient(circle, rgba(220,20,60,0.9) 0%, rgba(212,175,55,0.7) 30%, rgba(0,0,0,0.5) 100%)'
-          : 'radial-gradient(circle, rgba(220,20,60,0.7) 0%, rgba(212,175,55,0.6) 30%, rgba(0,0,0,0.4) 100%)'};
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 1;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        animation: gamesDustFloat ${Math.random() * 16 + 14}s linear infinite;
-        box-shadow: 0 0 ${Math.random() * 15 + 10}px rgba(220,20,60,0.6);
-      `;
-      
-      const container = document.querySelector('.games-dust-container');
-      if (container) {
-        container.appendChild(particle);
-        
-        setTimeout(() => {
-          if (particle.parentNode) {
-            particle.parentNode.removeChild(particle);
-          }
-        }, 30000);
-      }
-    };
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + games.length) % games.length);
+  };
 
-    const createGameObject = () => {
-      const objects = ['controller', 'dice', 'puzzle'];
-      const colors = ['#DC143C', '#D4AF37', '#000000'];
-      const object = objects[Math.floor(Math.random() * objects.length)];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      
-      const element = document.createElement('div');
-      element.className = `game-3d-object ${object}`;
-      element.style.cssText = `
-        position: absolute;
-        width: ${Math.random() * 36 + 24}px;
-        height: ${Math.random() * 36 + 24}px;
-        background: ${color === '#DC143C' 
-          ? 'linear-gradient(135deg, #DC143C, #B91C1C, #8B0000)'
-          : color === '#D4AF37'
-          ? 'linear-gradient(135deg, #D4AF37, #FFD700, #B8860B)'
-          : 'linear-gradient(135deg, #000000, #2a2a2a, #1a1a1a)'};
-        ${object === 'controller' ? 'border-radius: 12px;' : ''}
-        ${object === 'dice' ? 'border-radius: 6px;' : ''}
-        ${object === 'puzzle' ? 'clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);' : ''}
-        pointer-events: none;
-        z-index: 0;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        animation: gameMove ${Math.random() * 22 + 16}s linear infinite;
-        transform-style: preserve-3d;
-        box-shadow: 0 0 35px ${color}90;
-        opacity: 0.9;
-      `;
-      
-      const container = document.querySelector('.game-3d-container');
-      if (container) {
-        container.appendChild(element);
-        
-        setTimeout(() => {
-          if (element.parentNode) {
-            element.parentNode.removeChild(element);
-          }
-        }, 38000);
-      }
-    };
-
-    const dustInterval = setInterval(createFloatingDust, 500);
-    const objectInterval = setInterval(createGameObject, 2200);
-    
-    // Create initial batch
-    for (let i = 0; i < 12; i++) {
-      setTimeout(createFloatingDust, i * 150);
-    }
-    
-    for (let i = 0; i < 6; i++) {
-      setTimeout(createGameObject, i * 800);
-    }
-
-    return () => {
-      clearInterval(dustInterval);
-      clearInterval(objectInterval);
-    };
-  }, [isActive, isDark]);
-
-  // Floating background elements from SuccessStories.tsx
-  useEffect(() => {
-    if (!isActive) return;
-
-    const createFloatingElement = () => {
-      const element = document.createElement('div');
-      element.className = 'games-floating-element'; // Use the new class name
-      
-      // Symbols for GamesQuizzes - can be customized
-      const symbols = ['🎮', '🎲', '🧩', '💡', '🏆', '✨']; 
-      const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-      
-      element.innerHTML = symbol;
-      element.style.cssText = `
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        font-size: ${Math.random() * 25 + 15}px; /* Match SuccessStories */
-        animation-delay: ${Math.random() * 25}s; /* Match SuccessStories */
-        animation-duration: ${Math.random() * 15 + 20}s; /* Match SuccessStories */
-      `;
-      
-      // Ensure this container exists or adapt to an existing one
-      const container = document.querySelector('.games-floating-elements-container'); 
-      if (container) {
-        container.appendChild(element);
-        
-        setTimeout(() => {
-          if (element.parentNode) {
-            element.parentNode.removeChild(element);
-          }
-        }, 35000); // Match SuccessStories
-      }
-    };
-
-    // Create initial elements
-    const elementCount = window.innerWidth > 768 ? 10 : 5; // Match SuccessStories
-    
-    for (let i = 0; i < elementCount; i++) {
-      setTimeout(() => createFloatingElement(), Math.random() * 5000); // Match SuccessStories
-    }
-
-    // Continue creating elements periodically
-    const floatingInterval = setInterval(createFloatingElement, 4000); // Match SuccessStories
-
-    return () => {
-      clearInterval(floatingInterval);
-      // Ensure all elements are removed on cleanup
-      const elements = document.querySelectorAll('.games-floating-element');
-      elements.forEach(el => el.remove());
-    };
-  }, [isActive, isDark]); // Added isDark dependency as it might be used in styles
-
-  const games = [
-    {
-      title: "ClotQuest",
-      description: "Master the human clotting cascade through an interactive adventure game.",
-      image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=500&q=80",
-      color: "from-red-500 to-red-600"
-    },
-    {
-      title: "DiagnosisDetective",
-      description: "Put your diagnostic skills to the test with real-world medical mysteries.",
-      image: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=500&q=80",
-      color: "from-amber-500 to-amber-600"
-    },
-    {
-      title: "PharmFrenzy",
-      description: "Race against time to match medications with the right conditions.",
-      image: "https://images.unsplash.com/photo-1473091534298-04dcbce3278c?auto=format&fit=crop&w=500&q=80",
-      color: "from-blue-500 to-blue-600"
-    }
-  ];  return (
+  return (
     <div 
       ref={containerRef}
       className="w-full h-full relative flex flex-col justify-center items-center p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden min-h-screen"
@@ -258,168 +285,493 @@ const GamesQuizzes = ({ isActive = false }) => {
           : 'linear-gradient(135deg, #fef7f0 0%, #fbeee8 25%, #f5efe8 50%, #f8f3ee 75%, #fef7f0 100%)',
         transition: 'background 0.5s ease-in-out'
       }}
-    >
-      {/* Professional 3D Styles for Games & Quizzes */}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}    >
+      {/* Professional 3D Styles */}
       <GamesQuizzes3DStyles />
 
-      {/* Container for new floating elements */}
-      <div className="games-floating-elements-container absolute inset-0 pointer-events-none z-0"></div>
-
-      {/* Background Elements - Keep existing ones if they serve a different purpose */}
-      <div className="games-dust-container absolute inset-0 pointer-events-none z-0"></div>
-      <div className="game-3d-container absolute inset-0 pointer-events-none z-0"></div>      {/* CSS Animations */}
-      <style>{`
-        @keyframes gamesDustFloat {
-          0% {
-            transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.6);
-            opacity: 0;
-          }
-          20% {
-            opacity: 1;
-          }
-          50% {
-            transform: translateY(50vh) translateX(40px) rotate(180deg) scale(1.3);
-            opacity: 0.9;
-          }
-          80% {
-            opacity: 0.5;
-          }
-          100% {
-            transform: translateY(-30vh) translateX(-30px) rotate(360deg) scale(0.7);
-            opacity: 0;
-          }
-        }
-
-        @keyframes gameMove {
-          0% {
-            transform: translateY(100vh) translateX(0) rotateY(0deg) rotateX(0deg) scale(0.5);
-            opacity: 0.5;
-          }
-          30% {
-            opacity: 1;
-          }
-          50% {
-            transform: translateY(50vh) translateX(50px) rotateY(180deg) rotateX(90deg) scale(1.4);
-            opacity: 1;
-          }
-          70% {
-            opacity: 0.8;
-          }
-          100% {
-            transform: translateY(-40vh) translateX(-40px) rotateY(360deg) rotateX(180deg) scale(0.6);
-            opacity: 0;
-          }
-        }
-
-        .game-3d-object {
-          filter: drop-shadow(0 12px 24px rgba(0,0,0,0.5));
-          transform-style: preserve-3d;
-        }
-
-        .game-3d-object.controller {
-          border-radius: 12px;
-          background: linear-gradient(135deg, #DC143C 0%, #B91C1C 50%, #8B0000 100%);
-          box-shadow: 
-            inset 4px 4px 8px rgba(255,255,255,0.2),
-            inset -4px -4px 8px rgba(0,0,0,0.3),
-            0 0 35px rgba(220,20,60,0.9);
-        }
-
-        .game-3d-object.dice {
-          border-radius: 6px;
-          background: linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%);
-          box-shadow: 
-            inset 4px 4px 8px rgba(255,255,255,0.3),
-            inset -4px -4px 8px rgba(0,0,0,0.2),
-            0 0 35px rgba(212,175,55,0.9);
-        }
-
-        .game-3d-object.puzzle {
-          clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
-          background: linear-gradient(135deg, #000000 0%, #2a2a2a 50%, #1a1a1a 100%);
-          box-shadow: 
-            inset 2px 2px 4px rgba(255,255,255,0.1),
-            inset -2px -2px 4px rgba(0,0,0,0.5),
-            0 0 35px rgba(0,0,0,0.9);
-        }
-
-        .floating-games-dust {
-          filter: blur(0.7px);
-          animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-      `}</style>      <h2 
+      <h2
         ref={titleRef}
         className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center z-10 relative px-2 sm:px-4"
       >
         <span className="bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
           GAMES & QUIZZES
         </span>
-      </h2>
-      <Carousel className="w-full max-w-5xl z-10 relative px-2 sm:px-4">
-        <CarouselContent>
-          {games.map((game, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-              <div className="p-1 sm:p-2">
-                <Card className={`border-0 overflow-hidden transition-all duration-300 cursor-pointer h-full shadow-xl hover:shadow-2xl ${
-                  isDark ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
-                }`}>
-                  <div className="relative h-40 sm:h-48">
-                    <div className={`absolute inset-0 bg-gradient-to-b ${game.color} opacity-60`}></div>
-                    <img 
-                      src={game.image}
-                      alt={game.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Button 
-                        className="rounded-full w-10 h-10 sm:w-12 sm:h-12 p-0 bg-white text-gray-800 hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
-                      >
-                        <Play className="h-4 w-4 sm:h-6 sm:w-6 ml-1" />
-                      </Button>
-                    </div>
-                  </div>                  <CardContent className="p-3 sm:p-4">
-                    <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>{game.title}</h3>
-                    <p className={`text-xs sm:text-sm mb-3 sm:mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{game.description}</p>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>4.8 ★★★★★</span>
-                      <span className={`text-xs px-2 py-1 rounded ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'}`}>Educational</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        className="flex-1 bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white text-xs py-2"
-                        size="sm"
-                      >
-                        {index % 2 === 0 ? 'PLAY GAME' : 'ANSWER QUIZ'}
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        className="flex-1 text-xs py-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
-                        size="sm"
-                      >
-                        BUY COURSE
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <div className="flex justify-center mt-4 sm:mt-6">
-          <CarouselPrevious className="relative -left-0 mr-2 sm:mr-4" />
-          <CarouselNext className="relative -right-0" />
+      </h2>      {/* Two Column Layout */}
+      <div className="w-full max-w-7xl z-10 relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* Column 1: Professional Parallax Carousel */}
+        <div className="parallax-3d">
+          <h3 className="text-xl sm:text-2xl font-bold mb-4 text-center">
+            <span className="bg-gradient-to-r from-black via-gray-800 to-black text-transparent bg-clip-text">
+              Interactive Games
+            </span>
+          </h3>
+          <div 
+            ref={carouselRef}
+            className="relative overflow-hidden rounded-3xl shadow-2xl"
+          >
+            <div 
+              ref={cardsRef}
+              className="flex transition-transform duration-1000 ease-in-out"
+              style={{
+                transform: `translateX(-${currentSlide * 100}%)`
+              }}
+            >
+              {games.map((game, index) => {
+                const IconComponent = game.icon;
+                return (
+                  <div key={index} className="w-full flex-shrink-0 p-4">
+                    <Card className={`glassmorphism-card border-0 overflow-hidden cursor-pointer h-full shadow-xl hover:shadow-2xl ${
+                      isDark ? 'text-white' : 'text-gray-800'
+                    }`}>
+                      <div className="relative h-64 sm:h-80">
+                        <div className={`absolute inset-0 bg-gradient-to-b ${game.color} opacity-70`}></div>
+                        <img 
+                          src={game.image}
+                          alt={game.title}
+                          className="w-full h-full object-cover"
+                        />
+                        
+                        {/* Icon Overlay */}
+                        <div className="absolute top-4 right-4 p-3 rounded-full bg-white/20 backdrop-blur-sm">
+                          <IconComponent className="h-6 w-6 text-white" />
+                        </div>
+
+                        {/* Play Button */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Button 
+                            className="rounded-full w-16 h-16 p-0 bg-white/90 text-gray-800 hover:bg-white hover:scale-110 shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm"
+                          >
+                            <Play className="h-8 w-8 ml-1" />
+                          </Button>
+                        </div>
+
+                        {/* Category Badge */}
+                        <div className="absolute bottom-4 left-4">
+                          <span className="px-3 py-1 rounded-full text-sm font-medium bg-white/20 backdrop-blur-sm text-white">
+                            {game.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      <CardContent className="p-6">
+                        <h3 className="text-2xl font-bold mb-3">{game.title}</h3>
+                        <p className="text-base mb-4 opacity-80">{game.description}</p>
+                        
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="text-sm opacity-70">4.8 ★★★★★</span>
+                          <span className="text-sm px-3 py-1 rounded-full bg-gray-200/20 backdrop-blur-sm">
+                            {game.difficulty}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="text-sm opacity-70">{game.players} players</span>
+                          <span className="text-sm opacity-70">Educational</span>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                          <Link to="/games-quizzes" className="col-span-1">
+                            <Button 
+                              className="w-full bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white text-sm py-2"
+                              size="sm"
+                            >
+                              PLAY GAMES/QUIZ
+                            </Button>
+                          </Link>                        <Link to="/courses" className="col-span-1">
+                            <Button 
+                              className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white text-sm py-2"
+                              size="sm"
+                            >
+                              BUY COURSE
+                            </Button>
+                          </Link>
+                          <Link to="/games-quizzes" className="col-span-1">
+                            <Button 
+                              variant="outline"
+                              className="w-full text-sm py-2 border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white backdrop-blur-sm"
+                              size="sm"
+                            >
+                              EXPLORE ALL GAMES
+                            </Button>
+                          </Link>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex justify-center items-center mt-6 space-x-4">
+            <Button
+              onClick={prevSlide}
+              className="p-3 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300"
+              variant="ghost"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+
+            <div className="flex space-x-2">
+              {games.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    currentSlide === index 
+                      ? 'bg-white scale-125' 
+                      : 'bg-white/50 hover:bg-white/70'
+                  }`}
+                />
+              ))}
+            </div>            <Button
+              onClick={nextSlide}
+              className="p-3 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300"
+              variant="ghost"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>        {/* Column 2: Medical Quiz Carousel */}
+        <div className="parallax-3d">
+          <h3 className="text-xl sm:text-2xl font-bold mb-4 text-center">
+            <span className="bg-gradient-to-r from-black via-gray-800 to-black text-transparent bg-clip-text">
+              Medical Quizzes
+            </span>
+          </h3>
+          <MedicalQuizCarousel />
         </div>
-      </Carousel>
-      
-      <div className="mt-6 sm:mt-8 lg:mt-10 max-w-md text-center z-10 relative px-2 sm:px-4">
-        <p className={`mb-4 sm:mb-6 text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-          Our gamified learning experiences make complex medical concepts easy to understand and remember.
+      </div>
+
+      {/* Additional Content */}
+      <div className="mt-8 max-w-7xl text-center">
+        <p className={`mb-6 text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+          Experience the future of medical education with our immersive learning platform featuring cutting-edge games, professional courses, and comprehensive career support.
         </p>
-        <Button className={`transition-all duration-300 shadow-lg hover:shadow-xl px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base ${
-          isDark ? 'bg-white text-gray-800 hover:bg-gray-100' : 'bg-red-600 text-white hover:bg-red-700'
-        }`}>
-          Explore All Games
+      </div>
+    </div>
+  );
+};
+
+// Medical Quiz Carousel Component
+const MedicalQuizCarousel = () => {
+  const navigate = useNavigate();
+  const { isDark } = useTheme();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
+
+  // Quiz/Game Data Types
+  interface QuizOption {
+    id: string;
+    text: string;
+    correct: boolean;
+  }
+
+  interface QuizItem {
+    id: string;
+    type: "question" | "game";
+    title: string;
+    specialty: string;
+    icon: React.ReactNode;
+    color: string;
+    content?: string;
+    description?: string;
+    options?: QuizOption[];
+    difficulty?: "beginner" | "intermediate" | "advanced";
+    timeLimit?: number;
+    points?: number;
+  }
+
+  function interleaveQuizGame(items: QuizItem[]) {
+    const quizzes = items.filter(i => i.type === "question");
+    const games = items.filter(i => i.type === "game");
+    const maxLen = Math.max(quizzes.length, games.length);
+    const mixed: QuizItem[] = [];
+    for (let i = 0; i < maxLen; i++) {
+      if (quizzes[i]) mixed.push(quizzes[i]);
+      if (games[i]) mixed.push(games[i]);
+    }
+    return mixed;
+  }
+
+  const quizItems: QuizItem[] = [
+    {
+      id: "ethics-quiz",
+      type: "question",
+      title: "Ethics in Medicine",
+      specialty: "Medical Ethics",
+      icon: <Brain className="h-6 w-6" />,
+      color: "#D4AF37",
+      content: "What is the correct approach when facing a conflict of interest in patient care?",
+      description: "Test your knowledge of ethical principles in healthcare settings",
+      options: [
+        { id: "a", text: "Disclose the conflict and recuse yourself", correct: true },
+        { id: "b", text: "Ignore the conflict", correct: false },
+        { id: "c", text: "Let a colleague decide", correct: false }
+      ]
+    },
+    {
+      id: "clot-quest",
+      type: "game",
+      title: "CLOTQuest",
+      specialty: "Hematology",
+      icon: <Heart className="h-6 w-6" />,
+      color: "#B22222",
+      description: "Interactive game about blood clotting mechanisms and disorders"
+    },
+    {
+      id: "infectious-diseases",
+      type: "question",
+      title: "Infectious Disease Challenge",
+      specialty: "Infectious Diseases",
+      icon: <Dna className="h-6 w-6" />,
+      color: "#2C7873",
+      content: "Which of the following is NOT typically a vector-borne disease?",
+      description: "Test your knowledge of pathogens and disease transmission",
+      options: [
+        { id: "a", text: "Malaria", correct: false },
+        { id: "b", text: "Tuberculosis", correct: true },
+        { id: "c", text: "Dengue", correct: false }
+      ]
+    },
+    {
+      id: "fracture-fury",
+      type: "game",
+      title: "Fracture Fury",
+      specialty: "Orthopedics",
+      icon: <Activity className="h-6 w-6" />,
+      color: "#6B5B95",
+      description: "Interactive game to identify fracture types and appropriate treatments"
+    },
+    {
+      id: "bls-quiz",
+      type: "question",
+      title: "BLS Knowledge Check",
+      specialty: "Basic Life Support",
+      icon: <HeartPulse className="h-6 w-6" />,
+      color: "#F28C28",
+      content: "What is the correct compression depth for adult CPR according to current guidelines?",
+      description: "Essential knowledge for all healthcare professionals",
+      options: [
+        { id: "a", text: "At least 2 inches (5 cm)", correct: true },
+        { id: "b", text: "Less than 1 inch (2.5 cm)", correct: false },
+        { id: "c", text: "More than 4 inches (10 cm)", correct: false }
+      ]
+    },
+    {
+      id: "immunology-invasion",
+      type: "game",
+      title: "Immunology Invasion",
+      specialty: "Immunology",
+      icon: <Pill className="h-6 w-6" />,
+      color: "#4C243B",
+      description: "Guide immune cells to fight pathogens in this interactive game"
+    },
+    {
+      id: "acls-scenarios",
+      type: "question",
+      title: "ACLS Scenarios",
+      specialty: "Advanced Cardiac Life Support",
+      icon: <Activity className="h-6 w-6" />,
+      color: "#FF6B6B",
+      content: "In a patient with pulseless VT, what is the recommended first-line medication?",
+      description: "Critical thinking in cardiac emergencies",
+      options: [
+        { id: "a", text: "Epinephrine", correct: false },
+        { id: "b", text: "Amiodarone", correct: true },
+        { id: "c", text: "Aspirin", correct: false }
+      ]
+    },
+    {
+      id: "covid-conqueror",
+      type: "game",
+      title: "COVID Conqueror",
+      specialty: "Infectious Disease",
+      icon: <Syringe className="h-6 w-6" />,
+      color: "#609",
+      description: "Navigate through pandemic response scenarios in this educational game"
+    },
+    {
+      id: "communication-quiz",
+      type: "question",
+      title: "Patient Communication",
+      specialty: "Healthcare Communication",
+      icon: <Stethoscope className="h-6 w-6" />,
+      color: "#388E3C",
+      content: "Which approach is most effective when delivering difficult news to patients?",
+      description: "Enhance your patient interaction skills",
+      options: [
+        { id: "a", text: "Be direct, use medical jargon", correct: false },
+        { id: "b", text: "Use empathy and clear language", correct: true },
+        { id: "c", text: "Let the patient guess", correct: false }
+      ]
+    }
+  ];
+
+  const [items] = useState<QuizItem[]>(() => interleaveQuizGame(quizItems));
+
+  const nextItem = () => setActiveIndex((prev) => (prev + 1) % items.length);
+  const prevItem = () => setActiveIndex((prev) => (prev - 1 + items.length) % items.length);
+
+  // Autoplay with accessibility pause
+  useEffect(() => {
+    if (!autoplayEnabled) return;
+    
+    const timer = setInterval(nextItem, 15000);
+    return () => clearInterval(timer);
+  }, [autoplayEnabled, items.length]);
+
+  const handleQuizStart = (item: QuizItem) => {
+    navigate(`/courses#${item.id}`);
+  };
+
+  const handleGameStart = (item: QuizItem) => {
+    navigate(`/courses#${item.id}`);
+  };
+
+  return (
+    <div 
+      className="relative max-w-4xl mx-auto px-2 py-8" 
+      style={{ marginTop: "-10px" }}
+      role="region"
+      aria-label="Quiz and Game Carousel"
+    >
+      {/* Accessibility controls */}
+      <div className="sr-only">
+        <button onClick={() => setAutoplayEnabled(!autoplayEnabled)}>
+          {autoplayEnabled ? "Pause" : "Play"} automatic rotation
+        </button>
+      </div>      {/* Carousel controls */}
+      <div className="flex items-center justify-center mb-6 gap-2">
+        <Button
+          variant="outline"
+          className="quiz-nav-button rounded-full p-2 text-white flex-shrink-0"
+          onClick={prevItem}
+          aria-label="Previous item"
+        >
+          <ChevronLeft className="h-5 w-5" />
         </Button>
+
+        {/* Carousel */}
+        <div
+          className="relative flex-1 min-h-[208px] md:min-h-[256px] flex items-stretch justify-center"
+          ref={carouselRef}
+          style={{ height: "25.6vh", maxHeight: 272, marginBottom: "56px" }}
+          role="listbox"
+          aria-label="Quiz and game items"
+        >
+          <div className="relative w-full h-full flex items-center justify-center">            {items.map((item, index) => (
+              <Card
+                key={item.id}
+                className={`transition-all duration-500 ease-in-out w-[53vw] max-w-md h-[26.9vh] max-h-[250px] p-5 flex flex-col items-center justify-between text-center border-2 hover:shadow-lg cursor-pointer
+                  ${index === activeIndex ? "z-20 opacity-100" : "z-10 opacity-0 pointer-events-none"}
+                  ${isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}
+                style={{
+                  borderColor: item.color + "40",
+                  position: "absolute",
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
+                onClick={() => setActiveIndex(index)}
+                role="option"
+                aria-selected={index === activeIndex}
+                tabIndex={index === activeIndex ? 0 : -1}
+              >
+                <div
+                  className="rounded-full p-2 mb-2"
+                  style={{ backgroundColor: item.color + "20" }}
+                  aria-hidden="true"
+                >
+                  {item.icon}
+                </div>
+                <div className="space-y-1 flex-grow flex flex-col justify-center max-w-xs mx-auto">
+                  <h3 className={`font-bold text-lg mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{item.title}</h3>
+                  <p className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>{item.specialty}</p>                  {/* Quiz content */}
+                  {item.type === "question" && item.content && index === activeIndex && (
+                    <div role="group" aria-label="Quiz options">
+                      <p className={`text-xs mt-1 font-medium p-2 rounded ${
+                        isDark 
+                          ? 'text-gray-200 bg-gray-700' 
+                          : 'text-gray-700 bg-gray-50'
+                      }`}>
+                        {item.content}
+                      </p>
+                      <div className="mt-2 flex flex-col gap-1">
+                        {(item.options || []).map((option) => (
+                          <button
+                            key={option.id}
+                            className="quiz-button-gold w-full px-3 py-2 rounded text-white font-semibold transition-all text-xs"
+                            onClick={() => handleQuizStart(item)}
+                            aria-label={`Select answer: ${option.text}`}
+                          >
+                            {option.text}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}                  {/* Game description */}
+                  {item.type === "game" && item.description && (
+                    <div className="flex flex-col flex-1 justify-center">
+                      <p className={`text-xs mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{item.description}</p>
+                      {index === activeIndex && (
+                        <button
+                          className="quiz-button-gold px-5 py-2 rounded text-white text-sm font-medium transition-all"
+                          onClick={() => handleGameStart(item)}
+                          aria-label={`Start game: ${item.title}`}
+                        >
+                          Play Game/Quiz
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>        <Button
+          variant="outline"
+          className="quiz-nav-button rounded-full p-2 text-white flex-shrink-0"
+          onClick={nextItem}
+          aria-label="Next item"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </Button>
+      </div>      {/* Navigation dots */}
+      <div 
+        className="flex justify-center mt-4 space-x-2"
+        role="tablist"
+        aria-label="Carousel navigation"
+      >
+        {items.map((item, index) => (
+          <button
+            key={index}
+            className={`w-2 h-2 rounded-full transition-all ${
+              index === activeIndex ? "bg-[#D4AF37] w-4" : "bg-gray-300"
+            }`}
+            onClick={() => setActiveIndex(index)}
+            role="tab"
+            aria-selected={index === activeIndex}
+            aria-label={`Go to item ${index + 1}: ${item.title}`}
+          />
+        ))}
+      </div>
+
+      {/* Gold Action Buttons */}
+      <div className="flex justify-center mt-6 space-x-4">
+        <Link to="/games-quizzes">
+          <button className="quiz-button-gold px-6 py-3 rounded-lg text-white font-semibold text-sm transition-all">
+            PLAY GAME/QUIZ
+          </button>
+        </Link>
+        <Link to="/courses">
+          <button className="quiz-button-gold px-6 py-3 rounded-lg text-white font-semibold text-sm transition-all">
+            BUY COURSE
+          </button>
+        </Link>
       </div>
     </div>
   );

@@ -218,119 +218,196 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ isActive = false }) => 
       clearInterval(floatingInterval);
     };
   }, [isActive]);
-
   const testimonials = [
     {
       name: "Dr. Sarah Chen",
       role: "Cardiologist",
       quote: "My GLOHSEN score helped me stand out in a competitive job market. I'm now working at my dream hospital!",
-      rating: 5
+      rating: 5,
+      colorTheme: {
+        light: {
+          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.05) 100%)',
+          border: 'rgba(59, 130, 246, 0.3)',
+          iconColor: 'text-blue-600',
+          nameColor: 'text-blue-900',
+          roleColor: 'text-blue-700',
+          textColor: 'text-gray-800'
+        },
+        dark: {
+          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.1) 100%)',
+          border: 'rgba(59, 130, 246, 0.4)',
+          iconColor: 'text-blue-400',
+          nameColor: 'text-blue-100',
+          roleColor: 'text-blue-200',
+          textColor: 'text-gray-100'
+        }
+      }
     },
     {
       name: "Hospital Y",
       role: "Healthcare Facility",
       quote: "After implementing GLOHSEN's recommendations, our patient satisfaction scores increased by 42%.",
-      rating: 5
+      rating: 5,
+      colorTheme: {
+        light: {
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)',
+          border: 'rgba(16, 185, 129, 0.3)',
+          iconColor: 'text-emerald-600',
+          nameColor: 'text-emerald-900',
+          roleColor: 'text-emerald-700',
+          textColor: 'text-gray-800'
+        },
+        dark: {
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%)',
+          border: 'rgba(16, 185, 129, 0.4)',
+          iconColor: 'text-emerald-400',
+          nameColor: 'text-emerald-100',
+          roleColor: 'text-emerald-200',
+          textColor: 'text-gray-100'
+        }
+      }
     },
     {
       name: "Nursing Student A",
       role: "Final Year Student",
       quote: "The interactive courses and mentorship from Tutor Z helped me ace my exams and secure a placement.",
-      rating: 5
+      rating: 5,
+      colorTheme: {
+        light: {
+          background: 'linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(251, 113, 133, 0.05) 100%)',
+          border: 'rgba(245, 101, 101, 0.3)',
+          iconColor: 'text-rose-600',
+          nameColor: 'text-rose-900',
+          roleColor: 'text-rose-700',
+          textColor: 'text-gray-800'
+        },
+        dark: {
+          background: 'linear-gradient(135deg, rgba(245, 101, 101, 0.2) 0%, rgba(251, 113, 133, 0.1) 100%)',
+          border: 'rgba(245, 101, 101, 0.4)',
+          iconColor: 'text-rose-400',
+          nameColor: 'text-rose-100',
+          roleColor: 'text-rose-200',
+          textColor: 'text-gray-100'
+        }
+      }
     },
     {
       name: "Professor Z",
       role: "Physiology Tutor",
       quote: "I've been able to reach more students and make a bigger impact through GLOHSEN's platform.",
-      rating: 5
+      rating: 5,
+      colorTheme: {
+        light: {
+          background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%)',
+          border: 'rgba(168, 85, 247, 0.3)',
+          iconColor: 'text-purple-600',
+          nameColor: 'text-purple-900',
+          roleColor: 'text-purple-700',
+          textColor: 'text-gray-800'
+        },
+        dark: {
+          background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%)',
+          border: 'rgba(168, 85, 247, 0.4)',
+          iconColor: 'text-purple-400',
+          nameColor: 'text-purple-100',
+          roleColor: 'text-purple-200',
+          textColor: 'text-gray-100'
+        }
+      }
     }
-  ];  return (
+  ];return (
     <div 
       ref={containerRef}
       className="success-3d-container w-full min-h-screen relative flex flex-col justify-center items-center py-4 sm:py-6 md:py-8 lg:py-12 px-2 sm:px-4 overflow-hidden"
       style={{
-        background: isDark 
-          ? 'linear-gradient(135deg, #1a0a0a 0%, #2d1515 25%, #1f1611 50%, #0a0a0a 75%, #1a0a0a 100%)'
-          : 'linear-gradient(135deg, #fef7f0 0%, #fbeee8 25%, #f5efe8 50%, #f8f3ee 75%, #fef7f0 100%)',
-        transition: 'background 0.5s ease-in-out',
+        backgroundImage: 'url(https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&q=80)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        transition: 'background 0.5s ease-in-out'
       }}
     >
+      {/* White overlay */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.95)'
+        }}
+      ></div>
+      
       {/* Professional 3D Styles */}
       <Professional3DSuccessStyles />
       
-      {/* Background floating elements container */}
-      <div className="success-dust-container absolute inset-0 pointer-events-none z-0"></div>      <h2 
+      {/* Background floating elements container */}      <div className="success-dust-container absolute inset-0 pointer-events-none z-0"></div>
+
+      <h2 
         ref={titleRef}
-        className="success-title-3d text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-12 text-center px-2 sm:px-4"
+        className="success-title-3d text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-12 text-center px-2 sm:px-4 relative z-10"
       >
         <span className="bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
           SUCCESS STORIES
         </span>
-      </h2><div 
+      </h2>
+
+      <div 
         ref={testimonialsRef}
-        className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 flex-grow px-2 sm:px-4"
-      >        {testimonials.map((testimonial, index) => (
-          <Link 
-            key={index}
-            to="/testimonials"
-            className="block transition-transform duration-300 hover:scale-105"
-          >
-            <Card 
-              className="success-card-3d p-3 sm:p-4 lg:p-6 border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
-              style={{
-                background: isDark
-                  ? 'rgba(45, 21, 21, 0.3)'
-                  : 'rgba(255, 255, 255, 0.8)',
-                backdropFilter: 'blur(15px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-              }}
-            >
-            <CardContent className="space-y-3 sm:space-y-4">
-              <div className="flex items-center space-x-2 mb-2 sm:mb-3">
-                <User className="h-8 w-8 sm:h-10 sm:w-10 text-amber-500" />
-                <div>
-                  <p className={`font-semibold text-sm sm:text-base ${
-                    isDark ? 'text-gray-100' : 'text-gray-900'
-                  }`}>
-                    {testimonial.name}
-                  </p>
-                  <p className={`text-xs sm:text-sm ${
-                    isDark ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                    {testimonial.role}
-                  </p>
-                </div>
-              </div>              
-              <div className="flex space-x-1 mb-2 sm:mb-3">
-                {[...Array(testimonial.rating)].map((_, starIndex) => (
-                  <Star 
-                    key={starIndex} 
-                    className="success-star-3d h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-yellow-400 fill-current"
-                  />
-                ))}
-              </div>
-              
-              <ScrollArea className="h-20 sm:h-24 lg:h-32">
-                <p className={`text-xs sm:text-sm leading-relaxed ${
-                  isDark ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  "{testimonial.quote}"
-                </p>
-              </ScrollArea>
-              
-              <div className="flex items-center justify-between pt-1 sm:pt-2">
-                <MessageCircle className={`h-3 w-3 sm:h-4 sm:w-4 ${
-                  isDark ? 'text-gray-500' : 'text-gray-400'
-                }`} />
-                <span className={`text-xs ${
-                  isDark ? 'text-gray-500' : 'text-gray-500'
-                }`}>
-                  Verified Review
-                </span>              </div>
-            </CardContent>
-          </Card>
-          </Link>
-        ))}
+        className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 flex-grow px-2 sm:px-4 relative z-10"
+      >{testimonials.map((testimonial, index) => {
+            const theme = isDark ? testimonial.colorTheme.dark : testimonial.colorTheme.light;
+            
+            return (
+              <Link 
+                key={index}
+                to="/testimonials"
+                className="block transition-transform duration-300 hover:scale-105"
+              >
+                <Card 
+                  className="success-card-3d p-3 sm:p-4 lg:p-6 border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
+                  style={{
+                    background: theme.background,
+                    backdropFilter: 'blur(15px)',
+                    border: `1px solid ${theme.border}`
+                  }}
+                >
+                  <CardContent className="space-y-3 sm:space-y-4">
+                    <div className="flex items-center space-x-2 mb-2 sm:mb-3">
+                      <div className={`p-2 rounded-full ${theme.iconColor.replace('text-', 'bg-').replace('-600', '-100').replace('-400', '-900/20')}`}>
+                        <User className={`h-6 w-6 sm:h-8 sm:w-8 ${theme.iconColor}`} />
+                      </div>
+                      <div>
+                        <p className={`font-semibold text-sm sm:text-base ${theme.nameColor}`}>
+                          {testimonial.name}
+                        </p>
+                        <p className={`text-xs sm:text-sm ${theme.roleColor}`}>
+                          {testimonial.role}
+                        </p>
+                      </div>
+                    </div>              
+                    <div className="flex space-x-1 mb-2 sm:mb-3">
+                      {[...Array(testimonial.rating)].map((_, starIndex) => (
+                        <Star 
+                          key={starIndex} 
+                          className={`success-star-3d h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 ${theme.iconColor} fill-current`}
+                        />
+                      ))}
+                    </div>
+                    
+                    <ScrollArea className="h-20 sm:h-24 lg:h-32">
+                      <p className={`text-xs sm:text-sm leading-relaxed ${theme.textColor}`}>
+                        "{testimonial.quote}"
+                      </p>
+                    </ScrollArea>
+                    <div className="flex items-center justify-between pt-1 sm:pt-2">
+                      <MessageCircle className={`h-3 w-3 sm:h-4 sm:w-4 ${theme.iconColor} opacity-60`} />
+                      <span className={`text-xs ${theme.roleColor} opacity-75`}>
+                        Verified Review
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
       </div>
     </div>
   );

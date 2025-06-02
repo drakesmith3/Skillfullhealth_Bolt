@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Users, Star } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
+import { Link } from "react-router-dom";
 
 const TutorsAdvisers = ({ isActive = false }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -145,12 +146,11 @@ const TutorsAdvisers = ({ isActive = false }) => {
         backgroundRepeat: 'no-repeat',
         transition: 'background 0.5s ease-in-out'
       }}
-    >
-      {/* White overlay */}
+    >      {/* Theme-aware overlay */}
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundColor: 'rgba(255,255,255,0.9)'
+          backgroundColor: isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)'
         }}
       ></div>
       {/* Background Elements */}
@@ -236,16 +236,15 @@ const TutorsAdvisers = ({ isActive = false }) => {
           filter: blur(0.6px);
           animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
         } */
-      `}</style>      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center z-20 relative px-2 sm:px-4">
+      `}</style>      <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center z-20 relative px-2 sm:px-4 ${isDark ? 'drop-shadow-lg' : ''}`}>
         <span className="bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
           TUTORS & ADVISERS
         </span>
       </h2>
       <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 z-20 relative px-2 sm:px-4">
-        <div className="relative w-full lg:w-2/3 flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12">
-          {/* Tutor */}
+        <div className="relative w-full lg:w-2/3 flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12">          {/* Tutor */}
           <div ref={tutorRef} className="relative">
-            <div className="bg-white p-2 sm:p-3 rounded-full shadow-xl z-10">
+            <div className={`p-2 sm:p-3 rounded-full shadow-xl z-10 ${isDark ? 'bg-gray-800 border border-amber-500/30' : 'bg-white'}`}>
               <img 
                 src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=300&q=80" 
                 alt="Professor teaching" 
@@ -270,7 +269,7 @@ const TutorsAdvisers = ({ isActive = false }) => {
           
           {/* Student */}
           <div ref={studentRef} className="relative">
-            <div className="bg-white p-2 sm:p-3 rounded-full shadow-xl z-10">
+            <div className={`p-2 sm:p-3 rounded-full shadow-xl z-10 ${isDark ? 'bg-gray-800 border border-red-500/30' : 'bg-white'}`}>
               <img 
                 src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=300&q=80" 
                 alt="Nursing student" 
@@ -280,7 +279,9 @@ const TutorsAdvisers = ({ isActive = false }) => {
             <div className="absolute top-0 right-0 bg-red-600 text-white text-xs sm:text-sm font-medium px-2 py-1 rounded-full shadow-md z-20">
               Student A
             </div>
-            <div className="absolute -bottom-3 sm:-bottom-4 left-1/2 transform -translate-x-1/2 bg-white px-2 sm:px-3 py-1 rounded-full shadow-md text-xs sm:text-sm text-gray-700 whitespace-nowrap">
+            <div className={`absolute -bottom-3 sm:-bottom-4 left-1/2 transform -translate-x-1/2 px-2 sm:px-3 py-1 rounded-full shadow-md text-xs sm:text-sm whitespace-nowrap ${
+              isDark ? 'bg-gray-800 text-gray-200 border border-gray-600' : 'bg-white text-gray-700'
+            }`}>
               Nursing Student
             </div>
           </div>
@@ -298,12 +299,12 @@ const TutorsAdvisers = ({ isActive = false }) => {
               "The interactive CLOTQUEST game made understanding the complex clotting cascade simple and fun!"
             </p>
             <p className={`text-xs sm:text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>- Student A</p>
-          </div>
-          
-          <Button className="bg-amber-500 hover:bg-amber-600 w-full shadow-lg transition-all duration-300 hover:shadow-xl py-2 sm:py-3 text-sm sm:text-base">
-            <GraduationCap className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-            Explore Courses
-          </Button>
+          </div>            <Link to="/tutors">
+            <Button className="bg-amber-500 hover:bg-amber-600 w-full shadow-lg transition-all duration-300 hover:shadow-xl py-2 sm:py-3 text-sm sm:text-base">
+              <GraduationCap className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+              Explore Courses
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
