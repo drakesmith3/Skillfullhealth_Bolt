@@ -53,23 +53,32 @@ const JoinCommunity = ({ isActive = false }) => {
               a tutor leveraging AI to teach, a professional looking to upskill, or simply an employer 
               seeking superstar employees.
             </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
-              <Button className="bg-blue-600 hover:bg-blue-900" size="lg">
-                I'm a Client
-              </Button>
-              <Button className="bg-red-600 hover:bg-red-900" size="lg">
-                I'm a Student
-              </Button>
-              <Button className="bg-gray-600 hover:bg-gray-900" size="lg">
-                I'm a Tutor
-              </Button>
-              <Button className="bg-amber-600 hover:bg-amber-900" size="lg">
-                I'm a Professional
-              </Button>
-              <Button className="bg-green-600 hover:bg-green-900" size="lg">
-                I'm an Employer
-              </Button>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
+              <Link to="/signin?userType=client">
+                <Button className="bg-blue-600 hover:bg-blue-900 w-full" size="lg">
+                  I'm a Client
+                </Button>
+              </Link>
+              <Link to="/signin?userType=student">
+                <Button className="bg-red-600 hover:bg-red-900 w-full" size="lg">
+                  I'm a Student
+                </Button>
+              </Link>
+              <Link to="/signin?userType=tutor">
+                <Button className="bg-gray-600 hover:bg-gray-900 w-full" size="lg">
+                  I'm a Tutor
+                </Button>
+              </Link>
+              <Link to="/signin?userType=professional">
+                <Button className="bg-amber-600 hover:bg-amber-900 w-full" size="lg">
+                  I'm a Professional
+                </Button>
+              </Link>
+              <Link to="/signin?userType=employer">
+                <Button className="bg-green-600 hover:bg-green-900 w-full" size="lg">
+                  I'm an Employer
+                </Button>
+              </Link>
             </div>
             
             <div className="bg-white/20 rounded-lg p-8 max-w-2xl mx-auto backdrop-blur-[40px]">
@@ -80,10 +89,11 @@ const JoinCommunity = ({ isActive = false }) => {
                 isDark ? 'text-white' : 'text-white'
               }`}>
                 Join 10,000+ healthcare professionals who are already building a better future with GLOHSEN.
-              </p>
-              <Button className="bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white" size="lg">
-                Get Started Today
-              </Button>
+              </p>              <Link to="/signup">
+                <Button className="bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white w-full" size="lg">
+                  Get Started Today
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

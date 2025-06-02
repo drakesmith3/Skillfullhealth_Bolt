@@ -64,7 +64,7 @@ const GlohsenScoreSection = () => {
                     <p className="text-white/80 mb-3 text-sm">
                       Increase your earning potential with a higher GLOHSEN score. Top-rated professionals earn up to 40% more.
                     </p>
-                    <div className="text-3xl font-bold text-white mb-2">₦10,000,000</div>
+                    <div className="text-3xl font-bold text-white mb-2">Q10,000,000</div>
                     <Button className="bg-[#D4AF37] hover:bg-[#D4AF37]/80 text-black text-xs px-3 py-1 h-auto">
                       Withdraw
                     </Button>

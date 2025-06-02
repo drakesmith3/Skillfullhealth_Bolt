@@ -88,9 +88,9 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent compact>
-            <div className="text-2xl font-bold">₦{stats.totalEarnings.toLocaleString()}</div>
+            <div className="text-2xl font-bold">Q{stats.totalEarnings.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              ₦{stats.monthlyEarnings.toLocaleString()} this month
+              Q{stats.monthlyEarnings.toLocaleString()} this month
             </p>
           </CardContent>
         </Card>
@@ -122,7 +122,7 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
           </CardHeader>
           <CardContent compact>
             <div className="text-2xl font-bold">
-              ₦{mlmSystem.calculatePotentialEarnings(10).toLocaleString()}
+              Q{mlmSystem.calculatePotentialEarnings(10).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
               With 10 more referrals
@@ -170,15 +170,15 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
                     <div className="space-y-1">
                       <div className="flex justify-between">
                         <span>Direct Referrals (Level 1)</span>
-                        <span>₦{(stats.totalEarnings * 0.8).toLocaleString()}</span>
+                        <span>Q{(stats.totalEarnings * 0.8).toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Second Level</span>
-                        <span>₦{(stats.totalEarnings * 0.15).toLocaleString()}</span>
+                        <span>Q{(stats.totalEarnings * 0.15).toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Third Level</span>
-                        <span>₦{(stats.totalEarnings * 0.05).toLocaleString()}</span>
+                        <span>Q{(stats.totalEarnings * 0.05).toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
@@ -265,7 +265,7 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
                       </Badge>
                       {referral.bonusEarned > 0 && (
                         <p className="text-sm font-medium text-green-600 mt-1">
-                          +₦{referral.bonusEarned}
+                          +Q{referral.bonusEarned}
                         </p>
                       )}
                     </div>
@@ -315,28 +315,28 @@ const MLMDashboard: React.FC<MLMDashboardProps> = ({ userId, userType }) => {
                         <span className="font-medium">Bronze</span>
                         <span className="text-sm text-muted-foreground ml-2">(5 referrals)</span>
                       </div>
-                      <span className="font-medium">₦100 bonus</span>
+                      <span className="font-medium">Q100 bonus</span>
                     </div>
                     <div className="flex justify-between items-center p-2 border rounded">
                       <div>
                         <span className="font-medium">Silver</span>
                         <span className="text-sm text-muted-foreground ml-2">(15 referrals)</span>
                       </div>
-                      <span className="font-medium">₦300 bonus</span>
+                      <span className="font-medium">Q300 bonus</span>
                     </div>
                     <div className="flex justify-between items-center p-2 border rounded">
                       <div>
                         <span className="font-medium">Gold</span>
                         <span className="text-sm text-muted-foreground ml-2">(30 referrals)</span>
                       </div>
-                      <span className="font-medium">₦750 bonus</span>
+                      <span className="font-medium">Q750 bonus</span>
                     </div>
                     <div className="flex justify-between items-center p-2 border rounded">
                       <div>
                         <span className="font-medium">Platinum</span>
                         <span className="text-sm text-muted-foreground ml-2">(50 referrals)</span>
                       </div>
-                      <span className="font-medium">₦1,500 bonus</span>
+                      <span className="font-medium">Q1,500 bonus</span>
                     </div>
                   </div>
                 </div>

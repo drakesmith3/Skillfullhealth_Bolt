@@ -242,11 +242,11 @@ const StudentDashboard: React.FC = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Balance</span>
-                      <span className="font-semibold">₦15,000</span>
+                      <span className="font-semibold">Q15,000</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Scholarships</span>
-                      <span className="text-green-600 font-semibold">₦45,000</span>
+                      <span className="text-green-600 font-semibold">Q45,000</span>
                     </div>
                     <Button size="sm" className="w-full mt-2">Manage</Button>
                   </div>
@@ -993,7 +993,7 @@ const StudentDashboard: React.FC = () => {
                     <CreditCard className="w-5 h-5 text-[#D4AF37]" />
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-[#D4AF37] mb-2">₦15,000</div>
+                    <div className="text-3xl font-bold text-[#D4AF37] mb-2">Q15,000</div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Available</p>
                   </div>
                 </CardContent>
@@ -1006,7 +1006,7 @@ const StudentDashboard: React.FC = () => {
                     <Award className="w-5 h-5 text-green-500" />
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600 mb-2">₦45,000</div>
+                    <div className="text-3xl font-bold text-green-600 mb-2">Q45,000</div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Received</p>
                   </div>
                 </CardContent>
@@ -1019,7 +1019,7 @@ const StudentDashboard: React.FC = () => {
                     <DollarSign className="w-5 h-5 text-red-500" />
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-red-600 mb-2">₦27,000</div>
+                    <div className="text-3xl font-bold text-red-600 mb-2">Q27,000</div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">This Month</p>
                   </div>
                 </CardContent>
@@ -1032,7 +1032,7 @@ const StudentDashboard: React.FC = () => {
                     <Trophy className="w-5 h-5 text-purple-500" />
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-purple-600 mb-2">₦2,500</div>
+                    <div className="text-3xl font-bold text-purple-600 mb-2">Q2,500</div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Earned</p>
                   </div>
                 </CardContent>
@@ -1072,9 +1072,8 @@ const StudentDashboard: React.FC = () => {
                             { name: 'Certification', value: 1000, color: '#F59E0B' },
                           ].map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <ChartTooltip formatter={(value) => [`₦${value.toLocaleString()}`, 'Amount']} />
+                          ))}                        </Pie>
+                        <ChartTooltip formatter={(value) => [`Q${value.toLocaleString()}`, 'Amount']} />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -1099,10 +1098,9 @@ const StudentDashboard: React.FC = () => {
                         { month: 'May', income: 32000, expenses: 27000 },
                       ]}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <ChartTooltip formatter={(value) => [`₦${value.toLocaleString()}`, 'Amount']} />
-                        <Line 
+                        <XAxis dataKey="month" />                        <YAxis />
+                        <ChartTooltip formatter={(value) => [`Q${value.toLocaleString()}`, 'Amount']} />
+                        <Line
                           type="monotone" 
                           dataKey="income" 
                           stroke="#10B981" 
@@ -1153,7 +1151,7 @@ const StudentDashboard: React.FC = () => {
                         <div className={`font-bold text-lg ${
                           transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
                         }`}>
-                          {transaction.amount > 0 ? '+' : ''}₦{Math.abs(transaction.amount).toLocaleString()}
+                          {transaction.amount > 0 ? '+' : ''}Q{Math.abs(transaction.amount).toLocaleString()}
                         </div>
                         <Badge variant={transaction.status === 'Completed' ? 'default' : 'secondary'} className="text-xs">
                           {transaction.status}
@@ -1197,28 +1195,28 @@ const StudentDashboard: React.FC = () => {
                   {[
                     {
                       name: 'Academic Excellence Grant',
-                      amount: '₦50,000',
+                      amount: 'Q50,000',
                       deadline: 'June 15, 2025',
                       requirements: 'GPA 3.5+, Full-time student',
                       status: 'Eligible'
                     },
                     {
                       name: 'Healthcare Leadership Scholarship',
-                      amount: '₦75,000',
+                      amount: 'Q75,000',
                       deadline: 'July 1, 2025',
                       requirements: 'Leadership experience, Essay required',
                       status: 'Eligible'
                     },
                     {
                       name: 'Community Service Award',
-                      amount: '₦25,000',
+                      amount: 'Q25,000',
                       deadline: 'June 30, 2025',
                       requirements: '100+ volunteer hours',
                       status: 'Apply Now'
                     },
                     {
                       name: 'Medical Innovation Grant',
-                      amount: '₦100,000',
+                      amount: 'Q100,000',
                       deadline: 'August 15, 2025',
                       requirements: 'Research project, Faculty recommendation',
                       status: 'Requirements Not Met'

@@ -26,7 +26,7 @@ const ProfessionalPurse = () => {
         <h1 className="text-3xl font-bold text-center mb-6 text-d4af37 font-serif">Withdraw Your Earnings</h1>
         <form onSubmit={handleWithdraw} className="space-y-6">
           <div>
-            <Label htmlFor="amount" className="font-semibold">Amount (₦)</Label>
+            <Label htmlFor="amount" className="font-semibold">Amount (Q)</Label>
             <Input
               id="amount"
               type="number"
@@ -73,3 +73,4 @@ const ProfessionalPurse = () => {
 };
 
 export default ProfessionalPurse;
+

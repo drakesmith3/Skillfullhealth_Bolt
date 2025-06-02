@@ -18,19 +18,19 @@ const teamMembers = [
   {
     name: "Dr. Olusiji Olawumi",
     role: "Founder & CEO",
-    image: "/efbf957b-a127-4121-86b8-51528f7983af.png",
+    image: "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80 ",
     bio: "Visionary leader, medical doctor, and digital transformation advocate. Passionate about empowering African professionals through technology and education."
   },
   {
     name: "C Wizard",
     role: "Chief Technology Officer",
-    image: "/c96b664a-9865-407e-b314-656ff3ecc937.png",
+    image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
     bio: "Full-stack engineer and AI enthusiast, driving the technical vision and product innovation for the GLOHSEN platform."
   },
   {
     name: "Olufemi Agbaje",
     role: "Head of Product & Partnerships",
-    image: "/592ef409-e389-494f-a557-6179279a4414.png",
+    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
     bio: "Product strategist and partnership builder, connecting GLOHSEN with key stakeholders across Africa."
   },
   // Add more team members as needed

@@ -13,7 +13,7 @@ const ProfessionalNotifications = () => {
     { id: 2, type: 'event', title: 'Upcoming Event', message: 'Webinar on "Advancements in Cardiology"', time: '3 hours ago', read: false, priority: 'medium' },
     { id: 3, type: 'achievement', title: 'GLOHSEN Score Update', message: 'Your GLOHSEN score increased by 5 points', time: '6 hours ago', read: false, priority: 'high' },
     { id: 4, type: 'message', title: 'New Message', message: 'Dr. Adebayo sent you a message', time: '1 day ago', read: true, priority: 'medium' },
-    { id: 5, type: 'payment', title: 'Payment Received', message: 'Payment of ₦50,000 for locum job completed', time: '2 days ago', read: false, priority: 'low' }
+    { id: 5, type: 'payment', title: 'Payment Received', message: 'Payment of Q50,000 for locum job completed', time: '2 days ago', read: false, priority: 'low' }
   ]);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -210,3 +210,4 @@ const ProfessionalNotifications = () => {
 };
 
 export default ProfessionalNotifications;
+

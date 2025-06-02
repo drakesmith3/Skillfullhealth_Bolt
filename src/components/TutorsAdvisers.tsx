@@ -37,8 +37,7 @@ const TutorsAdvisers = ({ isActive = false }) => {
       .fromTo(contentRef.current.children,
         { y: 20, opacity: 0 },
         { y: 0, opacity: 1, stagger: 0.1, duration: 0.5, ease: "power2.out" },
-        "-=0.3"
-      );
+        "-=0.3"      );
     
   }, []);
 
@@ -135,18 +134,25 @@ const TutorsAdvisers = ({ isActive = false }) => {
   //     clearInterval(objectInterval);
   //   };
   // }, [isActive, isDark]);
-
   return (
     <div 
       ref={containerRef}
       className="w-full h-full relative flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden min-h-screen"
       style={{
-        background: isDark 
-          ? 'linear-gradient(135deg, #1a0a0a 0%, #2d1515 25%, #1f1611 50%, #0a0a0a 75%, #1a0a0a 100%)'
-          : 'linear-gradient(135deg, #fef7f0 0%, #fbeee8 25%, #f5efe8 50%, #f8f3ee 75%, #fef7f0 100%)',
+        backgroundImage: 'url(https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         transition: 'background 0.5s ease-in-out'
       }}
     >
+      {/* White overlay */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.9)'
+        }}
+      ></div>
       {/* Background Elements */}
       {/* <div className="tutors-dust-container absolute inset-0 pointer-events-none z-0"></div> */}
       {/* <div className="education-3d-container absolute inset-0 pointer-events-none z-0"></div> */}
@@ -230,12 +236,12 @@ const TutorsAdvisers = ({ isActive = false }) => {
           filter: blur(0.6px);
           animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
         } */
-      `}</style>      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center z-10 relative px-2 sm:px-4">
+      `}</style>      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center z-20 relative px-2 sm:px-4">
         <span className="bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
           TUTORS & ADVISERS
         </span>
       </h2>
-      <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 z-10 relative px-2 sm:px-4">
+      <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 z-20 relative px-2 sm:px-4">
         <div className="relative w-full lg:w-2/3 flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12">
           {/* Tutor */}
           <div ref={tutorRef} className="relative">

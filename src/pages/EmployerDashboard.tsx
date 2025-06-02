@@ -176,15 +176,15 @@ const EmployerDashboard: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Budget Allocated</span>
-                    <span className="font-semibold">₦15,000,000</span>
+                    <span className="font-semibold">Q15,000,000</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Spent</span>
-                    <span className="text-amber-600 font-semibold">₦8,250,000</span>
+                    <span className="text-amber-600 font-semibold">Q8,250,000</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Available</span>
-                    <span className="text-green-600 font-semibold">₦6,750,000</span>
+                    <span className="text-green-600 font-semibold">Q6,750,000</span>
                   </div>
                   <div className="flex justify-end">
                     <Button size="sm" className="bg-[#D4AF37] text-black font-bold hover:bg-amber-500">Manage</Button>
@@ -237,15 +237,15 @@ const EmployerDashboard: React.FC = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Total Recruitment Spend</span>
-                    <span className="font-semibold text-[#EA384C]">₦12,450,000</span>
+                    <span className="font-semibold text-[#EA384C]">Q12,450,000</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Average Cost per Hire</span>
-                    <span className="text-amber-600 font-semibold">₦691,667</span>
+                    <span className="text-amber-600 font-semibold">Q691,667</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Platform Fees</span>
-                    <span className="text-blue-600 font-semibold">₦1,245,000</span>
+                    <span className="text-blue-600 font-semibold">Q1,245,000</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Feedback Resolution Rate</span>
@@ -303,7 +303,7 @@ const EmployerDashboard: React.FC = () => {
                         <YAxis yAxisId="left" />
                         <YAxis yAxisId="right" orientation="right" />
                         <ChartTooltip formatter={(value, name) => {
-                          if (name === 'cost') return [`₦${value.toLocaleString()}`, 'Recruitment Cost'];
+                          if (name === 'cost') return [`Q${value.toLocaleString()}`, 'Recruitment Cost'];
                           return [value, name];
                         }} />
                         <Line 
@@ -328,7 +328,7 @@ const EmployerDashboard: React.FC = () => {
                           dataKey="cost" 
                           stroke="var(--color-cost)" 
                           strokeWidth={3}
-                          name="Cost (₦)"
+                          name="Cost (Q)"
                         />
                         <Legend />
                       </LineChart>
@@ -386,11 +386,11 @@ const EmployerDashboard: React.FC = () => {
                         <YAxis yAxisId="left" />
                         <YAxis yAxisId="right" orientation="right" />
                         <ChartTooltip formatter={(value, name) => {
-                          if (name === 'budget') return [`₦${value.toLocaleString()}`, 'Budget'];
+                          if (name === 'budget') return [`Q${value.toLocaleString()}`, 'Budget'];
                           return [value, 'Hired'];
                         }} />
                         <Bar yAxisId="left" dataKey="hired" fill="var(--color-hired)" name="Hired" />
-                        <Bar yAxisId="right" dataKey="budget" fill="var(--color-budget)" name="Budget (₦)" />
+                        <Bar yAxisId="right" dataKey="budget" fill="var(--color-budget)" name="Budget (Q)" />
                         <Legend />
                       </RechartsBarChart>
                     </ResponsiveContainer>
@@ -411,7 +411,7 @@ const EmployerDashboard: React.FC = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="quarter" />
                         <YAxis />
-                        <ChartTooltip formatter={(value) => [`₦${value.toLocaleString()}`, 'Amount']} />
+                        <ChartTooltip formatter={(value) => [`Q${value.toLocaleString()}`, 'Amount']} />
                         <Bar dataKey="budgeted" fill="var(--color-budget)" name="Budgeted" />
                         <Bar dataKey="spent" fill="var(--color-spent)" name="Spent" />
                         <Bar dataKey="saved" fill="var(--color-saved)" name="Saved" />
@@ -447,7 +447,7 @@ const EmployerDashboard: React.FC = () => {
                     <div className="text-xs text-gray-500 mt-1">Based on feedback</div>
                   </div>
                   <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-lg">
-                    <div className="text-3xl font-bold text-orange-600 mb-2">₦692k</div>
+                    <div className="text-3xl font-bold text-orange-600 mb-2">Q692k</div>
                     <div className="text-sm text-orange-700 dark:text-orange-300">Cost per Hire</div>
                     <div className="text-xs text-gray-500 mt-1">Below industry avg.</div>
                   </div>
@@ -645,7 +645,7 @@ const EmployerDashboard: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Cost per Hire</p>
-                    <p className="text-2xl font-bold text-[#EA384C]">₦691K</p>
+                    <p className="text-2xl font-bold text-[#EA384C]">Q691K</p>
                     <p className="text-xs text-red-600">↑ 8% from last month</p>
                   </div>
                   <CreditCard className="h-8 w-8 text-[#EA384C]" />
@@ -728,7 +728,7 @@ const EmployerDashboard: React.FC = () => {
                     <h4 className="font-semibold mb-2">Budget Utilization</h4>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm">Budget Used</span>
-                      <span className="text-sm font-bold">₦12.4M/₦15M</span>
+                      <span className="text-sm font-bold">Q12.4M/Q15M</span>
                     </div>
                     <Progress value={83} className="h-3" />
                   </div>
@@ -762,7 +762,7 @@ const EmployerDashboard: React.FC = () => {
             <Card size="sm" variant="stats" >
               <CardContent compact className="p-4">
                 <div className="text-sm text-gray-600 dark:text-gray-400">Total Spent</div>
-                <div className="text-2xl font-bold text-[#EA384C]">₦12,450,000</div>
+                <div className="text-2xl font-bold text-[#EA384C]">Q12,450,000</div>
                 <div className="text-xs text-green-600 mt-1">+8.2% from last year</div>
               </CardContent>
             </Card>
@@ -770,7 +770,7 @@ const EmployerDashboard: React.FC = () => {
             <Card size="sm" variant="stats" >
               <CardContent compact className="p-4">
                 <div className="text-sm text-gray-600 dark:text-gray-400">Platform Fees</div>
-                <div className="text-2xl font-bold text-[#D4AF37]">₦1,245,000</div>
+                <div className="text-2xl font-bold text-[#D4AF37]">Q1,245,000</div>
                 <div className="text-xs text-blue-600 mt-1">12 transactions</div>
               </CardContent>
             </Card>
@@ -778,7 +778,7 @@ const EmployerDashboard: React.FC = () => {
             <Card size="sm" variant="stats" >
               <CardContent compact className="p-4">
                 <div className="text-sm text-gray-600 dark:text-gray-400">Pending</div>
-                <div className="text-2xl font-bold text-orange-600">₦125,000</div>
+                <div className="text-2xl font-bold text-orange-600">Q125,000</div>
                 <div className="text-xs text-gray-500 mt-1">2 pending payments</div>
               </CardContent>
             </Card>
@@ -786,7 +786,7 @@ const EmployerDashboard: React.FC = () => {
             <Card size="sm" variant="stats" >
               <CardContent compact className="p-4">
                 <div className="text-sm text-gray-600 dark:text-gray-400">Last Payment</div>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">₦75,000</div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">Q75,000</div>
                 <div className="text-xs text-gray-500 mt-1">2 days ago</div>
               </CardContent>
             </Card>
@@ -818,7 +818,7 @@ const EmployerDashboard: React.FC = () => {
                         date: "Dec 15, 2024",
                         id: "TXN-2024-001",
                         description: "Job Posting Fee - Senior Nurse Position",
-                        amount: "₦75,000",
+                        amount: "Q75,000",
                         status: "Completed",
                         statusColor: "text-green-600"
                       },
@@ -826,7 +826,7 @@ const EmployerDashboard: React.FC = () => {
                         date: "Dec 12, 2024",
                         id: "TXN-2024-002",
                         description: "Premium Candidate Access - Q4 2024",
-                        amount: "₦150,000",
+                        amount: "Q150,000",
                         status: "Completed",
                         statusColor: "text-green-600"
                       },
@@ -834,7 +834,7 @@ const EmployerDashboard: React.FC = () => {
                         date: "Dec 10, 2024",
                         id: "TXN-2024-003",
                         description: "AI Matching Service - November",
-                        amount: "₦45,000",
+                        amount: "Q45,000",
                         status: "Pending",
                         statusColor: "text-orange-600"
                       },
@@ -842,7 +842,7 @@ const EmployerDashboard: React.FC = () => {
                         date: "Dec 8, 2024",
                         id: "TXN-2024-004",
                         description: "Job Posting Fee - Lab Technician",
-                        amount: "₦65,000",
+                        amount: "Q65,000",
                         status: "Completed",
                         statusColor: "text-green-600"
                       },
@@ -850,7 +850,7 @@ const EmployerDashboard: React.FC = () => {
                         date: "Dec 5, 2024",
                         id: "TXN-2024-005",
                         description: "Bulk Candidate Screening Package",
-                        amount: "₦200,000",
+                        amount: "Q200,000",
                         status: "Completed",
                         statusColor: "text-green-600"
                       }
@@ -1061,3 +1061,4 @@ const EmployerDashboard: React.FC = () => {
 };
 
 export default EmployerDashboard;
+

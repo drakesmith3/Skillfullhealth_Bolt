@@ -41,7 +41,7 @@ const TransactionItem = ({ type, amount, date, status, description }) => {
       </div>
       
       <div className={`font-bold ${type === "credit" ? "text-green-600" : "text-red-600"}`}>
-        {type === "credit" ? "+" : "-"}₦{amount.toLocaleString()}
+        {type === "credit" ? "+" : "-"}Q{amount.toLocaleString()}
       </div>
     </div>
   );
@@ -160,7 +160,7 @@ const WalletTransaction = () => {
               <div className="w-16 h-16 rounded-full bg-[#D4AF37]/20 flex items-center justify-center mx-auto mb-4">
                 <DollarSign className="h-8 w-8 text-d4af37" />
               </div>
-              <h3 className="text-3xl font-bold mb-1">₦{balance.toLocaleString()}</h3>
+              <h3 className="text-3xl font-bold mb-1">Q{balance.toLocaleString()}</h3>
               <p className="text-gray-500 text-sm mb-6">Available for withdrawal</p>
               
               <form onSubmit={handleWithdraw} className="text-left">
@@ -196,14 +196,14 @@ const WalletTransaction = () => {
                   </div>
                   
                   <div>
-                    <Label htmlFor="amount">Amount (₦)</Label>
+                    <Label htmlFor="amount">Amount (Q)</Label>
                     <Input 
                       id="amount"
                       type="number"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       min={1000}
-                      placeholder="Minimum: ₦1,000"
+                      placeholder="Minimum: Q1,000"
                       required
                     />
                   </div>
@@ -295,3 +295,4 @@ const WalletTransaction = () => {
 };
 
 export default WalletTransaction;
+

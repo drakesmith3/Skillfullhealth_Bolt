@@ -357,11 +357,11 @@ const Testimonials = () => {
             className="text-center rounded-lg p-8 border"
             style={{
               background: isDark
-                ? 'linear-gradient(135deg, rgba(220, 38, 38, 0.3) 0%, rgba(245, 158, 11, 0.4) 50%, rgba(220, 38, 38, 0.3) 100%)'
-                : 'linear-gradient(135deg, rgba(220, 38, 38, 0.4) 0%, rgba(245, 158, 11, 0.5) 50%, rgba(220, 38, 38, 0.4) 100%)',
+                ? 'linear-gradient(135deg, rgba(248, 113, 113, 0.2) 0%, rgba(251, 191, 36, 0.3) 50%, rgba(248, 113, 113, 0.2) 100%)'
+                : 'linear-gradient(135deg, rgba(252, 165, 165, 0.3) 0%, rgba(253, 230, 138, 0.4) 50%, rgba(252, 165, 165, 0.3) 100%)',
               border: isDark 
-                ? '1px solid rgba(220, 38, 38, 0.3)'
-                : '1px solid rgba(220, 38, 38, 0.3)'
+                ? '1px solid rgba(248, 113, 113, 0.2)'
+                : '1px solid rgba(252, 165, 165, 0.2)'
             }}
           >
             <h2 className={`text-2xl font-bold mb-4 ${

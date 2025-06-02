@@ -407,9 +407,9 @@ const AIAgentDashboard: React.FC = () => {
                 <DollarSign className="h-6 w-6 text-[#D4AF37]" />
                 <h3 className="text-xl font-semibold">Total Commissions</h3>
               </div>
-              <div className="text-3xl font-bold text-[#D4AF37]">₦{mlmStats.totalCommissions.toLocaleString()}</div>
+              <div className="text-3xl font-bold text-[#D4AF37]">Q{mlmStats.totalCommissions.toLocaleString()}</div>
               <div className="text-sm text-gray-600 mt-2">Paid out to affiliates</div>
-              <div className="text-xs text-orange-600 mt-1">₦{mlmStats.commissionsPending.toLocaleString()} pending</div>
+              <div className="text-xs text-orange-600 mt-1">Q{mlmStats.commissionsPending.toLocaleString()} pending</div>
             </Card>
 
             <Card className="p-6">
@@ -448,7 +448,7 @@ const AIAgentDashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold text-green-600">₦{performer.totalEarnings.toLocaleString()}</div>
+                      <div className="font-semibold text-green-600">Q{performer.totalEarnings.toLocaleString()}</div>
                       <div className="text-sm text-gray-600">Total earnings</div>
                     </div>
                   </div>
@@ -590,7 +590,7 @@ const AIAgentDashboard: React.FC = () => {
                         <div className={`text-sm font-semibold ${
                           transaction.type === 'payout' ? 'text-red-600' : 'text-green-600'
                         }`}>
-                          {transaction.type === 'payout' ? '-' : '+'}₦{transaction.amount.toLocaleString()}
+                          {transaction.type === 'payout' ? '-' : '+'}Q{transaction.amount.toLocaleString()}
                         </div>
                       </td>
                       <td className="px-4 py-4">

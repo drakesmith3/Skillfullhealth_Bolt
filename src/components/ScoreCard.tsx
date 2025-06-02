@@ -60,7 +60,7 @@ const ScoreCard = () => {
         
         <div className="text-center flex-1">
           <div className="text-sm font-bold">Potential Earnings</div>
-          <div className="font-semibold">₦10,000,000</div>
+          <div className="font-semibold">Q10,000,000</div>
           <div className="text-xs text-gray-500">Based on current score</div>
         </div>
       </div>

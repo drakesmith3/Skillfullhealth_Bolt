@@ -2,9 +2,9 @@
 import { BookOpen } from "lucide-react";
 
 const courses = [
-  { id: 1, name: "BLS Course", price: "₦25,000" },
-  { id: 2, name: "ECG Course", price: "₦35,000" },
-  { id: 3, name: "ACLS by Cardinal Academy", price: "₦45,000" },
+  { id: 1, name: "BLS Course", price: "Q25,000" },
+  { id: 2, name: "ECG Course", price: "Q35,000" },
+  { id: 3, name: "ACLS by Cardinal Academy", price: "Q45,000" },
 ];
 
 const RelatedCourses = () => {

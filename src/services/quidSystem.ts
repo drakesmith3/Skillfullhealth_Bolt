@@ -45,13 +45,11 @@ export interface MLMBonus {
 
 export class QUIDSystem {
   private purses: Map<string, QUIDPurse> = new Map();
-  private transactions: QUIDTransaction[] = [];
-  private exchangeRates: QUIDExchangeRate[] = [
-    { currency: 'USD', country: 'USA', symbol: '$', rate: 10 },
-    { currency: 'NGN', country: 'Nigeria', symbol: '₦', rate: 10000 },
-    { currency: 'GBP', country: 'UK', symbol: '£', rate: 10 },
-    { currency: 'CAD', country: 'Canada', symbol: 'C$', rate: 10 },
-    { currency: 'EUR', country: 'Europe', symbol: '€', rate: 10 }
+  private transactions: QUIDTransaction[] = [];  private exchangeRates: QUIDExchangeRate[] = [
+    { currency: 'USD', country: 'USA', symbol: 'Q', rate: 10 },
+    { currency: 'QUD', country: 'Nigeria', symbol: 'Q', rate: 10000 },
+    { currency: 'GBP', country: 'UK', symbol: 'Q', rate: 10 },    { currency: 'CAD', country: 'Canada', symbol: 'Q', rate: 10 },
+    { currency: 'EUR', country: 'Europe', symbol: 'Q', rate: 10 }
   ];
 
   // Transaction fee percentage

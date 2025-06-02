@@ -377,13 +377,27 @@ const GamesQuizzes = ({ isActive = false }) => {
                         <Play className="h-4 w-4 sm:h-6 sm:w-6 ml-1" />
                       </Button>
                     </div>
-                  </div>
-                  <CardContent className="p-3 sm:p-4">
+                  </div>                  <CardContent className="p-3 sm:p-4">
                     <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>{game.title}</h3>
                     <p className={`text-xs sm:text-sm mb-3 sm:mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{game.description}</p>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-3">
                       <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>4.8 ★★★★★</span>
                       <span className={`text-xs px-2 py-1 rounded ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'}`}>Educational</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button 
+                        className="flex-1 bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white text-xs py-2"
+                        size="sm"
+                      >
+                        {index % 2 === 0 ? 'PLAY GAME' : 'ANSWER QUIZ'}
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        className="flex-1 text-xs py-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                        size="sm"
+                      >
+                        BUY COURSE
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

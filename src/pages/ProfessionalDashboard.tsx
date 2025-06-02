@@ -40,7 +40,7 @@ const DashboardPage: React.FC = () => {
 
   const glohsenScore = 77;
   const employerScore = "85/110";
-  const earnings = "₦5,000,000";
+  const earnings = "Q5,000,000";
 
   // User's selected subspecialties (max 4 from registration)
   const userSubspecialties = [
@@ -306,7 +306,7 @@ const DashboardPage: React.FC = () => {
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                      {showEarnings ? earnings : "₦*,***,***"}
+                      {showEarnings ? earnings : "Q*,***,***"}
                     </div>                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-4">Available Balance</div>
                     <Link to="/purse/professional">
                       <Button className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black font-semibold transition-all duration-300 transform hover:scale-105">
@@ -720,7 +720,7 @@ const DashboardPage: React.FC = () => {
                             <YAxis yAxisId="left" />
                             <YAxis yAxisId="right" orientation="right" />
                             <ChartTooltip formatter={(value, name) => {
-                              if (name === 'earnings') return [`₦${value.toLocaleString()}`, 'Earnings'];
+                              if (name === 'earnings') return [`Q${value.toLocaleString()}`, 'Earnings'];
                               return [value, 'Jobs'];
                             }} />
                             <Line 
@@ -729,7 +729,7 @@ const DashboardPage: React.FC = () => {
                               dataKey="earnings" 
                               stroke="var(--color-earnings)" 
                               strokeWidth={3}
-                              name="Earnings (₦)"
+                              name="Earnings (Q)"
                             />
                             <Line 
                               yAxisId="right"
@@ -1040,7 +1040,7 @@ const DashboardPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Spent</p>
-                        <p className="text-2xl font-bold text-orange-600">₦180,000</p>
+                        <p className="text-2xl font-bold text-orange-600">Q180,000</p>
                       </div>
                       <div className="p-3 bg-orange-100 dark:bg-orange-900/20 rounded-full">
                         <DollarSign className="h-6 w-6 text-orange-600" />
@@ -1296,7 +1296,7 @@ const DashboardPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Earnings</p>
-                        <p className="text-2xl font-bold text-green-600">₦5,000,000</p>
+                        <p className="text-2xl font-bold text-green-600">Q5,000,000</p>
                       </div>
                       <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-full">
                         <TrendingUp className="h-6 w-6 text-green-600" />
@@ -1310,7 +1310,7 @@ const DashboardPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Payments</p>
-                        <p className="text-2xl font-bold text-yellow-600">₦350,000</p>
+                        <p className="text-2xl font-bold text-yellow-600">Q350,000</p>
                       </div>
                       <div className="p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-full">
                         <Clock className="h-6 w-6 text-yellow-600" />
@@ -1324,7 +1324,7 @@ const DashboardPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">This Month</p>
-                        <p className="text-2xl font-bold text-blue-600">₦750,000</p>
+                        <p className="text-2xl font-bold text-blue-600">Q750,000</p>
                       </div>
                       <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-full">
                         <Calendar className="h-6 w-6 text-blue-600" />
@@ -1344,15 +1344,14 @@ const DashboardPage: React.FC = () => {
                 </CardHeader>
                 <CardContent compact>
                   <div className="space-y-4">
-                    {[
-                      { id: "TXN001", date: "2024-01-15", description: "Locum Payment - Lagos General Hospital", amount: "₦250,000", status: "Completed", type: "credit" },
-                      { id: "TXN002", date: "2024-01-10", description: "Course Fee - Advanced BLS Training", amount: "₦15,000", status: "Completed", type: "debit" },
-                      { id: "TXN003", date: "2024-01-05", description: "Locum Payment - Federal Medical Centre", amount: "₦300,000", status: "Completed", type: "credit" },
-                      { id: "TXN004", date: "2024-01-02", description: "Platform Commission", amount: "₦12,500", status: "Completed", type: "debit" },
-                      { id: "TXN005", date: "2023-12-28", description: "Locum Payment - Private Clinic", amount: "₦180,000", status: "Pending", type: "credit" },
-                      { id: "TXN006", date: "2023-12-25", description: "Course Fee - ACLS Renewal", amount: "₦25,000", status: "Completed", type: "debit" },
-                      { id: "TXN007", date: "2023-12-20", description: "Locum Payment - University Hospital", amount: "₦400,000", status: "Completed", type: "credit" },
-                      { id: "TXN008", date: "2023-12-15", description: "MLM Commission", amount: "₦50,000", status: "Completed", type: "credit" },
+                    {[                      { id: "TXN001", date: "2024-01-15", description: "Locum Payment - Lagos General Hospital", amount: "Q250,000", status: "Completed", type: "credit" },
+                      { id: "TXN002", date: "2024-01-10", description: "Course Fee - Advanced BLS Training", amount: "Q15,000", status: "Completed", type: "debit" },
+                      { id: "TXN003", date: "2024-01-05", description: "Locum Payment - Federal Medical Centre", amount: "Q300,000", status: "Completed", type: "credit" },
+                      { id: "TXN004", date: "2024-01-02", description: "Platform Commission", amount: "Q12,500", status: "Completed", type: "debit" },
+                      { id: "TXN005", date: "2023-12-28", description: "Locum Payment - Private Clinic", amount: "Q180,000", status: "Pending", type: "credit" },
+                      { id: "TXN006", date: "2023-12-25", description: "Course Fee - ACLS Renewal", amount: "Q25,000", status: "Completed", type: "debit" },
+                      { id: "TXN007", date: "2023-12-20", description: "Locum Payment - University Hospital", amount: "Q400,000", status: "Completed", type: "credit" },
+                      { id: "TXN008", date: "2023-12-15", description: "MLM Commission", amount: "Q50,000", status: "Completed", type: "credit" },
                     ].map((transaction) => (
                       <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-300">
                         <div className="flex items-center space-x-4">
@@ -1452,7 +1451,7 @@ const DashboardPage: React.FC = () => {
             </TabsContent>            <TabsContent value="jobs" className="space-y-6 animate-fadeIn">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
                 {/* Job Stats Cards */}
-                <Card size="md" variant="stats">
+                <Card size="lg" variant="default">
                   <CardContent compact>
                     <div className="flex items-center justify-between">
                       <div>
@@ -1466,7 +1465,7 @@ const DashboardPage: React.FC = () => {
                   </CardContent>
                 </Card>
 
-                <Card size="md" variant="stats">
+                <Card size="lg" variant="default">
                   <CardContent compact>
                     <div className="flex items-center justify-between">
                       <div>
@@ -1480,7 +1479,7 @@ const DashboardPage: React.FC = () => {
                   </CardContent>
                 </Card>
 
-                <Card size="md" variant="stats">
+                <Card size="lg" variant="default">
                   <CardContent compact>
                     <div className="flex items-center justify-between">
                       <div>
@@ -1494,7 +1493,7 @@ const DashboardPage: React.FC = () => {
                   </CardContent>
                 </Card>
 
-                <Card size="md" variant="stats">
+                <Card size="lg" variant="default">
                   <CardContent compact>
                     <div className="flex items-center justify-between">
                       <div>
@@ -1509,12 +1508,163 @@ const DashboardPage: React.FC = () => {
                 </Card>
               </div>
 
+              {/* Job Analytics Charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                {/* Earnings Trends */}
+                <Card size="lg" variant="default">
+                  <CardHeader compact>
+                    <CardTitle className="flex items-center text-[#ea384c]">
+                      <TrendingUp className="h-5 w-5 mr-2" />
+                      Earnings Trends
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent compact>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={[
+                          { month: 'Sep', earnings: 450000, jobs: 3 },
+                          { month: 'Oct', earnings: 680000, jobs: 4 },
+                          { month: 'Nov', earnings: 520000, jobs: 3 },
+                          { month: 'Dec', earnings: 750000, jobs: 5 },
+                          { month: 'Jan', earnings: 890000, jobs: 6 }
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />                        <ChartTooltip formatter={(value, name) => [
+                            name === 'earnings' ? `Q${value.toLocaleString()}` : value,
+                            name === 'earnings' ? 'Earnings' : 'Jobs'
+                          ]} />
+                          <Legend />
+                          <Line type="monotone" dataKey="earnings" stroke="#ea384c" strokeWidth={3} name="Earnings (Q)" />
+                          <Line type="monotone" dataKey="jobs" stroke="#D4AF37" strokeWidth={3} name="Jobs Count" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Job Types Distribution */}
+                <Card size="lg" variant="default">
+                  <CardHeader compact>
+                    <CardTitle className="flex items-center text-[#ea384c]">
+                      <Briefcase className="h-5 w-5 mr-2" />
+                      Job Types Distribution
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent compact>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={[
+                              { name: 'Emergency Medicine', value: 35, color: '#ea384c' },
+                              { name: 'General Practice', value: 28, color: '#D4AF37' },
+                              { name: 'Night Shifts', value: 20, color: '#3b82f6' },
+                              { name: 'Specialist Clinics', value: 12, color: '#10b981' },
+                              { name: 'Locum Coverage', value: 5, color: '#8b5cf6' }
+                            ]}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={100}
+                            fill="#8884d8"
+                            dataKey="value"
+                          >
+                            {[
+                              { name: 'Emergency Medicine', value: 35, color: '#ea384c' },
+                              { name: 'General Practice', value: 28, color: '#D4AF37' },
+                              { name: 'Night Shifts', value: 20, color: '#3b82f6' },
+                              { name: 'Specialist Clinics', value: 12, color: '#10b981' },
+                              { name: 'Locum Coverage', value: 5, color: '#8b5cf6' }
+                            ].map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <ChartTooltip />
+                          <Legend />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Performance Analytics */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                {/* Work Location Analytics */}
+                <Card size="lg" variant="default">
+                  <CardHeader compact>
+                    <CardTitle className="flex items-center text-[#ea384c]">
+                      <MapPin className="h-5 w-5 mr-2" />
+                      Work Locations
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent compact>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RechartsBarChart data={[
+                          { location: 'Lagos', jobs: 12, earnings: 2800000 },
+                          { location: 'Abuja', jobs: 8, earnings: 2100000 },
+                          { location: 'Kano', jobs: 3, earnings: 780000 },
+                          { location: 'Port Harcourt', jobs: 1, earnings: 320000 }
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="location" />
+                          <YAxis />                          <ChartTooltip formatter={(value, name) => [
+                            name === 'earnings' ? `Q${value.toLocaleString()}` : value,
+                            name === 'earnings' ? 'Total Earnings' : 'Jobs Completed'
+                          ]} />
+                          <Legend />
+                          <Bar dataKey="jobs" fill="#ea384c" name="Jobs Completed" />
+                          <Bar dataKey="earnings" fill="#D4AF37" name="Total Earnings (Q)" />
+                        </RechartsBarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Rating Trends */}
+                <Card size="lg" variant="default">
+                  <CardHeader compact>
+                    <CardTitle className="flex items-center text-[#ea384c]">
+                      <Star className="h-5 w-5 mr-2" />
+                      Rating Trends
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent compact>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={[
+                          { month: 'Sep', rating: 4.6, reviews: 8 },
+                          { month: 'Oct', rating: 4.7, reviews: 12 },
+                          { month: 'Nov', rating: 4.8, reviews: 9 },
+                          { month: 'Dec', rating: 4.9, reviews: 15 },
+                          { month: 'Jan', rating: 4.8, reviews: 18 }
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis domain={[4.0, 5.0]} />
+                          <ChartTooltip formatter={(value, name) => [
+                            name === 'rating' ? `${value}/5.0` : value,
+                            name === 'rating' ? 'Average Rating' : 'Reviews Count'
+                          ]} />
+                          <Legend />
+                          <Line type="monotone" dataKey="rating" stroke="#D4AF37" strokeWidth={3} name="Average Rating" />
+                          <Line type="monotone" dataKey="reviews" stroke="#3b82f6" strokeWidth={3} name="Reviews Count" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
               {/* Jobs History */}
               <Card size="lg" variant="default">
                 <CardHeader compact>
                   <CardTitle className="flex items-center text-[#ea384c]">
                     <Briefcase className="h-5 w-5 mr-2" />
-                    Jobs History
+                    Recent Jobs History
                   </CardTitle>
                 </CardHeader>
                 <CardContent compact>
@@ -1523,62 +1673,52 @@ const DashboardPage: React.FC = () => {
                       { 
                         id: "JOB001", 
                         facility: "Lagos General Hospital", 
-                        position: "Locum Doctor", 
+                        position: "Locum Midwife", 
                         duration: "5 days", 
                         date: "Jan 10-15, 2024", 
-                        payment: "₦250,000", 
+                        payment: "Q250,000", 
                         status: "Completed",
                         rating: 5
                       },
                       { 
                         id: "JOB002", 
                         facility: "Federal Medical Centre", 
-                        position: "Emergency Physician", 
+                        position: "Emergency Nurse", 
                         duration: "3 days", 
                         date: "Jan 5-8, 2024", 
-                        payment: "₦180,000", 
+                        payment: "Q180,000", 
                         status: "Completed",
                         rating: 4
                       },
                       { 
                         id: "JOB003", 
                         facility: "Private Maternity Clinic", 
-                        position: "Night Shift Doctor", 
+                        position: "Night Shift Midwife", 
                         duration: "7 days", 
                         date: "Dec 20-27, 2023", 
-                        payment: "₦315,000", 
+                        payment: "Q315,000", 
                         status: "Completed",
                         rating: 5
                       },
                       { 
                         id: "JOB004", 
                         facility: "University Teaching Hospital", 
-                        position: "Locum Physician", 
+                        position: "Locum Nurse", 
                         duration: "2 days", 
                         date: "Jan 20-22, 2024", 
-                        payment: "₦120,000", 
+                        payment: "Q120,000", 
                         status: "In Progress",
                         rating: null
                       },
                       { 
                         id: "JOB005", 
                         facility: "Specialist Hospital", 
-                        position: "ICU Physician", 
+                        position: "ICU Nurse", 
                         duration: "4 days", 
                         date: "Jan 25-29, 2024", 
-                        payment: "₦200,000", 
+                        payment: "Q200,000", 
                         status: "Applied",
                         rating: null
-                      },
-                      { 
-                        id: "JOB006", 
-                        facility: "Community Health Center", 
-                        position: "General Practitioner", 
-                        duration: "1 week", 
-                        date: "Dec 15-22, 2023", 
-                        payment: "₦280,000", 
-                        status: "Completed",
-                        rating: 5
                       },
                     ].map((job) => (
                       <div key={job.id} className="p-6 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-300 border border-gray-200 dark:border-gray-600">
@@ -1669,7 +1809,7 @@ const DashboardPage: React.FC = () => {
                     </div>
                     <div>
                       <Label htmlFor="minSalary">Minimum Salary</Label>
-                      <Input id="minSalary" placeholder="₦50,000" className="mt-1" />
+                      <Input id="minSalary" placeholder="Q50,000" className="mt-1" />
                     </div>
                   </div>
                   <div className="flex items-center space-x-4 mb-4">
@@ -1688,7 +1828,316 @@ const DashboardPage: React.FC = () => {
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent><TabsContent value="jobs" className="space-y-6 animate-fadeIn">
+            </TabsContent><TabsContent value="inbox" className="space-y-6 animate-fadeIn">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Message List */}
+                <div className="lg:col-span-1">
+                  <Card size="lg" variant="default">
+                    <CardHeader compact>
+                      <div className="flex justify-between items-center">
+                        <CardTitle className="flex items-center text-[#ea384c]">
+                          <Mail className="h-5 w-5 mr-2" />
+                          Messages
+                        </CardTitle>
+                        <Badge variant="secondary">8 new</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent compact className="p-0">
+                      <div className="space-y-1">
+                        {[
+                          {
+                            id: 1,
+                            sender: "GLOHSEN Admin",
+                            subject: "New Job Opportunity Available",
+                            preview: "A new locum position has been posted...",
+                            time: "2 hours ago",
+                            unread: true,
+                            type: "admin"
+                          },
+                          {
+                            id: 2,
+                            sender: "Lagos General Hospital",
+                            subject: "Job Application Status Update",
+                            preview: "Your application for the emergency...",
+                            time: "5 hours ago",
+                            unread: true,
+                            type: "employer"
+                          },
+                          {
+                            id: 3,
+                            sender: "Dr. Sarah Johnson",
+                            subject: "Course Feedback Request",
+                            preview: "Thank you for completing the BLS...",
+                            time: "1 day ago",
+                            unread: false,
+                            type: "tutor"
+                          },
+                          {
+                            id: 4,
+                            sender: "Federal Medical Centre",
+                            subject: "Contract Renewal Offer",
+                            preview: "We are pleased to offer you a...",
+                            time: "2 days ago",
+                            unread: false,
+                            type: "employer"
+                          },
+                          {
+                            id: 5,
+                            sender: "GLOHSEN Platform",
+                            subject: "Monthly Performance Summary",
+                            preview: "Your professional performance summary...",
+                            time: "3 days ago",
+                            unread: false,
+                            type: "admin"
+                          }
+                        ].map((message) => (
+                          <div 
+                            key={message.id}
+                            className={`p-4 border-b border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                              message.unread ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                            }`}
+                          >
+                            <div className="flex justify-between items-start mb-1">
+                              <div className="flex items-center">
+                                <span className="font-medium text-sm">{message.sender}</span>
+                                {message.unread && (
+                                  <div className="w-2 h-2 bg-blue-500 rounded-full ml-2"></div>
+                                )}
+                              </div>
+                              <span className="text-xs text-gray-500">{message.time}</span>
+                            </div>
+                            <div className="text-sm font-medium mb-1">{message.subject}</div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                              {message.preview}
+                            </div>
+                            <div className="mt-2">
+                              <Badge 
+                                variant="outline" 
+                                className={`text-xs ${
+                                  message.type === 'admin' ? 'border-purple-200 text-purple-700' :
+                                  message.type === 'employer' ? 'border-green-200 text-green-700' :
+                                  'border-blue-200 text-blue-700'
+                                }`}
+                              >
+                                {message.type}
+                              </Badge>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Message Detail & Compose */}
+                <div className="lg:col-span-2 space-y-6">
+                  {/* Current Message */}
+                  <Card size="lg" variant="default">
+                    <CardHeader compact>
+                      <div className="flex justify-between items-center">
+                        <CardTitle className="text-lg font-bold">Job Application Status Update</CardTitle>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm">
+                            <Star className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        <div className="flex items-center mr-4">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          <span>Lagos General Hospital</span>
+                        </div>
+                        <span>5 hours ago</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent compact>
+                      <div className="prose max-w-none">
+                        <p className="text-gray-700 dark:text-gray-300 mb-4">
+                          Dear Dr. [Name],
+                        </p>
+                        <p className="text-gray-700 dark:text-gray-300 mb-4">
+                          Thank you for your interest in the Emergency Medicine Locum position at Lagos General Hospital. 
+                          We are pleased to inform you that your application has been reviewed and you have been 
+                          shortlisted for the next stage of the selection process.
+                        </p>
+                        <p className="text-gray-700 dark:text-gray-300 mb-4">
+                          The next step involves a brief interview and orientation session scheduled for next week. 
+                          Please confirm your availability for the following time slots:
+                        </p>
+                        <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+                          <li>Monday, May 29th - 2:00 PM</li>
+                          <li>Tuesday, May 30th - 10:00 AM</li>
+                          <li>Wednesday, May 31st - 3:00 PM</li>
+                        </ul>
+                        <p className="text-gray-700 dark:text-gray-300">
+                          Best regards,<br />
+                          HR Department<br />
+                          Lagos General Hospital
+                        </p>
+                      </div>
+                      
+                      {/* Reply Section */}
+                      <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+                        <h4 className="font-medium mb-3">Reply to Lagos General Hospital</h4>
+                        <Textarea 
+                          placeholder="Type your reply here..." 
+                          className="min-h-[120px] mb-3"
+                        />
+                        <div className="flex justify-between items-center">
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm">
+                              <Upload className="h-4 w-4 mr-2" />
+                              Attach
+                            </Button>
+                            <Button variant="outline" size="sm">
+                              <Calendar className="h-4 w-4 mr-2" />
+                              Schedule
+                            </Button>
+                          </div>
+                          <Button className="bg-[#ea384c] hover:bg-[#d12e42] text-white">
+                            <Mail className="h-4 w-4 mr-2" />
+                            Send Reply
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Quick Actions */}
+                  <Card size="lg" variant="default">
+                    <CardHeader compact>
+                      <CardTitle className="text-lg font-bold">Quick Actions</CardTitle>
+                    </CardHeader>
+                    <CardContent compact>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Button variant="outline" className="p-4 h-auto flex-col hover:bg-[#ea384c] hover:text-white transition-all duration-300">
+                          <MessageCircle className="h-6 w-6 mb-2" />
+                          <span>Compose New Message</span>
+                          <span className="text-xs opacity-75">Send to employers or tutors</span>
+                        </Button>
+                        <Button variant="outline" className="p-4 h-auto flex-col hover:bg-[#ea384c] hover:text-white transition-all duration-300">
+                          <Users className="h-6 w-6 mb-2" />
+                          <span>Contact Support</span>
+                          <span className="text-xs opacity-75">Get help from GLOHSEN team</span>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Feedback Section */}
+              <Card size="xl" variant="default">
+                <CardHeader compact>
+                  <CardTitle className="flex items-center text-[#ea384c]">
+                    <Star className="h-5 w-5 mr-2" />
+                    Feedback & Reviews
+                  </CardTitle>
+                </CardHeader>
+                <CardContent compact>
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    {/* Feedback Summary */}
+                    <div className="lg:col-span-1">
+                      <div className="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div className="text-4xl font-bold text-[#ea384c] mb-2">4.8</div>
+                        <div className="flex justify-center mb-2">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} className={`h-5 w-5 ${i < 4 ? 'text-amber-400 fill-current' : 'text-gray-300'}`} />
+                          ))}
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          Based on 87 reviews
+                        </div>
+                        
+                        <div className="space-y-2 mt-4">
+                          {[
+                            { stars: 5, count: 65, percentage: 75 },
+                            { stars: 4, count: 15, percentage: 17 },
+                            { stars: 3, count: 5, percentage: 6 },
+                            { stars: 2, count: 2, percentage: 2 },
+                            { stars: 1, count: 0, percentage: 0 }
+                          ].map((rating, idx) => (
+                            <div key={idx} className="flex items-center text-xs">
+                              <span className="w-8">{rating.stars}★</span>
+                              <div className="flex-1 bg-gray-200 dark:bg-gray-600 rounded-full h-2 mx-2">
+                                <div 
+                                  className="bg-amber-400 h-2 rounded-full"
+                                  style={{ width: `${rating.percentage}%` }}
+                                />
+                              </div>
+                              <span className="w-8 text-right">{rating.count}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recent Reviews */}
+                    <div className="lg:col-span-2">
+                      <h3 className="font-bold mb-4">Recent Reviews from Employers</h3>
+                      <div className="space-y-4 max-h-96 overflow-y-auto">
+                        {[
+                          {
+                            employer: "Lagos General Hospital",
+                            position: "Emergency Medicine Locum",
+                            rating: 5,
+                            comment: "Exceptional medical skills and professionalism. Dr. [Name] handled emergency cases with remarkable competence and showed excellent patient care throughout the assignment.",
+                            date: "2 days ago"
+                          },
+                          {
+                            employer: "Federal Medical Centre",
+                            position: "ICU Physician",
+                            rating: 5,
+                            comment: "Outstanding performance during a challenging period. Demonstrated excellent clinical judgment and worked seamlessly with our medical team.",
+                            date: "1 week ago"
+                          },
+                          {
+                            employer: "Private Specialist Hospital",
+                            position: "General Practitioner",
+                            rating: 4,
+                            comment: "Very reliable and knowledgeable. Patients responded well to the care provided. Would definitely recommend for future assignments.",
+                            date: "2 weeks ago"
+                          },
+                          {
+                            employer: "Community Health Center",
+                            position: "Family Medicine",
+                            rating: 5,
+                            comment: "Excellent communication skills with patients and staff. Provided comprehensive care and maintained high standards throughout the contract.",
+                            date: "3 weeks ago"
+                          }
+                        ].map((review, idx) => (
+                          <div key={idx} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <div className="font-medium">{review.employer}</div>
+                                <div className="text-sm text-gray-600 dark:text-gray-400">{review.position}</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="flex">
+                                  {[...Array(review.rating)].map((_, i) => (
+                                    <Star 
+                                      key={i} 
+                                      className={`h-4 w-4 ${
+                                        i < review.rating ? 'text-amber-400 fill-current' : 'text-gray-300'
+                                      }`} 
+                                    />
+                                  ))}
+                                </div>
+                                <div className="text-xs text-gray-500">{review.date}</div>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">{review.comment}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent><TabsContent value="jobs history" className="space-y-6 animate-fadeIn">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
                 {/* Job Stats Cards */}
                 <Card size="lg" variant="default">
@@ -1748,159 +2197,6 @@ const DashboardPage: React.FC = () => {
                 </Card>
               </div>
 
-              {/* Job Analytics Charts */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                {/* Earnings Trends */}
-                <Card size="lg" variant="default">
-                  <CardHeader compact>
-                    <CardTitle className="flex items-center text-[#ea384c]">
-                      <TrendingUp className="h-5 w-5 mr-2" />
-                      Earnings Trends
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent compact>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={[
-                          { month: 'Sep', earnings: 450000, jobs: 3 },
-                          { month: 'Oct', earnings: 680000, jobs: 4 },
-                          { month: 'Nov', earnings: 520000, jobs: 3 },
-                          { month: 'Dec', earnings: 750000, jobs: 5 },
-                          { month: 'Jan', earnings: 890000, jobs: 6 }
-                        ]}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="month" />
-                          <YAxis />
-                          <ChartTooltip formatter={(value, name) => [
-                            name === 'earnings' ? `₦${value.toLocaleString()}` : value,
-                            name === 'earnings' ? 'Earnings' : 'Jobs'
-                          ]} />
-                          <Legend />
-                          <Line type="monotone" dataKey="earnings" stroke="#ea384c" strokeWidth={3} name="Earnings (₦)" />
-                          <Line type="monotone" dataKey="jobs" stroke="#D4AF37" strokeWidth={3} name="Jobs Count" />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Job Types Distribution */}
-                <Card size="lg" variant="default">
-                  <CardHeader compact>
-                    <CardTitle className="flex items-center text-[#ea384c]">
-                      <Briefcase className="h-5 w-5 mr-2" />
-                      Job Types Distribution
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent compact>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={[
-                              { name: 'Emergency Medicine', value: 35, color: '#ea384c' },
-                              { name: 'General Practice', value: 28, color: '#D4AF37' },
-                              { name: 'Night Shifts', value: 20, color: '#3b82f6' },
-                              { name: 'Specialist Clinics', value: 12, color: '#10b981' },
-                              { name: 'Locum Coverage', value: 5, color: '#8b5cf6' }
-                            ]}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            outerRadius={100}
-                            fill="#8884d8"
-                            dataKey="value"
-                          >
-                            {[
-                              { name: 'Emergency Medicine', value: 35, color: '#ea384c' },
-                              { name: 'General Practice', value: 28, color: '#D4AF37' },
-                              { name: 'Night Shifts', value: 20, color: '#3b82f6' },
-                              { name: 'Specialist Clinics', value: 12, color: '#10b981' },
-                              { name: 'Locum Coverage', value: 5, color: '#8b5cf6' }
-                            ].map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <ChartTooltip />
-                          <Legend />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Performance Analytics */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                {/* Work Location Analytics */}
-                <Card size="lg" variant="default">
-                  <CardHeader compact>
-                    <CardTitle className="flex items-center text-[#ea384c]">
-                      <MapPin className="h-5 w-5 mr-2" />
-                      Work Locations
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent compact>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <RechartsBarChart data={[
-                          { location: 'Lagos', jobs: 12, earnings: 2800000 },
-                          { location: 'Abuja', jobs: 8, earnings: 2100000 },
-                          { location: 'Kano', jobs: 3, earnings: 780000 },
-                          { location: 'Port Harcourt', jobs: 1, earnings: 320000 }
-                        ]}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="location" />
-                          <YAxis />
-                          <ChartTooltip formatter={(value, name) => [
-                            name === 'earnings' ? `₦${value.toLocaleString()}` : value,
-                            name === 'earnings' ? 'Total Earnings' : 'Jobs Completed'
-                          ]} />
-                          <Legend />
-                          <Bar dataKey="jobs" fill="#ea384c" name="Jobs Completed" />
-                          <Bar dataKey="earnings" fill="#D4AF37" name="Total Earnings (₦)" />
-                        </RechartsBarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Rating Trends */}
-                <Card size="lg" variant="default">
-                  <CardHeader compact>
-                    <CardTitle className="flex items-center text-[#ea384c]">
-                      <Star className="h-5 w-5 mr-2" />
-                      Rating Trends
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent compact>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={[
-                          { month: 'Sep', rating: 4.6, reviews: 8 },
-                          { month: 'Oct', rating: 4.7, reviews: 12 },
-                          { month: 'Nov', rating: 4.8, reviews: 9 },
-                          { month: 'Dec', rating: 4.9, reviews: 15 },
-                          { month: 'Jan', rating: 4.8, reviews: 18 }
-                        ]}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="month" />
-                          <YAxis domain={[4.0, 5.0]} />
-                          <ChartTooltip formatter={(value, name) => [
-                            name === 'rating' ? `${value}/5.0` : value,
-                            name === 'rating' ? 'Average Rating' : 'Reviews Count'
-                          ]} />
-                          <Legend />
-                          <Line type="monotone" dataKey="rating" stroke="#D4AF37" strokeWidth={3} name="Average Rating" />
-                          <Line type="monotone" dataKey="reviews" stroke="#3b82f6" strokeWidth={3} name="Reviews Count" />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
               {/* Jobs History */}
               <Card size="lg" variant="default">
                 <CardHeader compact>
@@ -1918,7 +2214,7 @@ const DashboardPage: React.FC = () => {
                         position: "Locum Midwife", 
                         duration: "5 days", 
                         date: "Jan 10-15, 2024", 
-                        payment: "₦250,000", 
+                        payment: "Q250,000", 
                         status: "Completed",
                         rating: 5
                       },
@@ -1928,7 +2224,7 @@ const DashboardPage: React.FC = () => {
                         position: "Emergency Nurse", 
                         duration: "3 days", 
                         date: "Jan 5-8, 2024", 
-                        payment: "₦180,000", 
+                        payment: "Q180,000", 
                         status: "Completed",
                         rating: 4
                       },
@@ -1938,7 +2234,7 @@ const DashboardPage: React.FC = () => {
                         position: "Night Shift Midwife", 
                         duration: "7 days", 
                         date: "Dec 20-27, 2023", 
-                        payment: "₦315,000", 
+                        payment: "Q315,000", 
                         status: "Completed",
                         rating: 5
                       },
@@ -1948,7 +2244,7 @@ const DashboardPage: React.FC = () => {
                         position: "Locum Nurse", 
                         duration: "2 days", 
                         date: "Jan 20-22, 2024", 
-                        payment: "₦120,000", 
+                        payment: "Q120,000", 
                         status: "In Progress",
                         rating: null
                       },
@@ -1958,7 +2254,7 @@ const DashboardPage: React.FC = () => {
                         position: "ICU Nurse", 
                         duration: "4 days", 
                         date: "Jan 25-29, 2024", 
-                        payment: "₦200,000", 
+                        payment: "Q200,000", 
                         status: "Applied",
                         rating: null
                       },
@@ -2001,7 +2297,8 @@ const DashboardPage: React.FC = () => {
                             </Button>
                           </div>
                         </div>
-                      </div>                    ))}
+                      </div>
+                    ))}
                   </div>
                   <div className="mt-6 flex justify-center">
                     <Button variant="outline" className="hover:bg-[#ea384c] hover:text-white transition-all duration-300">
@@ -2050,7 +2347,7 @@ const DashboardPage: React.FC = () => {
                     </div>
                     <div>
                       <Label htmlFor="minSalary">Minimum Salary</Label>
-                      <Input id="minSalary" placeholder="₦50,000" className="mt-1" />
+                      <Input id="minSalary" placeholder="Q50,000" className="mt-1" />
                     </div>
                   </div>
                   <div className="flex items-center space-x-4 mb-4">
@@ -2378,7 +2675,9 @@ const DashboardPage: React.FC = () => {
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent><TabsContent value="jobs history" className="space-y-6 animate-fadeIn">
+            </TabsContent>
+
+            <TabsContent value="jobs" className="space-y-6 animate-fadeIn">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
                 {/* Job Stats Cards */}
                 <Card size="lg" variant="default">
@@ -2438,6 +2737,157 @@ const DashboardPage: React.FC = () => {
                 </Card>
               </div>
 
+              {/* Job Analytics Charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                {/* Earnings Trends */}
+                <Card size="lg" variant="default">
+                  <CardHeader compact>
+                    <CardTitle className="flex items-center text-[#ea384c]">
+                      <TrendingUp className="h-5 w-5 mr-2" />
+                      Earnings Trends
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent compact>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={[
+                          { month: 'Sep', earnings: 450000, jobs: 3 },
+                          { month: 'Oct', earnings: 680000, jobs: 4 },
+                          { month: 'Nov', earnings: 520000, jobs: 3 },
+                          { month: 'Dec', earnings: 750000, jobs: 5 },
+                          { month: 'Jan', earnings: 890000, jobs: 6 }
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />                        <ChartTooltip formatter={(value, name) => [
+                            name === 'earnings' ? `Q${value.toLocaleString()}` : value,
+                            name === 'earnings' ? 'Earnings' : 'Jobs'
+                          ]} />
+                          <Legend />
+                          <Line type="monotone" dataKey="earnings" stroke="#ea384c" strokeWidth={3} name="Earnings (Q)" />
+                          <Line type="monotone" dataKey="jobs" stroke="#D4AF37" strokeWidth={3} name="Jobs Count" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Job Types Distribution */}
+                <Card size="lg" variant="default">
+                  <CardHeader compact>
+                    <CardTitle className="flex items-center text-[#ea384c]">
+                      <Briefcase className="h-5 w-5 mr-2" />
+                      Job Types Distribution
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent compact>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={[
+                              { name: 'Emergency Medicine', value: 35, color: '#ea384c' },
+                              { name: 'General Practice', value: 28, color: '#D4AF37' },
+                              { name: 'Night Shifts', value: 20, color: '#3b82f6' },
+                              { name: 'Specialist Clinics', value: 12, color: '#10b981' },
+                              { name: 'Locum Coverage', value: 5, color: '#8b5cf6' }
+                            ]}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={100}
+                            fill="#8884d8"
+                            dataKey="value"
+                          >
+                            {[
+                              { name: 'Emergency Medicine', value: 35, color: '#ea384c' },
+                              { name: 'General Practice', value: 28, color: '#D4AF37' },
+                              { name: 'Night Shifts', value: 20, color: '#3b82f6' },
+                              { name: 'Specialist Clinics', value: 12, color: '#10b981' },
+                              { name: 'Locum Coverage', value: 5, color: '#8b5cf6' }
+                            ].map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <ChartTooltip />
+                          <Legend />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Performance Analytics */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                {/* Work Location Analytics */}
+                <Card size="lg" variant="default">
+                  <CardHeader compact>
+                    <CardTitle className="flex items-center text-[#ea384c]">
+                      <MapPin className="h-5 w-5 mr-2" />
+                      Work Locations
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent compact>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RechartsBarChart data={[
+                          { location: 'Lagos', jobs: 12, earnings: 2800000 },
+                          { location: 'Abuja', jobs: 8, earnings: 2100000 },
+                          { location: 'Kano', jobs: 3, earnings: 780000 },
+                          { location: 'Port Harcourt', jobs: 1, earnings: 320000 }
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="location" />
+                          <YAxis />                          <ChartTooltip formatter={(value, name) => [
+                            name === 'earnings' ? `Q${value.toLocaleString()}` : value,
+                            name === 'earnings' ? 'Total Earnings' : 'Jobs Completed'
+                          ]} />
+                          <Legend />
+                          <Bar dataKey="jobs" fill="#ea384c" name="Jobs Completed" />
+                          <Bar dataKey="earnings" fill="#D4AF37" name="Total Earnings (Q)" />
+                        </RechartsBarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Rating Trends */}
+                <Card size="lg" variant="default">
+                  <CardHeader compact>
+                    <CardTitle className="flex items-center text-[#ea384c]">
+                      <Star className="h-5 w-5 mr-2" />
+                      Rating Trends
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent compact>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={[
+                          { month: 'Sep', rating: 4.6, reviews: 8 },
+                          { month: 'Oct', rating: 4.7, reviews: 12 },
+                          { month: 'Nov', rating: 4.8, reviews: 9 },
+                          { month: 'Dec', rating: 4.9, reviews: 15 },
+                          { month: 'Jan', rating: 4.8, reviews: 18 }
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis domain={[4.0, 5.0]} />
+                          <ChartTooltip formatter={(value, name) => [
+                            name === 'rating' ? `${value}/5.0` : value,
+                            name === 'rating' ? 'Average Rating' : 'Reviews Count'
+                          ]} />
+                          <Legend />
+                          <Line type="monotone" dataKey="rating" stroke="#D4AF37" strokeWidth={3} name="Average Rating" />
+                          <Line type="monotone" dataKey="reviews" stroke="#3b82f6" strokeWidth={3} name="Reviews Count" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
               {/* Jobs History */}
               <Card size="lg" variant="default">
                 <CardHeader compact>
@@ -2455,7 +2905,7 @@ const DashboardPage: React.FC = () => {
                         position: "Locum Midwife", 
                         duration: "5 days", 
                         date: "Jan 10-15, 2024", 
-                        payment: "₦250,000", 
+                        payment: "Q250,000", 
                         status: "Completed",
                         rating: 5
                       },
@@ -2465,7 +2915,7 @@ const DashboardPage: React.FC = () => {
                         position: "Emergency Nurse", 
                         duration: "3 days", 
                         date: "Jan 5-8, 2024", 
-                        payment: "₦180,000", 
+                        payment: "Q180,000", 
                         status: "Completed",
                         rating: 4
                       },
@@ -2475,7 +2925,7 @@ const DashboardPage: React.FC = () => {
                         position: "Night Shift Midwife", 
                         duration: "7 days", 
                         date: "Dec 20-27, 2023", 
-                        payment: "₦315,000", 
+                        payment: "Q315,000", 
                         status: "Completed",
                         rating: 5
                       },
@@ -2485,7 +2935,7 @@ const DashboardPage: React.FC = () => {
                         position: "Locum Nurse", 
                         duration: "2 days", 
                         date: "Jan 20-22, 2024", 
-                        payment: "₦120,000", 
+                        payment: "Q120,000", 
                         status: "In Progress",
                         rating: null
                       },
@@ -2495,7 +2945,7 @@ const DashboardPage: React.FC = () => {
                         position: "ICU Nurse", 
                         duration: "4 days", 
                         date: "Jan 25-29, 2024", 
-                        payment: "₦200,000", 
+                        payment: "Q200,000", 
                         status: "Applied",
                         rating: null
                       },
@@ -2583,7 +3033,7 @@ const DashboardPage: React.FC = () => {
                             id: 3,
                             from: "Federal Medical Centre",
                             subject: "Payment Processed",
-                            message: "Your payment of ₦250,000 for the locum services has been processed and will reflect in your account within 24 hours...",
+                            message: "Your payment of Q250,000 for the locum services has been processed and will reflect in your account within 24 hours...",
                             time: "1 day ago",
                             unread: false,
                             type: "payment"
@@ -2596,11 +3046,10 @@ const DashboardPage: React.FC = () => {
                             time: "2 days ago",
                             unread: false,
                             type: "feedback"
-                          },
-                          {
+                          },                          {
                             id: 5,
                             from: "GLOHSEN Community",
-                            subject: "New Discussion: Best Practices in Pediatric Care",
+                            subject: "New Discussion: Best Practices in Healthcare",
                             message: "A new discussion thread has been started in the community forum. Join the conversation and share your expertise...",
                             time: "3 days ago",
                             unread: false,
@@ -2661,7 +3110,8 @@ const DashboardPage: React.FC = () => {
                 </div>
 
                 {/* Feedback & Ratings Section */}
-                <div className="space-y-6">                  <Card size="lg" variant="default">
+                <div className="space-y-6">
+                  <Card size="lg" variant="default">
                     <CardHeader compact>
                       <CardTitle className="flex items-center text-[#ea384c]">
                         <Star className="h-5 w-5 mr-2" />
@@ -2705,7 +3155,9 @@ const DashboardPage: React.FC = () => {
                         </div>
                       </div>
                     </CardContent>
-                  </Card>                  <Card size="lg" variant="default">
+                  </Card>
+
+                  <Card size="lg" variant="default">
                     <CardHeader compact>
                       <CardTitle className="flex items-center text-[#ea384c]">
                         <MessageCircle className="h-5 w-5 mr-2" />
@@ -2755,7 +3207,9 @@ const DashboardPage: React.FC = () => {
                         ))}
                       </div>
                     </CardContent>
-                  </Card>                  <Card size="md" variant="default">
+                  </Card>
+
+                  <Card size="md" variant="default">
                     <CardHeader compact>
                       <CardTitle className="flex items-center text-[#ea384c]">
                         <FileText className="h-5 w-5 mr-2" />

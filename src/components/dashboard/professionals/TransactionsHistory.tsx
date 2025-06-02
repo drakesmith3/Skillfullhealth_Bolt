@@ -15,7 +15,7 @@ const TransactionsHistory = () => {
       id: "TX-79082",
       date: "2025-05-15",
       type: "Payout",
-      amount: "₦450,000",
+      amount: "Q450,000",
       description: "Locum Job Payment - General Hospital Lagos",
       status: "Completed",
     },
@@ -23,7 +23,7 @@ const TransactionsHistory = () => {
       id: "TX-65432",
       date: "2025-05-10",
       type: "Withdrawal",
-      amount: "₦250,000",
+      amount: "Q250,000",
       description: "Bank Transfer to Zenith Bank ****4532",
       status: "Completed",
     },
@@ -31,7 +31,7 @@ const TransactionsHistory = () => {
       id: "TX-54321",
       date: "2025-05-02",
       type: "Payout",
-      amount: "₦350,000",
+      amount: "Q350,000",
       description: "Locum Job Payment - Mercy Medical Center",
       status: "Completed",
     },
@@ -39,7 +39,7 @@ const TransactionsHistory = () => {
       id: "TX-43215",
       date: "2025-04-25",
       type: "Payout",
-      amount: "₦200,000",
+      amount: "Q200,000",
       description: "Short-term Locum - St. Mary's Clinic",
       status: "Completed",
     },
@@ -47,7 +47,7 @@ const TransactionsHistory = () => {
       id: "TX-32154",
       date: "2025-04-18",
       type: "Withdrawal",
-      amount: "₦400,000",
+      amount: "Q400,000",
       description: "Bank Transfer to GTBank ****7865",
       status: "Completed",
     },
@@ -55,7 +55,7 @@ const TransactionsHistory = () => {
       id: "TX-98765",
       date: "2025-05-18",
       type: "Payout",
-      amount: "₦500,000",
+      amount: "Q500,000",
       description: "Upcoming Locum Payment - City Hospital",
       status: "Pending",
     },
@@ -98,15 +98,15 @@ const TransactionsHistory = () => {
       <div className="space-y-2 mb-6">
         <div className="flex justify-between items-center">
           <span className="text-sm font-medium">Available Balance</span>
-          <span className="text-lg font-bold text-[#D4AF37]">₦150,000</span>
+          <span className="text-lg font-bold text-[#D4AF37]">Q150,000</span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm font-medium">Pending Transactions</span>
-          <span className="text-lg font-semibold text-amber-500">₦500,000</span>
+          <span className="text-lg font-semibold text-amber-500">Q500,000</span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm font-medium">Total Withdrawals (This Month)</span>
-          <span className="text-lg font-semibold text-green-600">₦650,000</span>
+          <span className="text-lg font-semibold text-green-600">Q650,000</span>
         </div>
       </div>
       

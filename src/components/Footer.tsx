@@ -205,6 +205,7 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
             <li><Link to="/job-board" className="hover:text-[#ea384c] transition-colors font-medium">Job Board</Link></li>
             <li><Link to="/games-quizzes" className="hover:text-[#ea384c] transition-colors font-medium">Games & Quizzes</Link></li>
             <li><Link to="/courses" className="hover:text-[#ea384c] transition-colors font-medium">Courses</Link></li>
+            <li><Link to="/testimonials" className="hover:text-[#ea384c] transition-colors font-medium">Testimonials</Link></li>
           </ul>
         </div>
         <div className="flex flex-col space-y-4 col-span-1">

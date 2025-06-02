@@ -90,18 +90,17 @@ const TutorDashboard: React.FC = () => {
                     Earnings
                   </h3>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
+                <div className="space-y-2">                  <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Total Earnings</span>
-                    <span className="font-semibold">₦2,500,000</span>
+                    <span className="font-semibold">Q2,500,000</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Pending</span>
-                    <span className="text-amber-600 font-semibold">₦350,000</span>
+                    <span className="text-amber-600 font-semibold">Q350,000</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Available</span>
-                    <span className="text-green-600 font-semibold">₦180,000</span>
+                    <span className="text-green-600 font-semibold">Q180,000</span>
                   </div>
                   <div className="flex justify-end">
                     <Button size="sm" className="bg-[#D4AF37] text-black font-bold hover:bg-amber-500">Withdraw</Button>
@@ -428,8 +427,7 @@ const TutorDashboard: React.FC = () => {
             </CardHeader>
             <CardContent compact>
               <div className="space-y-4">
-                {[
-                  {
+                {[                  {
                     id: 1,
                     title: "Medical Ethics & Professionalism",
                     students: 32,
@@ -438,7 +436,7 @@ const TutorDashboard: React.FC = () => {
                     status: "Active",
                     lastUpdated: "2 days ago",
                     duration: "6 weeks",
-                    revenue: "₦480,000"
+                    revenue: "Q480,000"
                   },
                   {
                     id: 2,
@@ -449,7 +447,7 @@ const TutorDashboard: React.FC = () => {
                     status: "Active",
                     lastUpdated: "5 days ago",
                     duration: "8 weeks",
-                    revenue: "₦420,000"
+                    revenue: "Q420,000"
                   },
                   {
                     id: 3,
@@ -460,7 +458,7 @@ const TutorDashboard: React.FC = () => {
                     status: "Active",
                     lastUpdated: "1 day ago",
                     duration: "12 weeks",
-                    revenue: "₦675,000"
+                    revenue: "Q675,000"
                   },
                   {
                     id: 4,
@@ -471,7 +469,7 @@ const TutorDashboard: React.FC = () => {
                     status: "Draft",
                     lastUpdated: "1 week ago",
                     duration: "10 weeks",
-                    revenue: "₦285,000"
+                    revenue: "Q285,000"
                   }
                 ].map((course, idx) => (
                   <div key={idx} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
@@ -887,8 +885,7 @@ const TutorDashboard: React.FC = () => {
             <Card size="sm" variant="stats">
               <CardContent compact className="p-4">
                 <div className="text-center">
-                  <CreditCard className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                  <div className="text-lg font-bold">₦2,500,000</div>
+                  <CreditCard className="h-8 w-8 text-green-500 mx-auto mb-2" />                  <div className="text-lg font-bold">Q2,500,000</div>
                   <div className="text-xs text-gray-500">Total Earnings</div>
                 </div>
               </CardContent>
@@ -898,7 +895,7 @@ const TutorDashboard: React.FC = () => {
               <CardContent compact className="p-4">
                 <div className="text-center">
                   <Clock className="h-8 w-8 text-amber-500 mx-auto mb-2" />
-                  <div className="text-lg font-bold">₦350,000</div>
+                  <div className="text-lg font-bold">Q350,000</div>
                   <div className="text-xs text-gray-500">Pending</div>
                 </div>
               </CardContent>
@@ -908,7 +905,7 @@ const TutorDashboard: React.FC = () => {
               <CardContent compact className="p-4">
                 <div className="text-center">
                   <CheckCircle className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                  <div className="text-lg font-bold">₦180,000</div>
+                  <div className="text-lg font-bold">Q180,000</div>
                   <div className="text-xs text-gray-500">Available</div>
                 </div>
               </CardContent>
@@ -935,7 +932,7 @@ const TutorDashboard: React.FC = () => {
                 <Button className="bg-[#D4AF37] text-black hover:bg-amber-500 p-6 h-auto flex-col">
                   <Download className="h-6 w-6 mb-2" />
                   <span>Withdraw Funds</span>
-                  <span className="text-xs opacity-75">Available: ₦180,000</span>
+                  <span className="text-xs opacity-75">Available: Q180,000</span>
                 </Button>
                 <Button variant="outline" className="p-6 h-auto flex-col">
                   <FileText className="h-6 w-6 mb-2" />
@@ -987,15 +984,14 @@ const TutorDashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {[
-                      {
+                    {[                      {
                         date: "May 28, 2025",
                         description: "Course Enrollment Payment",
                         course: "Medical Ethics",
                         student: "Adaora Okoye",
-                        amount: "₦25,000",
+                        amount: "Q25,000",
                         status: "Completed",
-                        commission: "₦22,500",
+                        commission: "Q22,500",
                         statusColor: "bg-green-100 text-green-800"
                       },
                       {
@@ -1003,9 +999,9 @@ const TutorDashboard: React.FC = () => {
                         description: "Course Enrollment Payment",
                         course: "Clinical Diagnosis",
                         student: "Emeka Nwachukwu",
-                        amount: "₦30,000",
+                        amount: "Q30,000",
                         status: "Completed",
-                        commission: "₦27,000",
+                        commission: "Q27,000",
                         statusColor: "bg-green-100 text-green-800"
                       },
                       {
@@ -1013,9 +1009,9 @@ const TutorDashboard: React.FC = () => {
                         description: "Withdrawal Request",
                         course: "-",
                         student: "-",
-                        amount: "₦150,000",
+                        amount: "Q150,000",
                         status: "Processing",
-                        commission: "-₦150,000",
+                        commission: "-Q150,000",
                         statusColor: "bg-yellow-100 text-yellow-800"
                       },
                       {
@@ -1023,19 +1019,18 @@ const TutorDashboard: React.FC = () => {
                         description: "Course Enrollment Payment",
                         course: "Anatomy 101",
                         student: "Fatima Ibrahim",
-                        amount: "₦35,000",
+                        amount: "Q35,000",
                         status: "Completed",
-                        commission: "₦31,500",
+                        commission: "Q31,500",
                         statusColor: "bg-green-100 text-green-800"
-                      },
-                      {
+                      },                      {
                         date: "May 24, 2025",
                         description: "Platform Fee",
                         course: "-",
                         student: "-",
-                        amount: "₦5,000",
+                        amount: "Q5,000",
                         status: "Completed",
-                        commission: "-₦5,000",
+                        commission: "-Q5,000",
                         statusColor: "bg-gray-100 text-gray-800"
                       },
                       {
@@ -1043,9 +1038,9 @@ const TutorDashboard: React.FC = () => {
                         description: "Course Enrollment Payment",
                         course: "Pharmacology",
                         student: "Samuel Adeleke",
-                        amount: "₦28,000",
+                        amount: "Q28,000",
                         status: "Completed",
-                        commission: "₦25,200",
+                        commission: "Q25,200",
                         statusColor: "bg-green-100 text-green-800"
                       },
                       {
@@ -1053,9 +1048,9 @@ const TutorDashboard: React.FC = () => {
                         description: "Refund Request",
                         course: "Medical Ethics",
                         student: "John Doe",
-                        amount: "₦25,000",
+                        amount: "Q25,000",
                         status: "Refunded",
-                        commission: "-₦22,500",
+                        commission: "-Q22,500",
                         statusColor: "bg-red-100 text-red-800"
                       },
                       {
@@ -1063,9 +1058,9 @@ const TutorDashboard: React.FC = () => {
                         description: "Course Enrollment Payment",
                         course: "Clinical Diagnosis",
                         student: "Chioma Eze",
-                        amount: "₦30,000",
+                        amount: "Q30,000",
                         status: "Completed",
-                        commission: "₦27,000",
+                        commission: "Q27,000",
                         statusColor: "bg-green-100 text-green-800"
                       }
                     ].map((transaction, idx) => (

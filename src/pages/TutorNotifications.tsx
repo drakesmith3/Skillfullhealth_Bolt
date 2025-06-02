@@ -11,7 +11,7 @@ const TutorNotifications = () => {
   const [notifications, setNotifications] = useState([
     { id: 1, type: 'enrollment', title: 'New Student Enrollment', message: '5 new students enrolled in your Anatomy course', time: '30 minutes ago', read: false, priority: 'high' },
     { id: 2, type: 'review', title: 'Course Review Received', message: 'Sarah gave your Physiology course 5 stars', time: '2 hours ago', read: false, priority: 'medium' },
-    { id: 3, type: 'payment', title: 'Earnings Update', message: 'Your weekly earnings: ₦125,000 from 3 courses', time: '1 day ago', read: true, priority: 'medium' },
+    { id: 3, type: 'payment', title: 'Earnings Update', message: 'Your weekly earnings: Q125,000 from 3 courses', time: '1 day ago', read: true, priority: 'medium' },
     { id: 4, type: 'message', title: 'Student Question', message: 'John asked a question in Pharmacology discussion', time: '1 day ago', read: false, priority: 'low' },
     { id: 5, type: 'achievement', title: 'Milestone Reached', message: 'Congratulations! 100 students completed your courses', time: '3 days ago', read: true, priority: 'high' }
   ]);
