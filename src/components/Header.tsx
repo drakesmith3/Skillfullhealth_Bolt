@@ -191,8 +191,8 @@ const Header: React.FC<HeaderProps> = ({ isActive, scrollToSection }) => {
           <span className="micro-interact animated-shine-text metallic-gold-text block sm:inline">YOUR STORY BEGINS HERE</span>
         </h1>
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 dark:text-gray-200 max-w-sm sm:max-w-xl md:max-w-2xl leading-relaxed md:leading-loose micro-interact text-center">
-          Embark on a Journey of Fun & Transformation with GLOHSEN.
-          Scroll to explore what awaits.
+          Dive into a Universe of Fun & Resourcefulness, for You by Us.
+          Scroll to Experience the Transforming Story of Health.
         </p>        {/* Make the bounce container clickable */}
         <div 
           className="mt-8 cursor-pointer micro-interact" 

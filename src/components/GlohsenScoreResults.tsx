@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Share, Printer, Download, ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import GlohsenScoreResultMockup from "./GlohsenScoreResultMockup";
 
 const GlohsenScoreResults = () => {
   // Sample score history data
@@ -51,11 +52,76 @@ const GlohsenScoreResults = () => {
             <Button variant="outline" size="sm" className="flex items-center gap-2">
               <Printer className="h-4 w-4" />
               Print
-            </Button>
-            <Button size="sm" className="flex items-center gap-2 bg-[#F9D75D] text-black hover:bg-[#F9D75D]/80">
+            </Button>            <Button size="sm" className="flex items-center gap-2 bg-[#F9D75D] text-black hover:bg-[#F9D75D]/80">
               <Download className="h-4 w-4" />
               Export PDF
             </Button>
+          </div>
+        </div>
+        
+        {/* Professional Ranking Showcase */}
+        <div className="mb-8">
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Your Professional Standing</h3>
+            <p className="text-gray-600">See how you rank among healthcare professionals on our platform</p>
+          </div>
+          
+          <div className="flex justify-center">
+            <div className="transform hover:scale-105 transition-transform duration-300">
+              <GlohsenScoreResultMockup />
+            </div>
+          </div>
+            {/* Additional ranking context */}
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            <Card className="text-center p-4">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-bold text-[#D4AF37] mb-1">Top 10%</div>
+                <div className="text-sm text-gray-600">Among all professionals</div>
+                <div className="text-xs text-gray-400 mt-1">Based on 9,173 profiles</div>
+              </CardContent>
+            </Card>
+            
+            <Card className="text-center p-4">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-bold text-blue-600 mb-1">8,240</div>
+                <div className="text-sm text-gray-600">Professionals ranked below you</div>
+                <div className="text-xs text-gray-400 mt-1">In your specialty area</div>
+              </CardContent>
+            </Card>
+            
+            <Card className="text-center p-4">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-bold text-green-600 mb-1">97%</div>
+                <div className="text-sm text-gray-600">Employer match rate</div>
+                <div className="text-xs text-gray-400 mt-1">Higher than 89% of peers</div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Peer Comparison Insights */}
+          <div className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 max-w-4xl mx-auto">
+            <h4 className="font-bold text-gray-800 mb-3 flex items-center">
+              <span className="mr-2">🏆</span>
+              How You Compare to Fellow Professionals
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Your Score vs. Specialty Average:</span>
+                <span className="font-semibold text-green-600">+24 points higher</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Skills Assessment Ranking:</span>
+                <span className="font-semibold text-[#D4AF37]">8th percentile</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Experience Level:</span>
+                <span className="font-semibold text-blue-600">Expert tier</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Employer Preference:</span>
+                <span className="font-semibold text-purple-600">Highly sought after</span>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -177,9 +243,8 @@ const GlohsenScoreResults = () => {
             </Card>
           </div>
         </div>
-        
-        {/* Score Breakdown */}
-        <Card className="mb-10">
+          {/* Score Breakdown */}
+        <Card className="mb-10" data-score-breakdown>
           <CardContent className="pt-6">
             <h3 className="font-bold mb-6">Score Breakdown</h3>
             <div className="space-y-4">

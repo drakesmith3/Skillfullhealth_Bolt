@@ -5,8 +5,65 @@ import { User, Users, Briefcase, GraduationCap, MessageCircle } from "lucide-rea
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 
+// Custom styles for dock effect
+const dockStyles = `
+  .dock-button-wrapper {
+    perspective: 1000px;
+  }
+  
+  .dock-button {
+    min-width: 120px;
+    min-height: 80px;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transform-origin: bottom center;
+    cursor: pointer;
+    will-change: transform;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .dock-button:before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+  
+  .dock-button:hover:before {
+    opacity: 1;
+  }
+  
+  @media (max-width: 768px) {
+    .dock-button {
+      min-width: 100px;
+      min-height: 70px;
+    }
+  }
+`;
+
 const JoinCommunity = ({ isActive = false }) => {
   const { isDark } = useTheme();
+
+  // Add styles to head
+  useEffect(() => {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = dockStyles;
+    document.head.appendChild(styleSheet);
+    
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
 
   return (
     <section 
@@ -51,35 +108,54 @@ const JoinCommunity = ({ isActive = false }) => {
             }`}>
               ...whether you're a patient seeking better care, a student striving for success, 
               a tutor leveraging AI to teach, a professional looking to upskill, or simply an employer 
-              seeking superstar employees.
-            </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
-              <Link to="/signin?userType=client">
-                <Button className="bg-blue-600 hover:bg-blue-900 w-full" size="lg">
-                  I'm a Client
-                </Button>
-              </Link>
-              <Link to="/signin?userType=student">
-                <Button className="bg-red-600 hover:bg-red-900 w-full" size="lg">
-                  I'm a Student
-                </Button>
-              </Link>
-              <Link to="/signin?userType=tutor">
-                <Button className="bg-gray-600 hover:bg-gray-900 w-full" size="lg">
-                  I'm a Tutor
-                </Button>
-              </Link>
-              <Link to="/signin?userType=professional">
-                <Button className="bg-amber-600 hover:bg-amber-900 w-full" size="lg">
-                  I'm a Professional
-                </Button>
-              </Link>
-              <Link to="/signin?userType=employer">
-                <Button className="bg-green-600 hover:bg-green-900 w-full" size="lg">
-                  I'm an Employer
-                </Button>
-              </Link>
-            </div>
+              seeking superstar employees.            </p>
+              {/* Dock-style Button Container */}
+              <div className="flex flex-wrap justify-center items-end gap-2 max-w-4xl mx-auto px-4">
+                <Link to="/signin?userType=client" className="dock-button-wrapper">
+                  <Button className="dock-button bg-blue-700 hover:bg-blue-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                    <div className="flex flex-col items-center gap-1">
+                      <User size={20} />
+                      <span className="text-sm font-medium">I'm a Client</span>
+                    </div>
+                  </Button>
+                </Link>
+                
+                <Link to="/signin?userType=student" className="dock-button-wrapper">
+                  <Button className="dock-button bg-red-700 hover:bg-red-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                    <div className="flex flex-col items-center gap-1">
+                      <GraduationCap size={20} />
+                      <span className="text-sm font-medium">I'm a Student</span>
+                    </div>
+                  </Button>
+                </Link>
+                
+                <Link to="/signin?userType=tutor" className="dock-button-wrapper">
+                  <Button className="dock-button bg-gray-900 hover:bg-gray-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                    <div className="flex flex-col items-center gap-1">
+                      <MessageCircle size={20} />
+                      <span className="text-sm font-medium">I'm a Tutor</span>
+                    </div>
+                  </Button>
+                </Link>
+                
+                <Link to="/signin?userType=professional" className="dock-button-wrapper">
+                  <Button className="dock-button bg-amber-600 hover:bg-amber-400 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                    <div className="flex flex-col items-center gap-1">
+                      <Users size={20} />
+                      <span className="text-sm font-medium">I'm a Professional</span>
+                    </div>
+                  </Button>
+                </Link>
+                
+                <Link to="/signin?userType=employer" className="dock-button-wrapper">
+                  <Button className="dock-button bg-green-600 hover:bg-green-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                    <div className="flex flex-col items-center gap-1">
+                      <Briefcase size={20} />
+                      <span className="text-sm font-medium">I'm an Employer</span>
+                    </div>
+                  </Button>
+                </Link>
+              </div>
             
             <div className="bg-white/20 rounded-lg p-8 max-w-2xl mx-auto backdrop-blur-[40px]">
               <h3 className={`text-2xl font-bold mb-4 ${
