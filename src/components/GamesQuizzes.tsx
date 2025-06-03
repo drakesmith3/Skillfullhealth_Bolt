@@ -704,7 +704,7 @@ const MedicalQuizCarousel = () => {
                         {(item.options || []).map((option) => (
                           <button
                             key={option.id}
-                            className="quiz-button-gold w-full px-3 py-2 rounded text-white font-semibold transition-all text-xs"
+                            className="quiz-button-gold w-full px-3 py-2 rounded text-black font-semibold transition-all text-xs"
                             onClick={() => handleQuizStart(item)}
                             aria-label={`Select answer: ${option.text}`}
                           >
@@ -719,7 +719,7 @@ const MedicalQuizCarousel = () => {
                       <p className={`text-xs mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{item.description}</p>
                       {index === activeIndex && (
                         <button
-                          className="quiz-button-gold px-5 py-2 rounded text-white text-sm font-medium transition-all"
+                          className="quiz-button-gold px-5 py-2 rounded text-black text-sm font-medium transition-all"
                           onClick={() => handleGameStart(item)}
                           aria-label={`Start game: ${item.title}`}
                         >
@@ -763,15 +763,15 @@ const MedicalQuizCarousel = () => {
       {/* Gold Action Buttons */}
       <div className="flex justify-center mt-6 space-x-4">
         <Link to="/games-quizzes">
-          <button className="quiz-button-gold px-6 py-3 rounded-lg text-white font-semibold text-sm transition-all">
-            PLAY GAME/QUIZ
-          </button>
-        </Link>
-        <Link to="/courses">
-          <button className="quiz-button-gold px-6 py-3 rounded-lg text-white font-semibold text-sm transition-all">
-            BUY COURSE
-          </button>
-        </Link>
+          <button className="quiz-button-gold px-6 py-3 rounded-lg text-black font-semibold text-sm transition-all">
+             PLAY GAME/QUIZ
+           </button>
+         </Link>
+         <Link to="/courses">
+          <button className="quiz-button-gold px-6 py-3 rounded-lg text-black font-semibold text-sm transition-all">
+             BUY COURSE
+           </button>
+         </Link>
       </div>
     </div>
   );

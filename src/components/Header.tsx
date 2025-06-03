@@ -151,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ isActive, scrollToSection }) => {
     };
   }, [isActive]);
 
-  const goldButtonClasses = "bg-[#F9D75D] text-black px-6 py-3 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-sm";
+  const goldButtonClasses = "shine-button bg-[#F9D75D] text-black px-6 py-3 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-sm";
 
   return (
     <section
@@ -176,7 +176,7 @@ const Header: React.FC<HeaderProps> = ({ isActive, scrollToSection }) => {
           <Link to="/feedback" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`}>LEAVE FEEDBACK</Link>
           <Link 
             to="/games-quizzes" 
-            className="bg-[#FFD700] text-black px-3 py-2 sm:px-4 md:px-5 md:py-2.5 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-xs sm:text-sm"
+            className="shine-button bg-[#FFD700] text-black px-3 py-2 sm:px-4 md:px-5 md:py-2.5 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-xs sm:text-sm"
           >
             GAMES & QUIZZES
           </Link>

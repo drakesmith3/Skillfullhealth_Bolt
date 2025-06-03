@@ -122,7 +122,7 @@ const Employers = ({ isActive = false }) => {
                 </p>
               </div>
             </div>
-              <div className="text-center">              <Link to="/employers">
+              <div className="text-center">              <Link to="/SignUpPage">
                 <Button className="bg-red-600 hover:bg-red-700 text-white" size="lg">
                   Register as an Employer
                 </Button>

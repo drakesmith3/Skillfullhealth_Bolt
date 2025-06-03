@@ -28,6 +28,9 @@ const Professional3DSuccessStyles = () => (
         transform: translateY(-15px) rotateX(8deg) rotateY(8deg) scale(1.02);
         animation-play-state: paused;
       }
+      .dark .success-card-3d:hover {
+        box-shadow: 0 20px 30px rgba(255, 255, 255, 0.4) !important;
+      }
       
       .success-title-3d {
         transform-style: preserve-3d;
@@ -331,7 +334,7 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ isActive = false }) => 
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundColor: 'rgba(255,255,255,0.95)'
+          backgroundColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.85)'
         }}
       ></div>
       
@@ -348,6 +351,10 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ isActive = false }) => 
           SUCCESS STORIES
         </span>
       </h2>
+      {/* Subtitle moved below with page-aligned styling */}
+      <p className="relative z-10 mt-2 mb-8 text-base sm:text-lg font-medium text-foreground text-center max-w-2xl mx-auto">
+        Real Stories, Real Transformations, Real Impact
+      </p>
 
       <div 
         ref={testimonialsRef}

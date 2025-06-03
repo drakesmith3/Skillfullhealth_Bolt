@@ -714,29 +714,36 @@ const StakeholderTree: React.FC = () => {
         />
       </div>      {/* Detailed Tooltip */}
       {selectedNode && (
-        <div 
-          className="absolute bg-gradient-to-br from-gray-800 to-black p-4 rounded-lg shadow-lg border border-gray-700 z-50 max-w-xs animate-fadeInScale"
+        <div
+          className="absolute bg-gradient-to-br from-gray-800 to-black p-4 rounded-lg shadow-lg border border-gray-700 z-50 max-w-xs animate-slide-up"
           style={{
-            left: dimensions.width > 500 
-              ? Math.min(Math.max(tooltipPosition.x - 100, 20), dimensions.width - 220) 
-              : '50%',
-            top: dimensions.width > 500 
-              ? Math.min(Math.max(tooltipPosition.y - 120, 20), dimensions.height - 200) 
-              : 'auto',
-            bottom: dimensions.width <= 500 ? '20px' : 'auto',
-            transform: dimensions.width <= 500 ? 'translateX(-50%)' : 'none',
-            borderColor: data.find(node => node.id === selectedNode)?.color || 'rgba(255,255,255,0.1)',
-            maxHeight: '180px',
-            overflowY: 'auto'
+            // Calculate placement beside node
+            left: (() => {
+              const tooltipWidth = 220;
+              const margin = 20;
+              // if near right edge, position to left of node
+              if (tooltipPosition.x + tooltipWidth + margin > dimensions.width) {
+                return Math.max(tooltipPosition.x - tooltipWidth - margin, margin);
+              }
+              // default, to the right
+              return Math.min(tooltipPosition.x + margin, dimensions.width - tooltipWidth - margin);
+            })(),
+            top: (() => {
+              const tooltipHeight = 200;
+              const margin = 20;
+              // if near bottom, position above node
+              if (tooltipPosition.y + tooltipHeight + margin > dimensions.height) {
+                return Math.max(tooltipPosition.y - tooltipHeight - margin, margin);
+              }
+              return Math.min(tooltipPosition.y + margin, dimensions.height - tooltipHeight - margin);
+            })(),
           }}
         >
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-lg font-bold" style={{ 
-              color: data.find(node => node.id === selectedNode)?.color 
-            }}>
+            <h4 className="text-lg font-bold text-foreground">
               {data.find(node => node.id === selectedNode)?.name}
             </h4>
-            <button 
+            <button
               className="text-gray-400 hover:text-white transition-colors"
               onClick={() => setSelectedNode(null)}
               aria-label="Close tooltip"
