@@ -1,10 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { GlohsenScoreProvider } from "./contexts/GlohsenScoreContext";
 import { AccessibilityProvider } from "./components/accessibility/AccessibilityProvider";
 import { SecurityProvider } from "./components/security/SecurityProvider";
+import { SoundProvider } from "./contexts/SoundContext";
+import { audioPlayer } from "./utils/AudioPlayer";
 import { generateFaviconDataURL } from "./utils/generateFavicon";
 import FloatingActionButtons from "./components/FloatingActionButtons";
 import Home from "./pages/Home";
@@ -161,6 +163,61 @@ const PublicContentLayout = () => {
 };
 
 function App() {
+  // Sound management state
+  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [volume, setVolume] = useState(0.5);
+
+  // Initialize sound system
+  useEffect(() => {
+    // Initially mute audioPlayer to comply with autoplay restrictions
+    audioPlayer.muted = true;
+    
+    // Preload common sound effects
+    audioPlayer.preload(['/click.mp3', '/page-turn.mp3']);
+
+    // Listen for first user interaction to enable audio
+    const enableAudio = () => {
+      if (!hasUserInteracted) {
+        setHasUserInteracted(true);
+        audioPlayer.muted = false;
+        setIsSoundEnabled(true);
+        
+        // Remove listeners after first interaction
+        document.removeEventListener('click', enableAudio);
+        document.removeEventListener('keydown', enableAudio);
+        document.removeEventListener('touchstart', enableAudio);
+      }
+    };
+
+    // Add listeners for user interaction
+    document.addEventListener('click', enableAudio);
+    document.addEventListener('keydown', enableAudio);
+    document.addEventListener('touchstart', enableAudio);
+
+    return () => {
+      // Clean up listeners
+      document.removeEventListener('click', enableAudio);
+      document.removeEventListener('keydown', enableAudio);
+      document.removeEventListener('touchstart', enableAudio);
+    };
+  }, [hasUserInteracted]);
+
+  // Create click sound function
+  const playClickSound = useCallback(() => {
+    if (isSoundEnabled && hasUserInteracted) {
+      audioPlayer.play('/click.mp3', volume).catch(error => {
+        console.warn('Failed to play click sound:', error);
+      });
+    }
+  }, [isSoundEnabled, hasUserInteracted, volume]);
+
+  // Toggle sound function (for potential future use)
+  const toggleSound = useCallback(() => {
+    const muted = audioPlayer.toggleMute();
+    setIsSoundEnabled(!muted);
+  }, []);
+
   // Generate and set favicon when app loads
   useEffect(() => {
     const faviconDataURL = generateFaviconDataURL(32);
@@ -180,85 +237,86 @@ function App() {
   return (
     <ThemeProvider>
       <AccessibilityProvider>
-        <SecurityProvider>
-          <GlohsenScoreProvider>
-            <Router>
-              <Routes>
-                {/* Fully Public Routes - No sidebar */}                <Route path="/" element={<Home />} />
-                <Route path="/about-us" element={<AboutUs />} />
-                <Route path="/contact-us" element={<ContactUs />} />
-                <Route path="/testimonials" element={<Testimonials />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/signin" element={<SignInPage />} />
-                <Route path="/login" element={<SignInPage />} />
-                <Route path="/sitemap" element={<Sitemap />} />
-                <Route path="/signed-out" element={<SignedOutPage />} />
-                
-                {/* Profile Completion Route */}
-                <Route path="/profile-completion" element={<ProfileCompletion />} />                {/* Admin Routes */}
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <SecurityProvider>          <GlohsenScoreProvider>
+            <SoundProvider playClickSound={playClickSound} isSoundEnabled={isSoundEnabled}>
+              <Router>
+                <Routes>
+                  {/* Fully Public Routes - No sidebar */}                <Route path="/" element={<Home />} />
+                  <Route path="/about-us" element={<AboutUs />} />
+                  <Route path="/contact-us" element={<ContactUs />} />
+                  <Route path="/testimonials" element={<Testimonials />} />
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/signin" element={<SignInPage />} />
+                  <Route path="/login" element={<SignInPage />} />
+                  <Route path="/sitemap" element={<Sitemap />} />
+                  <Route path="/signed-out" element={<SignedOutPage />} />
+                  
+                  {/* Profile Completion Route */}
+                  <Route path="/profile-completion" element={<ProfileCompletion />} />                {/* Admin Routes */}
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
-                {/* Account Settings Routes - No sidebar/footer */}
-                <Route path="/account-settings" element={<AccountSettings />} />
-                <Route path="/account-settings/professional" element={<AccountSettings />} />
-                <Route path="/account-settings/:userType" element={<AccountSettings />} />
+                  {/* Account Settings Routes - No sidebar/footer */}
+                  <Route path="/account-settings" element={<AccountSettings />} />
+                  <Route path="/account-settings/professional" element={<AccountSettings />} />
+                  <Route path="/account-settings/:userType" element={<AccountSettings />} />
 
-                {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
-                <Route element={<PublicContentLayout />}>
-                  <Route path="/courses" element={<CourseEnrollment />} />
-                  <Route path="/job-board" element={<JobBoard />} />
-                  <Route path="/jobs" element={<JobBoard />} />
-                  <Route path="/community-forum" element={<CommunityForum />} />
-                  <Route path="/forum" element={<CommunityForum />} />
-                  <Route path="/community" element={<CommunityForum />} />
-                  <Route path="/discussion" element={<CommunityForum />} />                  <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />
-                  <Route path="/medical-quizzes-games" element={<MedicalGamesQuizzes />} />
-                  <Route path="/games" element={<MedicalGamesQuizzes />} />
-                  <Route path="/quizzes" element={<MedicalGamesQuizzes />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/feedback" element={<GeneralFeedbackForm />} />
-                  <Route path="/ProfessionalsHandbook" element={<ProfessionalsHandbook />} />
-                  <Route path="/EmployersHandbook" element={<EmployersHandbook />} />
-                  <Route path="/TutorsHandbook" element={<TutorsHandbook />} />
-                  <Route path="/StudentsHandbook" element={<StudentsHandbook />} />
-                  <Route path="/faq" element={<FAQPage />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/terms-of-service" element={<TermsOfService />} />
-                  <Route path="/cookie-settings" element={<CookieSettings />} />
-                  <Route path="/refund-policy" element={<RefundPolicy />} />
-                  <Route path="/accessibility" element={<AccessibilityStatement />} />
-                  <Route path="/support" element={<Support />} />
-                  <Route path="/general-feedback" element={<GeneralFeedbackForm />} />
-                </Route>                {/* Authenticated Routes - Always have sidebar */}
-                <Route element={<AuthenticatedLayout />}>
-                  <Route path="/professional-dashboard" element={<DashboardPage />} />
-                  <Route path="/dashboard/professional" element={<DashboardPage />} />
-                  <Route path="/dashboard/employer" element={<EmployerDashboard />} />
-                  <Route path="/dashboard/tutor" element={<TutorDashboard />} />                  <Route path="/dashboard/student" element={<StudentDashboard />} />
-                  <Route path="/dashboard/client" element={<ClientDashboard />} />
-                  
-                  <Route path="/dashboard/:userType/notifications" element={<NotificationsPage />} />
-                  <Route path="/dashboard/:userType/inbox" element={<NotificationsPage />} />
-                  <Route path="/notifications/professional" element={<NotificationsPage />} />
-                  <Route path="/notifications/:userType" element={<NotificationsPage />} />
-                  <Route path="/score" element={<GlohsenScore />} />
-                  <Route path="/score/calculate" element={<GlohsenScore />} />
-                  <Route path="/score/details" element={<GlohsenScore />} />
-                  
-                  <Route path="/employer/criteria" element={<EmployerCriteriaPage />} />
-                  <Route path="/employer/payment" element={<EmployerPayment />} />
-                  
-                  <Route path="/kpi-tracking" element={<KPITrackingPage />} />
-                  <Route path="/kpi-dashboard" element={<KPIDashboard />} />
-                  <Route path="/purse/professional" element={<ProfessionalPurse />} />
-                  <Route path="/purse/tutor" element={<TutorPurse />} />
-                  <Route path="/activity" element={<ActivityHistoryPage />} />
-                  <Route path="/mlm" element={<MLMDashboard userId="temp-user-id" userType="professional" />} />
-                  <Route path="/mlm-tree" element={<MLMTreePage />} />
-                </Route>
-              </Routes>
-              <FloatingActionButtons />
-            </Router>
+                  {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
+                  <Route element={<PublicContentLayout />}>
+                    <Route path="/courses" element={<CourseEnrollment />} />
+                    <Route path="/job-board" element={<JobBoard />} />
+                    <Route path="/jobs" element={<JobBoard />} />
+                    <Route path="/community-forum" element={<CommunityForum />} />
+                    <Route path="/forum" element={<CommunityForum />} />
+                    <Route path="/community" element={<CommunityForum />} />
+                    <Route path="/discussion" element={<CommunityForum />} />                  <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />
+                    <Route path="/medical-quizzes-games" element={<MedicalGamesQuizzes />} />
+                    <Route path="/games" element={<MedicalGamesQuizzes />} />
+                    <Route path="/quizzes" element={<MedicalGamesQuizzes />} />
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/feedback" element={<GeneralFeedbackForm />} />
+                    <Route path="/ProfessionalsHandbook" element={<ProfessionalsHandbook />} />
+                    <Route path="/EmployersHandbook" element={<EmployersHandbook />} />
+                    <Route path="/TutorsHandbook" element={<TutorsHandbook />} />
+                    <Route path="/StudentsHandbook" element={<StudentsHandbook />} />
+                    <Route path="/faq" element={<FAQPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/terms-of-service" element={<TermsOfService />} />
+                    <Route path="/cookie-settings" element={<CookieSettings />} />
+                    <Route path="/refund-policy" element={<RefundPolicy />} />
+                    <Route path="/accessibility" element={<AccessibilityStatement />} />
+                    <Route path="/support" element={<Support />} />
+                    <Route path="/general-feedback" element={<GeneralFeedbackForm />} />
+                  </Route>                {/* Authenticated Routes - Always have sidebar */}
+                  <Route element={<AuthenticatedLayout />}>
+                    <Route path="/professional-dashboard" element={<DashboardPage />} />
+                    <Route path="/dashboard/professional" element={<DashboardPage />} />
+                    <Route path="/dashboard/employer" element={<EmployerDashboard />} />
+                    <Route path="/dashboard/tutor" element={<TutorDashboard />} />                  <Route path="/dashboard/student" element={<StudentDashboard />} />
+                    <Route path="/dashboard/client" element={<ClientDashboard />} />
+                    
+                    <Route path="/dashboard/:userType/notifications" element={<NotificationsPage />} />
+                    <Route path="/dashboard/:userType/inbox" element={<NotificationsPage />} />
+                    <Route path="/notifications/professional" element={<NotificationsPage />} />
+                    <Route path="/notifications/:userType" element={<NotificationsPage />} />
+                    <Route path="/score" element={<GlohsenScore />} />
+                    <Route path="/score/calculate" element={<GlohsenScore />} />
+                    <Route path="/score/details" element={<GlohsenScore />} />
+                    
+                    <Route path="/employer/criteria" element={<EmployerCriteriaPage />} />
+                    <Route path="/employer/payment" element={<EmployerPayment />} />
+                    
+                    <Route path="/kpi-tracking" element={<KPITrackingPage />} />
+                    <Route path="/kpi-dashboard" element={<KPIDashboard />} />
+                    <Route path="/purse/professional" element={<ProfessionalPurse />} />
+                    <Route path="/purse/tutor" element={<TutorPurse />} />
+                    <Route path="/activity" element={<ActivityHistoryPage />} />
+                    <Route path="/mlm" element={<MLMDashboard userId="temp-user-id" userType="professional" />} />
+                    <Route path="/mlm-tree" element={<MLMTreePage />} />
+                  </Route>
+                </Routes>
+                <FloatingActionButtons />
+              </Router>
+            </SoundProvider>
           </GlohsenScoreProvider>
         </SecurityProvider>
       </AccessibilityProvider>

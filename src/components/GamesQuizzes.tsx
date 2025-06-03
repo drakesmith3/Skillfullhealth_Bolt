@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Play, Heart, Eye, Target, Users, ChevronLeft, ChevronRight, Brain, Dna, Activity, HeartPulse, Pill, Syringe, Stethoscope } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
+import { useClickSound } from "../hooks/useClickSound";
 
 // Enhanced Glassmorphism 3D Styles for Games & Quizzes
 const GamesQuizzes3DStyles = () => (
@@ -150,14 +151,23 @@ const GamesQuizzes3DStyles = () => (
   }} />
 );
 
-const GamesQuizzes = ({ isActive = false }) => {
+const GamesQuizzes = ({ isActive = false, playClickSound }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const { isDark } = useTheme();
+  const [isPaused, setIsPaused] = useState(false);  const { isDark } = useTheme();
+  const { playClick: contextPlayClickSound } = useClickSound();
+  
+  // Use the click sound from props or context
+  const handleClick = () => {
+    if (playClickSound) {
+      playClickSound();
+    } else if (contextPlayClickSound) {
+      contextPlayClickSound();
+    }
+  };
     // New Medical Games Data
   const games = [
     {
@@ -266,12 +276,13 @@ const GamesQuizzes = ({ isActive = false }) => {
         "-=0.4"
       );
       }, []);
-
   const nextSlide = () => {
+    handleClick();
     setCurrentSlide((prev) => (prev + 1) % games.length);
   };
 
   const prevSlide = () => {
+    handleClick();
     setCurrentSlide((prev) => (prev - 1 + games.length) % games.length);
   };
 
@@ -335,12 +346,11 @@ const GamesQuizzes = ({ isActive = false }) => {
                         {/* Icon Overlay */}
                         <div className="absolute top-4 right-4 p-3 rounded-full bg-white/20 backdrop-blur-sm">
                           <IconComponent className="h-6 w-6 text-white" />
-                        </div>
-
-                        {/* Play Button */}
+                        </div>                        {/* Play Button */}
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Button 
                             className="rounded-full w-16 h-16 p-0 bg-white/90 text-gray-800 hover:bg-white hover:scale-110 shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm"
+                            onClick={handleClick}
                           >
                             <Play className="h-8 w-8 ml-1" />
                           </Button>
@@ -368,13 +378,12 @@ const GamesQuizzes = ({ isActive = false }) => {
                         <div className="flex items-center justify-between mb-4">
                           <span className="text-sm opacity-70">{game.players} players</span>
                           <span className="text-sm opacity-70">Educational</span>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-3">
+                        </div>                        <div className="grid grid-cols-3 gap-3">
                           <Link to="/games-quizzes" className="col-span-1">
                             <Button 
                               className="w-full bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white text-sm py-2"
                               size="sm"
+                              onClick={handleClick}
                             >
                               PLAY GAMES/QUIZ
                             </Button>
@@ -382,6 +391,7 @@ const GamesQuizzes = ({ isActive = false }) => {
                             <Button 
                               className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white text-sm py-2"
                               size="sm"
+                              onClick={handleClick}
                             >
                               BUY COURSE
                             </Button>
@@ -391,6 +401,7 @@ const GamesQuizzes = ({ isActive = false }) => {
                               variant="outline"
                               className="w-full text-sm py-2 border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white backdrop-blur-sm"
                               size="sm"
+                              onClick={handleClick}
                             >
                               EXPLORE ALL GAMES
                             </Button>
@@ -412,13 +423,14 @@ const GamesQuizzes = ({ isActive = false }) => {
               variant="ghost"
             >
               <ChevronLeft className="h-6 w-6" />
-            </Button>
-
-            <div className="flex space-x-2">
+            </Button>            <div className="flex space-x-2">
               {games.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => setCurrentSlide(index)}
+                  onClick={() => {
+                    handleClick();
+                    setCurrentSlide(index);
+                  }}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     currentSlide === index 
                       ? 'bg-white scale-125' 
@@ -426,7 +438,7 @@ const GamesQuizzes = ({ isActive = false }) => {
                   }`}
                 />
               ))}
-            </div>            <Button
+            </div><Button
               onClick={nextSlide}
               className="p-3 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300"
               variant="ghost"
@@ -441,7 +453,7 @@ const GamesQuizzes = ({ isActive = false }) => {
               Medical Quizzes
             </span>
           </h3>
-          <MedicalQuizCarousel />
+          <MedicalQuizCarousel playClickSound={playClickSound} />
         </div>
       </div>
 
@@ -456,12 +468,21 @@ const GamesQuizzes = ({ isActive = false }) => {
 };
 
 // Medical Quiz Carousel Component
-const MedicalQuizCarousel = () => {
+const MedicalQuizCarousel = ({ playClickSound }) => {
   const navigate = useNavigate();
   const { isDark } = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
+  const carouselRef = useRef<HTMLDivElement>(null);  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
+  const { playClick: contextPlayClickSound } = useClickSound();
+  
+  // Use the click sound from props or context
+  const handleClick = () => {
+    if (playClickSound) {
+      playClickSound();
+    } else if (contextPlayClickSound) {
+      contextPlayClickSound();
+    }
+  };
 
   // Quiz/Game Data Types
   interface QuizOption {
@@ -610,25 +631,36 @@ const MedicalQuizCarousel = () => {
       ]
     }
   ];
-
   const [items] = useState<QuizItem[]>(() => interleaveQuizGame(quizItems));
+  const nextItem = () => {
+    handleClick();
+    setActiveIndex((prev) => (prev + 1) % items.length);
+  };
+  
+  const prevItem = () => {
+    handleClick();
+    setActiveIndex((prev) => (prev - 1 + items.length) % items.length);
+  };
 
-  const nextItem = () => setActiveIndex((prev) => (prev + 1) % items.length);
-  const prevItem = () => setActiveIndex((prev) => (prev - 1 + items.length) % items.length);
+  // Silent autoplay function that doesn't trigger click sounds
+  const autoNextItem = () => {
+    setActiveIndex((prev) => (prev + 1) % items.length);
+  };
 
-  // Autoplay with accessibility pause
+  // Autoplay with accessibility pause - using silent function to prevent continuous clicking sounds
   useEffect(() => {
     if (!autoplayEnabled) return;
     
-    const timer = setInterval(nextItem, 15000);
+    const timer = setInterval(autoNextItem, 15000);
     return () => clearInterval(timer);
   }, [autoplayEnabled, items.length]);
-
   const handleQuizStart = (item: QuizItem) => {
+    handleClick();
     navigate(`/courses#${item.id}`);
   };
 
   const handleGameStart = (item: QuizItem) => {
+    handleClick();
     navigate(`/courses#${item.id}`);
   };
 
@@ -675,8 +707,10 @@ const MedicalQuizCarousel = () => {
                   left: "50%",
                   top: "50%",
                   transform: "translate(-50%, -50%)",
+                }}                onClick={() => {
+                  handleClick();
+                  setActiveIndex(index);
                 }}
-                onClick={() => setActiveIndex(index)}
                 role="option"
                 aria-selected={index === activeIndex}
                 tabIndex={index === activeIndex ? 0 : -1}
@@ -699,13 +733,15 @@ const MedicalQuizCarousel = () => {
                           : 'text-gray-700 bg-gray-50'
                       }`}>
                         {item.content}
-                      </p>
-                      <div className="mt-2 flex flex-col gap-1">
+                      </p>                      <div className="mt-2 flex flex-col gap-1">
                         {(item.options || []).map((option) => (
                           <button
                             key={option.id}
                             className="quiz-button-gold w-full px-3 py-2 rounded text-black font-semibold transition-all text-xs"
-                            onClick={() => handleQuizStart(item)}
+                            onClick={() => {
+                              handleClick();
+                              handleQuizStart(item);
+                            }}
                             aria-label={`Select answer: ${option.text}`}
                           >
                             {option.text}
@@ -716,11 +752,13 @@ const MedicalQuizCarousel = () => {
                   )}                  {/* Game description */}
                   {item.type === "game" && item.description && (
                     <div className="flex flex-col flex-1 justify-center">
-                      <p className={`text-xs mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{item.description}</p>
-                      {index === activeIndex && (
+                      <p className={`text-xs mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{item.description}</p>                      {index === activeIndex && (
                         <button
                           className="quiz-button-gold px-5 py-2 rounded text-black text-sm font-medium transition-all"
-                          onClick={() => handleGameStart(item)}
+                          onClick={() => {
+                            handleClick();
+                            handleGameStart(item);
+                          }}
                           aria-label={`Start game: ${item.title}`}
                         >
                           Play Game/Quiz
@@ -745,30 +783,36 @@ const MedicalQuizCarousel = () => {
         className="flex justify-center mt-4 space-x-2"
         role="tablist"
         aria-label="Carousel navigation"
-      >
-        {items.map((item, index) => (
+      >        {items.map((item, index) => (
           <button
             key={index}
             className={`w-2 h-2 rounded-full transition-all ${
               index === activeIndex ? "bg-[#D4AF37] w-4" : "bg-gray-300"
             }`}
-            onClick={() => setActiveIndex(index)}
+            onClick={() => {
+              handleClick();
+              setActiveIndex(index);
+            }}
             role="tab"
             aria-selected={index === activeIndex}
             aria-label={`Go to item ${index + 1}: ${item.title}`}
           />
         ))}
-      </div>
-
-      {/* Gold Action Buttons */}
+      </div>      {/* Gold Action Buttons */}
       <div className="flex justify-center mt-6 space-x-4">
         <Link to="/games-quizzes">
-          <button className="quiz-button-gold px-6 py-3 rounded-lg text-black font-semibold text-sm transition-all">
+          <button 
+            className="quiz-button-gold px-6 py-3 rounded-lg text-black font-semibold text-sm transition-all"
+            onClick={handleClick}
+          >
              PLAY GAME/QUIZ
            </button>
          </Link>
          <Link to="/courses">
-          <button className="quiz-button-gold px-6 py-3 rounded-lg text-black font-semibold text-sm transition-all">
+          <button 
+            className="quiz-button-gold px-6 py-3 rounded-lg text-black font-semibold text-sm transition-all"
+            onClick={handleClick}
+          >
              BUY COURSE
            </button>
          </Link>

@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { User, Users, Briefcase, GraduationCap, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import { useClickSound } from "../hooks/useClickSound";
 
 // Custom styles for dock effect
 const dockStyles = `
@@ -51,8 +52,17 @@ const dockStyles = `
   }
 `;
 
-const JoinCommunity = ({ isActive = false }) => {
-  const { isDark } = useTheme();
+const JoinCommunity = ({ isActive = false, playClickSound }) => {  const { isDark } = useTheme();
+  const { playClick } = useClickSound();
+  
+  // Handle click with sound
+  const handleClick = () => {
+    if (playClickSound) {
+      playClickSound();
+    } else {
+      playClick();
+    }
+  };
 
   // Add styles to head
   useEffect(() => {
@@ -111,8 +121,8 @@ const JoinCommunity = ({ isActive = false }) => {
               seeking superstar employees.            </p>
               {/* Dock-style Button Container */}
               <div className="flex flex-wrap justify-center items-end gap-2 max-w-4xl mx-auto px-4">
-                <Link to="/signin?userType=client" className="dock-button-wrapper">
-                  <Button className="dock-button bg-blue-700 hover:bg-blue-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                <Link to="/signin?userType=client" className="dock-button-wrapper" onClick={handleClick}>
+                  <Button className="dock-button bg-blue-700 hover:bg-blue-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg" onClick={playClickSound}>
                     <div className="flex flex-col items-center gap-1">
                       <User size={20} />
                       <span className="text-sm font-medium">I'm a Client</span>
@@ -120,8 +130,8 @@ const JoinCommunity = ({ isActive = false }) => {
                   </Button>
                 </Link>
                 
-                <Link to="/signin?userType=student" className="dock-button-wrapper">
-                  <Button className="dock-button bg-red-700 hover:bg-red-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                <Link to="/signin?userType=student" className="dock-button-wrapper" onClick={handleClick}>
+                  <Button className="dock-button bg-red-700 hover:bg-red-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg" onClick={playClickSound}>
                     <div className="flex flex-col items-center gap-1">
                       <GraduationCap size={20} />
                       <span className="text-sm font-medium">I'm a Student</span>
@@ -129,8 +139,8 @@ const JoinCommunity = ({ isActive = false }) => {
                   </Button>
                 </Link>
                 
-                <Link to="/signin?userType=tutor" className="dock-button-wrapper">
-                  <Button className="dock-button bg-gray-900 hover:bg-gray-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                <Link to="/signin?userType=tutor" className="dock-button-wrapper" onClick={handleClick}>
+                  <Button className="dock-button bg-gray-900 hover:bg-gray-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg" onClick={playClickSound}>
                     <div className="flex flex-col items-center gap-1">
                       <MessageCircle size={20} />
                       <span className="text-sm font-medium">I'm a Tutor</span>
@@ -138,8 +148,8 @@ const JoinCommunity = ({ isActive = false }) => {
                   </Button>
                 </Link>
                 
-                <Link to="/signin?userType=professional" className="dock-button-wrapper">
-                  <Button className="dock-button bg-amber-600 hover:bg-amber-400 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                <Link to="/signin?userType=professional" className="dock-button-wrapper" onClick={handleClick}>
+                  <Button className="dock-button bg-amber-600 hover:bg-amber-400 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg" onClick={playClickSound}>
                     <div className="flex flex-col items-center gap-1">
                       <Users size={20} />
                       <span className="text-sm font-medium">I'm a Professional</span>
@@ -147,8 +157,8 @@ const JoinCommunity = ({ isActive = false }) => {
                   </Button>
                 </Link>
                 
-                <Link to="/signin?userType=employer" className="dock-button-wrapper">
-                  <Button className="dock-button bg-green-600 hover:bg-green-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg">
+                <Link to="/signin?userType=employer" className="dock-button-wrapper" onClick={handleClick}>
+                  <Button className="dock-button bg-green-600 hover:bg-green-500 text-white transition-all duration-300 ease-out transform hover:scale-125 hover:-translate-y-2 hover:shadow-2xl active:scale-110" size="lg" onClick={playClickSound}>
                     <div className="flex flex-col items-center gap-1">
                       <Briefcase size={20} />
                       <span className="text-sm font-medium">I'm an Employer</span>
@@ -165,7 +175,7 @@ const JoinCommunity = ({ isActive = false }) => {
                 isDark ? 'text-white' : 'text-white'
               }`}>
                 Join 10,000+ healthcare professionals who are already building a better future with GLOHSEN.
-              </p>              <Link to="/signup">
+              </p>              <Link to="/signup" onClick={handleClick}>
                 <Button className="bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white w-full" size="lg">
                   Get Started Today
                 </Button>

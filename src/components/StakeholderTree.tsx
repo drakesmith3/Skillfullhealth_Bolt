@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { useClickSound } from '../hooks/useClickSound';
 
 interface StakeholderNode {
   id: string;
@@ -13,15 +14,28 @@ interface StakeholderNode {
   benefits?: string[]; // Array of benefits for each stakeholder
 }
 
-const StakeholderTree: React.FC = () => {
+interface StakeholderTreeProps {
+  playClickSound?: () => void;
+}
+
+const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);  const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const { playClick } = useClickSound();
+  
+  // Handle click with sound
+  const handleClick = () => {
+    if (playClickSound) {
+      playClickSound();
+    } else {
+      playClick();
+    }
+  };
   // Define the data structure for our stakeholder tree
   const data: StakeholderNode[] = [
     {
@@ -564,9 +578,11 @@ const StakeholderTree: React.FC = () => {
       .enter()
       .append('g')
       .attr('class', 'node')
-      .attr('transform', d => `translate(${positions[d.id].x}, ${positions[d.id].y})`)
-      .attr('cursor', 'pointer')
+      .attr('transform', d => `translate(${positions[d.id].x}, ${positions[d.id].y})`)      .attr('cursor', 'pointer')
       .on('click', (_, d) => {
+        // Play click sound
+        handleClick();
+        
         // Toggle selected node
         setSelectedNode(selectedNode === d.id ? null : d.id);
         
@@ -742,10 +758,12 @@ const StakeholderTree: React.FC = () => {
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-lg font-bold text-foreground">
               {data.find(node => node.id === selectedNode)?.name}
-            </h4>
-            <button
+            </h4>            <button
               className="text-gray-400 hover:text-white transition-colors"
-              onClick={() => setSelectedNode(null)}
+              onClick={() => {
+                handleClick();
+                setSelectedNode(null);
+              }}
               aria-label="Close tooltip"
             >
               ×
@@ -770,10 +788,12 @@ const StakeholderTree: React.FC = () => {
             ))}
           </ul>
           
-          <div className="text-center mt-4">
-            <button 
+          <div className="text-center mt-4">            <button 
               className="text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-black font-semibold py-1.5 px-3 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
-              onClick={() => setSelectedNode(null)}
+              onClick={() => {
+                handleClick();
+                setSelectedNode(null);
+              }}
             >
               Close
             </button>
@@ -788,10 +808,10 @@ const StakeholderTree: React.FC = () => {
       </div>
 
       {/* Information panel */}
-      <div className="absolute top-2 right-2 z-30">
-        <button 
+      <div className="absolute top-2 right-2 z-30">        <button 
           className="w-6 h-6 rounded-full bg-amber-500 text-black flex items-center justify-center text-xs font-bold shadow-md hover:bg-amber-400 transition-colors duration-200"
           onClick={() => {
+            handleClick();
             const infoPanel = document.getElementById('stakeholder-info-panel');
             if (infoPanel) {
               infoPanel.classList.toggle('hidden');
@@ -821,10 +841,10 @@ const StakeholderTree: React.FC = () => {
               <span className="text-amber-400 mr-1">•</span>
               <span>Colored lines show stakeholder relationships</span>
             </li>
-          </ul>
-          <button 
+          </ul>          <button 
             className="mt-2 text-amber-400 hover:text-amber-300 text-xs"
             onClick={() => {
+              handleClick();
               const infoPanel = document.getElementById('stakeholder-info-panel');
               if (infoPanel) {
                 infoPanel.classList.add('hidden');

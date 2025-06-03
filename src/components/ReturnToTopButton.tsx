@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronUp } from 'lucide-react';
+import { useSound } from '../contexts/SoundContext';
 
 interface ReturnToTopButtonProps {
   scrollToSection: (sectionIndex: number) => void;
@@ -10,7 +11,10 @@ const ReturnToTopButton: React.FC<ReturnToTopButtonProps> = ({
   scrollToSection,
   position = 'top-right' 
 }) => {
+  const { playClickSound } = useSound();
+
   const handleClick = () => {
+    playClickSound();
     scrollToSection(0); // Scroll to the Header section (index 0)
   };
 

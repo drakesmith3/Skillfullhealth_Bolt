@@ -7,14 +7,25 @@ import { MessageCircle, ThumbsUp, ThumbsDown, Check, Info, Star } from "lucide-r
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { useTheme } from "../contexts/ThemeContext";
+import { useClickSound } from "../hooks/useClickSound";
 
-const Feedback = ({ isActive = false }) => {
+interface SectionProps {
+  isActive?: boolean;
+  playClickSound?: () => void;
+}
+
+const Feedback = ({ isActive = false, playClickSound }: SectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const characterRef = useRef<HTMLDivElement>(null);
-  const speechBubbleRef = useRef<HTMLDivElement>(null);
-  const [activeTab, setActiveTab] = useState("facilities");
+  const speechBubbleRef = useRef<HTMLDivElement>(null);  const [activeTab, setActiveTab] = useState("facilities");
   const { isDark } = useTheme();
+  const { playClick } = useClickSound();
+
+  const handleClick = () => {
+    playClickSound?.();
+    playClick();
+  };
 
   useEffect(() => {
     if (!containerRef.current || !contentRef.current || !characterRef.current || !speechBubbleRef.current) return;
@@ -57,7 +68,7 @@ const Feedback = ({ isActive = false }) => {
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundColor: 'rgba(255,255,255,0.9)'
+          backgroundColor: isDark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.9)'
         }}
       ></div>
 
@@ -111,7 +122,7 @@ const Feedback = ({ isActive = false }) => {
         <div ref={contentRef} className="w-full lg:w-1/3 mt-6 lg:mt-0 px-2 sm:px-4">
           <h3 className={`text-lg sm:text-xl lg:text-2xl font-bold mb-3 sm:mb-4 text-center lg:text-left ${isDark ? 'text-white' : 'text-gray-800'}`}>Share Your Healthcare Experience</h3>
           
-          <p className={`mb-4 sm:mb-6 text-sm sm:text-base text-center lg:text-left ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`mb-4 sm:mb-6 text-sm sm:text-base text-center lg:text-left ${isDark ? 'text-gray-200' : 'text-gray-600'}`}>
             Help improve healthcare services by sharing your honest feedback about hospitals, professionals, and tutors.
           </p>
           
@@ -119,19 +130,21 @@ const Feedback = ({ isActive = false }) => {
             <p className={`italic text-sm sm:text-base ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
               "Your feedback creates accountability and drives positive change in healthcare!"
             </p>
-            <p className={`text-xs sm:text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>- GLOHSEN Team</p>
+            <p className={`text-xs sm:text-sm mt-2 ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>- GLOHSEN Team</p>
           </div>
 
-          <div className="mb-4 sm:mb-6">
-            <Tabs 
+          <div className="mb-4 sm:mb-6">            <Tabs 
               defaultValue="facilities" 
               value={activeTab} 
-              onValueChange={setActiveTab}
+              onValueChange={(value) => {
+                handleClick();
+                setActiveTab(value);
+              }}
               className="w-full"
             >
               <TabsList className="grid grid-cols-3 w-full mb-3 h-8 sm:h-9">
                 <TabsTrigger value="professionals" className="text-xs sm:text-sm px-1 sm:px-2">
-                  Doctors
+                  Professionals
                 </TabsTrigger>
                 <TabsTrigger value="facilities" className="text-xs sm:text-sm px-1 sm:px-2">
                   Hospitals
@@ -141,33 +154,37 @@ const Feedback = ({ isActive = false }) => {
                 </TabsTrigger>
               </TabsList>
               
-              <div className="space-y-3">
-                <div className="flex gap-1">
+              <div className="space-y-3">                <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star 
                       key={star} 
                       className="text-amber-400 cursor-pointer hover:text-amber-500" 
                       size={18} 
                       fill="currentColor"
+                      onClick={handleClick}
                     />
                   ))}
                 </div>
                 
                 <div className="flex gap-2">
-                  <div className="flex items-center cursor-pointer hover:text-green-600 bg-green-50 px-2 py-1 rounded text-xs">
+                  <div 
+                    className={`flex items-center cursor-pointer px-2 py-1 rounded text-xs ${isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600 hover:text-gray-100' : 'bg-green-50 hover:text-green-600'}`}
+                    onClick={handleClick}
+                  >  
                     <ThumbsUp className="mr-1" size={12} />
                     Positive
                   </div>
-                  <div className="flex items-center cursor-pointer hover:text-red-600 bg-red-50 px-2 py-1 rounded text-xs">
+                  <div 
+                    className={`flex items-center cursor-pointer px-2 py-1 rounded text-xs ${isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600 hover:text-gray-100' : 'bg-red-50 hover:text-red-600'}`}
+                    onClick={handleClick}
+                  >  
                     <ThumbsDown className="mr-1" size={12} />
                     Negative
                   </div>
                 </div>
               </div>
             </Tabs>
-          </div>
-
-          <Link to="/feedback">
+          </div>          <Link to="/feedback" onClick={handleClick}>
             <Button className="bg-red-600 hover:bg-red-700 w-full shadow-lg transition-all duration-300 hover:shadow-xl py-2 sm:py-3 text-sm sm:text-base">
               <MessageCircle className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Share Detailed Feedback
@@ -182,8 +199,7 @@ const Feedback = ({ isActive = false }) => {
           <h3 className={`text-lg sm:text-xl lg:text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'} flex items-center gap-2`}>
             <MessageCircle size={20} />
             Recent Community Feedback
-          </h3>
-          <Link to="/feedback#recent" className="text-sm text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-400">
+          </h3>          <Link to="/feedback#recent" className="text-sm text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-400" onClick={handleClick}>
             View All
           </Link>
         </div>
@@ -205,15 +221,14 @@ const Feedback = ({ isActive = false }) => {
                 <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full ml-1">Verified</span>
               </div>
             </div>
-            <p className="text-sm sm:text-base text-gray-600 mb-3">Great experience overall. Staff was friendly and knowledgeable. The new patient care system really works!</p>
-            <div className="flex justify-between items-center">
+            <p className="text-sm sm:text-base text-gray-600 mb-3">Great experience overall. Staff was friendly and knowledgeable. The new patient care system really works!</p>            <div className="flex justify-between items-center">
               <div className="flex gap-1">
                 {[1, 2, 3, 4].map((star) => (
                   <Star key={star} className="text-amber-400" size={14} fill="currentColor" />
                 ))}
                 <Star className="text-gray-300" size={14} />
               </div>
-              <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 h-6 px-3">
+              <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 h-6 px-3" onClick={handleClick}>
                 <MessageCircle size={12} />
                 Discuss
               </Button>
@@ -236,14 +251,13 @@ const Feedback = ({ isActive = false }) => {
                 <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full ml-1">Verified</span>
               </div>
             </div>
-            <p className="text-sm sm:text-base text-gray-600 mb-3">Very thorough and professional. Took time to explain my condition clearly and answered all my questions.</p>
-            <div className="flex justify-between items-center">
+            <p className="text-sm sm:text-base text-gray-600 mb-3">Very thorough and professional. Took time to explain my condition clearly and answered all my questions.</p>            <div className="flex justify-between items-center">
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star key={star} className="text-amber-400" size={14} fill="currentColor" />
                 ))}
               </div>
-              <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 h-6 px-3">
+              <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 h-6 px-3" onClick={handleClick}>
                 <MessageCircle size={12} />
                 Discuss
               </Button>

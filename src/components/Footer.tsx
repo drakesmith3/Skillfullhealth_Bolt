@@ -4,6 +4,7 @@ import { ChevronUp, Facebook, Twitter, Linkedin, Instagram, Youtube, Mail, Info 
 import { Button } from "@/components/ui/button";
 import { gsap } from "gsap";
 import ReturnToTopButton from './ReturnToTopButton';
+import { useClickSound } from '../hooks/useClickSound';
 
 // Import the dust particle creator from Header
 const createDustParticles = (container: HTMLElement | null, count: number, particleColor: string) => {
@@ -57,12 +58,21 @@ interface FooterProps {
   sectionName?: string;
   scrollToSection?: (sectionIndex: number) => void;
   isHomePage?: boolean; // Add prop to determine if this is the home page
+  playClickSound?: () => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection, isHomePage = false }) => {  const footerRef = useRef<HTMLDivElement>(null);
+const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection, isHomePage = false, playClickSound }) => {
+  const footerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { playClick } = useClickSound();
   
   const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Handle click with sound
+  const handleClick = () => {
+    playClickSound?.();
+    playClick();
+  };
   
   // Dynamic font sizing based on isHomePage (50% increase for home page)
   const fontSizes = isHomePage ? {
@@ -157,11 +167,8 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
         letterSpacing: '0.01em',
         fontWeight: 400,
         position: 'relative' // Ensure for absolute positioning of elements
-      }}
-    >
-      {/* Return to Top Button */}
-      {scrollToSection && <ReturnToTopButton scrollToSection={scrollToSection} />}
-        {/* Footer Header Message */}
+      }}      >
+      {/* Footer Header Message */}
       <div className="w-full py-4 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className={`font-bold text-center animated-shine-text metallic-gold-text ${fontSizes.headerTitle}`}>
@@ -170,9 +177,8 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
           <p className={`mt-2 text-center bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text ${fontSizes.headerSubtitle}`}>
             Your GLOHSEN story just began.          </p>
         </div>
-      </div>      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6 text-left">{/* Each column below gets extra spacing and separation for a professional look */}
-        <div className="flex flex-col items-center sm:items-start space-y-3 col-span-1">
-          <Link to="/" aria-label="GLOHSEN Home" className="mb-1">
+      </div>      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6 text-left">{/* Each column below gets extra spacing and separation for a professional look */}        <div className="flex flex-col items-center sm:items-start space-y-3 col-span-1">
+          <Link to="/" aria-label="GLOHSEN Home" className="mb-1" onClick={handleClick}>
             <div className="w-12 h-12 rounded-full bg-black shadow-lg flex items-center justify-center border-2 border-[#F9D75D]">
               <span className={`font-bold text-[#F9D75D] tracking-widest ${fontSizes.logoText}`}>G</span>
             </div>
@@ -180,58 +186,57 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
           <span className={`font-semibold text-[#F9D75D] tracking-wide ${fontSizes.brandName}`}>GLOHSEN</span>
           <span className={`text-gray-300 font-normal ${fontSizes.tagline}`}>Empowering Healthcare Stories</span>
           <div className="flex gap-3 mt-2">
-            <a href="https://facebook.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="transition-colors">
+            <a href="https://facebook.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="transition-colors" onClick={handleClick}>
               <Facebook size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
-            <a href="https://twitter.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="transition-colors">
+            <a href="https://twitter.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="transition-colors" onClick={handleClick}>
               <Twitter size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
-            <a href="https://linkedin.com/company/glohsen" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="transition-colors">
+            <a href="https://linkedin.com/company/glohsen" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="transition-colors" onClick={handleClick}>
               <Linkedin size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
-            <a href="https://instagram.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="transition-colors">
+            <a href="https://instagram.com/glohsen" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="transition-colors" onClick={handleClick}>
               <Instagram size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
-            <a href="https://youtube.com/c/glohsen" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="transition-colors">
+            <a href="https://youtube.com/c/glohsen" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="transition-colors" onClick={handleClick}>
               <Youtube size={fontSizes.socialIconSize} className="text-[#F9D75D] hover:text-[#ea384c] transition-colors" />
             </a>
           </div>
         </div>
         <div className="flex flex-col space-y-4 col-span-1">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Quick Links</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
-            <li><Link to="/" className="hover:text-[#ea384c] transition-colors font-medium">Home</Link></li>
-            <li><Link to="/blog" className="hover:text-[#ea384c] transition-colors font-medium">Blog</Link></li>
-            <li><Link to="/community" className="hover:text-[#ea384c] transition-colors font-medium">Community Forum</Link></li>
-            <li><Link to="/job-board" className="hover:text-[#ea384c] transition-colors font-medium">Job Board</Link></li>
-            <li><Link to="/games-quizzes" className="hover:text-[#ea384c] transition-colors font-medium">Games & Quizzes</Link></li>
-            <li><Link to="/courses" className="hover:text-[#ea384c] transition-colors font-medium">Courses</Link></li>
-            <li><Link to="/testimonials" className="hover:text-[#ea384c] transition-colors font-medium">Testimonials</Link></li>
+            <li><Link to="/" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Home</Link></li>
+            <li><Link to="/blog" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Blog</Link></li>
+            <li><Link to="/community" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Community Forum</Link></li>
+            <li><Link to="/job-board" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Job Board</Link></li>
+            <li><Link to="/games-quizzes" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Games & Quizzes</Link></li>
+            <li><Link to="/courses" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Courses</Link></li>
+            <li><Link to="/testimonials" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Testimonials</Link></li>
           </ul>
         </div>
         <div className="flex flex-col space-y-4 col-span-1">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Contact</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
-            <li><Link to="/contact-us" className="hover:text-[#ea384c] transition-colors font-medium">Contact Us</Link></li>
-            <li><Link to="/about-us" className="hover:text-[#ea384c] transition-colors font-medium">About Us</Link></li>
-            <li><Link to="/support" className="hover:text-[#ea384c] transition-colors font-medium">Support</Link></li>
-            <li><Link to="/faq" className="hover:text-[#ea384c] transition-colors font-medium">FAQ</Link></li>
+            <li><Link to="/contact-us" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Contact Us</Link></li>
+            <li><Link to="/about-us" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>About Us</Link></li>
+            <li><Link to="/support" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Support</Link></li>
+            <li><Link to="/faq" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>FAQ</Link></li>
           </ul>
         </div>
         <div className="flex flex-col space-y-4 col-span-1">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Legal</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
-            <li><Link to="/privacy-policy" className="hover:text-[#ea384c] transition-colors font-medium">Privacy Policy</Link></li>
-            <li><Link to="/terms-of-service" className="hover:text-[#ea384c] transition-colors font-medium">Terms of Service</Link></li>
-            <li><Link to="/cookie-settings" className="hover:text-[#ea384c] transition-colors font-medium">Cookies Settings</Link></li>
-            <li><Link to="/refund-policy" className="hover:text-[#ea384c] transition-colors font-medium">Refund Policy</Link></li>
-            <li><Link to="/accessibility" className="hover:text-[#ea384c] transition-colors font-medium">Accessibility</Link></li>
+            <li><Link to="/privacy-policy" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Privacy Policy</Link></li>
+            <li><Link to="/terms-of-service" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Terms of Service</Link></li>
+            <li><Link to="/cookie-settings" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Cookies Settings</Link></li>
+            <li><Link to="/refund-policy" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Refund Policy</Link></li>
+            <li><Link to="/accessibility" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Accessibility</Link></li>
           </ul>
         </div>
         <div className="flex flex-col space-y-4 col-span-1">
-          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Handbooks</h5>
-          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
-            <li><Link to="/ProfessionalsHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Professional Handbook</Link></li>
-            <li><Link to="/EmployersHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Employer Handbook</Link></li>
-            <li><Link to="/TutorsHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Tutor Handbook</Link></li>
-            <li><Link to="/StudentsHandbook" className="hover:text-[#ea384c] transition-colors font-medium">Student Handbook</Link></li>
+          <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Handbooks</h5>          <ul className={`space-y-2 text-gray-300 ${fontSizes.bodyText}`}>
+            <li><Link to="/ProfessionalsHandbook" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Professional Handbook</Link></li>
+            <li><Link to="/EmployersHandbook" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Employer Handbook</Link></li>
+            <li><Link to="/TutorsHandbook" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Tutor Handbook</Link></li>
+            <li><Link to="/StudentsHandbook" className="hover:text-[#ea384c] transition-colors font-medium" onClick={handleClick}>Student Handbook</Link></li>
           </ul>
         </div>        <div className="flex flex-col space-y-4 col-span-1">
           <h5 className={`font-semibold tracking-wide border-b border-[#333] pb-1 ${fontSizes.sectionHeading}`}>Subscribe for Updates</h5>
@@ -243,8 +248,7 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
               type="email"
               placeholder="Your email address"
               className={`px-3 py-2 rounded-md border border-[#444] bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-[#F9D75D] w-full placeholder-gray-500 ${fontSizes.bodyText}`}
-            />
-            <Button className={`bg-[#ea384c] hover:bg-[#c4293b] text-white px-4 py-2 w-full font-semibold tracking-wide ${fontSizes.buttonText} rounded-md`}>
+            />            <Button className={`bg-[#ea384c] hover:bg-[#c4293b] text-white px-4 py-2 w-full font-semibold tracking-wide ${fontSizes.buttonText} rounded-md`} onClick={handleClick}>
               SUBSCRIBE
             </Button>
           </div>
@@ -254,7 +258,7 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
           <div className={`text-gray-300 ${fontSizes.bodyText} mb-2`}>
             <p>Because Your Opinions and Feelings Count...</p>
           </div>          <div className="flex flex-col gap-2 w-full">
-            <Link to="/general-feedback" className="w-full block">
+            <Link to="/general-feedback" className="w-full block" onClick={handleClick}>
               <Button 
                 className="bg-[#F9D75D] hover:bg-[#ea384c] text-black hover:text-white w-full font-semibold tracking-wide rounded-md transition-colors"
                 style={{ 
@@ -267,6 +271,7 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
                   alignItems: 'center',
                   whiteSpace: 'nowrap'
                 }}
+                onClick={handleClick}
               >
                 LEAVE A FEEDBACK
               </Button>
@@ -276,12 +281,17 @@ const Footer: React.FC<FooterProps> = ({ isActive, sectionName, scrollToSection,
       </div>        {/* Bottom: Copyright & Socials */}
       <div className="w-full border-t border-[#333] mt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
-          <span className={`text-gray-500 ${fontSizes.copyrightText}`}>&copy; {new Date().getFullYear()} GLOHSEN. All rights reserved.</span>
-            <div className={`flex items-center gap-4 ${fontSizes.bodyText} text-gray-500`}>
-            <Link to="/sitemap" className="hover:text-[#F9D75D] transition-colors">Sitemap</Link>
-          </div>
-        </div>
+          <span className={`text-gray-500 ${fontSizes.copyrightText}`}>&copy; {new Date().getFullYear()} GLOHSEN. All rights reserved.</span>            <div className={`flex items-center gap-4 ${fontSizes.bodyText} text-gray-500`}>
+            <Link to="/sitemap" className="hover:text-[#F9D75D] transition-colors" onClick={handleClick}>Sitemap</Link>
+          </div>        </div>
       </div>
+        {/* Return to Top Button - only show on home page */}
+      {isHomePage && scrollToSection && (
+        <ReturnToTopButton 
+          scrollToSection={scrollToSection}
+          position="bottom-right"
+        />
+      )}
     </section>
   );
 };

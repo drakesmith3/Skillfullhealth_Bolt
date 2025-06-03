@@ -5,14 +5,25 @@ import { Button } from "@/components/ui/button";
 import { GraduationCap, Users, Star } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { Link } from "react-router-dom";
+import { useClickSound } from "../hooks/useClickSound";
 
-const TutorsAdvisers = ({ isActive = false }) => {
+interface SectionProps {
+  isActive?: boolean;
+  playClickSound?: () => void;
+}
+
+const TutorsAdvisers = ({ isActive = false, playClickSound }: SectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const tutorRef = useRef<HTMLDivElement>(null);
-  const studentRef = useRef<HTMLDivElement>(null);
-  const arrowRef = useRef<HTMLDivElement>(null);
+  const studentRef = useRef<HTMLDivElement>(null);  const arrowRef = useRef<HTMLDivElement>(null);
   const { isDark } = useTheme();
+  const { playClick } = useClickSound();
+
+  const handleClick = () => {
+    playClickSound?.();
+    playClick();
+  };
 
   useEffect(() => {
     if (!containerRef.current || !contentRef.current || !tutorRef.current || !studentRef.current || !arrowRef.current) return;
@@ -299,7 +310,7 @@ const TutorsAdvisers = ({ isActive = false }) => {
               "The interactive CLOTQUEST game made understanding the complex clotting cascade simple and fun!"
             </p>
             <p className={`text-xs sm:text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>- Student A</p>
-          </div>            <Link to="/tutors">
+          </div>          <Link to="/Courses" onClick={handleClick}>
             <Button className="bg-amber-500 hover:bg-amber-600 w-full shadow-lg transition-all duration-300 hover:shadow-xl py-2 sm:py-3 text-sm sm:text-base">
               <GraduationCap className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Explore Courses

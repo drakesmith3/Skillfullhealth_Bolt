@@ -4,11 +4,17 @@ import { Card } from "@/components/ui/card";
 import { User, Briefcase, MessageSquare, Calendar, Settings, Search, Award, FileText, Bell, ExternalLink, BookOpen, LogOut, CreditCard, Gamepad, Heart } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import Card3D from "./Card3D";
+import { useClickSound } from "../hooks/useClickSound";
 
 const Sidebar = () => {
   const location = useLocation();
+  const { playClick } = useClickSound();
   const isProfessional = location.pathname.includes('professional');
   const isTutor = location.pathname.includes('tutor');
+
+  const handleClick = () => {
+    playClick();
+  };
 
   return (
     <div className="space-y-4">
@@ -20,24 +26,23 @@ const Sidebar = () => {
       />
       
       <Card className="p-4 shadow-md overflow-hidden hover:shadow-lg transition-transform duration-300 transform hover:-translate-y-1">
-        <h3 className="font-bold mb-4 text-primary border-b pb-2">Quick Links</h3>
-        <div className="space-y-2">
-          <Link to="/profile">
+        <h3 className="font-bold mb-4 text-primary border-b pb-2">Quick Links</h3>        <div className="space-y-2">
+          <Link to="/profile" onClick={handleClick}>
             <Button className="w-full button-3d flex justify-start" variant="outline">
               <User className="mr-2 h-4 w-4" /> My Profile
             </Button>
           </Link>
-          <Link to="/dashboard/professional">
+          <Link to="/dashboard/professional" onClick={handleClick}>
             <Button className="w-full button-3d flex justify-start" variant="outline">
               <Briefcase className="mr-2 h-4 w-4" /> My Job Applications
             </Button>
           </Link>
-          <Link to="/dashboard/professional">
+          <Link to="/dashboard/professional" onClick={handleClick}>
             <Button className="w-full button-3d flex justify-start" variant="outline">
               <CreditCard className="mr-2 h-4 w-4" /> My Transactions
             </Button>
           </Link>
-          <Link to="/messages">
+          <Link to="/messages" onClick={handleClick}>
             <Button className="w-full button-3d flex justify-start" variant="outline">
               <MessageSquare className="mr-2 h-4 w-4" /> Inbox/Messages
             </Button>
@@ -46,19 +51,18 @@ const Sidebar = () => {
       </Card>
       
       <Card className="p-4 shadow-md overflow-hidden hover:shadow-lg transition-transform duration-300 transform hover:-translate-y-1">
-        <h3 className="font-bold mb-4 text-primary border-b pb-2">CME Courses</h3>
-        <div className="space-y-2">
-          <Link to="/courses">
+        <h3 className="font-bold mb-4 text-primary border-b pb-2">CME Courses</h3>        <div className="space-y-2">
+          <Link to="/courses" onClick={handleClick}>
             <Button className="w-full button-3d flex justify-start" variant="outline">
               <BookOpen className="mr-2 h-4 w-4" /> Enroll in New Course
             </Button>
           </Link>
-          <Link to="/games-quizzes">
+          <Link to="/games-quizzes" onClick={handleClick}>
             <Button className="w-full button-3d flex justify-start" variant="outline">
               <Gamepad className="mr-2 h-4 w-4" /> Play Quiz/Games
             </Button>
           </Link>
-          <Link to="/profile">
+          <Link to="/profile" onClick={handleClick}>
             <Button className="w-full button-3d flex justify-start" variant="outline">
               <Award className="mr-2 h-4 w-4" /> My Certifications
             </Button>
@@ -67,8 +71,7 @@ const Sidebar = () => {
       </Card>
       
       <Card className="p-4 shadow-md overflow-hidden hover:shadow-lg transition-transform duration-300 transform hover:-translate-y-1">
-        <h3 className="font-bold mb-4 text-primary border-b pb-2">GLOHSEN Score</h3>
-        <Link to="/score">
+        <h3 className="font-bold mb-4 text-primary border-b pb-2">GLOHSEN Score</h3>        <Link to="/score" onClick={handleClick}>
           <Button className="w-full button-3d bg-accent text-black hover:bg-accent/90 mb-2">
             View My Score
           </Button>
@@ -79,33 +82,32 @@ const Sidebar = () => {
       </Card>
       
       <Card className="p-4 shadow-md overflow-hidden hover:shadow-lg transition-transform duration-300 transform hover:-translate-y-1">
-        <h3 className="font-bold mb-4 text-primary border-b pb-2">Settings</h3>
-        <div className="space-y-2">
-          <Link to="/account-settings">
+        <h3 className="font-bold mb-4 text-primary border-b pb-2">Settings</h3>        <div className="space-y-2">
+          <Link to="/account-settings" onClick={handleClick}>
             <Button className="w-full button-3d flex justify-start" variant="outline">
               <Settings className="mr-2 h-4 w-4" /> Account Settings
             </Button>
           </Link>
-          <Link to="/notifications">
+          <Link to="/notifications" onClick={handleClick}>
             <Button className="w-full button-3d flex justify-start" variant="outline">
               <Bell className="mr-2 h-4 w-4" /> Notifications
             </Button>
           </Link>
           {isTutor && (
-            <Link to="/tutor-wallet">
+            <Link to="/tutor-wallet" onClick={handleClick}>
               <Button className="w-full button-3d flex justify-start" variant="outline">
                 <Heart className="mr-2 h-4 w-4" /> Tutor Wallet
               </Button>
             </Link>
           )}
           {isProfessional && (
-            <Link to="/wallet-transaction">
+            <Link to="/wallet-transaction" onClick={handleClick}>
               <Button className="w-full button-3d flex justify-start" variant="outline">
                 <Heart className="mr-2 h-4 w-4" /> Wallet
               </Button>
             </Link>
           )}
-          <Link to="/login">
+          <Link to="/login" onClick={handleClick}>
             <Button className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full button-3d flex justify-start">
               <LogOut className="mr-2 h-4 w-4" /> Logout
             </Button>

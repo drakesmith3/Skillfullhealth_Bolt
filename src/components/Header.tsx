@@ -2,6 +2,9 @@ import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { Link } from "react-router-dom";
 import Logo3DHyperRealistic from "./Logo3DHyperRealistic";
+import { useClickSound } from "../hooks/useClickSound";
+import { useTheme } from "../contexts/ThemeContext";
+import { useSound } from "../contexts/SoundContext";
 
 // Copied from Hero.tsx - for dust particles (assuming this is defined above or imported)
 const createDustParticles = (container: HTMLElement | null, count: number, particleColor: string) => {
@@ -56,13 +59,30 @@ const createDustParticles = (container: HTMLElement | null, count: number, parti
 interface HeaderProps {
   isActive?: boolean;
   sectionName?: string;
-  scrollToSection?: (sectionIndex: number) => void; // Add scrollToSection prop
+  scrollToSection?: (sectionIndex: number) => void;
+  playClickSound?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ isActive, scrollToSection }) => {
+const Header: React.FC<HeaderProps> = ({ 
+  isActive = false, 
+  scrollToSection,
+  playClickSound 
+}) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const topBarRef = useRef<HTMLDivElement>(null); // Ref for the top bar
+  const { isDark } = useTheme();
+  const { playClickSound: contextPlayClickSound } = useSound();
+  
+  // Use the click sound from context or props
+  const handleClick = () => {
+    if (playClickSound) {
+      playClickSound();
+    } else if (contextPlayClickSound) {
+      contextPlayClickSound();
+    }
+  };
+
   useEffect(() => {
     if (!headerRef.current) return;
     const particleColor = "#FFD700"; // Gold
@@ -151,75 +171,78 @@ const Header: React.FC<HeaderProps> = ({ isActive, scrollToSection }) => {
     };
   }, [isActive]);
 
-  const goldButtonClasses = "shine-button bg-[#F9D75D] text-black px-6 py-3 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-sm";
+  const goldButtonClasses = "shine-button bg-[#F9D75D] text-black px-6 py-3 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl text-sm relative overflow-hidden";
 
   return (
-    <section
-      ref={headerRef}
-      className="relative h-screen w-full flex flex-col justify-center items-center text-center p-0 bg-black text-white dark:bg-red-700 dark:text-gray-100 overflow-hidden antialiased"
-    >
-      {/* Top Bar for Logo and Navigation */}
-      <div 
-        ref={topBarRef}
-        className="absolute top-0 left-0 right-0 z-20 p-3 sm:p-4 md:p-6 flex flex-col sm:flex-row justify-between items-center opacity-0 transform -translate-y-5 gap-3 sm:gap-0"
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* Background and Dust Particles (if any) */}
+      <section
+        ref={headerRef}
+        className="relative h-screen w-full flex flex-col justify-center items-center text-center p-0 bg-black text-white dark:bg-red-700 dark:text-gray-100 overflow-hidden antialiased"
       >
-        {/* Logo (3D Hyper-Realistic Rotating Earth) */}
-        <Link to="/" aria-label="GLOHSEN Home" className="flex-shrink-0">
-          <Logo3DHyperRealistic size={56} className="flex-shrink-0" />
-        </Link>
-
-        {/* Navigation Buttons */}
-        <nav className="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-3 md:gap-4 max-w-full">
-          <Link to="/about-us" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`}>ABOUT US</Link>
-          <Link to="/signin" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`}>SIGN IN</Link>
-          <Link to="/signup" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`}>SIGN UP</Link>
-          <Link to="/feedback" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`}>LEAVE FEEDBACK</Link>
-          <Link 
-            to="/games-quizzes" 
-            className="shine-button bg-[#FFD700] text-black px-3 py-2 sm:px-4 md:px-5 md:py-2.5 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl text-xs sm:text-sm"
-          >
-            GAMES & QUIZZES
-          </Link>
-        </nav>
-      </div>
-
-      {/* Main Content (Centered) */}
-      <div ref={contentRef} className="relative z-10 flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 opacity-0 px-4 max-w-7xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight animated-shine-text metallic-gold-text text-center">
-          <span className="micro-interact animated-shine-text metallic-gold-text block sm:inline">WELCOME TO GLOHSEN:</span>
-          <br className="hidden sm:block"/> 
-          <span className="micro-interact animated-shine-text metallic-gold-text block sm:inline">YOUR STORY BEGINS HERE</span>
-        </h1>
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 dark:text-gray-200 max-w-sm sm:max-w-xl md:max-w-2xl leading-relaxed md:leading-loose micro-interact text-center">
-          Dive into a Universe of Fun & Resourcefulness, for You by Us.
-          Scroll to Experience the Transforming Story of Health.
-        </p>        {/* Make the bounce container clickable */}
+        {/* Top Bar for Logo and Navigation */}
         <div 
-          className="mt-8 cursor-pointer micro-interact" 
-          onClick={() => {
-            if (scrollToSection) {
-              // Direct call to go to the next section without rebounding
-              scrollToSection(1); // Scroll to the second section (index 1)
-            }
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              if (scrollToSection) {
-                scrollToSection(1);
-              }
-            }
-          }}
-          aria-label="Scroll to next section"
-        >
-          {/* Right arrow for horizontal scroll cue */}
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-yellow-400 dark:text-yellow-300">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 19.5l7.5-7.5-7.5-7.5m6 15l7.5-7.5-7.5-7.5" />
-          </svg>
+          ref={topBarRef}
+          className="absolute top-0 left-0 right-0 z-20 p-3 sm:p-4 md:p-6 flex flex-col sm:flex-row justify-between items-center opacity-0 transform -translate-y-5 gap-3 sm:gap-0"
+        >        {/* Logo (3D Hyper-Realistic Rotating Earth) */}
+          <Link to="/" aria-label="GLOHSEN Home" className="flex-shrink-0" onClick={handleClick}>
+            <Logo3DHyperRealistic size={56} className="flex-shrink-0" />
+          </Link>
+
+          {/* Navigation Buttons */}
+          <nav className="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-3 md:gap-4 max-w-full">
+            <Link to="/about-us" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`} onClick={handleClick}>ABOUT US</Link>
+            <Link to="/signin" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`} onClick={handleClick}>SIGN IN</Link>
+            <Link to="/signup" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`} onClick={handleClick}>SIGN UP</Link>
+            <Link to="/feedback" className={`${goldButtonClasses} text-xs sm:text-sm px-3 py-2 sm:px-4 md:px-6 md:py-3`} onClick={handleClick}>LEAVE FEEDBACK</Link>            <Link 
+              to="/games-quizzes" 
+              className="shine-button bg-[#FFD700] text-black px-3 py-2 sm:px-4 md:px-5 md:py-2.5 rounded-md font-semibold hover:bg-[#ea384c] hover:text-white transform hover:-translate-y-1 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl text-xs sm:text-sm relative overflow-hidden"
+              onClick={handleClick}
+            >
+              GAMES & QUIZZES
+            </Link>
+          </nav>
         </div>
-      </div>
-    </section>
+
+        {/* Main Content (Centered) */}
+        <div ref={contentRef} className="relative z-10 flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 opacity-0 px-4 max-w-7xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight animated-shine-text metallic-gold-text text-center">
+            <span className="micro-interact animated-shine-text metallic-gold-text block sm:inline">WELCOME TO GLOHSEN:</span>
+            <br className="hidden sm:block"/> 
+            <span className="micro-interact animated-shine-text metallic-gold-text block sm:inline">YOUR STORY BEGINS HERE</span>
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 dark:text-gray-200 max-w-sm sm:max-w-xl md:max-w-2xl leading-relaxed md:leading-loose micro-interact text-center">
+            Dive into a Universe of Fun & Resourcefulness, for You by Us.
+            Scroll to Experience the Transforming Story of Health.
+          </p>          {/* Make the bounce container clickable */}
+          <div 
+            className="mt-8 cursor-pointer micro-interact" 
+            onClick={() => {
+              handleClick();
+              if (scrollToSection) {
+                // Direct call to go to the next section without rebounding
+                scrollToSection(1); // Scroll to the second section (index 1)
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleClick();
+                if (scrollToSection) {
+                  scrollToSection(1);
+                }
+              }
+            }}
+            aria-label="Scroll to next section"
+          >
+            {/* Right arrow for horizontal scroll cue */}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-yellow-400 dark:text-yellow-300 animate-bounce">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 19.5l7.5-7.5-7.5-7.5m6 15l7.5-7.5-7.5-7.5" />
+            </svg>
+          </div>        </div>
+      </section>
+    </div>
   );
 };
 

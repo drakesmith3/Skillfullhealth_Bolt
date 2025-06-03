@@ -6,14 +6,25 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Users, Briefcase, Building, Trophy } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { Link } from "react-router-dom";
+import { useClickSound } from "../hooks/useClickSound";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Employers = ({ isActive = false }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const hospitalRef = useRef<HTMLImageElement>(null);
+interface SectionProps {
+  isActive?: boolean;
+  playClickSound?: () => void;
+}
+
+const Employers = ({ isActive = false, playClickSound }: SectionProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);  const hospitalRef = useRef<HTMLImageElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const { isDark } = useTheme();
+  const { playClick } = useClickSound();
+
+  const handleClick = () => {
+    playClickSound?.();
+    playClick();
+  };
   
   useEffect(() => {
     if (!containerRef.current || !hospitalRef.current || !contentRef.current) return;
@@ -121,8 +132,7 @@ const Employers = ({ isActive = false }) => {
                   Monitor KPIs and professional growth with our algorithmic scoring.
                 </p>
               </div>
-            </div>
-              <div className="text-center">              <Link to="/SignUpPage">
+            </div>            <div className="text-center">              <Link to="/SignUpPage" onClick={handleClick}>
                 <Button className="bg-red-600 hover:bg-red-700 text-white" size="lg">
                   Register as an Employer
                 </Button>

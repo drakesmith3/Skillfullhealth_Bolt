@@ -13,10 +13,11 @@ import SuccessStories from "../components/SuccessStories";
 import JoinCommunity from "../components/JoinCommunity";
 import Footer from "../components/Footer";
 import ScrollSound from "../components/ScrollSound";
+import { audioPlayer } from "../utils/AudioPlayer";
 import ProgressIndicator from "../components/ProgressIndicator";
 import StoryAnimations from "../components/StoryAnimations";
-import ReturnToTopButton from "../components/ReturnToTopButton";
 import { withReturnToTopButton } from "../components/withReturnToTopButton";
+import { useSound } from "../contexts/SoundContext";
 
 // Ensure ScrollTrigger is registered globally
 gsap.registerPlugin(ScrollTrigger);
@@ -26,6 +27,7 @@ export interface SectionProps {
   isActive: boolean;
   sectionName: string;
   scrollToSection?: (sectionIndex: number) => void;
+  playClickSound?: () => void;
 }
 
 // Story section titles for horizontal storytelling
@@ -58,17 +60,44 @@ const sectionsComponents: { component: ComponentType<SectionProps>; name: string
   { component: withReturnToTopButton(GamesAndQuizzes as ComponentType<SectionProps>), name: "GamesAndQuizzes", title: storyTitles[6] },
   { component: withReturnToTopButton(SuccessStories as ComponentType<SectionProps>), name: "SuccessStories", title: storyTitles[7] },
   { component: withReturnToTopButton(JoinCommunity as ComponentType<SectionProps>), name: "JoinCommunity", title: storyTitles[8] },
-  { component: HomeFooter as ComponentType<SectionProps>, name: "Footer", title: storyTitles[9] },
+  { component: withReturnToTopButton(HomeFooter as ComponentType<SectionProps>), name: "Footer", title: storyTitles[9] },
 ];
 
 const sectionNames = sectionsComponents.map(s => s.name);
 
-function Home(): JSX.Element {
+const Home: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
+  const [volume, setVolume] = useState(0.5);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  // Use global sound context
+  const { playClickSound: globalPlayClickSound, isSoundEnabled: globalIsSoundEnabled } = useSound();
   
+  // Use global sound state instead of local state
+  const isSoundEnabled = globalIsSoundEnabled;
+
+  // Setup user interaction tracking for audio
+  useEffect(() => {
+    const enableAudio = () => {
+      if (!hasUserInteracted) {
+        setHasUserInteracted(true);
+        audioPlayer.muted = false;
+      }
+    };
+
+    // Listen for first user interaction
+    document.addEventListener('click', enableAudio);
+    document.addEventListener('keydown', enableAudio);
+    document.addEventListener('touchstart', enableAudio);
+
+    return () => {
+      document.removeEventListener('click', enableAudio);
+      document.removeEventListener('keydown', enableAudio);
+      document.removeEventListener('touchstart', enableAudio);
+    };
+  }, [hasUserInteracted]);
+
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([]);
   const isScrollingProgrammatically = useRef(false);
 
@@ -80,6 +109,10 @@ function Home(): JSX.Element {
     
     if (validIndex === currentSection) return;
 
+    // play a page-turn sound on section change
+    if (isSoundEnabled) {
+      audioPlayer.play('/page-turn.mp3', volume);
+    }
     isScrollingProgrammatically.current = true;
     
     // Update section immediately with smooth transition via CSS
@@ -89,7 +122,7 @@ function Home(): JSX.Element {
     setTimeout(() => {
       isScrollingProgrammatically.current = false;
     }, 1000);
-  }, [numSections, currentSection]);
+  }, [currentSection, isSoundEnabled, volume]);
 
   // Setup horizontal navigation and keyboard controls
   useEffect(() => {
@@ -120,6 +153,11 @@ function Home(): JSX.Element {
 
     // Handle mouse wheel for section navigation
     const handleWheel = (event: WheelEvent) => {
+      if (isSoundEnabled) {
+        const delta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+        const wheelVol = Math.min(1, Math.abs(delta) / 300);
+        audioPlayer.play('/whoosh.mp3', wheelVol);
+      }
       if (isScrollingProgrammatically.current) return;
       
       event.preventDefault();
@@ -186,9 +224,61 @@ function Home(): JSX.Element {
     return () => clearTimeout(timer);
   }, []);
 
-  const toggleSound = useCallback(() => {
-    setIsSoundEnabled(prev => !prev);
+  // Preload storytelling sounds
+  useEffect(() => {
+    audioPlayer.preload([
+      '/page-turn.mp3',
+      '/whoosh.mp3',
+      '/ambient.mp3',
+      '/click.mp3'
+    ]);
   }, []);
+    // Ambient background music setup
+  const ambientRef = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => {
+    const ambient = new Audio('/ambient.mp3');
+    ambient.loop = true;
+    ambient.volume = volume * 0.3; // Slightly increased volume
+    ambientRef.current = ambient;
+    
+    // Add error handling
+    ambient.addEventListener('error', (e) => {
+      console.warn('Ambient audio error:', e);
+    });
+    
+    return () => { 
+      ambient.pause(); 
+      ambient.src = ''; // Clear src to free memory
+    };
+  }, [volume]);
+
+  // Toggle ambient playback on sound toggle and user interaction
+  useEffect(() => {
+    if (isSoundEnabled && hasUserInteracted && ambientRef.current) {
+      console.log('Starting ambient music...');
+      ambientRef.current.play().catch((error) => {
+        console.warn('Failed to play ambient music:', error);
+      });
+    } else if (ambientRef.current) {
+      console.log('Stopping ambient music...');
+      ambientRef.current.pause();
+    }
+  }, [isSoundEnabled, hasUserInteracted]);
+   const toggleSound = useCallback(() => {
+    const muted = audioPlayer.toggleMute();
+    console.log('Sound toggled:', !muted, 'Volume:', volume);
+    // Note: We no longer update local isSoundEnabled state since we use global state
+  }, [volume]);
+  // Create a function to play click sound for buttons
+  const playClickSound = useCallback(() => {
+    if (isSoundEnabled) {
+      audioPlayer.play('/click.mp3', volume);
+    }
+    // Also use global click sound if available
+    if (globalPlayClickSound) {
+      globalPlayClickSound();
+    }
+  }, [isSoundEnabled, volume, globalPlayClickSound]);
 
   if (isLoading) {
     return (
@@ -196,113 +286,121 @@ function Home(): JSX.Element {
         <div className="text-white text-xl">Loading Story...</div>
       </div>
     );
-  }
-
-  return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden">
-      <ScrollSound isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />      <ProgressIndicator 
-        currentSection={currentSection}
-        totalSections={numSections}
-        scrollToSection={scrollToSection}
-        chapterTitles={storyTitles}
-      />      <StoryAnimations 
-        currentSection={currentSection} 
-        totalSections={numSections} 
-      />      {/* Return to top button - only show when not on header section */}
-      {currentSection !== 0 && <ReturnToTopButton scrollToSection={scrollToSection} />}
-        {/* Current section title overlay */}
-      <div className="fixed top-1/2 left-8 transform -translate-y-1/2 z-50 opacity-30">
-        <div className="bg-black/20 backdrop-blur-sm rounded-full px-4 py-1">
-          <h1 className="text-white/70 text-sm font-medium">
-            {sectionsComponents[currentSection]?.title}
-          </h1>
-        </div>
-      </div>{/* Horizontal storytelling container */}
-      <div 
-        className="flex h-full transition-transform duration-1000 ease-out"
-        style={{ 
-          width: `${numSections * 100}vw`,
-          transform: `translateX(${-currentSection * 100}vw)`
-        }}
+  }  return (
+    <React.Fragment>
+      <ScrollSound
+        isSoundEnabled={isSoundEnabled}
+        toggleSound={toggleSound}
+        volume={volume}
+        setVolume={setVolume}
+      />
+      <div
+        ref={containerRef}
+        className="relative h-screen overflow-hidden"
       >
-        {sectionsComponents.map(({ component: Component, name }, index) => (
-          <div
-            key={name}
-            ref={(el) => (sectionsRef.current[index] = el)}
-            className="flex-shrink-0 w-screen h-full relative overflow-y-auto"
-            id={`section-${index}`}
+          <ProgressIndicator 
+            currentSection={currentSection}
+            totalSections={numSections}
+            scrollToSection={scrollToSection}
+            chapterTitles={storyTitles}          />      <StoryAnimations 
+            currentSection={currentSection} 
+            totalSections={numSections} 
+          />      
+          {/* Current section title overlay */}
+          <div className="fixed top-1/2 left-8 transform -translate-y-1/2 z-50 opacity-30">
+            <div className="bg-black/20 backdrop-blur-sm rounded-full px-4 py-1">
+              <h1 className="text-white/70 text-sm font-medium">
+                {sectionsComponents[currentSection]?.title}
+              </h1>
+            </div>
+          </div>{/* Horizontal storytelling container */}
+          <div 
+            className="flex h-full transition-transform duration-1000 ease-out"
+            style={{ 
+              width: `${numSections * 100}vw`,
+              transform: `translateX(${-currentSection * 100}vw)`
+            }}
           >
-            <Component 
-              isActive={currentSection === index}
-              sectionName={name}
-              scrollToSection={scrollToSection}
+            {sectionsComponents.map(({ component: Component, name }, index) => (
+              <div
+                key={name}
+                ref={(el) => (sectionsRef.current[index] = el)}
+                className="flex-shrink-0 w-screen h-full relative overflow-y-auto"
+                id={`section-${index}`}
+              >
+                <Component 
+                  isActive={currentSection === index}
+                  sectionName={name}
+                  scrollToSection={scrollToSection}
+                  playClickSound={playClickSound}
+                />
+              </div>
+            ))}
+          </div>
+
+        {/* Story navigation dots */}
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex space-x-3">
+          {sectionsComponents.map((section, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                if (isSoundEnabled) audioPlayer.play('/click.mp3', volume);
+                scrollToSection(index);
+              }}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                currentSection === index 
+                  ? 'bg-[#ea384c] scale-125 shadow-lg' 
+                  : 'bg-white/50 hover:bg-white/70'
+              }`}
+              aria-label={`Go to ${section.title}`}
+              title={section.title}
+            />
+          ))}
+        </div>
+
+        {/* Story progress bar */}
+        <div className="fixed bottom-4 left-4 right-4 z-40">
+          <div className="bg-white/20 rounded-full h-1">
+            <div 
+              className="bg-gradient-to-r from-[#ea384c] to-[#D4AF37] h-1 rounded-full transition-all duration-500"
+              style={{ width: `${((currentSection + 1) / numSections) * 100}%` }}
             />
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Story navigation dots */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex space-x-3">
-        {sectionsComponents.map((section, index) => (
+        {/* Navigation arrows */}
+        <div className="fixed top-1/2 left-4 transform -translate-y-1/2 z-40 opacity-70">
           <button
-            key={index}
-            onClick={() => scrollToSection(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              currentSection === index 
-                ? 'bg-[#ea384c] scale-125 shadow-lg' 
-                : 'bg-white/50 hover:bg-white/70'
+            onClick={() => { if (isSoundEnabled) audioPlayer.play('/click.mp3', volume); scrollToSection(Math.max(0, currentSection - 1)); }}
+            disabled={currentSection === 0}
+            className={`w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xl transition-all duration-300 ${
+              currentSection === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/30 hover:scale-110'
             }`}
-            aria-label={`Go to ${section.title}`}
-            title={section.title}
-          />
-        ))}
-      </div>
-
-      {/* Story progress bar */}
-      <div className="fixed bottom-4 left-4 right-4 z-40">
-        <div className="bg-white/20 rounded-full h-1">
-          <div 
-            className="bg-gradient-to-r from-[#ea384c] to-[#D4AF37] h-1 rounded-full transition-all duration-500"
-            style={{ width: `${((currentSection + 1) / numSections) * 100}%` }}
-          />
+            aria-label="Previous section"
+          >
+            ←
+          </button>
         </div>
-      </div>
 
-      {/* Navigation arrows */}
-      <div className="fixed top-1/2 left-4 transform -translate-y-1/2 z-40 opacity-70">
-        <button
-          onClick={() => scrollToSection(Math.max(0, currentSection - 1))}
-          disabled={currentSection === 0}
-          className={`w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xl transition-all duration-300 ${
-            currentSection === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/30 hover:scale-110'
-          }`}
-          aria-label="Previous section"
-        >
-          ←
-        </button>
-      </div>
-
-      <div className="fixed top-1/2 right-4 transform -translate-y-1/2 z-40 opacity-70">
-        <button
-          onClick={() => scrollToSection(Math.min(numSections - 1, currentSection + 1))}
-          disabled={currentSection === numSections - 1}
-          className={`w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xl transition-all duration-300 ${
-            currentSection === numSections - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/30 hover:scale-110'
-          }`}
-          aria-label="Next section"
-        >
-          →
-        </button>
-      </div>
-
-      {/* Storytelling instructions overlay */}
-      <div className="fixed bottom-16 right-4 z-40 opacity-50">
-        <div className="bg-black/30 backdrop-blur-sm rounded-lg p-3 text-white text-xs">
-          <div>Use ← → arrows or swipe to navigate</div>
-          <div>Mouse wheel also works</div>
+        <div className="fixed top-1/2 right-4 transform -translate-y-1/2 z-40 opacity-70">
+          <button
+            onClick={() => { if (isSoundEnabled) audioPlayer.play('/click.mp3', volume); scrollToSection(Math.min(numSections - 1, currentSection + 1)); }}
+            disabled={currentSection === numSections - 1}
+            className={`w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xl transition-all duration-300 ${
+              currentSection === numSections - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/30 hover:scale-110'
+            }`}
+            aria-label="Next section"
+          >
+            →
+          </button>
+        </div>        {/* Storytelling instructions overlay */}
+        <div className="fixed bottom-16 right-4 z-40 opacity-50">
+          <div className="bg-black/30 backdrop-blur-sm rounded-lg p-3 text-white text-xs">
+            <div>Use ← → arrows or swipe to navigate</div>
+            <div>Mouse wheel also works</div>
+          </div>        </div>
         </div>
-      </div>
-    </div>
+    </React.Fragment>
   );
 }
 

@@ -1,16 +1,29 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { ChevronsUp, MessageSquare, X, Send, Sun, Moon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { useSound } from '../contexts/SoundContext';
 
 const FloatingActionButtons: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
+  
+  // Safely use the sound context - only if we're within a SoundProvider
+  let playClickSound: (() => void) | null = null;
+  let isSoundEnabled = false;
+  
+  try {
+    const soundContext = useSound();
+    playClickSound = soundContext.playClickSound;
+    isSoundEnabled = soundContext.isSoundEnabled;
+  } catch (error) {
+    // Component is not within SoundProvider, which is fine
+    console.log('FloatingActionButtons: Not within SoundProvider context');
+  }
+  
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [message, setMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState<{type: 'user' | 'system', text: string}[]>([
+  const [message, setMessage] = useState('');const [chatHistory, setChatHistory] = useState<{type: 'user' | 'system', text: string}[]>([
     {type: 'system', text: 'Hello! How can I help you today?'}
   ]);
 
@@ -27,16 +40,30 @@ const FloatingActionButtons: React.FC = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
-
-  const scrollToTop = () => {
+  }, []);  const scrollToTop = () => {
+    console.log('ScrollToTop clicked - Sound enabled:', isSoundEnabled, 'playClickSound available:', !!playClickSound);
+    if (playClickSound) {
+      try {
+        playClickSound();
+      } catch (error) {
+        console.warn('Error playing click sound:', error);
+      }
+    }
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
   };
-
+  
   const toggleChat = () => {
+    console.log('ToggleChat clicked - Sound enabled:', isSoundEnabled, 'playClickSound available:', !!playClickSound);
+    if (playClickSound) {
+      try {
+        playClickSound();
+      } catch (error) {
+        console.warn('Error playing click sound:', error);
+      }
+    }
     setIsChatOpen(!isChatOpen);
     if (!isChatOpen) {
       toast({
@@ -44,11 +71,18 @@ const FloatingActionButtons: React.FC = () => {
         description: "You can now chat with our assistant."
       });
     }
-  };
-
-  const sendMessage = (e: React.FormEvent) => {
+  };  const sendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
+    
+    console.log('SendMessage clicked - Sound enabled:', isSoundEnabled, 'playClickSound available:', !!playClickSound);
+    if (playClickSound) {
+      try {
+        playClickSound();
+      } catch (error) {
+        console.warn('Error playing click sound:', error);
+      }
+    }
     
     // Add user message to chat
     setChatHistory([...chatHistory, {type: 'user', text: message}]);
@@ -75,8 +109,16 @@ const FloatingActionButtons: React.FC = () => {
     // Clear input
     setMessage('');
   };
-
+  
   const handleThemeToggle = () => {
+    console.log('ThemeToggle clicked - Sound enabled:', isSoundEnabled, 'playClickSound available:', !!playClickSound);
+    if (playClickSound) {
+      try {
+        playClickSound();
+      } catch (error) {
+        console.warn('Error playing click sound:', error);
+      }
+    }
     toggleTheme();
     toast({
       title: `Switched to ${theme === 'light' ? 'dark' : 'light'} mode`,
@@ -90,7 +132,7 @@ const FloatingActionButtons: React.FC = () => {
         {/* Enhanced Theme toggle button with WCAG compliance */}
         <button
           onClick={handleThemeToggle}
-          className="group relative p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:scale-110 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-2 border-gray-200 dark:border-gray-600 hover:border-[#ea384c] dark:hover:border-[#ea384c] focus:outline-none focus:ring-4 focus:ring-[#ea384c]/20 focus:border-[#ea384c]"
+          className="group relative w-10 h-10 p-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:scale-110 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-2 border-gray-200 dark:border-gray-600 hover:border-[#ea384c] dark:hover:border-[#ea384c] focus:outline-none focus:ring-4 focus:ring-[#ea384c]/20 focus:border-[#ea384c]"
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode. Current mode: ${theme}`}
           aria-describedby="theme-toggle-description"
           role="switch"
@@ -120,7 +162,7 @@ const FloatingActionButtons: React.FC = () => {
         {/* Chat with us button */}
         <button
           onClick={toggleChat}
-          className="group relative p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:scale-110 bg-[#ea384c] hover:bg-[#d12e42] text-white border-2 border-[#ea384c] hover:border-[#d12e42] focus:outline-none focus:ring-4 focus:ring-[#ea384c]/20"
+          className="group relative w-10 h-10 p-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:scale-110 bg-[#ea384c] hover:bg-[#d12e42] text-white border-2 border-[#ea384c] hover:border-[#d12e42] focus:outline-none focus:ring-4 focus:ring-[#ea384c]/20"
           aria-label={isChatOpen ? "Close chat assistant" : "Open chat assistant"}
           aria-expanded={isChatOpen}
         >
@@ -131,9 +173,7 @@ const FloatingActionButtons: React.FC = () => {
             Chat with us
             <div className="absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-l-gray-900"></div>
           </div>
-        </button>
-
-        {/* Back to top button - only visible when scrolled down */}
+        </button>        {/* Back to top button - only visible when scrolled down */}
         {showBackToTop && (
           <button
             onClick={scrollToTop}
@@ -165,9 +205,18 @@ const FloatingActionButtons: React.FC = () => {
             <div>
               <h3 id="chat-title" className="font-bold text-gray-800 dark:text-gray-200">GLOHSEN Assistant</h3>
               <p id="chat-description" className="text-xs text-gray-600 dark:text-gray-400">AI-powered support chat</p>
-            </div>
-            <button 
-              onClick={toggleChat}
+            </div>            <button 
+              onClick={() => {
+                console.log('ChatClose clicked - Sound enabled:', isSoundEnabled, 'playClickSound available:', !!playClickSound);
+                if (playClickSound) {
+                  try {
+                    playClickSound();
+                  } catch (error) {
+                    console.warn('Error playing click sound:', error);
+                  }
+                }
+                toggleChat();
+              }}
               className="p-2 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#ea384c] focus:ring-offset-2"
               aria-label="Close chat assistant"
             >

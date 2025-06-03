@@ -1,12 +1,14 @@
 import { useCallback, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import { useClickSound } from "../hooks/useClickSound";
 
 // Define props interface for section compatibility
 interface SectionProps {
   isActive: boolean;
   sectionName: string;
   scrollToSection?: (sectionIndex: number) => void;
+  playClickSound?: () => void;
 }
 
 // Centralized configuration for all wordings and settings
@@ -60,8 +62,9 @@ const WHEEL_CONFIG = {
   ]
 } as const;
 
-const HowItWorksWheel: React.FC<SectionProps> = ({ isActive, sectionName, scrollToSection }) => {  const navigate = useNavigate();
+const HowItWorksWheel: React.FC<SectionProps> = ({ isActive, sectionName, scrollToSection, playClickSound }) => {  const navigate = useNavigate();
   const { isDark, theme } = useTheme();
+  const { playClick } = useClickSound();
   // State for interactive wheel control
   const [rotationSpeed, setRotationSpeed] = useState<number>(WHEEL_CONFIG.SPEED_MULTIPLIER.NORMAL);
   const [isHovered, setIsHovered] = useState(false);
@@ -296,10 +299,16 @@ const HowItWorksWheel: React.FC<SectionProps> = ({ isActive, sectionName, scroll
       }, WHEEL_CONFIG.SPEED_RESET_DELAY);
     }
   }, [rotationDirection]);
-
   // Button link handlers using centralized step data
   const handleStepClick = useCallback(
     (step: number) => {
+      // Play click sound
+      if (playClickSound) {
+        playClickSound();
+      } else {
+        playClick();
+      }
+      
       switch (step) {
         case 1:
         case 2:
@@ -315,8 +324,8 @@ const HowItWorksWheel: React.FC<SectionProps> = ({ isActive, sectionName, scroll
           break;
       }
     },
-    [navigate]
-  ); // Removed comma here
+    [navigate, playClickSound, playClick]
+  );// Removed comma here
 
   // Calculate synchronized rotation duration
   const getRotationDuration = useCallback(() => {

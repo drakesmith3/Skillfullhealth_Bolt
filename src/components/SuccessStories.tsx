@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Star, MessageCircle, User } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
+import { useClickSound } from "../hooks/useClickSound";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -143,14 +144,25 @@ const Professional3DSuccessStyles = () => (
 
 interface SuccessStoriesProps {
   isActive?: boolean;
+  playClickSound?: () => void;
 }
 
-const SuccessStories: React.FC<SuccessStoriesProps> = ({ isActive = false }) => {
+const SuccessStories: React.FC<SuccessStoriesProps> = ({ isActive = false, playClickSound }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const testimonialsRef = useRef<HTMLDivElement>(null);
   const { isDark } = useTheme();
+  const { playClick } = useClickSound();
   
+  // Handle click with sound
+  const handleClick = () => {
+    if (playClickSound) {
+      playClickSound();
+    } else {
+      playClick();
+    }
+  };
+
   useEffect(() => {
     if (!containerRef.current || !titleRef.current || !testimonialsRef.current) return;
     
@@ -367,6 +379,7 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ isActive = false }) => 
                 key={index}
                 to="/testimonials"
                 className="block transition-transform duration-300 hover:scale-105"
+                onClick={handleClick}
               >
                 <Card 
                   className="success-card-3d p-3 sm:p-4 lg:p-6 border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"

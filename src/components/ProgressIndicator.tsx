@@ -1,6 +1,7 @@
 import React, { useState, memo, useMemo } from "react";
 import { BookOpen, ChevronsUp, ChevronsDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSound } from '../contexts/SoundContext';
 
 export interface ProgressIndicatorProps {
   currentSection: number;
@@ -15,11 +16,13 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = memo(({
   scrollToSection,
   chapterTitles = [],
 }) => {
+  const { playClickSound } = useSound();
   const [hoverSection, setHoverSection] = useState<number | null>(null);
   const [showNavigation, setShowNavigation] = useState<boolean>(true);
 
   const handleIndicatorClick = (index: number): void => {
     console.log(`[ProgressIndicator] Clicked section: ${index}`); // Added log
+    playClickSound();
     scrollToSection(index);
   };
 

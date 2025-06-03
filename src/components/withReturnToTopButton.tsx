@@ -4,15 +4,17 @@ import ReturnToTopButton from './ReturnToTopButton';
 
 // Higher-order component to add ReturnToTopButton to sections
 export const withReturnToTopButton = (
-  WrappedComponent: React.ComponentType<SectionProps>,
-  isHeaderSection: boolean = false
+  WrappedComponent: React.ComponentType<SectionProps>
 ) => {
   const WithReturnToTopButton = (props: SectionProps) => {
-    const { scrollToSection, ...restProps } = props;
+    const { scrollToSection, sectionName, ...restProps } = props;
+    
+    // Don't show ReturnToTopButton on the Header section
+    const shouldShowButton = sectionName !== "Header" && scrollToSection;
     
     return (
       <div className="relative w-full h-full">
-        {!isHeaderSection && scrollToSection && <ReturnToTopButton scrollToSection={scrollToSection} />}
+        {shouldShowButton && <ReturnToTopButton scrollToSection={scrollToSection} />}
         <WrappedComponent {...props} />
       </div>
     );

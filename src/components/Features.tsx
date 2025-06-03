@@ -2,16 +2,28 @@ import React, { useEffect, useRef, useState } from 'react';
 import AnimatedBook from './AnimatedBook';
 import StakeholderTree from './StakeholderTree';
 import { useTheme } from '../contexts/ThemeContext';
+import { useClickSound } from '../hooks/useClickSound';
 
 interface FeaturesProps {
   isActive?: boolean;
   sectionName?: string;
+  playClickSound?: () => void;
 }
 
-const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
+const Features: React.FC<FeaturesProps> = ({ isActive = false, playClickSound }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'book' | 'tree'>('book');
   const { isDark } = useTheme();
+  const { playClick } = useClickSound();
+  
+  // Handle click with sound
+  const handleClick = () => {
+    if (playClickSound) {
+      playClickSound();
+    } else {
+      playClick();
+    }
+  };
   
   // Enhanced 3D animations when section becomes active
   useEffect(() => {
@@ -123,11 +135,9 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
             activeTab === 'tree' ? 'hidden lg:flex' : 'flex'
           }`}
           style={{ opacity: 1, visibility: 'visible', position: 'relative' }}
-        >
-          <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl text-amber-700 dark:text-amber-400 font-semibold text-center">
+        >          <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl text-amber-700 dark:text-amber-400 font-semibold text-center">
             Interactive Book
-          </h3>
-          <div className="w-full flex-1 flex items-center justify-center">
+          </h3>          <div className="w-full flex-1 flex items-center justify-center">
             <AnimatedBook />
           </div>
           <p className="text-center max-w-md text-sm lg:text-base text-foreground mx-auto">
@@ -144,9 +154,8 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false }) => {
         >
           <h3 className="text-sm sm:text-base lg:text-lg text-amber-700 dark:text-amber-400 font-semibold text-center" style={{ fontSize: '1.3em' }}>
             Stakeholder Relationship Tree
-          </h3>
-          <div className="w-full stakeholder-tree-container flex justify-center h-auto min-h-[65vh] overflow-auto" style={{ transform: 'scale(1.4)', transformOrigin: 'center' }}>
-            <StakeholderTree />
+          </h3>          <div className="w-full stakeholder-tree-container flex justify-center h-auto min-h-[65vh] overflow-auto" style={{ transform: 'scale(1.4)', transformOrigin: 'center' }}>
+            <StakeholderTree playClickSound={handleClick} />
           </div>
           <p className="text-center max-w-md text-xs sm:text-sm lg:text-base text-foreground mx-auto">
             <span className="hidden md:inline">Hover over</span>
