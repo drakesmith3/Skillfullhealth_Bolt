@@ -684,7 +684,7 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
   return (
     <div 
       ref={containerRef} 
-      className="w-full h-full min-h-[400px] bg-gradient-to-br from-gray-900 via-gray-900 to-black rounded-lg shadow-xl p-4 relative overflow-hidden"
+      className="w-full h-full min-h-[400px] bg-gradient-to-br from-gray-900 via-gray-900 to-black rounded-lg shadow-xl p-4 relative overflow-visible"
       onMouseEnter={() => setIsAnimating(false)}
       style={{
         perspective: '1000px',
@@ -733,30 +733,30 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
         <div
           className="absolute bg-gradient-to-br from-gray-800 to-black p-4 rounded-lg shadow-lg border border-gray-700 z-50 max-w-xs animate-slide-up"
           style={{
-            // Calculate placement beside node
+            // Center horizontally over node and clamp within container
             left: (() => {
               const tooltipWidth = 220;
               const margin = 20;
-              // if near right edge, position to left of node
-              if (tooltipPosition.x + tooltipWidth + margin > dimensions.width) {
-                return Math.max(tooltipPosition.x - tooltipWidth - margin, margin);
-              }
-              // default, to the right
-              return Math.min(tooltipPosition.x + margin, dimensions.width - tooltipWidth - margin);
+              const centered = tooltipPosition.x - tooltipWidth / 2;
+              const min = margin;
+              const max = dimensions.width - tooltipWidth - margin;
+              return Math.min(Math.max(centered, min), max);
             })(),
+            // Position above node by default, fallback below if too close to top
             top: (() => {
               const tooltipHeight = 200;
               const margin = 20;
-              // if near bottom, position above node
-              if (tooltipPosition.y + tooltipHeight + margin > dimensions.height) {
-                return Math.max(tooltipPosition.y - tooltipHeight - margin, margin);
+              let above = tooltipPosition.y - tooltipHeight - margin;
+              if (above < margin) {
+                above = tooltipPosition.y + margin;
               }
-              return Math.min(tooltipPosition.y + margin, dimensions.height - tooltipHeight - margin);
+              const max = dimensions.height - tooltipHeight - margin;
+              return Math.min(above, max);
             })(),
           }}
         >
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-lg font-bold text-foreground">
+            <h4 className="text-lg font-bold text-white">
               {data.find(node => node.id === selectedNode)?.name}
             </h4>            <button
               className="text-gray-400 hover:text-white transition-colors"

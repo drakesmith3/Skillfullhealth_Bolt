@@ -301,7 +301,7 @@ const Home: React.FC = () => {
             totalSections={numSections} 
           />      
           {/* Current section title overlay */}
-          <div className="fixed top-1/2 left-8 transform -translate-y-1/2 z-50 opacity-30">
+          <div className="fixed bottom-24 left-4 z-50 opacity-30">
             <div className="bg-black/20 backdrop-blur-sm rounded-full px-4 py-1">
               <h1 className="text-white/70 text-sm font-medium">
                 {sectionsComponents[currentSection]?.title}

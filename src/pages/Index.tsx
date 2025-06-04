@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import Header from "../components/Header";
 import Features from "../components/Features";
-import HowItWorks from "../components/HowItWorks";
+import HowItWorks from "../components/HowItWorksWheel";
 import Feedback from "../components/Feedback";
 import Employers from "../components/Employers";
 import TutorsAdvisers from "../components/TutorsAdvisers";
@@ -26,6 +26,7 @@ export interface SectionProps {
   isActive: boolean;
   sectionName: string;
   scrollToSection?: (sectionIndex: number) => void;
+  playClickSound?: () => void;
 }
 
 // Define the sections in the desired story order
