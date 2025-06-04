@@ -58,7 +58,8 @@ const Feedback = ({ isActive = false, playClickSound }: SectionProps) => {
 
   return (    <div 
       ref={containerRef}
-      className="w-full h-full relative flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden min-h-screen"      style={{
+      className="w-full relative flex flex-col items-center justify-start p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden"
+      style={{
         backgroundImage: 'url(https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2072&q=80)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -78,7 +79,7 @@ const Feedback = ({ isActive = false, playClickSound }: SectionProps) => {
         </span>
       </h2>
       
-      <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 z-20 relative px-2 sm:px-4">
+      <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center justify-start gap-4 sm:gap-6 lg:gap-8 z-20 relative px-2 sm:px-4">
         <div className="relative w-full lg:w-2/3 flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12">
           {/* Character */}
           <div ref={characterRef} className="relative">

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback, ComponentType } from "react";
 import Lenis from "@studio-freight/lenis";
 import { gsap } from "gsap";
@@ -14,7 +13,6 @@ import GamesAndQuizzes from "../components/GamesQuizzes";
 import SuccessStories from "../components/SuccessStories";
 import JoinCommunity from "../components/JoinCommunity";
 import Footer from "../components/Footer";
-import ScrollSound from "../components/ScrollSound";
 import ProgressIndicator from "../components/ProgressIndicator";
 import StoryAnimations from "../components/StoryAnimations";
 import ReturnToTopButton from "../components/ReturnToTopButton";
@@ -450,10 +448,6 @@ function Index(): JSX.Element {
         totalSections={numSections}
         scrollToSection={safeScrollToSection}
         chapterTitles={sectionNames}
-      />
-      <ScrollSound 
-        isSoundEnabled={isSoundEnabled} 
-        toggleSound={toggleSound} 
       />
       <StoryAnimations
         currentSection={currentSection} 

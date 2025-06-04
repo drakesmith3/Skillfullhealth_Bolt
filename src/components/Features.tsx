@@ -83,7 +83,7 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false, playClickSound })
   return (
     <div 
       ref={sectionRef}
-      className={`features-3d-container relative flex flex-col justify-start items-center max-w-6xl mx-auto p-2 sm:p-4 md:p-6 lg:p-8 transition-all duration-1000 ${
+      className={`features-3d-container relative flex flex-col justify-start items-center border-2 border-red-600 p-2 sm:p-4 md:p-6 lg:p-8 transition-all duration-1000 ${
         isActive ? 'opacity-100' : 'opacity-0'
       }`}
       style={{
@@ -154,8 +154,10 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false, playClickSound })
         >
           <h3 className="text-sm sm:text-base lg:text-lg text-amber-700 dark:text-amber-400 font-semibold text-center" style={{ fontSize: '1.3em' }}>
             Stakeholder Relationship Tree
-          </h3>          <div className="w-full stakeholder-tree-container flex justify-center h-auto min-h-[65vh] overflow-auto" style={{ transform: 'scale(1.4)', transformOrigin: 'center' }}>
-            <StakeholderTree playClickSound={handleClick} />
+          </h3>          <div className="flex-1 flex items-center justify-center stakeholder-tree-container overflow-visible" style={{ minHeight: '65vh' }}>
+            <div style={{ transform: 'scale(1.4)', transformOrigin: 'center' }}>
+              <StakeholderTree playClickSound={handleClick} />
+            </div>
           </div>
           <p className="text-center max-w-md text-xs sm:text-sm lg:text-base text-foreground mx-auto">
             <span className="hidden md:inline">Hover over</span>

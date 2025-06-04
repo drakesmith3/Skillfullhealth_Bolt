@@ -54,6 +54,7 @@ import RefundPolicy from "./pages/RefundPolicy";
 import Testimonials from "./pages/Testimonials";
 import AccessibilityStatement from "./pages/AccessibilityStatement";
 import Support from "./pages/Support";
+import ScrollSound from "./components/ScrollSound";
 
 // Helper functions to interact with localStorage
 const isAuthenticated = (): boolean => {
@@ -183,6 +184,11 @@ function App() {
         audioPlayer.muted = false;
         setIsSoundEnabled(true);
         
+        // Play a click sound immediately upon enabling audio (first interaction)
+        audioPlayer.play('/click.mp3', volume).catch(error => {
+          console.warn('Failed to play initial click sound:', error);
+        });
+        
         // Remove listeners after first interaction
         document.removeEventListener('click', enableAudio);
         document.removeEventListener('keydown', enableAudio);
@@ -237,8 +243,16 @@ function App() {
   return (
     <ThemeProvider>
       <AccessibilityProvider>
-        <SecurityProvider>          <GlohsenScoreProvider>
+        <SecurityProvider>
+          <GlohsenScoreProvider>
             <SoundProvider playClickSound={playClickSound} isSoundEnabled={isSoundEnabled}>
+              {/* Sound toggle UI accessible on all pages */}
+              <ScrollSound
+                isSoundEnabled={isSoundEnabled}
+                toggleSound={toggleSound}
+                volume={volume}
+                setVolume={setVolume}
+              />
               <Router>
                 <Routes>
                   {/* Fully Public Routes - No sidebar */}                <Route path="/" element={<Home />} />

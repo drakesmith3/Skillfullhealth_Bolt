@@ -289,7 +289,7 @@ const GamesQuizzes = ({ isActive = false, playClickSound }) => {
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full relative flex flex-col justify-center items-center p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden min-h-screen"
+      className="w-full relative flex flex-col justify-start items-center p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden"
       style={{
         background: isDark 
           ? 'linear-gradient(135deg, #1a0a0a 0%, #2d1515 25%, #1f1611 50%, #0a0a0a 75%, #1a0a0a 100%)'

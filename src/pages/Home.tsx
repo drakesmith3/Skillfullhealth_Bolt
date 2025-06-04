@@ -12,7 +12,6 @@ import GamesAndQuizzes from "../components/GamesQuizzes";
 import SuccessStories from "../components/SuccessStories";
 import JoinCommunity from "../components/JoinCommunity";
 import Footer from "../components/Footer";
-import ScrollSound from "../components/ScrollSound";
 import { audioPlayer } from "../utils/AudioPlayer";
 import ProgressIndicator from "../components/ProgressIndicator";
 import StoryAnimations from "../components/StoryAnimations";
@@ -60,7 +59,7 @@ const sectionsComponents: { component: ComponentType<SectionProps>; name: string
   { component: withReturnToTopButton(GamesAndQuizzes as ComponentType<SectionProps>), name: "GamesAndQuizzes", title: storyTitles[6] },
   { component: withReturnToTopButton(SuccessStories as ComponentType<SectionProps>), name: "SuccessStories", title: storyTitles[7] },
   { component: withReturnToTopButton(JoinCommunity as ComponentType<SectionProps>), name: "JoinCommunity", title: storyTitles[8] },
-  { component: withReturnToTopButton(HomeFooter as ComponentType<SectionProps>), name: "Footer", title: storyTitles[9] },
+  { component: HomeFooter as ComponentType<SectionProps>, name: "Footer", title: storyTitles[9] },
 ];
 
 const sectionNames = sectionsComponents.map(s => s.name);
@@ -71,6 +70,7 @@ const Home: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [volume, setVolume] = useState(0.5);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
+
   // Use global sound context
   const { playClickSound: globalPlayClickSound, isSoundEnabled: globalIsSoundEnabled } = useSound();
   
@@ -288,12 +288,6 @@ const Home: React.FC = () => {
     );
   }  return (
     <React.Fragment>
-      <ScrollSound
-        isSoundEnabled={isSoundEnabled}
-        toggleSound={toggleSound}
-        volume={volume}
-        setVolume={setVolume}
-      />
       <div
         ref={containerRef}
         className="relative h-screen overflow-hidden"
@@ -394,7 +388,7 @@ const Home: React.FC = () => {
             →
           </button>
         </div>        {/* Storytelling instructions overlay */}
-        <div className="fixed bottom-16 right-4 z-40 opacity-50">
+        <div className="fixed bottom-16 left-4 z-40 opacity-50">
           <div className="bg-black/30 backdrop-blur-sm rounded-lg p-3 text-white text-xs">
             <div>Use ← → arrows or swipe to navigate</div>
             <div>Mouse wheel also works</div>
