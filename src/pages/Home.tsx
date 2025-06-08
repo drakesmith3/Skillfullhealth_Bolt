@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, useCallback, ComponentType } from "
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import Header from "../components/Header";
-import Features from "../components/Features";
+import HeaderWithParticlesOptimized from "../components/HeaderWithParticlesOptimized";
+import Features from "../components/FeaturesOptimized";
 import HowItWorks from "../components/HowItWorksWheel";
 import Feedback from "../components/Feedback";
 import Employers from "../components/Employers";
@@ -50,7 +50,7 @@ const HomeFooter: React.FC<SectionProps> = (props) => (
 
 // Define the sections in the desired story order
 const sectionsComponents: { component: ComponentType<SectionProps>; name: string; title: string }[] = [
-  { component: Header as ComponentType<SectionProps>, name: "Header", title: storyTitles[0] },
+  { component: HeaderWithParticlesOptimized as ComponentType<SectionProps>, name: "Header", title: storyTitles[0] },
   { component: withReturnToTopButton(Features as ComponentType<SectionProps>), name: "Features", title: storyTitles[1] },
   { component: withReturnToTopButton(HowItWorks as ComponentType<SectionProps>), name: "HowItWorks", title: storyTitles[2] },
   { component: withReturnToTopButton(Feedback as ComponentType<SectionProps>), name: "Feedback", title: storyTitles[3] },

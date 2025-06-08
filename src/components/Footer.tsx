@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import ReturnToTopButton from './ReturnToTopButton';
 import { useClickSound } from '../hooks/useClickSound';
 
-// Import the dust particle creator from Header
+// Import the dust particle utility
 const createDustParticles = (container: HTMLElement | null, count: number, particleColor: string) => {
   if (!container) return;
   const containerRect = container.getBoundingClientRect();

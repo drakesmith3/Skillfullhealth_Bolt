@@ -55,6 +55,8 @@ import Testimonials from "./pages/Testimonials";
 import AccessibilityStatement from "./pages/AccessibilityStatement";
 import Support from "./pages/Support";
 import ScrollSound from "./components/ScrollSound";
+import ParticlePerformanceTest from "./pages/ParticlePerformanceTest";
+import ParticleButterflyExperience from "./pages/ParticleButterflyExperience";
 
 // Helper functions to interact with localStorage
 const isAuthenticated = (): boolean => {
@@ -272,10 +274,10 @@ function App() {
                   {/* Account Settings Routes - No sidebar/footer */}
                   <Route path="/account-settings" element={<AccountSettings />} />
                   <Route path="/account-settings/professional" element={<AccountSettings />} />
-                  <Route path="/account-settings/:userType" element={<AccountSettings />} />
-
-                  {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
+                  <Route path="/account-settings/:userType" element={<AccountSettings />} />                  {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
                   <Route element={<PublicContentLayout />}>
+                    <Route path="/particle-performance" element={<ParticlePerformanceTest />} />
+                    <Route path="/butterfly-experience" element={<ParticleButterflyExperience />} />
                     <Route path="/courses" element={<CourseEnrollment />} />
                     <Route path="/job-board" element={<JobBoard />} />
                     <Route path="/jobs" element={<JobBoard />} />

@@ -523,3 +523,23 @@
   81%, 96%  { margin-top:  -5em; }
   100%      { margin-top:   0em; }
 }
+
+/* Gradient animation for HeaderWithParticles */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.formation-indicator-container {
+  position: absolute;
+  bottom: 16px; /* Update this value */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.button-container {
+  position: absolute;
+  bottom: 16px; /* Update this value */
+  left: 50%;
+  transform: translateX(-50%);
+}

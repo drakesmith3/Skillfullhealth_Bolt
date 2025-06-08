@@ -3,8 +3,8 @@ import Lenis from "@studio-freight/lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import Header from "../components/Header";
-import Features from "../components/Features";
+import HeaderWithParticles from "../components/HeaderWithParticles";
+import Features from "../components/FeaturesOptimized";
 import HowItWorks from "../components/HowItWorksWheel";
 import Feedback from "../components/Feedback";
 import Employers from "../components/Employers";
@@ -31,7 +31,7 @@ export interface SectionProps {
 
 // Define the sections in the desired story order
 const sectionsComponents: { component: ComponentType<SectionProps>; name: string }[] = [
-  { component: Header as ComponentType<SectionProps>, name: "Header" },
+  { component: HeaderWithParticles as ComponentType<SectionProps>, name: "Header" },
   { component: withReturnToTopButton(Features as ComponentType<SectionProps>), name: "Features" },
   { component: withReturnToTopButton(HowItWorks as ComponentType<SectionProps>), name: "HowItWorks" },
   { component: withReturnToTopButton(Feedback as ComponentType<SectionProps>), name: "Feedback" },

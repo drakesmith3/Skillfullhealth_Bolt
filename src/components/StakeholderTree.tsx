@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 import { useClickSound } from '../hooks/useClickSound';
 
@@ -18,24 +18,31 @@ interface StakeholderTreeProps {
   playClickSound?: () => void;
 }
 
-const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => {
-  const svgRef = useRef<SVGSVGElement>(null);
+const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => {  const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const selectedNodeRef = useRef<string | null>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);  const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const { playClick } = useClickSound();
-  
-  // Handle click with sound
-  const handleClick = () => {
-    if (playClickSound) {
-      playClickSound();
-    } else {
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });const { playClick } = useClickSound();
+      // Handle click with sound - simplified and optimized
+  const handleClick = useCallback(() => {
+    // Always try to play click sound immediately
+    try {
       playClick();
+      
+      // Fallback direct audio play for immediate feedback
+      const audio = new Audio('/click.mp3');
+      audio.volume = 0.3;
+      audio.play().catch(() => {
+        // Silently fail if audio can't play
+      });
+    } catch (error) {
+      console.warn('Click sound failed:', error);
     }
-  };
+  }, [playClick]);
+
   // Define the data structure for our stakeholder tree
   const data: StakeholderNode[] = [
     {
@@ -358,8 +365,7 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
       console.error('Error initializing StakeholderTree D3:', error);
     }
   }, [dimensions]);
-
-  // Create and update the D3 visualization
+  // Create and update the D3 visualization - optimized
   useEffect(() => {
     if (!svgRef.current || dimensions.width === 0 || dimensions.height === 0) {
       console.warn('StakeholderTree: Invalid dimensions or SVG ref for D3 rendering');
@@ -570,7 +576,37 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
     glowMerge.append('feMergeNode')
       .attr('in', 'coloredBlur');
     glowMerge.append('feMergeNode')
-      .attr('in', 'SourceGraphic');
+      .attr('in', 'SourceGraphic');    // Create optimized click handler
+    const createClickHandler = (nodeData: StakeholderNode) => {
+      return (event: any) => {
+        event.stopPropagation();
+        
+        // Immediate visual feedback
+        const target = event.currentTarget || event.target;
+        if (target) {
+          target.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            target.style.transform = 'scale(1)';
+          }, 100);
+        }
+        
+        // Play sound immediately - don't wait for state updates
+        handleClick();
+          // Update state efficiently
+        const isCurrentlySelected = selectedNode === nodeData.id;
+        const newSelectedNode = isCurrentlySelected ? null : nodeData.id;
+        
+        // Update ref immediately for faster rendering
+        selectedNodeRef.current = newSelectedNode;
+        
+        setSelectedNode(newSelectedNode);
+        setTooltipPosition({
+          x: positions[nodeData.id].x,
+          y: positions[nodeData.id].y
+        });
+        setIsAnimating(false);
+      };
+    };
 
     // Create node groups
     const nodeGroups = svg.selectAll('g.node')
@@ -578,22 +614,23 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
       .enter()
       .append('g')
       .attr('class', 'node')
-      .attr('transform', d => `translate(${positions[d.id].x}, ${positions[d.id].y})`)      .attr('cursor', 'pointer')
-      .on('click', (_, d) => {
-        // Play click sound
-        handleClick();
-        
-        // Toggle selected node
-        setSelectedNode(selectedNode === d.id ? null : d.id);
-        
+      .attr('transform', d => `translate(${positions[d.id].x}, ${positions[d.id].y})`)
+      .style('cursor', 'pointer')
+      .on('click', (event, d) => createClickHandler(d)(event))
+      .on('mouseenter', (event, d) => {
+        setHoveredNode(d.id);
         // Update position for tooltip
         setTooltipPosition({
           x: positions[d.id].x,
           y: positions[d.id].y
         });
-        
-        // Stop auto-rotation when user interacts
-        setIsAnimating(false);
+      })
+      .on('mouseleave', () => {
+        setHoveredNode(null);
+        // Hide tooltip when not hovering (unless a node is selected)
+        if (!selectedNode) {
+          // setTooltipPosition({ x: 0, y: 0 }); // Keep tooltip if selected
+        }
       });
 
     // Add shadow filter for 3D effect
@@ -620,29 +657,33 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
       .attr('stroke-opacity', 0.3)
       .attr('class', 'animate-ping')
       .attr('style', 'animation-duration: 3s');
-    
-    // Add outer glow for hover state
-    nodeGroups.append('circle')
+      // Add outer glow for hover state - optimized for immediate updates
+    const outerGlowCircles = nodeGroups.append('circle')
       .attr('r', d => d.id === 'glohsen' ? 55 : 40)
       .attr('fill', 'none')
       .attr('stroke', d => d.color)
       .attr('stroke-width', 2)
-      .attr('stroke-opacity', d => hoveredNode === d.id || selectedNode === d.id ? 0.8 : 0)
+      .attr('stroke-opacity', 0)
       .attr('filter', 'url(#glow-effect)')
       .attr('class', 'transition-all duration-300');
-    
-    // Add node circles with 3D effect
-    nodeGroups.append('circle')
+
+    // Update glow circles based on current state
+    outerGlowCircles.attr('stroke-opacity', d => {
+      return (hoveredNode === d.id || selectedNode === d.id) ? 0.8 : 0;
+    });      // Add node circles with 3D effect - optimized for immediate updates
+    const mainCircles = nodeGroups.append('circle')
       .attr('r', d => d.id === 'glohsen' ? 50 : 35)
-      .attr('fill', d => (hoveredNode === d.id || selectedNode === d.id) ? d.hoverColor : d.color)
+      .attr('fill', d => d.color)
       .attr('filter', 'url(#node-shadow)')
       .attr('class', 'transition-all duration-300')
+      .on('click', (event, d) => createClickHandler(d)(event))
       .on('mouseover', function(_, d) {
         setHoveredNode(d.id);
         d3.select(this)
           .transition()
           .duration(200)
-          .attr('r', d.id === 'glohsen' ? 55 : 40);
+          .attr('r', d.id === 'glohsen' ? 55 : 40)
+          .attr('fill', d.hoverColor);
         
         // Stop auto-rotation when user interacts
         setIsAnimating(false);
@@ -652,10 +693,16 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
         d3.select(this)
           .transition()
           .duration(200)
-          .attr('r', d.id === 'glohsen' ? 50 : 35);
+          .attr('r', d.id === 'glohsen' ? 50 : 35)
+          .attr('fill', d.color);
       });
 
-    // Add node labels
+    // Update circle colors based on current state
+    mainCircles.attr('fill', d => {
+      return (hoveredNode === d.id || selectedNode === d.id) ? d.hoverColor : d.color;
+    });
+
+    // Add text labels to nodes
     nodeGroups.append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '0.3em')
@@ -679,7 +726,7 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
     svg.select(`g.node[transform="translate(${positions['glohsen'].x}, ${positions['glohsen'].y})"] circle`)
       .attr('class', 'animate-pulse');
 
-  }, [dimensions, hoveredNode, selectedNode, data, links, tooltipPosition]);
+  }, [dimensions]); // Only re-render when dimensions change, not on state changes
   
   return (
     <div 
@@ -731,8 +778,7 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
       </div>      {/* Detailed Tooltip */}
       {selectedNode && (
         <div
-          className="absolute bg-gradient-to-br from-gray-800 to-black p-4 rounded-lg shadow-lg border border-gray-700 z-50 max-w-xs animate-slide-up"
-          style={{
+          className="absolute bg-gradient-to-br from-gray-800 to-black p-4 rounded-lg shadow-lg border border-gray-700 z-50 max-w-xs animate-slide-up"          style={{
             // Center horizontally over node and clamp within container
             left: (() => {
               const tooltipWidth = 220;
@@ -755,49 +801,62 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
             })(),
           }}
         >
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-lg font-bold text-white">
-              {data.find(node => node.id === selectedNode)?.name}
-            </h4>            <button
-              className="text-gray-400 hover:text-white transition-colors"
-              onClick={() => {
-                handleClick();
-                setSelectedNode(null);
-              }}
-              aria-label="Close tooltip"
-            >
-              ×
-            </button>
-          </div>
-          
-          <p className="text-gray-300 text-sm mb-3">
-            {data.find(node => node.id === selectedNode)?.longDescription}
-          </p>
-          
-          <h5 className="text-amber-400 font-semibold text-sm mb-2 flex items-center">
-            <span className="mr-2">✦</span>
-            <span>Key Benefits</span>
-          </h5>
-          
-          <ul className="text-left text-xs text-gray-300 mb-2">
-            {data.find(node => node.id === selectedNode)?.benefits?.map((benefit, index) => (
-              <li key={index} className="mb-2 flex items-start animate-fadeIn" style={{ animationDelay: `${index * 100}ms` }}>
-                <span className="text-amber-400 mr-2 mt-0.5">•</span>
-                <span>{benefit}</span>
-              </li>
-            ))}
-          </ul>
-          
-          <div className="text-center mt-4">            <button 
-              className="text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-black font-semibold py-1.5 px-3 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
-              onClick={() => {
-                handleClick();
-                setSelectedNode(null);
-              }}
-            >
-              Close
-            </button>
-          </div>
+          {(() => {
+            const node = data.find(d => d.id === selectedNode);
+            if (!node) return <div className="text-center text-gray-400">Loading...</div>;
+            
+            return (
+              <>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-lg font-bold" style={{ color: node.textColor }}>
+                    {node.name}
+                  </h4>
+                  <button 
+                    className="text-gray-400 hover:text-white text-xl leading-none transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClick();
+                      setSelectedNode(null);
+                      selectedNodeRef.current = null;
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+                
+                <p className="text-gray-300 text-sm mb-3">
+                  {node.longDescription || node.description}
+                </p>
+                
+                <h5 className="text-amber-400 font-semibold text-sm mb-2 flex items-center">
+                  <span className="mr-2">🎯</span>
+                  Key Benefits
+                </h5>
+                
+                <ul className="text-left text-xs text-gray-300 mb-2">
+                  {node.benefits?.map((benefit, index) => (
+                    <li key={index} className="flex items-start mb-1">
+                      <span className="text-amber-400 mr-2">•</span>
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <div className="text-center mt-4">
+                  <button 
+                    className="text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-black font-semibold py-1.5 px-3 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
+                    onClick={() => {
+                      handleClick();
+                      setSelectedNode(null);
+                      selectedNodeRef.current = null;
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </>
+            );
+          })()}
         </div>
       )}
 
@@ -812,6 +871,7 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
           className="w-6 h-6 rounded-full bg-amber-500 text-black flex items-center justify-center text-xs font-bold shadow-md hover:bg-amber-400 transition-colors duration-200"
           onClick={() => {
             handleClick();
+            setIsAnimating(false);
             const infoPanel = document.getElementById('stakeholder-info-panel');
             if (infoPanel) {
               infoPanel.classList.toggle('hidden');
@@ -842,8 +902,7 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
               <span>Colored lines show stakeholder relationships</span>
             </li>
           </ul>          <button 
-            className="mt-2 text-amber-400 hover:text-amber-300 text-xs"
-            onClick={() => {
+            className="mt-2 text-amber-400 hover:text-amber-300 text-xs"            onClick={() => {
               handleClick();
               const infoPanel = document.getElementById('stakeholder-info-panel');
               if (infoPanel) {

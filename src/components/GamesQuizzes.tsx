@@ -303,7 +303,7 @@ const GamesQuizzes = ({ isActive = false, playClickSound }) => {
 
       <h2
         ref={titleRef}
-        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center z-10 relative px-2 sm:px-4"
+        className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center z-10 relative px-2 sm:px-4"
       >
         <span className="bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text">
           GAMES & QUIZZES
@@ -313,7 +313,7 @@ const GamesQuizzes = ({ isActive = false, playClickSound }) => {
           {/* Column 1: Professional Parallax Carousel */}
         <div className="parallax-3d">
           <h3 className="text-xl sm:text-2xl font-bold mb-4 text-center">
-            <span className="bg-gradient-to-r from-black via-gray-800 to-black text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-black via-grey-800 to-black text-transparent bg-clip-text">
               Interactive Games
             </span>
           </h3>

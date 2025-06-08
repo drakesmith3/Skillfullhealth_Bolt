@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -39,10 +38,8 @@ const Notifications = () => {
       });
     }, 1000);
   };
-
   return (
     <div className="min-h-screen bg-f5f5f5">
-      <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-12 md:col-span-3">
