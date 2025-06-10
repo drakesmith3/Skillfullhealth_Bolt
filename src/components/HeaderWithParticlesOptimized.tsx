@@ -325,7 +325,6 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
     svgRef.current?.appendChild(circle);
     return circle;
   }, [animationStateRef, svgRef]); // svgRef and animationStateRef are stable refs
-
   const initializePlaygroundParticles = useCallback((numParticles: number, width: number, height: number) => {
     console.log('[EtherealButterflySVG] Initializing playground particles');
     const newParticles: SvgParticle[] = [];
@@ -340,19 +339,18 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
         id: `p_playground_${i}_${Date.now()}`,
         element: null,
         x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.05,  // Slower: Was 0.1
-        vy: (Math.random() - 0.5) * 0.05,  // Slower: Was 0.1
-        radius: Math.random() * 2 + 1,
+        y: Math.random() * height,        vx: (Math.random() - 0.5) * 3.0,  // Significantly increased initial velocity
+        vy: (Math.random() - 0.5) * 3.0,  // Significantly increased initial velocity
+        radius: Math.random() * 2.5 + 1, // Slightly larger particles
         color: getParticleColor('playground', isEdge, 'playground', distanceToCenter),
-        opacity: Math.random() * 0.5 + 0.3,
+        opacity: Math.random() * 0.6 + 0.4, // Better visibility
         targetX: null,
         targetY: null,
         originalX: Math.random() * width,
         originalY: Math.random() * height,
         wing: 'playground',
-        distanceToCenter: distanceToCenter, // For effects based on distance
-        isEdge: isEdge, // If it's an edge particle
+        distanceToCenter: distanceToCenter,
+        isEdge: isEdge,
         formed: false,
         progress: 0,
       };
@@ -405,18 +403,15 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
       const yFormationOffset = butterflyTargetPosition ? - (scale * 0.3) : 0; 
 
       const targetX = formationOrigin.x + bPoint.x * scale;
-      const targetY = formationOrigin.y + yFormationOffset + bPoint.y * scale;
-
-      const particle: SvgParticle = {
+      const targetY = formationOrigin.y + yFormationOffset + bPoint.y * scale;      const particle: SvgParticle = {
         id: `p_form_${i}_${Date.now()}`, // More unique ID
         element: null,
         x: Math.random() * width, 
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 1,
-        vy: (Math.random() - 0.5) * 1,
+        y: Math.random() * height,        vx: (Math.random() - 0.5) * 4.0, // Significantly increased initial velocity for formation
+        vy: (Math.random() - 0.5) * 4.0,
         radius: Math.random() * 1.5 + 0.8, 
         color: getParticleColor(bPoint.wing, bPoint.isEdge, 'forming', bPoint.distanceToCenter),
-        opacity: 0.1, 
+        opacity: 0.2, // Start more visible
         targetX: targetX,
         targetY: targetY,
         originalX: Math.random() * width, // Store initial random for potential effects
@@ -443,27 +438,49 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
     let formedCount = 0;
 
     particles.forEach(p => {
-      if (!p.element) return;
+      if (!p.element) return;      if (state === 'playground') {
+        // Add constant gentle motion for playground particles
+        const timeBasedX = Math.sin(currentTime * 0.0015 + p.originalX * 0.01) * 0.8; // Increased frequency and amplitude
+        const timeBasedY = Math.cos(currentTime * 0.0012 + p.originalY * 0.01) * 0.6; // Increased frequency and amplitude
+        p.vx += timeBasedX * 0.05; // Increased force multiplier
+        p.vy += timeBasedY * 0.05; // Increased force multiplier        // Add some random drift to make particles more lively
+        p.vx += (Math.random() - 0.5) * 0.02;
+        p.vy += (Math.random() - 0.5) * 0.02;
 
-      if (state === 'playground') {
+        // Add swirling motion for some particles
+        if (Math.random() < 0.3) { // 30% of particles get swirling motion
+          const swirl = Math.sin(currentTime * 0.001 + p.originalX) * 0.3;
+          p.vx += swirl * 0.03;
+          p.vy += Math.cos(currentTime * 0.001 + p.originalY) * 0.02;
+        }
+
+        // Enhanced mouse interaction with attraction/repulsion zones
         if (mousePos) {
           const dx = p.x - mousePos.x;
           const dy = p.y - mousePos.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          const repulsionRadius = width * 0.08; // Relative repulsion radius
-          if (dist < repulsionRadius && dist > 0) { // dist > 0 to avoid issues if mouse is exactly on particle
+          const repulsionRadius = width * 0.12; // Larger interaction radius
+          const attractionRadius = width * 0.25; // Attraction zone outside repulsion
+          
+          if (dist < repulsionRadius && dist > 0) {
+            // Repulsion force (stronger)
             const angle = Math.atan2(dy, dx);
-            const force = (repulsionRadius - dist) / repulsionRadius * 0.5; 
-            p.vx += Math.cos(angle) * force * 1.5; 
-            p.vy += Math.sin(angle) * force * 1.5;
+            const force = (repulsionRadius - dist) / repulsionRadius * 0.8; 
+            p.vx += Math.cos(angle) * force * 2.5; 
+            p.vy += Math.sin(angle) * force * 2.5;
+          } else if (dist < attractionRadius && dist > repulsionRadius) {
+            // Gentle attraction force
+            const angle = Math.atan2(-dy, -dx);
+            const force = 0.1 * ((attractionRadius - dist) / attractionRadius);
+            p.vx += Math.cos(angle) * force * 0.5;
+            p.vy += Math.sin(angle) * force * 0.5;
           }
-        }
-        p.vx *= 0.60; // Increased drag: Was 0.85
-        p.vy *= 0.60; // Increased drag: Was 0.85
-      } else if (state === 'forming' && p.targetX !== null && p.targetY !== null) {
+        }        // Apply drag but maintain some motion
+        p.vx *= 0.92; // Reduced drag for more sustained motion
+        p.vy *= 0.92;} else if (state === 'forming' && p.targetX !== null && p.targetY !== null) {
         const formationStartTime = lastInteractionTimeRef.current; 
         const staggerFactor = (p.originalX * p.originalY) % 500; // Stagger based on original random position
-        const formationDuration = 1200; // ms
+        const formationDuration = 2500; // Increased duration for better visualization
         
         if (p.progress < 1) {
           const timeSinceFormationStart = currentTime - (formationStartTime + staggerFactor);
@@ -471,15 +488,33 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
                p.progress = Math.min(1, timeSinceFormationStart / (formationDuration - staggerFactor > 0 ? formationDuration - staggerFactor : formationDuration));
           }
         }
+          // Continue playground motion while forming for visual transition
+        if (p.progress < 0.3) {
+          const timeBasedX = Math.sin(currentTime * 0.0015 + p.originalX * 0.01) * 0.6; // Increased motion during formation
+          const timeBasedY = Math.cos(currentTime * 0.0012 + p.originalY * 0.01) * 0.4;
+          p.vx += timeBasedX * 0.03 * (1 - p.progress * 3); // Reduce as formation progresses
+          p.vy += timeBasedY * 0.03 * (1 - p.progress * 3);
+          
+          // Maintain some playground drag
+          p.vx *= 0.90; // Slightly higher drag during formation
+          p.vy *= 0.90;
+        }
         
-        const easeProgress = 1 - Math.pow(1 - p.progress, 4); // Ease out quart
+        const easeProgress = 1 - Math.pow(1 - p.progress, 3); // Easier curve for smoother transition
         const dx = p.targetX - p.x;
         const dy = p.targetY - p.y;
         
-        // Move towards target
-        p.x += dx * easeProgress * 0.1; // Adjusted factor
-        p.y += dy * easeProgress * 0.1;
-        p.opacity = 0.2 + p.progress * 0.6; // Fade in
+        // Progressive formation force - starts gentle, becomes stronger
+        const formationForce = 0.02 + (p.progress * 0.15); // Increases as progress increases
+        p.vx += dx * formationForce;
+        p.vy += dy * formationForce;
+        
+        // Apply formation velocity
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        // Gradually fade in opacity during formation
+        p.opacity = 0.1 + p.progress * 0.7; // More gradual fade-in
 
         if (p.progress >= 1 && !p.formed) {
           p.x = p.targetX;
@@ -487,19 +522,19 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
           p.vx = 0; p.vy = 0;
           p.formed = true;
           p.opacity = 0.8 + (p.isEdge ? -0.2 : 0); 
-        }      
-      } else if (state === 'formed' && p.targetX !== null && p.targetY !== null) {
+        }      } else if (state === 'formed' && p.targetX !== null && p.targetY !== null) {
          if (!p.formed) { 
             p.x = p.targetX; p.y = p.targetY;
             p.vx = 0; p.vy = 0; p.formed = true;
          }
         
-        const springK = 0.06; 
-        const damping = 0.90; 
+        const springK = 0.08; // Increased spring constant for more responsiveness
+        const damping = 0.85; // Reduced damping for more fluid motion
 
+        // Enhanced mouse following behavior
         if (mousePos) {
-          const followStrength = 0.01;
-          const maxFollowDistance = Math.min(width, height) * 0.35;
+          const followStrength = 0.025; // Increased follow strength
+          const maxFollowDistance = Math.min(width, height) * 0.4; // Larger follow radius
 
           const dxToParticleTarget = mousePos.x - p.targetX;
           const dyToParticleTarget = mousePos.y - p.targetY;
@@ -513,10 +548,11 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
           p.targetY = Math.max(p.radius, Math.min(p.targetY, height - p.radius));
         }
 
-        const floatRadius = 0.5 + p.radius * 0.3 + (p.isEdge ? 0.5 : 0);
-        const floatSpeed = 0.0002 + ((p.originalX % 100)/200000);
-        const offsetX = Math.cos(currentTime * floatSpeed + p.originalX * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.5);
-        const offsetY = Math.sin(currentTime * floatSpeed + p.originalY * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.5) * 0.6;
+        // Enhanced floating animation with more variation
+        const floatRadius = 1.2 + p.radius * 0.5 + (p.isEdge ? 0.8 : 0); // Increased float radius
+        const floatSpeed = 0.0003 + ((p.originalX % 100)/150000); // Slightly faster
+        const offsetX = Math.cos(currentTime * floatSpeed + p.originalX * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.7);
+        const offsetY = Math.sin(currentTime * floatSpeed + p.originalY * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.7) * 0.6;
         
         const springTargetX = p.targetX + offsetX;
         const springTargetY = p.targetY + offsetY;
@@ -530,61 +566,80 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
         p.vx *= damping;
         p.vy *= damping;
 
+        // Enhanced mouse repulsion with dynamic effects
         if (mousePos) {
           const dxParticleMouse = p.x - mousePos.x;
           const dyParticleMouse = p.y - mousePos.y;
           const distParticleMouse = Math.sqrt(dxParticleMouse * dxParticleMouse + dyParticleMouse * dyParticleMouse);
-          const repulsionRadiusParticle = width * 0.045;
+          const repulsionRadiusParticle = width * 0.08; // Increased repulsion radius
 
           if (distParticleMouse < repulsionRadiusParticle && distParticleMouse > 0) {
             const angle = Math.atan2(dyParticleMouse, dxParticleMouse);
             const pushForceStrength = (repulsionRadiusParticle - distParticleMouse) / repulsionRadiusParticle;
-            p.vx += Math.cos(angle) * pushForceStrength * 1.0; 
-            p.vy += Math.sin(angle) * pushForceStrength * 1.0;
+            p.vx += Math.cos(angle) * pushForceStrength * 2.5; // Increased push force
+            p.vy += Math.sin(angle) * pushForceStrength * 2.5;
             lastInteractionTimeRef.current = Date.now();
           }
         }
+        
+        // Enhanced visual effects
         const baseOpacity = p.wing === 'body' ? 0.9 : (p.isEdge ? 0.6 : 0.8);
-        const flickerEffect = Math.sin(currentTime * 0.0004 + p.originalX * 0.02) * 0.1;
-        p.opacity = baseOpacity + flickerEffect;
+        const flickerEffect = Math.sin(currentTime * 0.0006 + p.originalX * 0.02) * 0.15; // More pronounced flicker
+        p.opacity = Math.max(0.3, baseOpacity + flickerEffect); // Ensure minimum opacity
       }
 
-      if (p.formed) formedCount++;
-
-      // Apply velocity to position
-      // For 'forming' state, position is directly interpolated.
-      // Velocities are primarily active in 'playground' and 'formed' states.
-      if (state === 'playground' || state === 'formed') {
-        p.x += p.vx;
-        p.y += p.vy;
-      }
-
-      // Boundary conditions
-      if (state === 'playground') {
-        if (p.x > width - p.radius || p.x < p.radius) {
-          p.vx *= -0.8; // Bounce with some energy loss
-          p.x = Math.max(p.radius, Math.min(p.x, width - p.radius)); // Clamp position
-        }
-        if (p.y > height - p.radius || p.y < p.radius) {
-          p.vy *= -0.8;
-          p.y = Math.max(p.radius, Math.min(p.y, height - p.radius));
-        }
+      if (p.formed) formedCount++;      // Apply velocity to position for all states
+      p.x += p.vx;
+      p.y += p.vy;        // Enhanced boundary conditions with better physics
+        if (state === 'playground') {
+          if (p.x > width - p.radius || p.x < p.radius) {
+            p.vx *= -0.8; // Slightly more elastic bounce
+            p.x = Math.max(p.radius, Math.min(p.x, width - p.radius));
+          }
+          if (p.y > height - p.radius || p.y < p.radius) {
+            p.vy *= -0.8;
+            p.y = Math.max(p.radius, Math.min(p.y, height - p.radius));
+          }
+        }else if (state === 'forming') {
+        // Gentle boundary constraints during formation
+        p.x = Math.max(p.radius * 0.5, Math.min(p.x, width - p.radius * 0.5));
+        p.y = Math.max(p.radius * 0.5, Math.min(p.y, height - p.radius * 0.5));
       } else if (state === 'formed') {
-        // Clamp particle positions to be within the canvas,
-        // as spring targets (p.targetX, p.targetY) are already clamped.
+        // Soft boundary constraints for formed butterfly
         p.x = Math.max(p.radius, Math.min(p.x, width - p.radius));
         p.y = Math.max(p.radius, Math.min(p.y, height - p.radius));
-      }
-
-      // Update SVG element attributes
+      }      // Update SVG element attributes with enhanced rendering
       p.element.setAttribute('cx', p.x.toString());
       p.element.setAttribute('cy', p.y.toString());
-      p.element.setAttribute('fill-opacity', p.opacity.toString());
-      // Ensure p.radius and p.color are correctly assigned to particles
-      if (p.radius) { // Add check if p.radius might be undefined initially
-        p.element.setAttribute('r', p.radius.toString());
+      p.element.setAttribute('fill-opacity', Math.max(0.1, p.opacity).toString()); // Ensure minimum visibility
+      
+      // Dynamic radius scaling based on state and interaction
+      let currentRadius = p.radius;
+      if (state === 'forming' && p.progress < 1) {
+        currentRadius = p.radius * (0.5 + p.progress * 0.5); // Grow during formation
+      } else if (state === 'formed' && mousePos) {
+        const distToMouse = Math.sqrt((p.x - mousePos.x) ** 2 + (p.y - mousePos.y) ** 2);
+        const interactionRadius = width * 0.1;
+        if (distToMouse < interactionRadius) {
+          const proximityFactor = 1 - (distToMouse / interactionRadius);
+          currentRadius = p.radius * (1 + proximityFactor * 0.5); // Grow when mouse is near
+        }
       }
-      if (p.color) { // Add check if p.color might be undefined initially
+      
+      p.element.setAttribute('r', currentRadius.toString());
+      
+      // Enhanced color updates based on interaction
+      if (state === 'formed' && mousePos) {
+        const distToMouse = Math.sqrt((p.x - mousePos.x) ** 2 + (p.y - mousePos.y) ** 2);
+        const interactionRadius = width * 0.08;
+        if (distToMouse < interactionRadius) {
+          // Add energy effect when mouse is near
+          const energyColor = p.wing === 'body' ? '#FFD700' : '#FF6B35';
+          p.element.setAttribute('fill', energyColor);
+        } else {
+          p.element.setAttribute('fill', p.color);
+        }
+      } else {
         p.element.setAttribute('fill', p.color);
       }
 
@@ -1135,18 +1190,17 @@ const HeaderWithParticlesOptimized: React.FC<HeaderProps> = ({ isActive, section
           </div>
           <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 tracking-tight leading-tight ${isDark ? 'shine-text' : 'shine-text-light'}`}>
             WELCOME TO GLOHSEN: <br className="hidden sm:block" /> EMPOWERING YOUR HEALTHCARE STORY
-          </h1>
-          <p className={`text-base sm:text-lg md:text-xl max-w-xl md:max-w-2xl mb-6 md:mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Revolutionizing career development and community health engagement through innovative technology.
+          </h1>          <p className={`text-base sm:text-lg md:text-xl max-w-xl md:max-w-2xl mb-2 md:mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            Your Fun, Transformative Journey Begins Here. <br className="hidden sm:block" />Revolutionizing career development and community health engagement through innovative technology.
           </p>
-          
+
           {scrollToSection && (
             <button
               onClick={() => {
                 if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
                 scrollToSection(1); // Assuming section 1 is the next section after header
               }}
-              className="glassmorphic-gold-button mt-6 md:mt-8 px-6 py-2.5 sm:px-8 sm:py-3 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out group flex items-center justify-center"
+              className="glassmorphic-gold-button mt-1 md:mt-2 px-5 py-2.5 sm:px-8 sm:py-3 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out group flex items-center justify-center"
               style={{ color: isDark ? '#FFD700' : '#1f2937' }} // Dynamic color for Explore button
               aria-label="Scroll to next section"
             >
