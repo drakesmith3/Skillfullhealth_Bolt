@@ -1,12 +1,136 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from "react";
 // import { gsap } from "gsap"; // GSAP might be less critical for SVG manual animation
 import { Link } from "react-router-dom";
+import { ChevronRight, PlayCircle, Info, Eye, EyeOff, Palette } from "lucide-react"; // Added Palette for example
 import Logo3DHyperRealistic from "./Logo3DHyperRealistic";
 import ThemeToggle from "./ThemeToggle";
 import { useSound } from "../contexts/SoundContext";
 import { useTheme } from "../contexts/ThemeContext";
 
-// Interface for HeaderWithParticlesOptimized props (remains the same)
+// --- STYLES ---
+// It's generally better to move these to a separate CSS file for larger applications
+// but keeping it here as per current structure.
+const GlobalStyles = () => (
+  <style dangerouslySetInnerHTML={{ __html: `
+      @keyframes shine-metallic {
+        0% { background-position: -300% center; }
+        100% { background-position: 300% center; }
+      }
+      .shine-text {
+        background: linear-gradient(to right, 
+          #B38728 0%, /* Darker Gold */
+          #FBF5B7 20%, /* Pale Gold Highlight */
+          #BF953F 40%, /* Medium Gold */
+          #FCF6BA 50%, /* Brightest Highlight (simulating sheen) */
+          #BF953F 60%, /* Medium Gold */
+          #AA771C 80%, /* Dark Gold */
+          #B38728 100% /* Darker Gold */
+        );
+        background-size: 300% auto; /* Make gradient wider for smoother animation */
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine-metallic 15s infinite linear; /* Slower: Was 10s */
+        position: relative;
+      }
+
+      .shine-text-light {
+        background: linear-gradient(to right,
+          #1A1A1A 0%, /* Dark base for black text */
+          #DCDCDC 30%, /* Sheen highlight (lighter gray - was #CCCCCC) */
+          #2C2C2C 45%,
+          #F0F0F0 50%, /* Brightest sheen (very light gray - was #E0E0E0) */
+          #2C2C2C 55%,
+          #DCDCDC 70%, /* Sheen highlight (lighter gray - was #CCCCCC) */
+          #1A1A1A 100% /* Dark base for black text */
+        );
+        background-size: 300% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine-metallic 30s infinite linear; /* Slower: Was 20s */
+        position: relative;
+      }
+
+      .nav-button {
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        position: relative;
+        overflow: hidden; 
+        cursor: pointer;
+        font-weight: 500;
+        border: none; /* Remove default border, will be part of specific style */
+      }
+
+      .nav-button-gold {
+        background: linear-gradient(145deg, #d4af37, #c09526); /* Brighter, more metallic gold */
+        border: 1px solid #b8860b; /* Darker gold border */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,223,135,0.5); /* 3D feel */
+      }
+
+      .nav-button-gold::before { /* Continuous sheen */
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -150%; 
+        width: 100%; 
+        height: 100%;
+        background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+        transform: skewX(-25deg);
+        animation: continuous-sheen-nav 7s infinite linear; /* Slower, wider animation */
+      }
+
+      @keyframes continuous-sheen-nav {
+        0% { left: -150%; }
+        40% { left: 150%; } 
+        100% { left: 150%; }
+      }      .nav-button:hover {
+        background: linear-gradient(145deg, #D32F2F, #B71C1C) !important; /* Red gradient on hover */
+        color: #FFFFFF;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Enhanced shadow on hover */
+        border-color: #B71C1C; /* Darker red border on hover */
+      }
+
+      .nav-button-gold:hover {
+        background: linear-gradient(145deg, #D32F2F, #B71C1C) !important; /* Red gradient on hover */
+        color: #FFFFFF;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Enhanced shadow on hover */
+        border-color: #B71C1C; /* Darker red border on hover */
+      }
+
+      /* Remove old .nav-button:hover::after if it exists */
+      .nav-button:hover::after {
+        display: none; 
+      }
+      
+      .bouncing-arrow {
+        display: inline-block;
+        animation: bounce 2s infinite;
+      }
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      .glassmorphic-gold-button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        padding: 10px 20px;
+        /* color: #FFD700; // Keep gold for dark mode */
+        font-weight: 500;
+        backdrop-filter: blur(10px) saturate(150%);
+        transition: background 0.3s ease, transform 0.2s ease, color 0.3s ease;
+      }
+      .glassmorphic-gold-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+  ` }} />
+);
+
 interface HeaderProps {
   isActive?: boolean;
   sectionName?: string;
@@ -100,7 +224,11 @@ interface FloatingElement {
   size: number; // px
 }
 
-const EtherealButterfly = () => {
+interface EtherealButterflyProps {
+  butterflyTargetPosition?: { x: number; y: number; width: number; height: number } | null;
+}
+
+const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPosition }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const workerRef = useRef<Worker | null>(null);
   const [animationState, setAnimationState] = useState<'playground' | 'forming' | 'formed'>('playground');
@@ -114,44 +242,73 @@ const EtherealButterfly = () => {
 
   const [butterflyPoints, setButterflyPoints] = useState<ButterflyPoint[]>([]);
   const [stats, setStats] = useState<Stats>({ particleCount: 0, formationProgress: 0, fps: 0 });
+  const statsRef = useRef(stats); // Added: Initialize statsRef
   const [showStats, setShowStats] = useState<boolean>(false);
   const [floatingElements, setFloatingElements] = useState<FloatingElement[]>([]);
   
   const frameCountRef = useRef<number>(0);
   const lastFPSTimeRef = useRef<number>(0);
 
+  const { isDark } = useTheme(); // Added for button accessibility
+
+  // Added: useEffect to keep statsRef.current in sync with stats state
+  useEffect(() => {
+    statsRef.current = stats;
+  }, [stats]);
+
   const BUTTERFLY_COLORS_THEME = useMemo(() => ({
-    gold: ['rgba(255,215,0,0.7)', 'rgba(200,160,0,0.7)', 'rgba(255,223,50,0.7)'], // Gold shades
-    red: ['rgba(139,0,0,0.7)', 'rgba(255,69,0,0.7)'], // Red shades
-    black: ['rgba(20,20,20,0.6)', 'rgba(50,50,50,0.6)'], // Black/Dark Gray shades
-    offWhite: 'rgba(240,240,240,0.5)', // Off-white for highlights or playground
-    ripple: 'rgba(255,215,0,0.5)', // Gold for ripple
+    // Monarch Colors
+    monarchOrange: ['#FCA500', '#FFB52B', '#E59400', '#FD8C00', '#FF7400'], // Added more vibrant orange
+    monarchBlack: ['#1A1A1A', '#0D0D0D', '#262626', '#000000'],
+    monarchWhite: ['#FFFFFF', '#FDFDFD', '#F5F5F5', '#FEFEFE'], // Brighter whites
+    
+    // Existing colors for playground mode or other effects
+    gold: ['rgba(255,215,0,0.7)', 'rgba(200,160,0,0.7)', 'rgba(255,223,50,0.7)'],
+    red: ['rgba(139,0,0,0.7)', 'rgba(255,69,0,0.7)'],
+    black: ['rgba(20,20,20,0.6)', 'rgba(50,50,50,0.6)'], // General black, distinct from monarchBlack
+    offWhite: 'rgba(240,240,240,0.5)',
+    ripple: 'rgba(255,215,0,0.6)', // Slightly more transparent ripple
   }), []);
 
   const getParticleColor = useCallback((
     type: 'left' | 'right' | 'body' | 'playground',
-    isEdge?: boolean
+    isEdge?: boolean,
+    currentAnimationState?: 'playground' | 'forming' | 'formed',
+    distanceToCenter?: number // Retained for potential future use
   ): string => {
-    if (isEdge) return BUTTERFLY_COLORS_THEME.black[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.black.length)];
+    const state = currentAnimationState || animationStateRef.current;
 
+    if (state === 'formed' || (state === 'forming' && type !== 'playground')) {
+      if (type === 'body') {
+        return BUTTERFLY_COLORS_THEME.monarchBlack[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchBlack.length)];
+      }
+      // Wings:
+      if (isEdge && Math.random() < 0.85) { // Higher chance for edges to be black
+        return BUTTERFLY_COLORS_THEME.monarchBlack[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchBlack.length)];
+      }
+      // Simulate some white spots, make them sparse
+      if (Math.random() < 0.08) { // 8% chance for a white spot particle
+          return BUTTERFLY_COLORS_THEME.monarchWhite[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchWhite.length)];
+      }
+      // Small chance for black accents within the orange parts of wings
+      if (Math.random() < 0.15) {
+        return BUTTERFLY_COLORS_THEME.monarchBlack[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchBlack.length)];
+      }
+      // Predominantly orange for wings
+      return BUTTERFLY_COLORS_THEME.monarchOrange[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchOrange.length)];
+    }
+
+    // Playground or other states (original logic)
     const rand = Math.random();
-    if (type === 'body') {
-      return BUTTERFLY_COLORS_THEME.black[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.black.length)];
-    }
-    if (type === 'playground') {
-      if (rand < 0.4) return BUTTERFLY_COLORS_THEME.gold[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.gold.length)];
-      if (rand < 0.7) return BUTTERFLY_COLORS_THEME.red[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.red.length)];
-      if (rand < 0.9) return BUTTERFLY_COLORS_THEME.black[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.black.length)];
-      return BUTTERFLY_COLORS_THEME.offWhite;
-    }
-    // For wings (left/right)
-    if (rand < 0.65) return BUTTERFLY_COLORS_THEME.gold[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.gold.length)];
-    if (rand < 0.9) return BUTTERFLY_COLORS_THEME.red[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.red.length)];
-    return BUTTERFLY_COLORS_THEME.black[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.black.length)];
-  }, [BUTTERFLY_COLORS_THEME]);
+    // For playground, use a mix of gold, red, black, offWhite
+    if (rand < 0.35) return BUTTERFLY_COLORS_THEME.gold[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.gold.length)];
+    if (rand < 0.6) return BUTTERFLY_COLORS_THEME.red[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.red.length)];
+    if (rand < 0.8) return BUTTERFLY_COLORS_THEME.black[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.black.length)];
+    return BUTTERFLY_COLORS_THEME.offWhite;
+  }, [BUTTERFLY_COLORS_THEME, animationStateRef]);
 
 
-  const createSvgParticleElement = (particle: SvgParticle): SVGCircleElement => {
+  const createSvgParticleElement = useCallback((particle: SvgParticle): SVGCircleElement => {
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('id', particle.id);
     circle.setAttribute('cx', particle.x.toString());
@@ -159,13 +316,15 @@ const EtherealButterfly = () => {
     circle.setAttribute('r', particle.radius.toString());
     circle.setAttribute('fill', particle.color);
     circle.setAttribute('opacity', particle.opacity.toString());
-    // For "3D" effect attempt through SVG filters (can be defined in <defs>)
-    // circle.style.filter = \`url(#glow-filter-${particle.color.replace(/[^a-zA-Z0-9]/g, '')})\`;
-    // Example of a more generic shadow:
-    // circle.style.filter = \`drop-shadow(0 0 ${particle.radius * 0.5}px ${particle.color.replace(/,0\.\d+\)/, ',0.3)')})\`;
+    
+    // Apply 3D filter if it's a butterfly particle (not playground) and in a relevant state
+    if (particle.wing !== 'playground' && (animationStateRef.current === 'forming' || animationStateRef.current === 'formed')) {
+      circle.style.filter = 'url(#monarchParticle3D)';
+    }
+    
     svgRef.current?.appendChild(circle);
     return circle;
-  };
+  }, [animationStateRef, svgRef]); // svgRef and animationStateRef are stable refs
 
   const initializePlaygroundParticles = useCallback((numParticles: number, width: number, height: number) => {
     console.log('[EtherealButterflySVG] Initializing playground particles');
@@ -175,23 +334,25 @@ const EtherealButterfly = () => {
     }
 
     for (let i = 0; i < numParticles; i++) {
+      const isEdge = Math.random() > 0.9;
+      const distanceToCenter = Math.random();
       const particle: SvgParticle = {
-        id: `p_playground_${i}_${Date.now()}`, // More unique ID
+        id: `p_playground_${i}_${Date.now()}`,
         element: null,
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 1.5, 
-        vy: (Math.random() - 0.5) * 1.5,
+        vx: (Math.random() - 0.5) * 0.05,  // Slower: Was 0.1
+        vy: (Math.random() - 0.5) * 0.05,  // Slower: Was 0.1
         radius: Math.random() * 2 + 1,
-        color: getParticleColor('playground'),
+        color: getParticleColor('playground', isEdge, 'playground', distanceToCenter),
         opacity: Math.random() * 0.5 + 0.3,
         targetX: null,
         targetY: null,
         originalX: Math.random() * width,
         originalY: Math.random() * height,
         wing: 'playground',
-        distanceToCenter: Math.random(),
-        isEdge: Math.random() > 0.9,
+        distanceToCenter: distanceToCenter, // For effects based on distance
+        isEdge: isEdge, // If it's an edge particle
         formed: false,
         progress: 0,
       };
@@ -201,7 +362,7 @@ const EtherealButterfly = () => {
     particlesRef.current = newParticles;
     setStats(prev => ({ ...prev, particleCount: newParticles.length, formationProgress: 0 }));
     console.log('[EtherealButterflySVG] Playground particles initialized:', newParticles.length);
-  }, [getParticleColor]);
+  }, [getParticleColor, createSvgParticleElement]);
 
   const initializeFormationParticlesSVG = useCallback((points: ButterflyPoint[], width: number, height: number) => {
     console.log('[EtherealButterflySVG] Initializing formation particles');
@@ -213,20 +374,38 @@ const EtherealButterfly = () => {
       return;
     }
 
-    const desiredParticleCount = Math.min(800, Math.max(400, points.length * 2)); // Max 800 particles
+    const desiredParticleCount = Math.min(1200, Math.max(600, points.length * 3)); // Up to 1200 particles
     const newParticles: SvgParticle[] = [];
     
     if (svgRef.current) {
         particlesRef.current.forEach(p => p.element?.remove());
     }
 
+    // Determine formation origin and scale
+    const defaultOrigin = { x: width / 2, y: height / 2 - height * 0.05 };
+    let formationOrigin = defaultOrigin;
+    let scaleMultiplier = 0.30; // Default scale for center screen
+
+    if (butterflyTargetPosition && width > 0 && height > 0) {
+      // Target the center of the "WELCOME" text passed via prop
+      formationOrigin = { x: butterflyTargetPosition.x, y: butterflyTargetPosition.y };
+      // Smaller scale for perching
+      scaleMultiplier = 0.10; // Significantly smaller for perching
+      console.log('[EtherealButterflySVG] Using target position for butterfly formation:', formationOrigin, "scaleMultiplier:", scaleMultiplier);
+    } else {
+      console.log('[EtherealButterflySVG] Using default center screen for butterfly formation.');
+    }
+    
+    const scale = Math.min(width, height) * scaleMultiplier;
+
     for (let i = 0; i < desiredParticleCount; i++) {
       const pointIndex = i % points.length;
       const bPoint = points[pointIndex];
       
-      const scale = Math.min(width, height) * 0.30; // Slightly smaller butterfly
-      const targetX = bPoint.x * scale + width / 2;
-      const targetY = bPoint.y * scale + height / 2 - height * 0.05; // Centered more
+      const yFormationOffset = butterflyTargetPosition ? - (scale * 0.3) : 0; 
+
+      const targetX = formationOrigin.x + bPoint.x * scale;
+      const targetY = formationOrigin.y + yFormationOffset + bPoint.y * scale;
 
       const particle: SvgParticle = {
         id: `p_form_${i}_${Date.now()}`, // More unique ID
@@ -236,7 +415,7 @@ const EtherealButterfly = () => {
         vx: (Math.random() - 0.5) * 1,
         vy: (Math.random() - 0.5) * 1,
         radius: Math.random() * 1.5 + 0.8, 
-        color: getParticleColor(bPoint.wing, bPoint.isEdge),
+        color: getParticleColor(bPoint.wing, bPoint.isEdge, 'forming', bPoint.distanceToCenter),
         opacity: 0.1, 
         targetX: targetX,
         targetY: targetY,
@@ -254,7 +433,7 @@ const EtherealButterfly = () => {
     particlesRef.current = newParticles;
     setStats(prev => ({ ...prev, particleCount: newParticles.length, formationProgress: 0 }));
     console.log('[EtherealButterflySVG] Formation particles initialized:', newParticles.length);
-  }, [getParticleColor, initializePlaygroundParticles]);
+  }, [getParticleColor, initializePlaygroundParticles, butterflyTargetPosition]); // Added butterflyTargetPosition
 
   const updateAndDrawSvgParticles = useCallback((width: number, height: number) => {
     const particles = particlesRef.current;
@@ -275,16 +454,16 @@ const EtherealButterfly = () => {
           if (dist < repulsionRadius && dist > 0) { // dist > 0 to avoid issues if mouse is exactly on particle
             const angle = Math.atan2(dy, dx);
             const force = (repulsionRadius - dist) / repulsionRadius * 0.5; 
-            p.vx += Math.cos(angle) * force * 1.5; // Stronger push
+            p.vx += Math.cos(angle) * force * 1.5; 
             p.vy += Math.sin(angle) * force * 1.5;
           }
         }
-        p.vx *= 0.95; 
-        p.vy *= 0.95;
+        p.vx *= 0.60; // Increased drag: Was 0.85
+        p.vy *= 0.60; // Increased drag: Was 0.85
       } else if (state === 'forming' && p.targetX !== null && p.targetY !== null) {
-        const formationStartTime = lastInteractionTimeRef.current; // Set when 'Form Butterfly' is clicked
+        const formationStartTime = lastInteractionTimeRef.current; 
         const staggerFactor = (p.originalX * p.originalY) % 500; // Stagger based on original random position
-        const formationDuration = 1800; // ms
+        const formationDuration = 1200; // ms
         
         if (p.progress < 1) {
           const timeSinceFormationStart = currentTime - (formationStartTime + staggerFactor);
@@ -307,76 +486,64 @@ const EtherealButterfly = () => {
           p.y = p.targetY;
           p.vx = 0; p.vy = 0;
           p.formed = true;
-          p.opacity = 0.8 + (p.isEdge ? -0.2 : 0); // Edges slightly less opaque
-        }      } else if (state === 'formed' && p.targetX !== null && p.targetY !== null) {
+          p.opacity = 0.8 + (p.isEdge ? -0.2 : 0); 
+        }      
+      } else if (state === 'formed' && p.targetX !== null && p.targetY !== null) {
          if (!p.formed) { 
             p.x = p.targetX; p.y = p.targetY;
             p.vx = 0; p.vy = 0; p.formed = true;
          }
         
-        // Enhanced physics for formed butterfly
+        const springK = 0.06; 
+        const damping = 0.90; 
+
         if (mousePos) {
-          // Calculate distance to mouse
-          const dxMouse = mousePos.x - p.targetX;
-          const dyMouse = mousePos.y - p.targetY;
-          const distToMouseFromTarget = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-          
-          // Butterfly follows mouse with some lag and maintains formation
-          const followStrength = 0.02; // How strongly the butterfly follows the mouse
-          const maxFollowDistance = Math.min(width, height) * 0.3; // Maximum distance butterfly will move from center
-          
-          if (distToMouseFromTarget < maxFollowDistance) {
-            // Move the target position towards mouse
-            p.targetX += dxMouse * followStrength;
-            p.targetY += dyMouse * followStrength;
-            
-            // Keep butterfly within bounds
-            p.targetX = Math.max(p.radius, Math.min(p.targetX, width - p.radius));
-            p.targetY = Math.max(p.radius, Math.min(p.targetY, height - p.radius));
+          const followStrength = 0.01;
+          const maxFollowDistance = Math.min(width, height) * 0.35;
+
+          const dxToParticleTarget = mousePos.x - p.targetX;
+          const dyToParticleTarget = mousePos.y - p.targetY;
+          const distToParticleTarget = Math.sqrt(dxToParticleTarget * dxToParticleTarget + dyToParticleTarget * dyToParticleTarget);
+
+          if (distToParticleTarget < maxFollowDistance * 1.5) { 
+             p.targetX += dxToParticleTarget * followStrength;
+             p.targetY += dyToParticleTarget * followStrength;
           }
-          
-          // Repulsion effect when mouse is very close to individual particles
-          const dxParticle = p.x - mousePos.x;
-          const dyParticle = p.y - mousePos.y;
-          const distToParticle = Math.sqrt(dxParticle * dxParticle + dyParticle * dyParticle);
-          const repulsionRadius = width * 0.04; // Smaller repulsion radius for formed state
-          
-          if (distToParticle < repulsionRadius && distToParticle > 0) {
-            const angle = Math.atan2(dyParticle, dxParticle);
-            const pushForce = (repulsionRadius - distToParticle) / repulsionRadius * 0.8;
-            p.x += Math.cos(angle) * pushForce * 12; 
-            p.y += Math.sin(angle) * pushForce * 12;
-            
-            // Update interaction time for ripple effects
-            lastInteractionTimeRef.current = Date.now();
-          } else {
-            // Gentle return to formation position with floating motion
-            const floatRadius = 0.5 + p.radius * 0.3 + (p.isEdge ? 0.5 : 0);
-            const floatSpeed = 0.0002 + ((p.originalX % 100)/200000); // Unique speed per particle
-            const offsetX = Math.cos(currentTime * floatSpeed + p.originalX * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.5);
-            const offsetY = Math.sin(currentTime * floatSpeed + p.originalY * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.5) * 0.6;
-            
-            const targetWithFloat = {
-              x: p.targetX + offsetX,
-              y: p.targetY + offsetY
-            };
-            
-            // Smooth return to target position
-            const returnStrength = 0.05;
-            p.x += (targetWithFloat.x - p.x) * returnStrength;
-            p.y += (targetWithFloat.y - p.y) * returnStrength;
-          }
-        } else {
-          // No mouse interaction - gentle floating motion
-          const floatRadius = 0.5 + p.radius * 0.3 + (p.isEdge ? 0.5 : 0);
-          const floatSpeed = 0.0002 + ((p.originalX % 100)/200000); // Unique speed per particle
-          const offsetX = Math.cos(currentTime * floatSpeed + p.originalX * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.5);
-          const offsetY = Math.sin(currentTime * floatSpeed + p.originalY * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.5) * 0.6;
-          p.x = p.targetX + offsetX;
-          p.y = p.targetY + offsetY;
+          p.targetX = Math.max(p.radius, Math.min(p.targetX, width - p.radius));
+          p.targetY = Math.max(p.radius, Math.min(p.targetY, height - p.radius));
         }
+
+        const floatRadius = 0.5 + p.radius * 0.3 + (p.isEdge ? 0.5 : 0);
+        const floatSpeed = 0.0002 + ((p.originalX % 100)/200000);
+        const offsetX = Math.cos(currentTime * floatSpeed + p.originalX * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.5);
+        const offsetY = Math.sin(currentTime * floatSpeed + p.originalY * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.5) * 0.6;
         
-        // Dynamic opacity based on wing type and interaction
+        const springTargetX = p.targetX + offsetX;
+        const springTargetY = p.targetY + offsetY;
+
+        const forceX = (springTargetX - p.x) * springK;
+        const forceY = (springTargetY - p.y) * springK;
+        
+        p.vx += forceX;
+        p.vy += forceY;
+        
+        p.vx *= damping;
+        p.vy *= damping;
+
+        if (mousePos) {
+          const dxParticleMouse = p.x - mousePos.x;
+          const dyParticleMouse = p.y - mousePos.y;
+          const distParticleMouse = Math.sqrt(dxParticleMouse * dxParticleMouse + dyParticleMouse * dyParticleMouse);
+          const repulsionRadiusParticle = width * 0.045;
+
+          if (distParticleMouse < repulsionRadiusParticle && distParticleMouse > 0) {
+            const angle = Math.atan2(dyParticleMouse, dxParticleMouse);
+            const pushForceStrength = (repulsionRadiusParticle - distParticleMouse) / repulsionRadiusParticle;
+            p.vx += Math.cos(angle) * pushForceStrength * 1.0; 
+            p.vy += Math.sin(angle) * pushForceStrength * 1.0;
+            lastInteractionTimeRef.current = Date.now();
+          }
+        }
         const baseOpacity = p.wing === 'body' ? 0.9 : (p.isEdge ? 0.6 : 0.8);
         const flickerEffect = Math.sin(currentTime * 0.0004 + p.originalX * 0.02) * 0.1;
         p.opacity = baseOpacity + flickerEffect;
@@ -384,117 +551,72 @@ const EtherealButterfly = () => {
 
       if (p.formed) formedCount++;
 
-      // Apply velocity if not formed or in specific states
-      if (!p.formed || state === 'playground') {
+      // Apply velocity to position
+      // For 'forming' state, position is directly interpolated.
+      // Velocities are primarily active in 'playground' and 'formed' states.
+      if (state === 'playground' || state === 'formed') {
         p.x += p.vx;
         p.y += p.vy;
       }
-      
+
+      // Boundary conditions
       if (state === 'playground') {
-        if (p.x < p.radius || p.x > width - p.radius) { p.vx *= -0.6; p.x = Math.max(p.radius, Math.min(p.x, width - p.radius)); }
-        if (p.y < p.radius || p.y > height - p.radius) { p.vy *= -0.6; p.y = Math.max(p.radius, Math.min(p.y, height - p.radius)); }
+        if (p.x > width - p.radius || p.x < p.radius) {
+          p.vx *= -0.8; // Bounce with some energy loss
+          p.x = Math.max(p.radius, Math.min(p.x, width - p.radius)); // Clamp position
+        }
+        if (p.y > height - p.radius || p.y < p.radius) {
+          p.vy *= -0.8;
+          p.y = Math.max(p.radius, Math.min(p.y, height - p.radius));
+        }
+      } else if (state === 'formed') {
+        // Clamp particle positions to be within the canvas,
+        // as spring targets (p.targetX, p.targetY) are already clamped.
+        p.x = Math.max(p.radius, Math.min(p.x, width - p.radius));
+        p.y = Math.max(p.radius, Math.min(p.y, height - p.radius));
       }
-      
+
+      // Update SVG element attributes
       p.element.setAttribute('cx', p.x.toString());
       p.element.setAttribute('cy', p.y.toString());
-      p.element.setAttribute('opacity', p.opacity.toString());
-      p.element.setAttribute('r', p.radius.toString());
-    });
+      p.element.setAttribute('fill-opacity', p.opacity.toString());
+      // Ensure p.radius and p.color are correctly assigned to particles
+      if (p.radius) { // Add check if p.radius might be undefined initially
+        p.element.setAttribute('r', p.radius.toString());
+      }
+      if (p.color) { // Add check if p.color might be undefined initially
+        p.element.setAttribute('fill', p.color);
+      }
+
+      // Apply 3D filter effect
+      if (state === 'formed' || (state === 'forming' && p.progress > 0.5)) {
+        p.element.setAttribute('filter', 'url(#monarchParticle3D)');
+      } else {
+        p.element.removeAttribute('filter');
+      }
+    }); // End of particles.forEach
 
     if (state === 'forming') {
-      const progressSum = particles.reduce((acc, curr) => acc + curr.progress, 0);
-      const overallProgress = particles.length > 0 ? progressSum / particles.length : 0;
-      setStats(prev => ({ ...prev, formationProgress: Math.round(overallProgress * 100), particleCount: particles.length }));
-      
-      if (overallProgress >= 0.99 && particles.every(p => p.formed || p.progress >= 0.99)) {
-        console.log('[EtherealButterflySVG] All particles appear formed.');
-        setAnimationState('formed');
-        animationStateRef.current = 'formed';
+      // Smoothly update the formation progress based on the number of formed particles
+      const newProgress = (formedCount / particles.length) * 100;
+      setStats(prev => ({ ...prev, formationProgress: newProgress }));
+
+      // If nearly all particles are formed, snap to 100% to avoid stuck progress
+      if (newProgress >= 99 && stats.formationProgress < 99) {
         setStats(prev => ({ ...prev, formationProgress: 100 }));
       }
     } else if (state === 'formed') {
-        setStats(prev => ({ ...prev, particleCount: formedCount }));
-    }
-  }, []);
-
-
-  const createRippleEffect = useCallback((x: number, y: number) => {
-    if (!svgRef.current || animationStateRef.current !== 'formed') return;
-    
-    const ripple = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    ripple.setAttribute('cx', x.toString());
-    ripple.setAttribute('cy', y.toString());
-    ripple.setAttribute('r', '0');
-    ripple.setAttribute('fill', 'none');
-    ripple.setAttribute('stroke', BUTTERFLY_COLORS_THEME.ripple);
-    ripple.setAttribute('stroke-width', '1.5'); // Thinner ripple
-    ripple.setAttribute('opacity', '0.7');
-    
-    svgRef.current.appendChild(ripple);
-    
-    let startTime: number | null = null;
-    const animateRipple = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / 500, 1); 
-      const easeProgress = 1 - Math.pow(1 - progress, 2); 
-      
-      ripple.setAttribute('r', ( (svgSizeRef.current.width * 0.05) * easeProgress).toString()); // Relative size
-      ripple.setAttribute('opacity', (0.7 * (1 - progress)).toString());
-      
-      if (progress < 1) {
-        requestAnimationFrame(animateRipple);
-      } else {
-        ripple.remove();
-      }
-    };
-    requestAnimationFrame(animateRipple);
-  }, [BUTTERFLY_COLORS_THEME.ripple]);
-
-  const handleSvgClick = (event: React.MouseEvent<SVGSVGElement>) => {
-    if (animationStateRef.current === 'formed') {
-        const rect = svgRef.current?.getBoundingClientRect();
-        if (rect) {
-            createRippleEffect(event.clientX - rect.left, event.clientY - rect.top);
+        // Ensure progress is 100 if in formed state
+        if (statsRef.current.formationProgress < 100 && particles.length > 0) { // check statsRef.current
+             setStats(prev => ({ ...prev, formationProgress: 100 }));
         }
     }
-  };
+  // Ensure the dependency array for this useCallback is correct.
+  // It should include [getParticleColor, setStats, setAnimationState, statsRef, /* any other necessary stable dependencies */]
+  // For example: }, [getParticleColor, setStats, setAnimationState, statsRef]);
+  }, [getParticleColor, setStats, setAnimationState, statsRef]); // Please verify/adjust this dependency array as needed
 
-  const resetAnimation = useCallback(() => {
-    console.log('[EtherealButterflySVG] Resetting animation to playground.');
-    setAnimationState('playground');
-    animationStateRef.current = 'playground';
-    if (svgSizeRef.current.width > 0 && svgSizeRef.current.height > 0) {
-       initializePlaygroundParticles(300, svgSizeRef.current.width, svgSizeRef.current.height);
-    }
-    setStats(prev => ({ ...prev, formationProgress: 0 }));
-  }, [initializePlaygroundParticles]);
-
-  const handleFormButterflyClick = useCallback(() => {
-    console.log('[EtherealButterflySVG] Form Butterfly button clicked. Current state:', animationStateRef.current);
-    if (animationStateRef.current === 'formed') {
-      resetAnimation();
-    } else if (animationStateRef.current === 'playground') {
-      if (butterflyPoints.length > 0) {
-        console.log('[EtherealButterflySVG] Using existing points for formation.');
-        setAnimationState('forming'); 
-        animationStateRef.current = 'forming';
-        lastInteractionTimeRef.current = Date.now(); 
-        initializeFormationParticlesSVG(butterflyPoints, svgSizeRef.current.width, svgSizeRef.current.height);
-      } else {
-        console.log('[EtherealButterflySVG] Requesting butterfly points from worker (no preloaded points).');
-        workerRef.current?.postMessage({ type: 'GET_BUTTERFLY_POINTS' });
-        // Set to forming, and initialization will happen on worker message
-        setAnimationState('forming'); 
-        animationStateRef.current = 'forming';
-        lastInteractionTimeRef.current = Date.now();
-      }
-    }
-  }, [resetAnimation, butterflyPoints, initializeFormationParticlesSVG]);
-
-  useEffect(() => {
-    svgSizeRef.current = svgSize;
-  }, [svgSize]);
-
+  // Worker Initialization Effect
   useEffect(() => {
     console.log('[EtherealButterflySVG] Initializing worker.');
     const newWorker = new Worker(new URL('./butterflyWorker.ts', import.meta.url), { type: 'module' });
@@ -503,15 +625,11 @@ const EtherealButterfly = () => {
     newWorker.onerror = (error) => {
       console.error('[EtherealButterflySVG] Worker error:', error);
     };
-      newWorker.onmessage = (event: MessageEvent<ButterflyPoint[]>) => {
+    newWorker.onmessage = (event: MessageEvent<ButterflyPoint[]>) => {
       console.log('[EtherealButterflySVG] Message from worker:', event.data.length, 'points.');
       setButterflyPoints(event.data);
-      // If we are already in 'forming' state (e.g., button clicked before worker responded fully)
-      // and have a valid SVG size, initialize formation particles now.
-      if (animationStateRef.current === 'forming' && svgSizeRef.current.width > 0 && svgSizeRef.current.height > 0) {
-        console.log('[EtherealButterflySVG] Worker responded while in forming state, initializing formation particles.');
-        initializeFormationParticlesSVG(event.data, svgSizeRef.current.width, svgSizeRef.current.height);
-      }
+      // Note: No direct call to initializeFormationParticlesSVG here.
+      // The main animation effect will react to butterflyPoints state change.
     };
     newWorker.postMessage({ type: 'GET_BUTTERFLY_POINTS' }); // Initial fetch
 
@@ -520,50 +638,54 @@ const EtherealButterfly = () => {
       newWorker.terminate();
       workerRef.current = null;
     };
-  }, [initializeFormationParticlesSVG]); // Added initializeFormationParticlesSVG dependency
+  }, []); // Empty dependency array: Run once on mount, cleanup on unmount.
 
 
+  // Main Animation and Resize Effect
   useEffect(() => {
     console.log('[EtherealButterflySVG] Animation/resize effect setup.');
     const svg = svgRef.current;
     const container = svg?.parentElement;
 
     if (!svg || !container) {
-      console.log('[EtherealButterflySVG] SVG or container not available.');
+      console.log('[EtherealButterflySVG] SVG or container not available for animation setup.');
       return;
     }
-    
-    const resizeSvg = () => {
+
+    const resizeAndInitialize = () => {
       const rect = container.getBoundingClientRect();
       const newWidth = rect.width;
       const newHeight = rect.height;
 
+      if (newWidth === 0 || newHeight === 0) {
+        console.log('[EtherealButterflySVG] Resize skipped: zero dimensions');
+        return; 
+      }
+
       svg.setAttribute('width', newWidth.toString());
-      svg.setAttribute('height', newHeight.toString()); // Corrected typo
+      svg.setAttribute('height', newHeight.toString());
       svg.setAttribute('viewBox', `0 0 ${newWidth} ${newHeight}`);
       
+      svgSizeRef.current = { width: newWidth, height: newHeight };
       setSvgSize({ width: newWidth, height: newHeight }); 
       console.log('[EtherealButterflySVG] SVG resized to:', newWidth, newHeight);
-      
+
       if (animationStateRef.current === 'playground') {
+        console.log('[EtherealButterflySVG] (Re)initializing playground particles due to resize/effect update.');
         initializePlaygroundParticles(300, newWidth, newHeight);
-      } else if (animationStateRef.current === 'formed' || animationStateRef.current === 'forming') {
-        if (butterflyPoints.length > 0) { // Use existing points if available
-            console.log('[EtherealButterflySVG] Resizing, re-initializing formation with existing points.');
-            initializeFormationParticlesSVG(butterflyPoints, newWidth, newHeight);
-            if(animationStateRef.current === 'forming') lastInteractionTimeRef.current = Date.now();
-        } else { // Otherwise, re-fetch from worker
-            console.log('[EtherealButterflySVG] Resizing, no points, re-fetching from worker.');
-            workerRef.current?.postMessage({ type: 'GET_BUTTERFLY_POINTS' }); 
+      } else if (animationStateRef.current === 'forming' || animationStateRef.current === 'formed') {
+        if (butterflyPoints.length > 0) {
+          console.log('[EtherealButterflySVG] (Re)initializing formation particles due to resize/effect update with points.');
+          initializeFormationParticlesSVG(butterflyPoints, newWidth, newHeight);
+          if(animationStateRef.current === 'forming') lastInteractionTimeRef.current = Date.now();
+        } else {
+          console.log('[EtherealButterflySVG] (Re)initializing formation (or fallback) due to resize/effect update without points (worker might not have responded yet or no points defined).');
+          initializeFormationParticlesSVG([], newWidth, newHeight); // Will fallback to playground if points are empty
         }
       }
     };
 
-    resizeSvg(); 
-    if (animationStateRef.current === 'playground' && svgSizeRef.current.width > 0 && svgSizeRef.current.height > 0) {
-        // Ensure playground particles are there if starting in that state with size
-        initializePlaygroundParticles(300, svgSizeRef.current.width, svgSizeRef.current.height);
-    }
+    resizeAndInitialize();
 
     const handleMouseMove = (event: MouseEvent) => {
       const r = svg.getBoundingClientRect();
@@ -584,7 +706,7 @@ const EtherealButterfly = () => {
 
     container.addEventListener('mousemove', handleMouseMove);
     container.addEventListener('touchmove', handleTouchMove, { passive: true });
-    window.addEventListener('resize', resizeSvg);
+    window.addEventListener('resize', resizeAndInitialize);
 
     const animate = (time: number) => {
       if (svgSizeRef.current.width === 0 || svgSizeRef.current.height === 0) {
@@ -629,15 +751,16 @@ const EtherealButterfly = () => {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       container.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('resize', resizeSvg);
+      window.removeEventListener('resize', resizeAndInitialize);
       particlesRef.current.forEach(p => p.element?.remove());
       particlesRef.current = [];
-      setFloatingElements([]); // Clear floating elements
+      setFloatingElements([]);
     };
   }, [initializePlaygroundParticles, initializeFormationParticlesSVG, updateAndDrawSvgParticles, butterflyPoints]);
 
   useEffect(() => {
-    animationStateRef.current = animationState;
+    // This effect logs changes to animationState, can be useful for debugging
+    // console.log('[EtherealButterflySVG] Animation state changed to:', animationState);
   }, [animationState]);
 
   const floatingElementsStyle = useMemo(() => {
@@ -662,6 +785,45 @@ const EtherealButterfly = () => {
   }, [floatingElements, BUTTERFLY_COLORS_THEME.gold]);
 
 
+  const handleSvgClick = useCallback(() => {
+    console.log('SVG canvas clicked. Current animation state:', animationStateRef.current);
+    // Currently, no specific action is tied to a generic SVG click to avoid conflict with dedicated buttons.
+    // This can be expanded later if specific interactions are needed for direct SVG clicks.
+  }, [animationStateRef]); // animationStateRef is a ref, its identity is stable
+
+  const handleFormButterflyClick = useCallback(() => {
+    console.log('Form Butterfly button onClick triggered');
+    const currentState = animationStateRef.current;
+    const newWidth = svgSizeRef.current.width;
+    const newHeight = svgSizeRef.current.height;
+
+    if (!svgRef.current || newWidth === 0 || newHeight === 0) {
+      console.warn('[EtherealButterflySVG] Cannot change state: SVG not ready or size is zero.');
+      return;
+    }
+
+    if (currentState === 'playground') {
+      setAnimationState('forming');
+      animationStateRef.current = 'forming';
+      lastInteractionTimeRef.current = Date.now();
+      // Initialize with current butterflyPoints; if empty, worker might still be fetching
+      // or initializeFormationParticlesSVG will handle the fallback to playground if points are truly unavailable.
+      initializeFormationParticlesSVG(butterflyPoints, newWidth, newHeight);
+    } else if (currentState === 'formed' || currentState === 'forming') {
+      // Allow interrupting 'forming' state and returning to 'playground'
+      setAnimationState('playground');
+      animationStateRef.current = 'playground';
+      lastInteractionTimeRef.current = Date.now();
+      initializePlaygroundParticles(300, newWidth, newHeight);
+    }
+  }, [
+    butterflyPoints, 
+    initializeFormationParticlesSVG, 
+    initializePlaygroundParticles, 
+    setAnimationState,
+    // svgSizeRef, animationStateRef, lastInteractionTimeRef are refs and don't need to be in deps
+  ]);
+
   return (
     <ButterflyErrorBoundary fallbackMessage="The Ethereal Butterfly animation encountered an issue.">
       <style>{floatingElementsStyle}</style>
@@ -682,101 +844,105 @@ const EtherealButterfly = () => {
             pointerEvents: 'auto', 
           }}
         >
-            {/* Optional: Define SVG filters here if needed for 3D effect */}
-            {/* 
             <defs>
-                <filter id="particleGlow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+                <filter id="monarchParticle3D" x="-50%" y="-50%" width="200%" height="200%">
+                    {/* Adjusted stdDeviation for a more subtle 3D effect, less blurry */}
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="0.8" result="blur"/>
+                    {/* Offset to create a slight shadow/depth */}
+                    <feOffset in="blur" dx="0.7" dy="0.7" result="offsetBlur"/>
+                    
+                    {/* Specular lighting for a hint of shine on particles */}
+                    <feSpecularLighting in="blur" surfaceScale="3" specularConstant=".75" specularExponent="20" lightingColor="#fed850" result="specOut">
+                        <fePointLight x="-5000" y="-10000" z="20000"/>
+                    </feSpecularLighting>
+                    <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+                    <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+
+                    {/* Combine the offset blur (shadow) and the lit paint (main particle color with highlight) */}
                     <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
+                        <feMergeNode in="offsetBlur"/> 
+                        <feMergeNode in="litPaint"/> 
                     </feMerge>
                 </filter>
             </defs>
-            */}
         </svg>
-        
-        {animationStateRef.current === 'playground' && (
-          <div style={{
-            position: 'absolute', top: 'calc(10% + 40px)', left: '50%',
-            transform: 'translateX(-50%)', color: 'rgba(240, 240, 240, 0.8)', // Off-white
-            fontSize: '1.2rem', textAlign: 'center', pointerEvents: 'none', zIndex: 5,
-            textShadow: '0 0 8px rgba(0,0,0,0.6)'
-          }}>
-            Playground Mode: Particles react to mouse
-          </div>
-        )}
-
-        <button
-          onClick={handleFormButterflyClick}
-          style={{
-            position: 'absolute', bottom: '30px', left: '50%',
-            transform: 'translateX(-50%)', padding: '12px 28px', fontSize: '1rem',
-            fontWeight: '600', color: '#FFD700', background: 'rgba(40, 40, 70, 0.35)',
-            backdropFilter: 'blur(12px) saturate(150%)', WebkitBackdropFilter: 'blur(12px) saturate(150%)',
-            border: '1px solid rgba(255, 215, 0, 0.5)', borderRadius: '12px',
-            cursor: 'pointer', zIndex: 100, pointerEvents: 'auto',
-            boxShadow: '0 8px 24px 0 rgba(255, 215, 0, 0.2)',
-            transition: 'all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)',
-          }}
-          onMouseEnter={(e) => {
-            const target = e.currentTarget;
-            target.style.background = 'rgba(50, 50, 80, 0.5)';
-            target.style.boxShadow = '0 10px 30px 0 rgba(255, 215, 0, 0.3)';
-            target.style.transform = 'translateX(-50%) scale(1.03)';
-            target.style.color = '#FFFFA0';
-          }}
-          onMouseLeave={(e) => {
-            const target = e.currentTarget;
-            target.style.background = 'rgba(40, 40, 70, 0.35)';
-            target.style.boxShadow = '0 8px 24px 0 rgba(255, 215, 0, 0.2)';
-            target.style.transform = 'translateX(-50%) scale(1)';
-            target.style.color = '#FFD700';
-          }}
-        >
-          {animationStateRef.current === 'formed' ? 'Replay Animation' : 'Form Butterfly'}
-        </button>
-
-        <button
-            onClick={() => setShowStats(s => !s)}
-            style={{
-                position: 'absolute', bottom: '30px', right: '30px',
-                padding: '10px 20px', fontSize: '0.9rem', fontWeight: '500',
-                color: 'rgba(240,240,240,0.9)', background: 'rgba(70, 70, 100, 0.3)', // Off-white text
-                backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
-                border: '1px solid rgba(255, 255, 255, 0.3)', borderRadius: '8px',
-                cursor: 'pointer', zIndex: 100, pointerEvents: 'auto',
-                transition: 'all 0.2s ease',
+          <div style={{ position: 'absolute', top: '30px', left: '30px', zIndex: 150, display: 'flex', gap: '10px', pointerEvents: 'auto' }}>
+          <button 
+            onClick={handleFormButterflyClick}
+            onMouseEnter={() => console.log('Form Butterfly button mouse enter')}
+            onMouseLeave={() => console.log('Form Butterfly button mouse leave')}
+            onMouseDown={() => console.log('Form Butterfly button mouse down')}
+            title={animationState === 'playground' || animationState === 'forming' ? 'Assemble the butterfly' : 'Disperse particles into playground mode'}
+            style={{ 
+              padding: '10px 15px', 
+              background: 'rgba(255,255,255,0.15)', 
+              border: '1px solid rgba(255,255,255,0.4)', 
+              borderRadius: '8px', 
+              color: isDark ? 'white' : '#1f2937', // Adjusted for light mode
+              cursor: 'pointer', 
+              backdropFilter: 'blur(5px) saturate(150%)',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              pointerEvents: 'auto' // Explicitly ensure pointer events work
             }}
-             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(80, 80, 110, 0.4)';}}
-             onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(70, 70, 100, 0.3)';}}
-        >
-            {showStats ? 'Hide Stats' : 'Show Stats'}
-        </button>
+          >
+            {animationState === 'playground' || animationState === 'forming' ? <PlayCircle size={18} /> : <Palette size={18} />}
+            {animationState === 'playground' || animationState === 'forming' ? 'Form Butterfly' : 'Playground Mode'}
+          </button>
+        </div>
 
-        {showStats && (
+        <div style={{ position: 'absolute', bottom: '30px', right: '30px', zIndex: 150, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px', pointerEvents: 'auto' }}>
+          {showStats && (
             <div style={{
-                position: 'absolute', top: '20px', right: '20px',
-                background: 'rgba(20, 20, 40, 0.75)', backdropFilter: 'blur(10px) saturate(120%)',
-                border: '1px solid rgba(255, 215, 0, 0.4)', borderRadius: '12px',
-                padding: '15px 20px', color: '#FFD700', 
-                zIndex: 90, pointerEvents: 'none', minWidth: '180px',
-                boxShadow: '0 6px 20px rgba(0,0,0,0.35)', fontFamily: 'Arial, sans-serif'
+              background: 'rgba(10, 10, 20, 0.85)', // Dark, slightly blueish, more opaque
+              color: '#E0E0E0', // Softer white
+              padding: '15px',
+              borderRadius: '10px',
+              width: '200px', // Slightly wider
+              boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(8px) saturate(120%)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              fontFamily: 'Arial, Helvetica, sans-serif', // Clear, readable font
+              fontSize: '0.9em',
+              lineHeight: '1.7',
+              textAlign: 'left'
             }}>
-                <div style={{ marginBottom: '12px', textAlign: 'left', borderBottom: '1px solid rgba(255,215,0,0.2)', paddingBottom:'8px' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'rgba(240,240,240,0.8)' }}>Particles: </span>
-                    <span style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{stats.particleCount}</span>
-                </div>
-                <div style={{ marginBottom: '12px', textAlign: 'left', borderBottom: '1px solid rgba(255,215,0,0.2)', paddingBottom:'8px' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'rgba(240,240,240,0.8)' }}>Formation: </span>
-                    <span style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{stats.formationProgress}%</span>
-                </div>
-                <div style={{ textAlign: 'left' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'rgba(240,240,240,0.8)' }}>FPS: </span>
-                    <span style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{stats.fps}</span>
-                </div>
+              <h4 style={{ margin: '0 0 10px 0', fontSize: '1.1em', color: '#FFFFFF', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '5px' }}>Performance Stats</h4>
+              <p style={{margin: '3px 0'}}>Particles: <span style={{float: 'right', fontWeight: 'bold'}}>{stats.particleCount}</span></p>
+              <p style={{margin: '3px 0'}}>FPS: <span style={{float: 'right', fontWeight: 'bold'}}>{stats.fps}</span></p>
+              { (animationState === 'forming' || animationState === 'formed') &&
+                <p style={{margin: '3px 0'}}>Formation: <span style={{float: 'right', fontWeight: 'bold'}}>{stats.formationProgress}%</span></p>
+              }
+              <p style={{margin: '3px 0'}}>Mode: <span style={{float: 'right', fontWeight: 'bold', textTransform: 'capitalize'}}>{animationState}</span></p>
             </div>
-        )}
+          )}
+          <button 
+            onClick={() => {
+              // Add console.log here
+              console.log('Show/Hide Stats button onClick triggered');
+              setShowStats(s => !s);
+            }} 
+            title={showStats ? "Hide performance statistics" : "Show performance statistics"}
+            style={{ 
+              padding: '10px 15px', 
+              background: 'rgba(255,255,255,0.15)', 
+              border: '1px solid rgba(255,255,255,0.4)', 
+              borderRadius: '8px', 
+              color: isDark ? 'white' : '#1f2937', // Adjusted for light mode
+              cursor: 'pointer', 
+              backdropFilter: 'blur(5px) saturate(150%)',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            {showStats ? <EyeOff size={18} /> : <Eye size={18} />}
+            {showStats ? 'Hide Stats' : 'Show Stats'}
+          </button>
+        </div>
       </div>
     </ButterflyErrorBoundary>
   );
@@ -785,81 +951,212 @@ const EtherealButterfly = () => {
 // --- END OF MERGED ETHEREAL BUTTERFLY SECTION ---
 
 
-const HeaderWithParticlesOptimized: React.FC<HeaderProps> = ({ isActive, scrollToSection, playClickSound }) => {
-  const { isDark } = useTheme();
-  const sectionNames = useMemo(() => ['Features', 'How It Works', 'Feedback', 'Join'], []);
+const HeaderWithParticlesOptimized: React.FC<HeaderProps> = ({ isActive, sectionName, scrollToSection, playClickSound: playClickSoundProp }) => {
+  const { isSoundEnabled } = useSound(); 
+  const { isDark, toggleTheme } = useTheme();
+  const [showHint, setShowHint] = useState(true);
+  const welcomeTitleRef = useRef<HTMLHeadingElement>(null); 
+  const [butterflyTargetPos, setButterflyTargetPos] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+
+  useEffect(() => {
+    const calculateTargetPosition = () => {
+      if (welcomeTitleRef.current) {
+        const headerElement = document.getElementById('home-header');
+        if (!headerElement) return;
+
+        const headerRect = headerElement.getBoundingClientRect();
+        const titleRect = welcomeTitleRef.current.getBoundingClientRect();
+
+        const targetX = (titleRect.left - headerRect.left) + titleRect.width / 2;
+        const targetY = (titleRect.top - headerRect.top) + titleRect.height / 2;
+        
+        setButterflyTargetPos({
+          x: targetX,
+          y: targetY,
+          width: titleRect.width,
+          height: titleRect.height,
+        });
+      }
+    };
+
+    calculateTargetPosition();
+    window.addEventListener('resize', calculateTargetPosition);
+    const timeoutId = setTimeout(calculateTargetPosition, 200);
+
+    return () => {
+      window.removeEventListener('resize', calculateTargetPosition);
+      clearTimeout(timeoutId);
+    };
+  }, [isDark]); 
+
+  useEffect(() => {
+    // Log theme changes, can be useful for debugging
+    console.log('[HeaderWithParticlesOptimized] Theme changed:', isDark ? 'Dark' : 'Light');
+  }, [isDark]);
+
+  // Base styles that are consistent
+  const headerBaseStyle: React.CSSProperties = {
+    position: 'relative',
+    width: '100%',
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    padding: '20px', // p-5 equivalent
+    textAlign: 'center',
+    zIndex: 1,
+    color: isDark ? 'white' : '#1f2937', // Tailwind text-white or text-gray-800
+    transition: 'background-color 0.5s ease-in-out, color 0.5s ease-in-out', // Added color transition
+  };
+
+  // Dynamic styles that change with the theme
+  const headerDynamicStyle: React.CSSProperties = isDark
+  ? { background: '#0a0a0a' } // Slightly off-black for dark mode
+  : {
+      // Glassmorphism for light mode
+      background: 'linear-gradient(135deg, rgba(235, 245, 255, 0.7) 0%, rgba(210, 225, 245, 0.55) 100%)', // Adjusted alpha
+      backdropFilter: 'blur(10px) saturate(150%)', // Adjusted blur/saturate
+      WebkitBackdropFilter: 'blur(10px) saturate(150%)',
+      borderBottom: `1px solid rgba(200, 210, 230, 0.35)`, // Slightly more visible border
+      boxShadow: '0 6px 25px rgba(0,0,0,0.08)', // Adjusted shadow
+    };
+  
+  const headerStyle = { ...headerBaseStyle, ...headerDynamicStyle };
 
   return (
-    <header 
-      className="relative w-full h-screen flex flex-col items-center justify-center text-center text-white overflow-hidden"
-      style={{
-        background: isDark 
-          ? 'linear-gradient(135deg, #0a0f1a 0%, #1a2238 100%)' 
-          : 'linear-gradient(135deg, #6DD5FA 0%, #2980B9 100%)', // Example light theme for non-dark mode
-      }}
-    >
-      <div className="relative z-20 flex flex-col items-center px-4">
-        <div className="mb-8">
-          <Logo3DHyperRealistic />
-        </div>
-        <h1 className="text-5xl md:text-4xl font-bold mb-4 animate-fade-in-down" style={{textShadow: '0 2px 4px rgba(0,0,0,0.5)'}}>
-          WELCOME TO GLOHSEN: YOUR STORY STARTS HERE
-        </h1>
-        <p className="text-lg md:text-xl mb-8 animate-fade-in-up max-w-xl" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>
-          Navigate your journey through the healthcare story with interactive visuals and engaging content. Have Fun. Feel the Magical Transformation.
-        </p>
-        <div className="flex space-x-4 animate-fade-in-up animation-delay-500">
-          <Link 
-            to="/features"
-            onClick={playClickSound} 
-            className="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
-          >
-            Discover Features
-          </Link>
-          <Link 
-            to="/join"
-            onClick={playClickSound} 
-            className="px-8 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
-          >
-            Join Community
-          </Link>
-        </div>
-      </div>
+    <>
+      <GlobalStyles />
+      <header
+        id="home-header"
+        className={`relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden text-center p-5`}
+        style={headerStyle} 
+      >
+        <EtherealButterfly butterflyTargetPosition={butterflyTargetPos} />
 
-      <div className="absolute top-8 right-8 flex items-center space-x-6 z-50">
-        <nav className="hidden md:flex space-x-6">
-          {sectionNames.map((item, index) => (
-            <button
-              key={item}
+        {showHint && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '15px', // Slightly lower
+              left: '50%',
+              transform: 'translateX(-50%)',
+              padding: '6px 12px',
+              background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)',
+              color: isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.65)',
+              borderRadius: '6px',
+              fontSize: '0.8rem', // Slightly larger
+              fontWeight: '400',
+              zIndex: 100,
+              cursor: 'pointer',
+              transition: 'opacity 0.3s ease, background 0.3s ease',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            }}
+            onClick={() => setShowHint(false)}
+            title="Press ESC to dismiss. Click butterfly icon to assemble/disperse particles."
+          >
+            PLAYGROUND MODE: PARTICLES INTERACT WITH MOUSE. USE BUTTERFLY ICON TO TOGGLE FORMATION.
+          </div>
+        )}        <div className="absolute top-4 right-4 lg:top-6 lg:right-6 flex items-center space-x-2 md:space-x-3 z-20">
+          <ThemeToggle />
+          <nav className="flex items-center space-x-2 md:space-x-3">
+            <Link
+              to="/about-us"
+              className="nav-button nav-button-gold text-xs sm:text-sm"
               onClick={() => {
-                if (playClickSound) playClickSound();
-                if (scrollToSection) {
-                  const sectionIndexMap: { [key: string]: number } = {
-                    'Features': 1, 
-                    'How It Works': 2,
-                    'Feedback': 3,
-                    'Join': 4, 
-                  };
-                  const targetIndex = sectionIndexMap[item];
-                  if (targetIndex !== undefined) {
-                    scrollToSection(targetIndex);
-                  } else {
-                    console.warn(`Scroll target for "${item}" not found.`); // Corrected template literal
-                  }
-                }
+                if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
               }}
-              className="text-white hover:text-yellow-400 transition-colors duration-300 text-lg"
             >
-              {item}
-            </button>
-          ))}
-        </nav>
-        <ThemeToggle />
-      </div>
-      
-      {isActive && <EtherealButterfly />}
+              ABOUT US
+            </Link>
+            <Link
+              to="/signin"
+              className="nav-button nav-button-gold text-xs sm:text-sm"
+              onClick={() => {
+                if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
+              }}
+            >
+              SIGN IN
+            </Link>
+            <Link
+              to="/signup"
+              className="nav-button nav-button-gold text-xs sm:text-sm"
+              onClick={() => {
+                if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
+              }}
+            >
+              SIGN UP
+            </Link>
+            <Link
+              to="/feedback"
+              className="nav-button nav-button-gold text-xs sm:text-sm"
+              onClick={() => {
+                if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
+              }}
+            >
+              LEAVE FEEDBACK
+            </Link>
+            <Link
+              to="/games-quizzes"
+              className="nav-button nav-button-gold text-xs sm:text-sm"
+              onClick={() => {
+                if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
+              }}
+            >
+              GAMES & QUIZZES
+            </Link>
+            <Link
+              to="/community-forum"
+              className="nav-button nav-button-gold text-xs sm:text-sm"
+              onClick={() => {
+                if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
+              }}
+            >
+              COMMUNITY
+            </Link>
+            <Link
+              to="/blog"
+              className="nav-button nav-button-gold text-xs sm:text-sm"
+              onClick={() => {
+                if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
+              }}
+            >
+              BLOG
+            </Link>
+          </nav>
+        </div>
 
-    </header>
+        {/* Main Content Area */}
+        <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 pt-16 sm:pt-20">
+          <div className="mb-6 md:mb-8">
+            {/* Removed isDarkTheme prop as it's not accepted by Logo3DHyperRealistic */}
+            <Logo3DHyperRealistic size={isDark ? 140 : 130} />
+          </div>
+          <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 tracking-tight leading-tight ${isDark ? 'shine-text' : 'shine-text-light'}`}>
+            WELCOME TO GLOHSEN: <br className="hidden sm:block" /> EMPOWERING YOUR HEALTHCARE STORY
+          </h1>
+          <p className={`text-base sm:text-lg md:text-xl max-w-xl md:max-w-2xl mb-6 md:mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            Revolutionizing career development and community health engagement through innovative technology.
+          </p>
+          
+          {scrollToSection && (
+            <button
+              onClick={() => {
+                if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
+                scrollToSection(1); // Assuming section 1 is the next section after header
+              }}
+              className="glassmorphic-gold-button mt-6 md:mt-8 px-6 py-2.5 sm:px-8 sm:py-3 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out group flex items-center justify-center"
+              style={{ color: isDark ? '#FFD700' : '#1f2937' }} // Dynamic color for Explore button
+              aria-label="Scroll to next section"
+            >
+              <span className="mr-2">Explore</span>
+              <span className="bouncing-arrow">&gt;&gt;</span>
+            </button>
+          )}
+        </div>
+      </header>
+    </>
   );
 };
 

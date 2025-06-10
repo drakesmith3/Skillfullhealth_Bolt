@@ -313,7 +313,7 @@ const GamesQuizzes = ({ isActive = false, playClickSound }) => {
           {/* Column 1: Professional Parallax Carousel */}
         <div className="parallax-3d">
           <h3 className="text-xl sm:text-2xl font-bold mb-4 text-center">
-            <span className="bg-gradient-to-r from-black via-grey-800 to-black text-transparent bg-clip-text">
+            <span className={`bg-gradient-to-r ${isDark ? 'from-white via-gray-300 to-white' : 'from-black via-gray-800 to-black'} text-transparent bg-clip-text`}>
               Interactive Games
             </span>
           </h3>
@@ -449,7 +449,7 @@ const GamesQuizzes = ({ isActive = false, playClickSound }) => {
         </div>        {/* Column 2: Medical Quiz Carousel */}
         <div className="parallax-3d">
           <h3 className="text-xl sm:text-2xl font-bold mb-4 text-center">
-            <span className="bg-gradient-to-r from-black via-gray-800 to-black text-transparent bg-clip-text">
+            <span className={`bg-gradient-to-r ${isDark ? 'from-white via-gray-300 to-white' : 'from-black via-gray-800 to-black'} text-transparent bg-clip-text`}>
               Medical Quizzes
             </span>
           </h3>

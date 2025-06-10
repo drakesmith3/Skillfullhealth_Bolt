@@ -105,12 +105,8 @@ const Features: React.FC<FeaturesProps> = ({ isActive = false, playClickSound })
           <span className={isDark
             ? 'animated-shine-text'
             : 'bg-gradient-to-r from-red-600 via-amber-400 to-red-600 text-transparent bg-clip-text'}>
-            THE GLOHSEN STANDARD FOR ALL
-          </span>
-          <span className="features-flip-container mx-4">
-            <div className={`features-flip-items ${isDark
-              ? 'animated-shine-text'
-              : 'text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-amber-400 to-red-600'}`}>
+            THE GLOHSEN STANDARD FOR ALL          </span>          <span className="features-flip-container mx-4">
+            <div className="features-flip-items">
                <div>STAKEHOLDERS</div>
                <div>CLIENTS</div>
                <div>PROFESSIONALS</div>
