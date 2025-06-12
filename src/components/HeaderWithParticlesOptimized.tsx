@@ -339,8 +339,9 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
         id: `p_playground_${i}_${Date.now()}`,
         element: null,
         x: Math.random() * width,
-        y: Math.random() * height,        vx: (Math.random() - 0.5) * 3.0,  // Significantly increased initial velocity
-        vy: (Math.random() - 0.5) * 3.0,  // Significantly increased initial velocity
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 1.5,  // Increased initial velocity
+        vy: (Math.random() - 0.5) * 1.5,  // Increased initial velocity
         radius: Math.random() * 2.5 + 1, // Slightly larger particles
         color: getParticleColor('playground', isEdge, 'playground', distanceToCenter),
         opacity: Math.random() * 0.6 + 0.4, // Better visibility
@@ -403,15 +404,18 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
       const yFormationOffset = butterflyTargetPosition ? - (scale * 0.3) : 0; 
 
       const targetX = formationOrigin.x + bPoint.x * scale;
-      const targetY = formationOrigin.y + yFormationOffset + bPoint.y * scale;      const particle: SvgParticle = {
+      const targetY = formationOrigin.y + yFormationOffset + bPoint.y * scale;
+
+      const particle: SvgParticle = {
         id: `p_form_${i}_${Date.now()}`, // More unique ID
         element: null,
         x: Math.random() * width, 
-        y: Math.random() * height,        vx: (Math.random() - 0.5) * 4.0, // Significantly increased initial velocity for formation
-        vy: (Math.random() - 0.5) * 4.0,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 1,
+        vy: (Math.random() - 0.5) * 1,
         radius: Math.random() * 1.5 + 0.8, 
         color: getParticleColor(bPoint.wing, bPoint.isEdge, 'forming', bPoint.distanceToCenter),
-        opacity: 0.2, // Start more visible
+        opacity: 0.1, 
         targetX: targetX,
         targetY: targetY,
         originalX: Math.random() * width, // Store initial random for potential effects
@@ -440,19 +444,10 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
     particles.forEach(p => {
       if (!p.element) return;      if (state === 'playground') {
         // Add constant gentle motion for playground particles
-        const timeBasedX = Math.sin(currentTime * 0.0015 + p.originalX * 0.01) * 0.8; // Increased frequency and amplitude
-        const timeBasedY = Math.cos(currentTime * 0.0012 + p.originalY * 0.01) * 0.6; // Increased frequency and amplitude
-        p.vx += timeBasedX * 0.05; // Increased force multiplier
-        p.vy += timeBasedY * 0.05; // Increased force multiplier        // Add some random drift to make particles more lively
-        p.vx += (Math.random() - 0.5) * 0.02;
-        p.vy += (Math.random() - 0.5) * 0.02;
-
-        // Add swirling motion for some particles
-        if (Math.random() < 0.3) { // 30% of particles get swirling motion
-          const swirl = Math.sin(currentTime * 0.001 + p.originalX) * 0.3;
-          p.vx += swirl * 0.03;
-          p.vy += Math.cos(currentTime * 0.001 + p.originalY) * 0.02;
-        }
+        const timeBasedX = Math.sin(currentTime * 0.0008 + p.originalX * 0.01) * 0.3;
+        const timeBasedY = Math.cos(currentTime * 0.0006 + p.originalY * 0.01) * 0.2;
+        p.vx += timeBasedX * 0.02;
+        p.vy += timeBasedY * 0.02;
 
         // Enhanced mouse interaction with attraction/repulsion zones
         if (mousePos) {
@@ -475,9 +470,11 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
             p.vx += Math.cos(angle) * force * 0.5;
             p.vy += Math.sin(angle) * force * 0.5;
           }
-        }        // Apply drag but maintain some motion
-        p.vx *= 0.92; // Reduced drag for more sustained motion
-        p.vy *= 0.92;} else if (state === 'forming' && p.targetX !== null && p.targetY !== null) {
+        }
+
+        // Apply drag but maintain some motion
+        p.vx *= 0.85; // Reduced drag for more fluid motion
+        p.vy *= 0.85;      } else if (state === 'forming' && p.targetX !== null && p.targetY !== null) {
         const formationStartTime = lastInteractionTimeRef.current; 
         const staggerFactor = (p.originalX * p.originalY) % 500; // Stagger based on original random position
         const formationDuration = 2500; // Increased duration for better visualization
@@ -488,16 +485,17 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
                p.progress = Math.min(1, timeSinceFormationStart / (formationDuration - staggerFactor > 0 ? formationDuration - staggerFactor : formationDuration));
           }
         }
-          // Continue playground motion while forming for visual transition
+        
+        // Continue playground motion while forming for visual transition
         if (p.progress < 0.3) {
-          const timeBasedX = Math.sin(currentTime * 0.0015 + p.originalX * 0.01) * 0.6; // Increased motion during formation
-          const timeBasedY = Math.cos(currentTime * 0.0012 + p.originalY * 0.01) * 0.4;
-          p.vx += timeBasedX * 0.03 * (1 - p.progress * 3); // Reduce as formation progresses
-          p.vy += timeBasedY * 0.03 * (1 - p.progress * 3);
+          const timeBasedX = Math.sin(currentTime * 0.0008 + p.originalX * 0.01) * 0.2;
+          const timeBasedY = Math.cos(currentTime * 0.0006 + p.originalY * 0.01) * 0.15;
+          p.vx += timeBasedX * 0.015 * (1 - p.progress * 3); // Reduce as formation progresses
+          p.vy += timeBasedY * 0.015 * (1 - p.progress * 3);
           
           // Maintain some playground drag
-          p.vx *= 0.90; // Slightly higher drag during formation
-          p.vy *= 0.90;
+          p.vx *= 0.88;
+          p.vy *= 0.88;
         }
         
         const easeProgress = 1 - Math.pow(1 - p.progress, 3); // Easier curve for smoother transition
@@ -590,17 +588,17 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
 
       if (p.formed) formedCount++;      // Apply velocity to position for all states
       p.x += p.vx;
-      p.y += p.vy;        // Enhanced boundary conditions with better physics
-        if (state === 'playground') {
-          if (p.x > width - p.radius || p.x < p.radius) {
-            p.vx *= -0.8; // Slightly more elastic bounce
-            p.x = Math.max(p.radius, Math.min(p.x, width - p.radius));
-          }
-          if (p.y > height - p.radius || p.y < p.radius) {
-            p.vy *= -0.8;
-            p.y = Math.max(p.radius, Math.min(p.y, height - p.radius));
-          }
-        }else if (state === 'forming') {
+      p.y += p.vy;      // Enhanced boundary conditions with better physics
+      if (state === 'playground') {
+        if (p.x > width - p.radius || p.x < p.radius) {
+          p.vx *= -0.7; // More realistic bounce
+          p.x = Math.max(p.radius, Math.min(p.x, width - p.radius));
+        }
+        if (p.y > height - p.radius || p.y < p.radius) {
+          p.vy *= -0.7;
+          p.y = Math.max(p.radius, Math.min(p.y, height - p.radius));
+        }
+      } else if (state === 'forming') {
         // Gentle boundary constraints during formation
         p.x = Math.max(p.radius * 0.5, Math.min(p.x, width - p.radius * 0.5));
         p.y = Math.max(p.radius * 0.5, Math.min(p.y, height - p.radius * 0.5));
@@ -1190,17 +1188,18 @@ const HeaderWithParticlesOptimized: React.FC<HeaderProps> = ({ isActive, section
           </div>
           <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 tracking-tight leading-tight ${isDark ? 'shine-text' : 'shine-text-light'}`}>
             WELCOME TO GLOHSEN: <br className="hidden sm:block" /> EMPOWERING YOUR HEALTHCARE STORY
-          </h1>          <p className={`text-base sm:text-lg md:text-xl max-w-xl md:max-w-2xl mb-2 md:mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Your Fun, Transformative Journey Begins Here. <br className="hidden sm:block" />Revolutionizing career development and community health engagement through innovative technology.
+          </h1>
+          <p className={`text-base sm:text-lg md:text-xl max-w-xl md:max-w-2xl mb-6 md:mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            Revolutionizing career development and community health engagement through innovative technology.
           </p>
-
+          
           {scrollToSection && (
             <button
               onClick={() => {
                 if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
                 scrollToSection(1); // Assuming section 1 is the next section after header
               }}
-              className="glassmorphic-gold-button mt-1 md:mt-2 px-5 py-2.5 sm:px-8 sm:py-3 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out group flex items-center justify-center"
+              className="glassmorphic-gold-button mt-6 md:mt-8 px-6 py-2.5 sm:px-8 sm:py-3 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out group flex items-center justify-center"
               style={{ color: isDark ? '#FFD700' : '#1f2937' }} // Dynamic color for Explore button
               aria-label="Scroll to next section"
             >
