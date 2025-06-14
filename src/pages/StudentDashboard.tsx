@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Card, CardContent } from "../components/ui/card";
@@ -9,7 +8,6 @@ import { BookOpen, Users, CreditCard, ChartBar, Activity, Gamepad, MessageSquare
 import { ChartContainer, ChartTooltip } from "../components/ui/chart";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from "recharts";
 import StandardDashboardLayout from "../components/dashboard/StandardDashboardLayout";
-import StudentSidebarContent from "../components/dashboard/StudentSidebarContent";
 
 const StudentDashboard: React.FC = () => {
   const location = useLocation();
@@ -136,7 +134,6 @@ const StudentDashboard: React.FC = () => {
 
   return (
     <StandardDashboardLayout
-      sidebar={<StudentSidebarContent />}
       className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
     >
       <div className="space-y-6">

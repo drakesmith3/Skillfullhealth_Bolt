@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -106,14 +105,12 @@ const EmployerSidebar: React.FC = () => {
 
         <div className="flex gap-2 mt-4">
           <Link 
-            to="/employer-dashboard"
-            state={{ activeTab: 'transactions' }}
-            className="flex-1"
+            to="/employer-dashboard/purse"
+            className={getLinkClass("/employer-dashboard/purse")}
+            onClick={() => handleLinkClick("/employer-dashboard/purse")}
           >
-            <Button size="sm" className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black text-xs">
-              <Wallet className="h-3 w-3 mr-1" />
-              Wallet
-            </Button>
+            <CreditCard className="h-3 w-3 mr-1" /> {/* Changed from Wallet*/}
+            Purse {/* Changed from Wallet*/}
           </Link>
           <Link 
             to="/account-settings/employer"

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,7 +65,7 @@ const StudentSidebar = () => {
 
           <div className="flex justify-between pt-3 gap-2">
             <Button size="sm" variant="outline" className="border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10" asChild>
-              <Link to="/wallet-transaction">Wallet</Link>
+              <Link to="/purse-transaction">Purse</Link>
             </Button>
             <Button size="sm" variant="outline" className="border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10" asChild>
               <Link to="/account-settings">Edit Profile</Link>

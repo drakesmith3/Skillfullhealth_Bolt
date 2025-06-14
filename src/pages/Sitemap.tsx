@@ -103,8 +103,8 @@ const Sitemap: React.FC = () => {
       title: 'Financial Management',
       icon: DollarSign,
       pages: [
-        { name: 'Professional Purse', path: '/wallet/professional', description: 'Earnings, transactions, and financial history' },
-        { name: 'Tutor Purse', path: '/wallet/tutor', description: 'Teaching income and MLM commission tracking' },
+        { name: 'Professional Purse', path: '/purse/professional', description: 'Earnings, transactions, and financial history' },
+        { name: 'Tutor Purse', path: '/purse/tutor', description: 'Teaching income and MLM commission tracking' },
         { name: 'MLM System', path: '/mlm', description: 'Multi-level marketing referral management' },
         { name: 'Payment Processing', path: '/payments', description: 'Secure payment gateway and transactions' }
       ]
@@ -155,7 +155,7 @@ const Sitemap: React.FC = () => {
       icon: MessageCircle,
       pages: [
         { name: 'General Feedback', path: '/general-feedback', description: 'Share platform experience and suggestions' },
-        { name: 'Help Center', path: '/faq', description: 'Documentation and frequently asked questions' },
+        { name: 'Help Center', path: '/faq', description: 'Documentation and frequently asked questions (FAQ)' },
         { name: 'Contact Support', path: '/contact', description: 'Technical support and customer service' },
         { name: 'Feature Requests', path: '/feature-requests', description: 'Suggest new features and improvements' },
         { name: 'Bug Reports', path: '/bug-reports', description: 'Report technical issues and bugs' }

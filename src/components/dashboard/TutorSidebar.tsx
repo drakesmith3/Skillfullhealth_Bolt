@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -109,11 +108,11 @@ const TutorSidebar: React.FC = () => {
         <h3 className="text-red-500 font-semibold mb-4">Earnings</h3>
         <nav className="space-y-2">
           <Link 
-            to="/tutor-wallet"
-            className={getLinkClass('/tutor-wallet')}
+            to="/tutor-purse"
+            className={getLinkClass('/tutor-purse')}
           >
             <CreditCard size={20} />
-            <span>WALLET</span>
+            <span>PURSE</span>
           </Link>
           <Link 
             to="/earnings-analytics"

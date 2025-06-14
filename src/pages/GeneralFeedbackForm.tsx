@@ -338,7 +338,7 @@ const FeedbackForm: React.FC = () => {
                     Professionals
                   </TabsTrigger>
                   <TabsTrigger value="facilities" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
-                    Hospitals/Facilities
+                    Hospitals/Facilities/Pharmacy
                   </TabsTrigger>
                   <TabsTrigger value="tutors" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
                     Tutors/Advisers

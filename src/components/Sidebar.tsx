@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { User, Briefcase, MessageSquare, Calendar, Settings, Search, Award, FileText, Bell, ExternalLink, BookOpen, LogOut, CreditCard, Gamepad, Heart } from "lucide-react";
@@ -94,16 +93,16 @@ const Sidebar = () => {
             </Button>
           </Link>
           {isTutor && (
-            <Link to="/tutor-wallet" onClick={handleClick}>
+            <Link to="/tutor-purse" onClick={handleClick}>
               <Button className="w-full button-3d flex justify-start" variant="outline">
-                <Heart className="mr-2 h-4 w-4" /> Tutor Wallet
+                <Heart className="mr-2 h-4 w-4" /> Tutor Purse
               </Button>
             </Link>
           )}
           {isProfessional && (
-            <Link to="/wallet-transaction" onClick={handleClick}>
+            <Link to="/purse-transaction" onClick={handleClick}>
               <Button className="w-full button-3d flex justify-start" variant="outline">
-                <Heart className="mr-2 h-4 w-4" /> Wallet
+                <Heart className="mr-2 h-4 w-4" /> Purse
               </Button>
             </Link>
           )}

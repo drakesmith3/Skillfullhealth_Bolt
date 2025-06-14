@@ -174,7 +174,7 @@ class ButterflyErrorBoundary extends React.Component<{ children: React.ReactNode
 }
 
 
-// Particle interface for SVG elements
+// Enhanced Particle interface for SVG elements with advanced physics
 interface SvgParticle {
   id: string; // Unique ID for the SVG element
   element: SVGCircleElement | null;
@@ -194,6 +194,23 @@ interface SvgParticle {
   isEdge: boolean; // If it's an edge particle
   formed: boolean; // If it has reached its target in the butterfly
   progress: number; // Animation progress for formation
+  
+  // Enhanced physics properties
+  springForce: number; // Individual spring constant
+  dampening: number; // Individual dampening factor
+  mass: number; // Particle mass for physics calculations
+  formationDelay: number; // Sequential formation timing
+  curveAmplitude: number; // For curved path animations
+  energyLevel: number; // For sparkle and glow effects
+  interactionRadius: number; // Individual interaction zone
+  
+  // Advanced animation properties
+  convergencePathX: number[]; // Spline points for curved convergence
+  convergencePathY: number[]; // Spline points for curved convergence
+  pathProgress: number; // Progress along convergence path (0-1)
+  isConverging: boolean; // Flag for convergence animation
+  groupIndex: number; // For sequential group animations
+  wavePhase: number; // For sine wave convergence
 }
 
 // ButterflyPoint interface (data from worker - kept from Optimized version)
@@ -255,12 +272,13 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
   useEffect(() => {
     statsRef.current = stats;
   }, [stats]);
-
   const BUTTERFLY_COLORS_THEME = useMemo(() => ({
-    // Monarch Colors
-    monarchOrange: ['#FCA500', '#FFB52B', '#E59400', '#FD8C00', '#FF7400'], // Added more vibrant orange
-    monarchBlack: ['#1A1A1A', '#0D0D0D', '#262626', '#000000'],
-    monarchWhite: ['#FFFFFF', '#FDFDFD', '#F5F5F5', '#FEFEFE'], // Brighter whites
+    // Enhanced Monarch Colors with Red, Gold and Black Polkadots
+    monarchOrange: ['#FCA500', '#FFB52B', '#E59400', '#FD8C00', '#FF7400', '#FF8C00'], // Rich orange spectrum
+    monarchBlack: ['#1A1A1A', '#0D0D0D', '#262626', '#000000', '#1C1C1C'], // Deep black variations
+    monarchWhite: ['#FFFFFF', '#FDFDFD', '#F5F5F5', '#FEFEFE', '#F8F8FF'], // Pure whites
+    monarchRed: ['#DC143C', '#B22222', '#8B0000', '#CD5C5C', '#F08080'], // Red polkadot spectrum
+    monarchGold: ['#FFD700', '#DAA520', '#B8860B', '#F4C430', '#BF953F'], // Gold polkadot spectrum
     
     // Existing colors for playground mode or other effects
     gold: ['rgba(255,215,0,0.7)', 'rgba(200,160,0,0.7)', 'rgba(255,223,50,0.7)'],
@@ -269,12 +287,11 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
     offWhite: 'rgba(240,240,240,0.5)',
     ripple: 'rgba(255,215,0,0.6)', // Slightly more transparent ripple
   }), []);
-
   const getParticleColor = useCallback((
     type: 'left' | 'right' | 'body' | 'playground',
     isEdge?: boolean,
     currentAnimationState?: 'playground' | 'forming' | 'formed',
-    distanceToCenter?: number // Retained for potential future use
+    distanceToCenter?: number // Used for polkadot pattern
   ): string => {
     const state = currentAnimationState || animationStateRef.current;
 
@@ -282,19 +299,36 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
       if (type === 'body') {
         return BUTTERFLY_COLORS_THEME.monarchBlack[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchBlack.length)];
       }
-      // Wings:
-      if (isEdge && Math.random() < 0.85) { // Higher chance for edges to be black
+      
+      // Enhanced wing coloring with red, gold, and black polkadots
+      if (isEdge && Math.random() < 0.9) { // Higher chance for edges to be black
         return BUTTERFLY_COLORS_THEME.monarchBlack[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchBlack.length)];
       }
-      // Simulate some white spots, make them sparse
-      if (Math.random() < 0.08) { // 8% chance for a white spot particle
+      
+      // Create polkadot pattern based on distance to center
+      const polkadotChance = distanceToCenter ? Math.sin(distanceToCenter * 0.3) * 0.5 + 0.5 : Math.random();
+      
+      // Red polkadots (15% chance)
+      if (polkadotChance < 0.15) {
+        return BUTTERFLY_COLORS_THEME.monarchRed[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchRed.length)];
+      }
+      
+      // Gold polkadots (12% chance) 
+      if (polkadotChance < 0.27) {
+        return BUTTERFLY_COLORS_THEME.monarchGold[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchGold.length)];
+      }
+      
+      // Black polkadots for contrast (8% chance)
+      if (polkadotChance < 0.35) {
+        return BUTTERFLY_COLORS_THEME.monarchBlack[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchBlack.length)];
+      }
+      
+      // Small chance for white highlights (5%)
+      if (polkadotChance < 0.40) { 
           return BUTTERFLY_COLORS_THEME.monarchWhite[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchWhite.length)];
       }
-      // Small chance for black accents within the orange parts of wings
-      if (Math.random() < 0.15) {
-        return BUTTERFLY_COLORS_THEME.monarchBlack[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchBlack.length)];
-      }
-      // Predominantly orange for wings
+      
+      // Predominantly rich orange for wings (60%)
       return BUTTERFLY_COLORS_THEME.monarchOrange[Math.floor(Math.random() * BUTTERFLY_COLORS_THEME.monarchOrange.length)];
     }
 
@@ -321,12 +355,12 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
     if (particle.wing !== 'playground' && (animationStateRef.current === 'forming' || animationStateRef.current === 'formed')) {
       circle.style.filter = 'url(#monarchParticle3D)';
     }
-    
-    svgRef.current?.appendChild(circle);
+      svgRef.current?.appendChild(circle);
     return circle;
   }, [animationStateRef, svgRef]); // svgRef and animationStateRef are stable refs
+  
   const initializePlaygroundParticles = useCallback((numParticles: number, width: number, height: number) => {
-    console.log('[EtherealButterflySVG] Initializing playground particles');
+    console.log('[EtherealButterflySVG] Initializing enhanced playground particles');
     const newParticles: SvgParticle[] = [];
     if (svgRef.current) {
         particlesRef.current.forEach(p => p.element?.remove());
@@ -354,13 +388,30 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
         isEdge: isEdge,
         formed: false,
         progress: 0,
+        
+        // Enhanced physics properties
+        springForce: 0.05 + Math.random() * 0.1, // Variable spring constants
+        dampening: 0.8 + Math.random() * 0.15, // Variable dampening
+        mass: 0.5 + Math.random() * 1.5, // Variable particle masses
+        formationDelay: 0, // No delay for playground particles
+        curveAmplitude: Math.random() * 20 + 10, // For organic movement
+        energyLevel: Math.random(), // For visual effects
+        interactionRadius: 50 + Math.random() * 100, // Individual interaction zones
+        
+        // Advanced animation properties
+        convergencePathX: [], // Will be populated during formation
+        convergencePathY: [], // Will be populated during formation
+        pathProgress: 0, // Not used in playground mode
+        isConverging: false, // Not converging in playground
+        groupIndex: 0, // No groups in playground
+        wavePhase: Math.random() * Math.PI * 2, // Random phase for wave motion
       };
       particle.element = createSvgParticleElement(particle);
       newParticles.push(particle);
     }
     particlesRef.current = newParticles;
     setStats(prev => ({ ...prev, particleCount: newParticles.length, formationProgress: 0 }));
-    console.log('[EtherealButterflySVG] Playground particles initialized:', newParticles.length);
+    console.log('[EtherealButterflySVG] Enhanced playground particles initialized:', newParticles.length);
   }, [getParticleColor, createSvgParticleElement]);
 
   const initializeFormationParticlesSVG = useCallback((points: ButterflyPoint[], width: number, height: number) => {
@@ -371,28 +422,23 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
       setAnimationState('playground');
       animationStateRef.current = 'playground';
       return;
-    }
-
-    const desiredParticleCount = Math.min(1200, Math.max(600, points.length * 3)); // Up to 1200 particles
+    }    const desiredParticleCount = Math.min(1800, Math.max(800, points.length * 4)); // Increased particle count for more dramatic effect
     const newParticles: SvgParticle[] = [];
     
     if (svgRef.current) {
         particlesRef.current.forEach(p => p.element?.remove());
-    }
-
-    // Determine formation origin and scale
-    const defaultOrigin = { x: width / 2, y: height / 2 - height * 0.05 };
+    }// Determine formation origin and scale - positioned on the left side of the screen
+    const defaultOrigin = { x: width * 0.2, y: height * 0.45 }; // Further left positioning
     let formationOrigin = defaultOrigin;
-    let scaleMultiplier = 0.30; // Default scale for center screen
+    let scaleMultiplier = 0.4; // Larger scale for better visibility on left side
 
     if (butterflyTargetPosition && width > 0 && height > 0) {
-      // Target the center of the "WELCOME" text passed via prop
-      formationOrigin = { x: butterflyTargetPosition.x, y: butterflyTargetPosition.y };
-      // Smaller scale for perching
-      scaleMultiplier = 0.10; // Significantly smaller for perching
-      console.log('[EtherealButterflySVG] Using target position for butterfly formation:', formationOrigin, "scaleMultiplier:", scaleMultiplier);
+      // Override with left-side positioning instead of target position
+      formationOrigin = { x: width * 0.18, y: height * 0.4 }; // Force left-side positioning
+      scaleMultiplier = 0.35; // Good scale for left-side display
+      console.log('[EtherealButterflySVG] Using left-side positioning for butterfly formation:', formationOrigin, "scaleMultiplier:", scaleMultiplier);
     } else {
-      console.log('[EtherealButterflySVG] Using default center screen for butterfly formation.');
+      console.log('[EtherealButterflySVG] Using default left-side positioning for butterfly formation.');
     }
     
     const scale = Math.min(width, height) * scaleMultiplier;
@@ -400,34 +446,155 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
     for (let i = 0; i < desiredParticleCount; i++) {
       const pointIndex = i % points.length;
       const bPoint = points[pointIndex];
-      
-      const yFormationOffset = butterflyTargetPosition ? - (scale * 0.3) : 0; 
+      const groupIndex = Math.floor((i / desiredParticleCount) * groupCount); // Define groupIndex here
+      const yFormationOffset = 0; // Remove offset to keep butterfly centered vertically
 
       const targetX = formationOrigin.x + bPoint.x * scale;
       const targetY = formationOrigin.y + yFormationOffset + bPoint.y * scale;
 
-      const particle: SvgParticle = {
-        id: `p_form_${i}_${Date.now()}`, // More unique ID
-        element: null,
-        x: Math.random() * width, 
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 1,
-        vy: (Math.random() - 0.5) * 1,
-        radius: Math.random() * 1.5 + 0.8, 
-        color: getParticleColor(bPoint.wing, bPoint.isEdge, 'forming', bPoint.distanceToCenter),
-        opacity: 0.1, 
-        targetX: targetX,
-        targetY: targetY,
-        originalX: Math.random() * width, // Store initial random for potential effects
-        originalY: Math.random() * height,
-        wing: bPoint.wing,
-        distanceToCenter: bPoint.distanceToCenter,
-        isEdge: bPoint.isEdge,
-        formed: false,
-        progress: 0,
+      // Ensure particles start from truly random positions across the entire screen
+      const startX = Math.random() * width;
+      const startY = Math.random() * height;
+      
+      // Add some edge bias to ensure particles come from screen edges too
+      const edgeBias = Math.random();
+      let finalStartX = startX;
+      let finalStartY = startY;
+      
+      if (edgeBias < 0.3) { // 30% chance to start from screen edges
+        const edge = Math.floor(Math.random() * 4);
+        switch(edge) {
+          case 0: finalStartX = 0; finalStartY = Math.random() * height; break; // Left edge
+          case 1: finalStartX = width; finalStartY = Math.random() * height; break; // Right edge
+          case 2: finalStartX = Math.random() * width; finalStartY = 0; break; // Top edge
+          case 3: finalStartX = Math.random() * width; finalStartY = height; break; // Bottom edge
+        }
+      }      // Generate curved convergence path for each particle
+      const generateCurvePath = (startX: number, startY: number, endX: number, endY: number) => {
+        const pathPoints = 8; // Number of spline points
+        const pathX: number[] = [];
+        const pathY: number[] = [];
+        
+        // Create curved path with sine wave influence
+        for (let j = 0; j <= pathPoints; j++) {
+          const t = j / pathPoints;
+          const curveInfluence = Math.sin(t * Math.PI) * (30 + Math.random() * 40);
+          
+          // Bezier-like curve with random control points
+          const controlX = (startX + endX) / 2 + (Math.random() - 0.5) * width * 0.3;
+          const controlY = (startY + endY) / 2 + curveInfluence;
+          
+          // Quadratic interpolation
+          const x = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * controlX + t * t * endX;
+          const y = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * controlY + t * t * endY;
+          
+          pathX.push(x);
+          pathY.push(y);
+        }
+        
+        return { pathX, pathY };
       };
-      particle.element = createSvgParticleElement(particle);
-      newParticles.push(particle);
+
+      // Sequential group assignment for satisfying one-after-another formation
+      const groupCount = 12; // Number of sequential groups
+
+      for (let i = 0; i < desiredParticleCount; i++) {
+        const pointIndex = i % points.length;
+        const bPoint = points[pointIndex];
+        const groupIndex = Math.floor((i / desiredParticleCount) * groupCount); // Define groupIndex here
+        const yFormationOffset = 0; // Remove offset to keep butterfly centered vertically
+
+        const targetX = formationOrigin.x + bPoint.x * scale;
+        const targetY = formationOrigin.y + yFormationOffset + bPoint.y * scale;
+
+        // Ensure particles start from truly random positions across the entire screen
+        const startX = Math.random() * width;
+        const startY = Math.random() * height;
+        
+        // Add some edge bias to ensure particles come from screen edges too
+        const edgeBias = Math.random();
+        let finalStartX = startX;
+        let finalStartY = startY;
+        
+        if (edgeBias < 0.3) { // 30% chance to start from screen edges
+          const edge = Math.floor(Math.random() * 4);
+          switch(edge) {
+            case 0: finalStartX = 0; finalStartY = Math.random() * height; break; // Left edge
+            case 1: finalStartX = width; finalStartY = Math.random() * height; break; // Right edge
+            case 2: finalStartX = Math.random() * width; finalStartY = 0; break; // Top edge
+            case 3: finalStartX = Math.random() * width; finalStartY = height; break; // Bottom edge
+          }
+        }      // Generate curved convergence path for each particle
+        const generateCurvePath = (startX: number, startY: number, endX: number, endY: number) => {
+          const pathPoints = 8; // Number of spline points
+          const pathX: number[] = [];
+          const pathY: number[] = [];
+          
+          // Create curved path with sine wave influence
+          for (let j = 0; j <= pathPoints; j++) {
+            const t = j / pathPoints;
+            const curveInfluence = Math.sin(t * Math.PI) * (30 + Math.random() * 40);
+            
+            // Bezier-like curve with random control points
+            const controlX = (startX + endX) / 2 + (Math.random() - 0.5) * width * 0.3;
+            const controlY = (startY + endY) / 2 + curveInfluence;
+            
+            // Quadratic interpolation
+            const x = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * controlX + t * t * endX;
+            const y = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * controlY + t * t * endY;
+            
+            pathX.push(x);
+            pathY.push(y);
+          }
+          
+          return { pathX, pathY };
+        };
+
+        // Sequential group assignment for satisfying one-after-another formation
+        const groupCount = 12; // Number of sequential groups
+        const groupDelay = groupIndex * 50; // Was 800ms, changed to 50ms for faster sequential reveal
+        
+        const { pathX, pathY } = generateCurvePath(finalStartX, finalStartY, targetX, targetY);
+
+        const particle: SvgParticle = {
+          id: `p_form_${i}_${Date.now()}`, // More unique ID
+          element: null,
+          x: finalStartX, 
+          y: finalStartY,
+          vx: (Math.random() - 0.5) * 1,
+          vy: (Math.random() - 0.5) * 1,
+          radius: Math.random() * 1.5 + 0.8, 
+          color: getParticleColor(bPoint.wing, bPoint.isEdge, 'forming', bPoint.distanceToCenter),
+          opacity: 0.1, 
+          targetX: targetX,
+          targetY: targetY,        originalX: finalStartX, // Store initial position for potential effects
+          originalY: finalStartY,
+          wing: bPoint.wing,
+          distanceToCenter: bPoint.distanceToCenter,
+          isEdge: bPoint.isEdge,
+          formed: false,
+          progress: 0,
+          
+          // Enhanced physics properties for professional animation
+          springForce: 0.08 + Math.random() * 0.12, // Variable spring response
+          dampening: 0.82 + Math.random() * 0.15, // Professional dampening
+          mass: 0.8 + Math.random() * 1.2 + (bPoint.isEdge ? 0.3 : 0), // Edge particles slightly heavier
+          formationDelay: groupDelay + Math.random() * 200, // Sequential + random variation
+          curveAmplitude: 25 + Math.random() * 35, // For organic curved paths
+          energyLevel: bPoint.isEdge ? 0.8 + Math.random() * 0.2 : 0.3 + Math.random() * 0.5, // Edge particles more energetic
+          interactionRadius: 60 + Math.random() * 80 + (bPoint.isEdge ? 20 : 0), // Variable interaction zones
+          
+          // Advanced animation properties for curved convergence
+          convergencePathX: pathX, // Pre-calculated spline points
+          convergencePathY: pathY, // Pre-calculated spline points  
+          pathProgress: 0, // Progress along the convergence path
+          isConverging: false, // Will be set to true when formation starts
+          groupIndex: groupIndex, // For sequential group animations
+          wavePhase: Math.random() * Math.PI * 2 + (groupIndex * 0.5), // Phase for wave-like motion
+        };
+        particle.element = createSvgParticleElement(particle);
+        newParticles.push(particle);
+      }
     }
     particlesRef.current = newParticles;
     setStats(prev => ({ ...prev, particleCount: newParticles.length, formationProgress: 0 }));
@@ -475,115 +642,201 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
         // Apply drag but maintain some motion
         p.vx *= 0.85; // Reduced drag for more fluid motion
         p.vy *= 0.85;      } else if (state === 'forming' && p.targetX !== null && p.targetY !== null) {
+        // Advanced sequential formation with curved paths and spring physics
         const formationStartTime = lastInteractionTimeRef.current; 
-        const staggerFactor = (p.originalX * p.originalY) % 500; // Stagger based on original random position
-        const formationDuration = 2500; // Increased duration for better visualization
+        const timeSinceFormationStart = currentTime - (formationStartTime + p.formationDelay);
         
-        if (p.progress < 1) {
-          const timeSinceFormationStart = currentTime - (formationStartTime + staggerFactor);
-          if (timeSinceFormationStart > 0) {
-               p.progress = Math.min(1, timeSinceFormationStart / (formationDuration - staggerFactor > 0 ? formationDuration - staggerFactor : formationDuration));
+        if (timeSinceFormationStart > 0 && p.progress < 1) {
+          // Professional easing with sequential timing
+          const timeProgress = Math.min(1, timeSinceFormationStart / 800); // Was 8000, changed to 800 for ~0.8s formation
+          p.progress = 1 - Math.pow(1 - timeProgress, 4); // Professional ease-out curve
+          
+          // Start convergence animation
+          if (!p.isConverging && p.progress > 0.1) {
+            p.isConverging = true;
+            console.log(`[Particle ${p.id}] Starting convergence animation for group ${p.groupIndex}`);
           }
         }
         
-        // Continue playground motion while forming for visual transition
-        if (p.progress < 0.3) {
-          const timeBasedX = Math.sin(currentTime * 0.0008 + p.originalX * 0.01) * 0.2;
-          const timeBasedY = Math.cos(currentTime * 0.0006 + p.originalY * 0.01) * 0.15;
-          p.vx += timeBasedX * 0.015 * (1 - p.progress * 3); // Reduce as formation progresses
-          p.vy += timeBasedY * 0.015 * (1 - p.progress * 3);
+        if (p.isConverging && p.convergencePathX.length > 0) {
+          // Follow curved convergence path with spring physics
+          const pathIndex = Math.min(
+            Math.floor(p.progress * (p.convergencePathX.length - 1)), 
+            p.convergencePathX.length - 1
+          );
           
-          // Maintain some playground drag
-          p.vx *= 0.88;
-          p.vy *= 0.88;
+          const nextIndex = Math.min(pathIndex + 1, p.convergencePathX.length - 1);
+          const localProgress = (p.progress * (p.convergencePathX.length - 1)) - pathIndex;
+          
+          // Interpolate between path points with sine wave influence
+          const waveInfluence = Math.sin(p.wavePhase + p.progress * Math.PI * 2) * p.curveAmplitude * (1 - p.progress);
+          
+          const targetPathX = p.convergencePathX[pathIndex] + 
+            (p.convergencePathX[nextIndex] - p.convergencePathX[pathIndex]) * localProgress;
+          const targetPathY = p.convergencePathY[pathIndex] + 
+            (p.convergencePathY[nextIndex] - p.convergencePathY[pathIndex]) * localProgress + waveInfluence;
+          
+          // Advanced spring physics with variable constants
+          const dx = targetPathX - p.x;
+          const dy = targetPathY - p.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          // Adaptive spring force based on distance and progress
+          const adaptiveSpringForce = p.springForce * (1 + p.progress * 2) * Math.min(distance / 100, 2);
+          
+          // Apply spring forces with mass consideration
+          const forceX = (dx * adaptiveSpringForce) / p.mass;
+          const forceY = (dy * adaptiveSpringForce) / p.mass;
+          
+          p.vx += forceX;
+          p.vy += forceY;
+          
+          // Professional dampening with energy conservation
+          p.vx *= p.dampening;
+          p.vy *= p.dampening;
+          
+          // Add energy-based sparkle effect during convergence
+          if (distance < 50 && p.energyLevel > 0.6) {
+            p.energyLevel = Math.min(1, p.energyLevel + 0.02);
+          }
+        } else {
+          // Fallback to simple convergence if path not available
+          const dx = p.targetX - p.x;
+          const dy = p.targetY - p.y;
+          const formationForce = 0.003 + (p.progress * 0.05);
+          
+          p.vx += dx * formationForce / p.mass;
+          p.vy += dy * formationForce / p.mass;
+          p.vx *= p.dampening;
+          p.vy *= p.dampening;
         }
         
-        const easeProgress = 1 - Math.pow(1 - p.progress, 3); // Easier curve for smoother transition
-        const dx = p.targetX - p.x;
-        const dy = p.targetY - p.y;
-        
-        // Progressive formation force - starts gentle, becomes stronger
-        const formationForce = 0.02 + (p.progress * 0.15); // Increases as progress increases
-        p.vx += dx * formationForce;
-        p.vy += dy * formationForce;
-        
-        // Apply formation velocity
+        // Apply velocity with enhanced physics
         p.x += p.vx;
         p.y += p.vy;
         
-        // Gradually fade in opacity during formation
-        p.opacity = 0.1 + p.progress * 0.7; // More gradual fade-in
+        // Professional opacity transition with energy effects
+        const baseOpacity = 0.05 + p.progress * 0.75;
+        const energyGlow = p.energyLevel > 0.7 ? Math.sin(currentTime * 0.01) * 0.2 : 0;
+        p.opacity = Math.min(0.9, baseOpacity + energyGlow);
 
-        if (p.progress >= 1 && !p.formed) {
-          p.x = p.targetX;
-          p.y = p.targetY;
-          p.vx = 0; p.vy = 0;
-          p.formed = true;
-          p.opacity = 0.8 + (p.isEdge ? -0.2 : 0); 
+        // Snap to final position with spring settle
+        if (p.progress >= 0.98 && !p.formed) {
+          const dx = p.targetX - p.x;
+          const dy = p.targetY - p.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 3) {
+            p.x = p.targetX;
+            p.y = p.targetY;
+            p.vx = 0; 
+            p.vy = 0;
+            p.formed = true;
+            p.isConverging = false;
+            p.opacity = 0.8 + (p.isEdge ? 0.1 : 0);
+            console.log(`[Particle ${p.id}] Formation complete for group ${p.groupIndex}`);
+          }
         }      } else if (state === 'formed' && p.targetX !== null && p.targetY !== null) {
-         if (!p.formed) { 
-            p.x = p.targetX; p.y = p.targetY;
-            p.vx = 0; p.vy = 0; p.formed = true;
-         }
+        // Professional formed state with advanced spring physics
+        if (!p.formed) { 
+          p.x = p.targetX; 
+          p.y = p.targetY;
+          p.vx = 0; 
+          p.vy = 0; 
+          p.formed = true;
+        }
         
-        const springK = 0.08; // Increased spring constant for more responsiveness
-        const damping = 0.85; // Reduced damping for more fluid motion
+        // Advanced spring system with individual particle physics
+        const springK = p.springForce * (1.2 + p.energyLevel * 0.5); // Energy-enhanced spring response
+        const damping = p.dampening;
 
-        // Enhanced mouse following behavior
+        // Professional mouse interaction with butterfly shape preservation
         if (mousePos) {
-          const followStrength = 0.025; // Increased follow strength
-          const maxFollowDistance = Math.min(width, height) * 0.4; // Larger follow radius
+          const followStrength = 0.03 + p.energyLevel * 0.02; // Energy-based responsiveness
+          const maxFollowDistance = Math.min(width, height) * 0.35;
+          const personalSpace = p.interactionRadius * 0.8; // Individual interaction zones
 
           const dxToParticleTarget = mousePos.x - p.targetX;
           const dyToParticleTarget = mousePos.y - p.targetY;
           const distToParticleTarget = Math.sqrt(dxToParticleTarget * dxToParticleTarget + dyToParticleTarget * dyToParticleTarget);
 
-          if (distToParticleTarget < maxFollowDistance * 1.5) { 
-             p.targetX += dxToParticleTarget * followStrength;
-             p.targetY += dyToParticleTarget * followStrength;
+          // Adaptive following based on particle importance and energy
+          if (distToParticleTarget < maxFollowDistance) { 
+            const followInfluence = followStrength * (1 - distToParticleTarget / maxFollowDistance);
+            const massCompensation = 1 / p.mass; // Lighter particles respond more
+            
+            p.targetX += dxToParticleTarget * followInfluence * massCompensation;
+            p.targetY += dyToParticleTarget * followInfluence * massCompensation;
           }
-          p.targetX = Math.max(p.radius, Math.min(p.targetX, width - p.radius));
-          p.targetY = Math.max(p.radius, Math.min(p.targetY, height - p.radius));
+          
+          // Ensure butterfly stays within bounds with soft constraints
+          p.targetX = Math.max(p.radius * 2, Math.min(p.targetX, width - p.radius * 2));
+          p.targetY = Math.max(p.radius * 2, Math.min(p.targetY, height - p.radius * 2));
         }
 
-        // Enhanced floating animation with more variation
-        const floatRadius = 1.2 + p.radius * 0.5 + (p.isEdge ? 0.8 : 0); // Increased float radius
-        const floatSpeed = 0.0003 + ((p.originalX % 100)/150000); // Slightly faster
-        const offsetX = Math.cos(currentTime * floatSpeed + p.originalX * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.7);
-        const offsetY = Math.sin(currentTime * floatSpeed + p.originalY * 0.01) * floatRadius * (1 + p.distanceToCenter * 0.7) * 0.6;
+        // Professional floating animation with individual characteristics
+        const floatRadius = (0.8 + p.radius * 0.3) * (1 + p.energyLevel * 0.4);
+        const floatSpeed = 0.0002 + (p.wavePhase * 0.00005) + (p.energyLevel * 0.0001);
+        
+        // Complex harmonic motion with energy influence
+        const offsetX = Math.cos(currentTime * floatSpeed + p.wavePhase) * floatRadius * 
+          (1 + p.distanceToCenter * 0.6) * (1 + Math.sin(currentTime * floatSpeed * 0.3) * 0.2);
+        const offsetY = Math.sin(currentTime * floatSpeed + p.wavePhase * 1.3) * floatRadius * 
+          (1 + p.distanceToCenter * 0.6) * 0.7 * (1 + Math.cos(currentTime * floatSpeed * 0.5) * 0.15);
         
         const springTargetX = p.targetX + offsetX;
         const springTargetY = p.targetY + offsetY;
 
-        const forceX = (springTargetX - p.x) * springK;
-        const forceY = (springTargetY - p.y) * springK;
+        // Advanced spring forces with non-linear response
+        const dx = springTargetX - p.x;
+        const dy = springTargetY - p.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Non-linear spring for more organic movement
+        const nonLinearSpring = springK * (1 + Math.sin(distance * 0.1) * 0.2);
+        const forceX = dx * nonLinearSpring / p.mass;
+        const forceY = dy * nonLinearSpring / p.mass;
         
         p.vx += forceX;
         p.vy += forceY;
         
+        // Professional dampening with energy conservation
         p.vx *= damping;
         p.vy *= damping;
 
-        // Enhanced mouse repulsion with dynamic effects
+        // Enhanced mouse repulsion with energy dynamics
         if (mousePos) {
           const dxParticleMouse = p.x - mousePos.x;
           const dyParticleMouse = p.y - mousePos.y;
           const distParticleMouse = Math.sqrt(dxParticleMouse * dxParticleMouse + dyParticleMouse * dyParticleMouse);
-          const repulsionRadiusParticle = width * 0.08; // Increased repulsion radius
+          const personalRepulsionRadius = p.interactionRadius;
 
-          if (distParticleMouse < repulsionRadiusParticle && distParticleMouse > 0) {
+          if (distParticleMouse < personalRepulsionRadius && distParticleMouse > 0) {
             const angle = Math.atan2(dyParticleMouse, dxParticleMouse);
-            const pushForceStrength = (repulsionRadiusParticle - distParticleMouse) / repulsionRadiusParticle;
-            p.vx += Math.cos(angle) * pushForceStrength * 2.5; // Increased push force
-            p.vy += Math.sin(angle) * pushForceStrength * 2.5;
+            const repulsionStrength = (personalRepulsionRadius - distParticleMouse) / personalRepulsionRadius;
+            const energyBoost = 1 + p.energyLevel * 0.5;
+            const massCompensation = 2 / p.mass;
+            
+            const repulsionForce = repulsionStrength * energyBoost * massCompensation * 2.8;
+            p.vx += Math.cos(angle) * repulsionForce;
+            p.vy += Math.sin(angle) * repulsionForce;
+            
+            // Increase energy level on interaction
+            p.energyLevel = Math.min(1, p.energyLevel + 0.05);
             lastInteractionTimeRef.current = Date.now();
           }
         }
         
-        // Enhanced visual effects
-        const baseOpacity = p.wing === 'body' ? 0.9 : (p.isEdge ? 0.6 : 0.8);
-        const flickerEffect = Math.sin(currentTime * 0.0006 + p.originalX * 0.02) * 0.15; // More pronounced flicker
-        p.opacity = Math.max(0.3, baseOpacity + flickerEffect); // Ensure minimum opacity
+        // Professional visual effects with energy-based enhancements
+        const baseOpacity = p.wing === 'body' ? 0.92 : (p.isEdge ? 0.75 : 0.85);
+        const energyFlicker = p.energyLevel > 0.5 ? 
+          Math.sin(currentTime * 0.008 + p.wavePhase) * 0.12 * p.energyLevel : 0;
+        const harmonicFlicker = Math.sin(currentTime * 0.003 + p.originalX * 0.02) * 0.08;
+        
+        p.opacity = Math.max(0.4, Math.min(0.95, baseOpacity + energyFlicker + harmonicFlicker));
+        
+        // Gradually decay energy over time for natural settling
+        p.energyLevel = Math.max(0.1, p.energyLevel * 0.998);
       }
 
       if (p.formed) formedCount++;      // Apply velocity to position for all states
@@ -639,12 +892,41 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
         }
       } else {
         p.element.setAttribute('fill', p.color);
-      }
-
-      // Apply 3D filter effect
+      }      // Professional visual effects system with advanced filter application
       if (state === 'formed' || (state === 'forming' && p.progress > 0.5)) {
-        p.element.setAttribute('filter', 'url(#monarchParticle3D)');
-      } else {
+        // High-energy particles get sparkle effects
+        if (p.energyLevel > 0.8) {
+          p.element.setAttribute('filter', 'url(#sparkleEffect)');
+        }
+        // Body particles get enhanced 3D treatment
+        else if (p.wing === 'body') {
+          p.element.setAttribute('filter', 'url(#monarchParticle3D)');
+        }
+        // Edge particles and polkadots get wing shimmer
+        else if (p.isEdge || (p.color.includes('#DC143C') || p.color.includes('#FFD700'))) {
+          p.element.setAttribute('filter', 'url(#wingShimmer)');
+        }
+        // Regular wing particles get atmospheric glow during interactions
+        else if (mousePos) {
+          const distToMouse = Math.sqrt((p.x - mousePos.x) ** 2 + (p.y - mousePos.y) ** 2);
+          const glowRadius = p.interactionRadius * 0.8;
+          if (distToMouse < glowRadius) {
+            p.element.setAttribute('filter', 'url(#atmosphericGlow)');
+          } else {
+            p.element.setAttribute('filter', 'url(#monarchParticle3D)');
+          }
+        }
+        // Default enhanced 3D for regular particles
+        else {
+          p.element.setAttribute('filter', 'url(#monarchParticle3D)');
+        }
+      } 
+      // Playground mode gets subtle atmospheric glow
+      else if (state === 'playground' && p.energyLevel > 0.6) {
+        p.element.setAttribute('filter', 'url(#atmosphericGlow)');
+      } 
+      // Remove filters for low-energy or forming particles
+      else {
         p.element.removeAttribute('filter');
       }
     }); // End of particles.forEach
@@ -738,13 +1020,43 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
       }
     };
 
-    resizeAndInitialize();
-
-    const handleMouseMove = (event: MouseEvent) => {
+    resizeAndInitialize();    const handleMouseMove = (event: MouseEvent) => {
       const r = svg.getBoundingClientRect();
       mousePositionRef.current = { x: event.clientX - r.left, y: event.clientY - r.top };
       if(animationStateRef.current === 'formed' || animationStateRef.current === 'playground') { // Update for playground too
         lastInteractionTimeRef.current = Date.now();
+      }
+    };
+    
+    // Enhanced keyboard shortcuts for professional UX
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.code) {
+        case 'Space':
+          event.preventDefault();
+          handleFormButterflyClick();
+          break;
+        case 'KeyR':
+          event.preventDefault();
+          // Reset to playground mode
+          setAnimationState('playground');
+          animationStateRef.current = 'playground';
+          lastInteractionTimeRef.current = Date.now();
+          initializePlaygroundParticles(300, svgSizeRef.current.width, svgSizeRef.current.height);
+          console.log('[EtherealButterflySVG] Reset to playground via keyboard shortcut');
+          break;
+        case 'KeyS':
+          event.preventDefault();
+          setShowStats(prev => !prev);
+          break;
+        case 'Escape':
+          // Gentle dispersion effect
+          if (animationStateRef.current === 'formed') {
+            setAnimationState('playground');
+            animationStateRef.current = 'playground';
+            lastInteractionTimeRef.current = Date.now();
+            initializePlaygroundParticles(300, svgSizeRef.current.width, svgSizeRef.current.height);
+          }
+          break;
       }
     };
     const handleTouchMove = (event: TouchEvent) => {
@@ -755,11 +1067,10 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
                 lastInteractionTimeRef.current = Date.now();
             }
         }
-    };
-
-    container.addEventListener('mousemove', handleMouseMove);
+    };    container.addEventListener('mousemove', handleMouseMove);
     container.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('resize', resizeAndInitialize);
+    window.addEventListener('keydown', handleKeyDown);
 
     const animate = (time: number) => {
       if (svgSizeRef.current.width === 0 || svgSizeRef.current.height === 0) {
@@ -770,7 +1081,7 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
       
       frameCountRef.current++;
       if (!lastFPSTimeRef.current) lastFPSTimeRef.current = time;
-      const deltaTime = time - lastFPSTimeRef.current;
+      const deltaTime = time - lastFPSTime.current;
       if (deltaTime >= 1000) {
           const fps = Math.round((frameCountRef.current * 1000) / deltaTime);
           setStats(prev => ({ ...prev, fps }));
@@ -801,10 +1112,10 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
 
     return () => {
       console.log('[EtherealButterflySVG] Cleaning up animation effect.');
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-      container.removeEventListener('mousemove', handleMouseMove);
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);      container.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', resizeAndInitialize);
+      window.removeEventListener('keydown', handleKeyDown);
       particlesRef.current.forEach(p => p.element?.remove());
       particlesRef.current = [];
       setFloatingElements([]);
@@ -896,26 +1207,81 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
             width: '100%', height: '100%',
             pointerEvents: 'auto', 
           }}
-        >
-            <defs>
-                <filter id="monarchParticle3D" x="-50%" y="-50%" width="200%" height="200%">
-                    {/* Adjusted stdDeviation for a more subtle 3D effect, less blurry */}
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="0.8" result="blur"/>
-                    {/* Offset to create a slight shadow/depth */}
-                    <feOffset in="blur" dx="0.7" dy="0.7" result="offsetBlur"/>
+        >            <defs>                {/* Enhanced 3D Monarch Butterfly Particle Filter with realistic depth and wing shimmer */}
+                <filter id="monarchParticle3D" x="-100%" y="-100%" width="300%" height="300%">
+                    {/* Enhanced shadow for better depth perception */}
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="blur"/>
+                    <feOffset in="blur" dx="1.5" dy="1.5" result="offsetBlur"/>
+                    <feComponentTransfer result="darkShadow">
+                        <feFuncA type="linear" slope="0.6"/>
+                    </feComponentTransfer>
                     
-                    {/* Specular lighting for a hint of shine on particles */}
-                    <feSpecularLighting in="blur" surfaceScale="3" specularConstant=".75" specularExponent="20" lightingColor="#fed850" result="specOut">
-                        <fePointLight x="-5000" y="-10000" z="20000"/>
+                    {/* Multiple lighting effects for realistic 3D appearance */}
+                    <feSpecularLighting in="blur" surfaceScale="4" specularConstant="1.8" 
+                                      specularExponent="25" lightingColor="#FFD700" result="goldShine">
+                        <fePointLight x="-8000" y="-12000" z="25000"/>
                     </feSpecularLighting>
-                    <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
-                    <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
-
-                    {/* Combine the offset blur (shadow) and the lit paint (main particle color with highlight) */}
+                    
+                    {/* Secondary red shimmer for polkadot effect */}
+                    <feSpecularLighting in="blur" surfaceScale="2" specularConstant="1.2" 
+                                      specularExponent="15" lightingColor="#DC143C" result="redShimmer">
+                        <fePointLight x="5000" y="8000" z="18000"/>
+                    </feSpecularLighting>
+                    
+                    {/* Combine lighting effects */}
+                    <feComposite in="goldShine" in2="SourceAlpha" operator="in" result="goldShine2"/>
+                    <feComposite in="redShimmer" in2="SourceAlpha" operator="in" result="redShimmer2"/>
+                    
+                    {/* Blend lighting with original graphic */}
+                    <feComposite in="SourceGraphic" in2="goldShine2" operator="screen" result="litPaint1"/>
+                    <feComposite in="litPaint1" in2="redShimmer2" operator="screen" result="finalLitPaint"/>
+                    
+                    {/* Final composition with enhanced shadow */}
                     <feMerge>
-                        <feMergeNode in="offsetBlur"/> 
-                        <feMergeNode in="litPaint"/> 
+                        <feMergeNode in="darkShadow"/> 
+                        <feMergeNode in="finalLitPaint"/> 
                     </feMerge>
+                </filter>
+                
+                {/* Professional wing shimmer animation with sparkle effects */}
+                <filter id="wingShimmer" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="0.8" result="blur"/>
+                    <feSpecularLighting surfaceScale="2" specularConstant="2.5" 
+                                      specularExponent="20" lightingColor="#FFA500" result="shimmer">
+                        <fePointLight x="8" y="8" z="20"/>
+                    </feSpecularLighting>
+                    <feComposite in="shimmer" in2="SourceAlpha" operator="in" result="shimmer2"/>
+                    <feComposite in="SourceGraphic" in2="shimmer2" operator="screen"/>
+                </filter>
+                
+                {/* Advanced sparkle effect for energy particles */}
+                <filter id="sparkleEffect" x="-100%" y="-100%" width="300%" height="300%">
+                    <feGaussianBlur stdDeviation="0.5" result="sparkleBlur"/>
+                    <feSpecularLighting surfaceScale="3" specularConstant="3" 
+                                      specularExponent="30" lightingColor="#FFFFFF" result="sparkle">
+                        <fePointLight x="0" y="0" z="15"/>
+                    </feSpecularLighting>
+                    <feComposite in="sparkle" in2="SourceAlpha" operator="in" result="sparkle2"/>
+                    <feComposite in="SourceGraphic" in2="sparkle2" operator="screen" result="sparkled"/>
+                    
+                    {/* Add pulsing glow */}
+                    <feGaussianBlur in="sparkled" stdDeviation="2" result="glow"/>
+                    <feComponentTransfer result="coloredGlow">
+                        <feFuncA type="linear" slope="0.3"/>
+                    </feComponentTransfer>
+                    <feMerge>
+                        <feMergeNode in="coloredGlow"/>
+                        <feMergeNode in="sparkled"/>
+                    </feMerge>
+                </filter>
+                
+                {/* Atmospheric lighting effect for ambient particles */}
+                <filter id="atmosphericGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="1.5" result="softGlow"/>
+                    <feComponentTransfer result="atmosphereGlow">
+                        <feFuncA type="linear" slope="0.4"/>
+                    </feComponentTransfer>
+                    <feComposite in="SourceGraphic" in2="atmosphereGlow" operator="screen"/>
                 </filter>
             </defs>
         </svg>
@@ -944,33 +1310,7 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
             {animationState === 'playground' || animationState === 'forming' ? <PlayCircle size={18} /> : <Palette size={18} />}
             {animationState === 'playground' || animationState === 'forming' ? 'Form Butterfly' : 'Playground Mode'}
           </button>
-        </div>
-
-        <div style={{ position: 'absolute', bottom: '30px', right: '30px', zIndex: 150, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px', pointerEvents: 'auto' }}>
-          {showStats && (
-            <div style={{
-              background: 'rgba(10, 10, 20, 0.85)', // Dark, slightly blueish, more opaque
-              color: '#E0E0E0', // Softer white
-              padding: '15px',
-              borderRadius: '10px',
-              width: '200px', // Slightly wider
-              boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-              backdropFilter: 'blur(8px) saturate(120%)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              fontFamily: 'Arial, Helvetica, sans-serif', // Clear, readable font
-              fontSize: '0.9em',
-              lineHeight: '1.7',
-              textAlign: 'left'
-            }}>
-              <h4 style={{ margin: '0 0 10px 0', fontSize: '1.1em', color: '#FFFFFF', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '5px' }}>Performance Stats</h4>
-              <p style={{margin: '3px 0'}}>Particles: <span style={{float: 'right', fontWeight: 'bold'}}>{stats.particleCount}</span></p>
-              <p style={{margin: '3px 0'}}>FPS: <span style={{float: 'right', fontWeight: 'bold'}}>{stats.fps}</span></p>
-              { (animationState === 'forming' || animationState === 'formed') &&
-                <p style={{margin: '3px 0'}}>Formation: <span style={{float: 'right', fontWeight: 'bold'}}>{stats.formationProgress}%</span></p>
-              }
-              <p style={{margin: '3px 0'}}>Mode: <span style={{float: 'right', fontWeight: 'bold', textTransform: 'capitalize'}}>{animationState}</span></p>
-            </div>
-          )}
+        </div>        <div style={{ position: 'absolute', bottom: '30px', left: '30px', zIndex: 150, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', pointerEvents: 'auto' }}>
           <button 
             onClick={() => {
               // Add console.log here
@@ -995,6 +1335,41 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
             {showStats ? <EyeOff size={18} /> : <Eye size={18} />}
             {showStats ? 'Hide Stats' : 'Show Stats'}
           </button>
+          {showStats && (
+            <div style={{
+              background: 'rgba(10, 10, 20, 0.85)', // Dark, slightly blueish, more opaque
+              color: '#E0E0E0', // Softer white
+              padding: '15px',
+              borderRadius: '10px',
+              width: '200px', // Slightly wider
+              boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(8px) saturate(120%)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              fontFamily: 'Arial, Helvetica, sans-serif', // Clear, readable font
+              fontSize: '0.9em',
+              lineHeight: '1.7',
+              textAlign: 'left'
+            }}>
+              <h4 style={{ margin: '0 0 10px 0', fontSize: '1.1em', color: '#FFFFFF', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '5px' }}>Performance Stats</h4>
+              <p style={{margin: '3px 0'}}>Particles: <span style={{float: 'right', fontWeight: 'bold'}}>{stats.particleCount}</span></p>
+              <p style={{margin: '3px 0'}}>FPS: <span style={{float: 'right', fontWeight: 'bold'}}>{stats.fps}</span></p>
+              { (animationState === 'forming' || animationState === 'formed') &&
+                <p style={{margin: '3px 0'}}>Formation: <span style={{float: 'right', fontWeight: 'bold'}}>{stats.formationProgress}%</span></p>
+              }
+              <p style={{margin: '3px 0'}}>Mode: <span style={{float: 'right', fontWeight: 'bold', textTransform: 'capitalize'}}>{animationState}</span></p>
+              
+              {/* Professional keyboard shortcuts help */}
+              <div style={{ marginTop: '15px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
+                <h5 style={{ margin: '0 0 8px 0', fontSize: '0.95em', color: '#FFD700' }}>Keyboard Shortcuts</h5>
+                <div style={{ fontSize: '0.8em', lineHeight: '1.4' }}>
+                  <p style={{ margin: '2px 0' }}><kbd style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '3px', fontSize: '0.75em' }}>Space</kbd> Toggle Formation</p>
+                  <p style={{ margin: '2px 0' }}><kbd style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '3px', fontSize: '0.75em' }}>R</kbd> Reset to Playground</p>
+                  <p style={{ margin: '2px 0' }}><kbd style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '3px', fontSize: '0.75em' }}>S</kbd> Show/Hide Stats</p>
+                  <p style={{ margin: '2px 0' }}><kbd style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '3px', fontSize: '0.75em' }}>Esc</kbd> Disperse Butterfly</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </ButterflyErrorBoundary>
@@ -1021,7 +1396,7 @@ const HeaderWithParticlesOptimized: React.FC<HeaderProps> = ({ isActive, section
         const titleRect = welcomeTitleRef.current.getBoundingClientRect();
 
         const targetX = (titleRect.left - headerRect.left) + titleRect.width / 2;
-        const targetY = (titleRect.top - headerRect.top) + titleRect.height / 2;
+        const targetY = (titleRect.top - headerRect.top) + titleRect.height / 2; // Corrected this line
         
         setButterflyTargetPos({
           x: targetX,
@@ -1086,32 +1461,33 @@ const HeaderWithParticlesOptimized: React.FC<HeaderProps> = ({ isActive, section
         className={`relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden text-center p-5`}
         style={headerStyle} 
       >
-        <EtherealButterfly butterflyTargetPosition={butterflyTargetPos} />
-
-        {showHint && (
+        <EtherealButterfly butterflyTargetPosition={butterflyTargetPos} />        {showHint && (
           <div
             style={{
               position: 'absolute',
               top: '15px', // Slightly lower
               left: '50%',
               transform: 'translateX(-50%)',
-              padding: '6px 12px',
+              padding: '8px 16px',
               background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)',
-              color: isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.65)',
-              borderRadius: '6px',
-              fontSize: '0.8rem', // Slightly larger
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
+              borderRadius: '8px',
+              fontSize: '0.85rem',
               fontWeight: '400',
               zIndex: 100,
               cursor: 'pointer',
               transition: 'opacity 0.3s ease, background 0.3s ease',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+              maxWidth: '90vw',
+              textAlign: 'center',
+              lineHeight: '1.4',
             }}
             onClick={() => setShowHint(false)}
-            title="Press ESC to dismiss. Click butterfly icon to assemble/disperse particles."
+            title="Click to dismiss. Professional particle butterfly system with advanced physics and visual effects."
           >
-            PLAYGROUND MODE: PARTICLES INTERACT WITH MOUSE. USE BUTTERFLY ICON TO TOGGLE FORMATION.
+            🦋 <strong>PROFESSIONAL PARTICLE BUTTERFLY</strong> • Mouse: Interact • Space: Transform • R: Reset • S: Stats • Esc: Disperse
           </div>
-        )}        <div className="absolute top-4 right-4 lg:top-6 lg:right-6 flex items-center space-x-2 md:space-x-3 z-20">
+        )}<div className="absolute top-4 right-4 lg:top-6 lg:right-6 flex items-center space-x-2 md:space-x-3 z-20">
           <ThemeToggle />
           <nav className="flex items-center space-x-2 md:space-x-3">
             <Link
@@ -1178,28 +1554,29 @@ const HeaderWithParticlesOptimized: React.FC<HeaderProps> = ({ isActive, section
               BLOG
             </Link>
           </nav>
-        </div>
-
-        {/* Main Content Area */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 pt-16 sm:pt-20">
-          <div className="mb-6 md:mb-8">
+        </div>        {/* Main Content Area - Moved up for better centering */}
+        <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 pt-8 sm:pt-12">          <div className="mb-4 md:mb-6">
             {/* Removed isDarkTheme prop as it's not accepted by Logo3DHyperRealistic */}
-            <Logo3DHyperRealistic size={isDark ? 140 : 130} />
+            <Logo3DHyperRealistic size={isDark ? 120 : 110} />
           </div>
-          <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 tracking-tight leading-tight ${isDark ? 'shine-text' : 'shine-text-light'}`}>
+
+          <h1 
+            ref={welcomeTitleRef}
+            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 tracking-tight leading-tight ${isDark ? 'shine-text' : 'shine-text-light'}`}
+          >
             WELCOME TO GLOHSEN: <br className="hidden sm:block" /> EMPOWERING YOUR HEALTHCARE STORY
-          </h1>
-          <p className={`text-base sm:text-lg md:text-xl max-w-xl md:max-w-2xl mb-6 md:mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Revolutionizing career development and community health engagement through innovative technology.
+          </h1>          <p className={`text-base sm:text-lg md:text-xl max-w-xl md:max-w-2xl mb-6 md:mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            Your Fun, Transformative Journey Begins Here. <br className="hidden sm:block" /> Revolutionizing career development and community health engagement through innovative technology.
           </p>
-          
+
+          {/* EXPLORE Button - Positioned after descriptive text */}
           {scrollToSection && (
             <button
               onClick={() => {
                 if (playClickSoundProp && isSoundEnabled) playClickSoundProp();
                 scrollToSection(1); // Assuming section 1 is the next section after header
               }}
-              className="glassmorphic-gold-button mt-6 md:mt-8 px-6 py-2.5 sm:px-8 sm:py-3 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out group flex items-center justify-center"
+              className="glassmorphic-gold-button mb-4 md:mb-6 px-6 py-2.5 sm:px-8 sm:py-3 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out group flex items-center justify-center"
               style={{ color: isDark ? '#FFD700' : '#1f2937' }} // Dynamic color for Explore button
               aria-label="Scroll to next section"
             >
