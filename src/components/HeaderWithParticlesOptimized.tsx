@@ -422,54 +422,53 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
       setAnimationState('playground');
       animationStateRef.current = 'playground';
       return;
-    }    const desiredParticleCount = Math.min(1800, Math.max(800, points.length * 4)); // Increased particle count for more dramatic effect
+    }
+    const desiredParticleCount = Math.min(1800, Math.max(800, points.length * 4));
     const newParticles: SvgParticle[] = [];
     
     if (svgRef.current) {
         particlesRef.current.forEach(p => p.element?.remove());
-    }// Determine formation origin and scale - positioned on the left side of the screen
-    const defaultOrigin = { x: width * 0.2, y: height * 0.45 }; // Further left positioning
+    }
+    const defaultOrigin = { x: width * 0.2, y: height * 0.45 };
     let formationOrigin = defaultOrigin;
-    let scaleMultiplier = 0.4; // Larger scale for better visibility on left side
+    let scaleMultiplier = 0.4;
 
     if (butterflyTargetPosition && width > 0 && height > 0) {
-      // Override with left-side positioning instead of target position
-      formationOrigin = { x: width * 0.18, y: height * 0.4 }; // Force left-side positioning
-      scaleMultiplier = 0.35; // Good scale for left-side display
+      formationOrigin = { x: width * 0.18, y: height * 0.4 };
+      scaleMultiplier = 0.35;
       console.log('[EtherealButterflySVG] Using left-side positioning for butterfly formation:', formationOrigin, "scaleMultiplier:", scaleMultiplier);
     } else {
       console.log('[EtherealButterflySVG] Using default left-side positioning for butterfly formation.');
     }
     
     const scale = Math.min(width, height) * scaleMultiplier;
+    const groupCount = 12; // Moved groupCount declaration here, before the loop
 
     for (let i = 0; i < desiredParticleCount; i++) {
       const pointIndex = i % points.length;
       const bPoint = points[pointIndex];
-      const groupIndex = Math.floor((i / desiredParticleCount) * groupCount); // Define groupIndex here
-      const yFormationOffset = 0; // Remove offset to keep butterfly centered vertically
+      const groupIndex = Math.floor((i / desiredParticleCount) * groupCount); // Now groupCount is defined before use
+      const yFormationOffset = 0;
 
       const targetX = formationOrigin.x + bPoint.x * scale;
       const targetY = formationOrigin.y + yFormationOffset + bPoint.y * scale;
 
-      // Ensure particles start from truly random positions across the entire screen
       const startX = Math.random() * width;
       const startY = Math.random() * height;
       
-      // Add some edge bias to ensure particles come from screen edges too
       const edgeBias = Math.random();
       let finalStartX = startX;
       let finalStartY = startY;
       
-      if (edgeBias < 0.3) { // 30% chance to start from screen edges
+      if (edgeBias < 0.3) {
         const edge = Math.floor(Math.random() * 4);
         switch(edge) {
-          case 0: finalStartX = 0; finalStartY = Math.random() * height; break; // Left edge
-          case 1: finalStartX = width; finalStartY = Math.random() * height; break; // Right edge
-          case 2: finalStartX = Math.random() * width; finalStartY = 0; break; // Top edge
-          case 3: finalStartX = Math.random() * width; finalStartY = height; break; // Bottom edge
+          case 0: finalStartX = 0; finalStartY = Math.random() * height; break;
+          case 1: finalStartX = width; finalStartY = Math.random() * height; break;
+          case 2: finalStartX = Math.random() * width; finalStartY = 0; break;
+          case 3: finalStartX = Math.random() * width; finalStartY = height; break;
         }
-      }      // Generate curved convergence path for each particle
+      }
       const generateCurvePath = (startX: number, startY: number, endX: number, endY: number) => {
         const pathPoints = 8; // Number of spline points
         const pathX: number[] = [];
@@ -494,118 +493,57 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
         
         return { pathX, pathY };
       };
+      
+      const groupDelay = groupIndex * 50;
+      
+      const { pathX, pathY } = generateCurvePath(finalStartX, finalStartY, targetX, targetY);
 
-      // Sequential group assignment for satisfying one-after-another formation
-      const groupCount = 12; // Number of sequential groups
-
-      for (let i = 0; i < desiredParticleCount; i++) {
-        const pointIndex = i % points.length;
-        const bPoint = points[pointIndex];
-        const groupIndex = Math.floor((i / desiredParticleCount) * groupCount); // Define groupIndex here
-        const yFormationOffset = 0; // Remove offset to keep butterfly centered vertically
-
-        const targetX = formationOrigin.x + bPoint.x * scale;
-        const targetY = formationOrigin.y + yFormationOffset + bPoint.y * scale;
-
-        // Ensure particles start from truly random positions across the entire screen
-        const startX = Math.random() * width;
-        const startY = Math.random() * height;
-        
-        // Add some edge bias to ensure particles come from screen edges too
-        const edgeBias = Math.random();
-        let finalStartX = startX;
-        let finalStartY = startY;
-        
-        if (edgeBias < 0.3) { // 30% chance to start from screen edges
-          const edge = Math.floor(Math.random() * 4);
-          switch(edge) {
-            case 0: finalStartX = 0; finalStartY = Math.random() * height; break; // Left edge
-            case 1: finalStartX = width; finalStartY = Math.random() * height; break; // Right edge
-            case 2: finalStartX = Math.random() * width; finalStartY = 0; break; // Top edge
-            case 3: finalStartX = Math.random() * width; finalStartY = height; break; // Bottom edge
-          }
-        }      // Generate curved convergence path for each particle
-        const generateCurvePath = (startX: number, startY: number, endX: number, endY: number) => {
-          const pathPoints = 8; // Number of spline points
-          const pathX: number[] = [];
-          const pathY: number[] = [];
-          
-          // Create curved path with sine wave influence
-          for (let j = 0; j <= pathPoints; j++) {
-            const t = j / pathPoints;
-            const curveInfluence = Math.sin(t * Math.PI) * (30 + Math.random() * 40);
-            
-            // Bezier-like curve with random control points
-            const controlX = (startX + endX) / 2 + (Math.random() - 0.5) * width * 0.3;
-            const controlY = (startY + endY) / 2 + curveInfluence;
-            
-            // Quadratic interpolation
-            const x = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * controlX + t * t * endX;
-            const y = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * controlY + t * t * endY;
-            
-            pathX.push(x);
-            pathY.push(y);
-          }
-          
-          return { pathX, pathY };
-        };
-
-        // Sequential group assignment for satisfying one-after-another formation
-        const groupCount = 12; // Number of sequential groups
-        const groupDelay = groupIndex * 50; // Was 800ms, changed to 50ms for faster sequential reveal
-        
-        const { pathX, pathY } = generateCurvePath(finalStartX, finalStartY, targetX, targetY);
-
-        const particle: SvgParticle = {
-          id: `p_form_${i}_${Date.now()}`, // More unique ID
-          element: null,
-          x: finalStartX, 
-          y: finalStartY,
-          vx: (Math.random() - 0.5) * 1,
-          vy: (Math.random() - 0.5) * 1,
-          radius: Math.random() * 1.5 + 0.8, 
-          color: getParticleColor(bPoint.wing, bPoint.isEdge, 'forming', bPoint.distanceToCenter),
-          opacity: 0.1, 
-          targetX: targetX,
-          targetY: targetY,        originalX: finalStartX, // Store initial position for potential effects
-          originalY: finalStartY,
-          wing: bPoint.wing,
-          distanceToCenter: bPoint.distanceToCenter,
-          isEdge: bPoint.isEdge,
-          formed: false,
-          progress: 0,
-          
-          // Enhanced physics properties for professional animation
-          springForce: 0.08 + Math.random() * 0.12, // Variable spring response
-          dampening: 0.82 + Math.random() * 0.15, // Professional dampening
-          mass: 0.8 + Math.random() * 1.2 + (bPoint.isEdge ? 0.3 : 0), // Edge particles slightly heavier
-          formationDelay: groupDelay + Math.random() * 200, // Sequential + random variation
-          curveAmplitude: 25 + Math.random() * 35, // For organic curved paths
-          energyLevel: bPoint.isEdge ? 0.8 + Math.random() * 0.2 : 0.3 + Math.random() * 0.5, // Edge particles more energetic
-          interactionRadius: 60 + Math.random() * 80 + (bPoint.isEdge ? 20 : 0), // Variable interaction zones
-          
-          // Advanced animation properties for curved convergence
-          convergencePathX: pathX, // Pre-calculated spline points
-          convergencePathY: pathY, // Pre-calculated spline points  
-          pathProgress: 0, // Progress along the convergence path
-          isConverging: false, // Will be set to true when formation starts
-          groupIndex: groupIndex, // For sequential group animations
-          wavePhase: Math.random() * Math.PI * 2 + (groupIndex * 0.5), // Phase for wave-like motion
-        };
-        particle.element = createSvgParticleElement(particle);
-        newParticles.push(particle);
-      }
+      const particle: SvgParticle = {
+        id: `p_form_${i}_${Date.now()}`,
+        element: null,
+        x: finalStartX, 
+        y: finalStartY,
+        vx: (Math.random() - 0.5) * 1,
+        vy: (Math.random() - 0.5) * 1,
+        radius: Math.random() * 1.5 + 0.8, 
+        color: getParticleColor(bPoint.wing, bPoint.isEdge, 'forming', bPoint.distanceToCenter),
+        opacity: 0.1, 
+        targetX: targetX,
+        targetY: targetY,
+        originalX: finalStartX,
+        originalY: finalStartY,
+        wing: bPoint.wing,
+        distanceToCenter: bPoint.distanceToCenter,
+        isEdge: bPoint.isEdge,
+        formed: false,
+        progress: 0,
+        springForce: 0.08 + Math.random() * 0.12,
+        dampening: 0.82 + Math.random() * 0.15,
+        mass: 0.8 + Math.random() * 1.2 + (bPoint.isEdge ? 0.3 : 0),
+        formationDelay: groupDelay + Math.random() * 200,
+        curveAmplitude: 25 + Math.random() * 35,
+        energyLevel: bPoint.isEdge ? 0.8 + Math.random() * 0.2 : 0.3 + Math.random() * 0.5,
+        interactionRadius: 60 + Math.random() * 80 + (bPoint.isEdge ? 20 : 0),
+        convergencePathX: pathX,
+        convergencePathY: pathY,
+        pathProgress: 0,
+        isConverging: false,
+        groupIndex: groupIndex,
+        wavePhase: Math.random() * Math.PI * 2 + (groupIndex * 0.5),
+      };
+      particle.element = createSvgParticleElement(particle);
+      newParticles.push(particle);
     }
     particlesRef.current = newParticles;
     setStats(prev => ({ ...prev, particleCount: newParticles.length, formationProgress: 0 }));
     console.log('[EtherealButterflySVG] Formation particles initialized:', newParticles.length);
-  }, [getParticleColor, initializePlaygroundParticles, butterflyTargetPosition]); // Added butterflyTargetPosition
+  }, [getParticleColor, initializePlaygroundParticles, butterflyTargetPosition, createSvgParticleElement]); // Added createSvgParticleElement to dependencies
 
   const updateAndDrawSvgParticles = useCallback((width: number, height: number) => {
     const particles = particlesRef.current;
     const state = animationStateRef.current;
     const mousePos = mousePositionRef.current;
-    const currentTime = Date.now();
+    const currentTime = Date.now(); // Ensure currentTime is defined
     let formedCount = 0;
 
     particles.forEach(p => {
@@ -1072,7 +1010,7 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
     window.addEventListener('resize', resizeAndInitialize);
     window.addEventListener('keydown', handleKeyDown);
 
-    const animate = (time: number) => {
+    const animate = (time: number) => { // 'time' here is the timestamp from requestAnimationFrame
       if (svgSizeRef.current.width === 0 || svgSizeRef.current.height === 0) {
         animationFrameRef.current = requestAnimationFrame(animate);
         return;
@@ -1080,12 +1018,12 @@ const EtherealButterfly: React.FC<EtherealButterflyProps> = ({ butterflyTargetPo
       updateAndDrawSvgParticles(svgSizeRef.current.width, svgSizeRef.current.height);
       
       frameCountRef.current++;
-      if (!lastFPSTimeRef.current) lastFPSTimeRef.current = time;
-      const deltaTime = time - lastFPSTime.current;
+      if (!lastFPSTimeRef.current) lastFPSTimeRef.current = time; // Initialize with the first timestamp
+      const deltaTime = time - lastFPSTimeRef.current; // Corrected: use time from animate and lastFPSTimeRef.current
       if (deltaTime >= 1000) {
           const fps = Math.round((frameCountRef.current * 1000) / deltaTime);
           setStats(prev => ({ ...prev, fps }));
-          lastFPSTimeRef.current = time;
+          lastFPSTimeRef.current = time; // Update with current timestamp
           frameCountRef.current = 0;
       }
 
@@ -1426,7 +1364,7 @@ const HeaderWithParticlesOptimized: React.FC<HeaderProps> = ({ isActive, section
   const headerBaseStyle: React.CSSProperties = {
     position: 'relative',
     width: '100%',
-    minHeight: '100vh',
+       minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
