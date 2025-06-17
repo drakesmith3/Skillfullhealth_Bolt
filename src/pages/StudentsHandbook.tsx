@@ -1,155 +1,245 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, BookOpen, Gamepad2, Users, DollarSign, Shield, TrendingUp, AlertTriangle, Heart, Award, Sparkles, Star, Target, Zap } from 'lucide-react';
+import { motion, useAnimation, useInView } from 'framer-motion';
+import { GraduationCap, BookOpen, Gamepad2, Users, DollarSign, Shield, TrendingUp, AlertTriangle, Heart, Award, Sparkles, Star, Target, Zap, CheckCircle, Crown, Medal, Trophy, Briefcase, Globe, Clock, X, ChevronRight, ArrowUpRight, FileText, PlayCircle, Brain, Search, RefreshCw, MessageSquare } from 'lucide-react';
 import PreHeader from '../components/PreHeader';
 import Footer from '../components/Footer';
 
 export default function StudentsHandbook() {
-  // Sound effect functions
-  const playClickSound = useCallback(() => {
-    const audio = new Audio('/click.mp3');
-    audio.volume = 0.3;
-    audio.play().catch(() => {});
+  // Sound effects (if audio files are available)
+  const playSound = useCallback((soundType: string) => {
+    try {
+      const audio = new Audio(`/${soundType}.mp3`);
+      audio.volume = 0.3;
+      audio.play().catch(() => {});
+    } catch (error) {
+      // Silently handle audio errors
+    }
   }, []);
-
-  const playPageTurnSound = useCallback(() => {
-    const audio = new Audio('/page-turn.mp3');
-    audio.volume = 0.4;
-    audio.play().catch(() => {});
-  }, []);
-
-  const playWhooshSound = useCallback(() => {
-    const audio = new Audio('/whoosh.mp3');
-    audio.volume = 0.2;
-    audio.play().catch(() => {});
-  }, []);
-
-  const playChimeSound = useCallback(() => {
-    const audio = new Audio('/CHIME -169854__gnotesoundz__wind-chime-crunch.mp3');
-    audio.volume = 0.3;
-    audio.play().catch(() => {});  }, []);
 
   return (
     <>
       <PreHeader />
       
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-red-50/20 dark:from-black dark:via-gray-900 dark:to-red-950/20 py-16 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-red-500/10 to-yellow-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-yellow-500/10 to-red-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-red-500/5 to-yellow-500/5 rounded-full blur-3xl animate-pulse delay-500"></div>
-      </div>
+      {/* Premium Background with Animated Elements */}
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-yellow-50 to-red-50 dark:from-gray-900 dark:via-red-950 dark:to-black relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-red-200/30 dark:bg-red-800/20 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-48 h-48 bg-yellow-200/30 dark:bg-yellow-800/20 rounded-full blur-xl animate-bounce"></div>
+          <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-red-300/30 dark:bg-red-700/20 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute bottom-40 right-1/3 w-36 h-36 bg-yellow-300/30 dark:bg-yellow-700/20 rounded-full blur-xl animate-bounce"></div>
+        </div>
 
-      <div className="max-w-5xl mx-auto px-6 relative z-10">
-        {/* Premium Header Section */}
-        <div className="text-center mb-20 relative">
-          {/* Decorative Elements */}
-          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2">
-            <div className="flex items-center space-x-2">
-              <Star className="w-6 h-6 text-yellow-500 animate-pulse" />
-              <Star className="w-4 h-4 text-red-500 animate-pulse delay-300" />
-              <Star className="w-6 h-6 text-yellow-500 animate-pulse delay-600" />
+        <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
+          {/* Premium Header Section */}
+          <motion.div 
+            className="text-center mb-16 relative"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-yellow-500/10 rounded-3xl blur-xl"></div>
+            <div className="relative backdrop-blur-lg bg-gradient-to-br from-red-50/80 to-yellow-50/80 dark:from-red-900/20 dark:to-yellow-900/20 rounded-3xl border border-red-200/30 dark:border-red-700/30 p-12 hover:shadow-2xl transition-all duration-500">
+              {/* Premium Header Image */}
+              <motion.div 
+                className="mb-8"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+              >
+                <img 
+                  src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+                  alt="Healthcare Students Learning and Collaboration" 
+                  className="w-full h-64 object-cover rounded-2xl shadow-lg hover:scale-105 transition-transform duration-500"
+                />
+              </motion.div>
+              
+              <div className="flex justify-center mb-6">
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-yellow-500 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
+                  <div className="relative p-6 bg-gradient-to-r from-red-600 to-yellow-600 rounded-full shadow-2xl">
+                    <GraduationCap className="w-16 h-16 text-white" />
+                  </div>
+                </motion.div>
+              </div>
+              
+              <motion.h1 
+                className="text-5xl md:text-6xl font-black text-transparent bg-gradient-to-r from-red-600 via-yellow-600 to-red-600 bg-clip-text mb-6 tracking-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                STUDENTS HANDBOOK
+              </motion.h1>
+              
+              <motion.p 
+                className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-medium max-w-4xl mx-auto leading-relaxed mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                Your comprehensive guide to succeeding as a healthcare student on the GLOHSEN platform. 
+                <span className="text-transparent bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text font-black"> Learn, grow, and prepare for your future healthcare career.</span>
+              </motion.p>
+              
+              {/* Student Stats Cards */}
+              <motion.div 
+                className="grid md:grid-cols-3 gap-6 mt-12"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                <motion.div 
+                  className="text-center p-6 backdrop-blur-lg bg-red-50/50 dark:bg-red-900/20 rounded-2xl border border-red-200/30 dark:border-red-700/30 hover:scale-105 transition-transform duration-300"
+                  whileHover={{ y: -5 }}
+                >
+                  <BookOpen className="w-10 h-10 text-red-500 mx-auto mb-3" />
+                  <h3 className="text-2xl font-bold text-gray-800 dark:text-white">250,000+</h3>
+                  <p className="text-gray-600 dark:text-gray-400">Active Students</p>
+                </motion.div>
+                <motion.div 
+                  className="text-center p-6 backdrop-blur-lg bg-yellow-50/50 dark:bg-yellow-900/20 rounded-2xl border border-yellow-200/30 dark:border-yellow-700/30 hover:scale-105 transition-transform duration-300"
+                  whileHover={{ y: -5 }}
+                >
+                  <Gamepad2 className="w-10 h-10 text-yellow-600 mx-auto mb-3" />
+                  <h3 className="text-2xl font-bold text-gray-800 dark:text-white">10,000+</h3>
+                  <p className="text-gray-600 dark:text-gray-400">Games & Quizzes</p>
+                </motion.div>
+                <motion.div 
+                  className="text-center p-6 backdrop-blur-lg bg-black/10 dark:bg-black/20 rounded-2xl border border-gray-300/30 dark:border-gray-700/30 hover:scale-105 transition-transform duration-300"
+                  whileHover={{ y: -5 }}
+                >
+                  <Trophy className="w-10 h-10 text-gray-700 dark:text-gray-300 mx-auto mb-3" />
+                  <h3 className="text-2xl font-bold text-gray-800 dark:text-white">5,000+</h3>
+                  <p className="text-gray-600 dark:text-gray-400">Certificates Earned</p>
+                </motion.div>
+              </motion.div>
             </div>
-          </div>
-          
-          <div className="relative inline-block">
-            <h1 className="text-6xl md:text-7xl font-black text-transparent bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text mb-6 tracking-tight leading-tight">
-              GLOHSEN
-            </h1>
-            <div className="absolute -inset-2 bg-gradient-to-r from-red-600/20 to-yellow-500/20 blur-lg rounded-lg"></div>
-          </div>
-          
-          <h2 className="text-3xl md:text-4xl font-bold text-black dark:text-stone-100 mb-8 tracking-wide">
-            Student <span className="text-transparent bg-gradient-to-r from-yellow-500 to-red-600 bg-clip-text">Handbook</span>
-          </h2>
-          
-          <div className="max-w-4xl mx-auto backdrop-blur-sm bg-white/80 dark:bg-black/80 rounded-3xl p-8 shadow-2xl border border-white/20">
-            <p className="text-xl md:text-2xl text-gray-800 dark:text-stone-200 leading-relaxed font-medium">
-              Your <span className="text-red-600 font-bold">comprehensive guide</span> to succeeding as a healthcare student on the GLOHSEN platform. 
-              <br />
-              <span className="text-yellow-600 font-semibold">Learn, grow, and prepare</span> for your future healthcare career with our innovative tools and community.
-            </p>
-          </div>
-
-          {/* Premium Accent Line */}
+          </motion.div>          {/* Premium Accent Line */}
           <div className="mt-12 flex justify-center">
             <div className="w-32 h-1 bg-gradient-to-r from-red-600 to-yellow-500 rounded-full shadow-lg"></div>
           </div>
-        </div>        {/* Premium Table of Contents */}
-        <div className="backdrop-blur-lg bg-white/90 dark:bg-black/90 rounded-3xl shadow-2xl overflow-hidden mb-16 border border-white/30 dark:border-gray-800/50">
-          {/* Luxurious Header */}
-          <div className="relative bg-gradient-to-r from-red-600 via-red-700 to-yellow-600 p-8">
-            <div className="absolute inset-0 bg-gradient-to-r from-red-600/90 to-yellow-500/90 backdrop-blur-sm"></div>
-            <div className="relative z-10">
-              <h2 className="text-3xl font-black text-white flex items-center justify-center">
-                <div className="mr-4 p-3 bg-white/20 rounded-2xl backdrop-blur-sm border border-white/30">
-                  <GraduationCap className="w-8 h-8" />
-                </div>
-                <span className="tracking-wide">Table of Contents</span>
-                <Sparkles className="w-6 h-6 ml-4 animate-pulse" />
-              </h2>
-            </div>
-          </div>
-
-          {/* Premium Content Grid */}
-          <div className="p-8 bg-gradient-to-br from-stone-50/50 to-amber-50/30 dark:from-gray-900/50 dark:to-red-950/20">
-            <div className="grid md:grid-cols-2 gap-6">
-              {[
-                { title: '1. What is GLOHSEN and the GLOHSEN Standard?', icon: Award, color: 'red' },
-                { title: '2. Why Join GLOHSEN as a Student?', icon: Heart, color: 'yellow' },
-                { title: '3. Terms, Privacy, and Legal Requirements', icon: Shield, color: 'red' },
-                { title: '4. Ways to Make Money on GLOHSEN', icon: DollarSign, color: 'yellow' },
-                { title: '5. How to Become a Creator/Tutor', icon: BookOpen, color: 'red' },
-                { title: '6. Games, Quizzes, and Competitions', icon: Gamepad2, color: 'yellow' },
-                { title: '7. Platform Rules and Student Conduct', icon: AlertTriangle, color: 'red' },
-                { title: '8. Making the Most of GLOHSEN Community', icon: Users, color: 'yellow' }
-              ].map((item, index) => {
-                const IconComponent = item.icon;
-                const isRed = item.color === 'red';
-                  return (
-                  <a
-                    key={index}
-                    href={`#section-${index + 1}`}
-                    onClick={(e) => {
-                      playPageTurnSound();
-                    }}
-                    onMouseEnter={playWhooshSound}
-                    className={`group relative block p-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 ${
-                      isRed 
-                        ? 'bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-red-200/50 dark:border-red-800/30 hover:border-red-400 hover:from-red-100 hover:to-red-200/70' 
-                        : 'bg-gradient-to-br from-yellow-50 to-amber-100/50 dark:from-yellow-950/30 dark:to-yellow-900/20 border-yellow-200/50 dark:border-yellow-800/30 hover:border-yellow-400 hover:from-yellow-100 hover:to-amber-200/70'
-                    }`}
-                  >
-                    {/* Premium Icon Container */}
-                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 shadow-lg transition-all duration-300 group-hover:scale-110 ${
-                      isRed 
-                        ? 'bg-gradient-to-br from-red-500 to-red-600 group-hover:from-red-600 group-hover:to-red-700' 
-                        : 'bg-gradient-to-br from-yellow-500 to-amber-600 group-hover:from-yellow-600 group-hover:to-amber-700'
-                    }`}>
-                      <IconComponent className="w-6 h-6 text-white" />
-                    </div>
-                    
-                    {/* Premium Typography */}
-                    <h3 className={`text-lg font-bold leading-tight transition-colors group-hover:${isRed ? 'text-red-700' : 'text-yellow-700'} ${
-                      isRed ? 'text-red-900 dark:text-red-100' : 'text-yellow-900 dark:text-yellow-100'
-                    }`}>
-                      {item.title}
-                    </h3>
-                    
-                    {/* Hover Effect Accent */}
-                    <div className={`absolute bottom-0 left-0 h-1 w-0 transition-all duration-300 group-hover:w-full rounded-b-2xl ${
-                      isRed ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-                    }`}></div>
-                    
-                    {/* Premium Shine Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none"></div>
-                  </a>
-                );
-              })}            </div>
-          </div>
         </div>
-        
+
+          {/* Premium Table of Contents */}
+          <motion.div 
+            className="relative group mb-16"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-yellow-500/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+            <div className="relative backdrop-blur-lg bg-gradient-to-br from-red-50/80 to-yellow-50/80 dark:from-red-900/20 dark:to-yellow-900/20 rounded-3xl border border-red-200/30 dark:border-red-700/30 overflow-hidden hover:shadow-2xl transition-all duration-500">
+              
+              {/* Header with Gradient */}
+              <div className="bg-gradient-to-r from-red-500 via-red-600 to-yellow-500 p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white flex items-center relative z-10">
+                  <GraduationCap className="w-8 h-8 mr-4 animate-pulse" />
+                  Table of Contents
+                  <Sparkles className="w-6 h-6 ml-3 text-yellow-200 animate-spin" />
+                </h2>
+                <p className="text-white/90 mt-2 text-lg">Navigate your learning journey to success</p>
+              </div>
+
+              <div className="p-8">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {[
+                    { 
+                      title: '1. What is GLOHSEN and the GLOHSEN Standard?',
+                      icon: Award,
+                      color: 'from-red-500 to-red-600',
+                      description: 'Understanding our educational framework'
+                    },
+                    { 
+                      title: '2. Why Join GLOHSEN as a Student?',
+                      icon: Heart,
+                      color: 'from-yellow-500 to-yellow-600',
+                      description: 'Benefits of our learning platform'
+                    },
+                    { 
+                      title: '3. Terms, Privacy, and Legal Requirements',
+                      icon: Shield,
+                      color: 'from-red-500 to-black',
+                      description: 'Essential legal framework'
+                    },
+                    { 
+                      title: '4. How to Create and Manage Your Student Profile',
+                      icon: Users,
+                      color: 'from-yellow-500 to-red-500',
+                      description: 'Setting up your learning profile'
+                    },
+                    { 
+                      title: '5. QUID Currency and Transaction Policies',
+                      icon: DollarSign,
+                      color: 'from-yellow-500 to-yellow-600',
+                      description: 'Financial ecosystem for students'
+                    },
+                    { 
+                      title: '6. Games, Quizzes, and Interactive Learning',
+                      icon: Gamepad2,
+                      color: 'from-red-500 to-yellow-500',
+                      description: 'Engaging educational activities'
+                    },
+                    { 
+                      title: '7. Tutoring and Mentorship Opportunities',
+                      icon: BookOpen,
+                      color: 'from-yellow-500 to-red-500',
+                      description: 'Access to expert guidance'
+                    },
+                    { 
+                      title: '8. Platform Rules and Academic Integrity',
+                      icon: AlertTriangle,
+                      color: 'from-red-500 to-black',
+                      description: 'Academic standards & guidelines'
+                    },
+                    { 
+                      title: '9. Making the Most of GLOHSEN Community',
+                      icon: Users,
+                      color: 'from-yellow-500 to-red-500',
+                      description: 'Community engagement strategies'
+                    }
+                  ].map((item, index) => {
+                    const IconComponent = item.icon;
+                    return (
+                      <motion.a
+                        key={index}
+                        href={`#section-${index + 1}`}
+                        onClick={() => playSound('click')}
+                        className="group relative block p-6 rounded-2xl backdrop-blur-lg bg-white/10 dark:bg-black/10 border border-white/20 dark:border-gray-700/30 hover:bg-white/20 dark:hover:bg-black/20 hover:border-red-300/50 dark:hover:border-red-600/50 transition-all duration-300 hover:shadow-xl"
+                        whileHover={{ y: -5, scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <div className="flex items-start space-x-4">
+                          <motion.div 
+                            className={`p-3 rounded-xl bg-gradient-to-r ${item.color} shadow-lg`}
+                            whileHover={{ scale: 1.1, rotate: 5 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <IconComponent className="w-6 h-6 text-white" />
+                          </motion.div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors duration-300 leading-tight">
+                              {item.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                              {item.description}
+                            </p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-red-500 group-hover:translate-x-1 transition-all duration-300" />                        </div>
+                      </motion.a>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
         {/* Premium Content Sections */}
         <div className="space-y-16">
           {/* Premium Section 1 */}
@@ -213,7 +303,7 @@ export default function StudentsHandbook() {
                     
                     <div className="text-center mb-10">
                       <h4 className="text-3xl font-black text-black dark:text-stone-100 mb-4">
-                        The GLOHSEN Standard: <span className="text-transparent bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text">"FREI"</span>
+                        The GLOHSEN Standard: <span className="text-transparent bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text">"Is It 'FREI'?"</span>
                       </h4>
                       <p className="text-xl text-gray-800 dark:text-stone-200 max-w-3xl mx-auto leading-relaxed">
                         All educational content on our platform meets <span className="font-bold text-red-600">three essential criteria</span> to ensure the best learning experience:
@@ -248,9 +338,7 @@ export default function StudentsHandbook() {
                           icon: '🎨'
                         }
                       ].map((item, index) => (
-                        <div key={index} className={`group relative text-center backdrop-blur-sm bg-gradient-to-br ${item.bgGradient} dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-8 border-2 border-white/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105`}
-                          onMouseEnter={playWhooshSound}
-                        >
+                        <div key={index} className={`group relative text-center backdrop-blur-sm bg-gradient-to-br ${item.bgGradient} dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-8 border-2 border-white/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105`}>
                           {/* Premium Icon Container */}
                           <div className={`relative w-20 h-20 bg-gradient-to-br ${item.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl group-hover:scale-110 transition-transform duration-300`}>
                             <span className="text-white font-black text-2xl">{item.letter}</span>
@@ -263,12 +351,12 @@ export default function StudentsHandbook() {
                           <p className="text-gray-800 dark:text-stone-200 leading-relaxed font-medium">
                             {item.description}
                           </p>
-                          
-                          {/* Shine Effect */}
+                            {/* Shine Effect */}
                           <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none"></div>
                         </div>
                       ))}
-                    </div>                  </div>
+                    </div>
+                  </div>
 
                   {/* Learning Ecosystem Card */}
                   <div className="backdrop-blur-sm bg-white/80 dark:bg-black/80 rounded-2xl p-8 border border-white/20 shadow-xl">
@@ -444,71 +532,145 @@ export default function StudentsHandbook() {
               </div>
             </div>
           </section>          {/* Premium Section 3 */}
-          <section id="section-3" className="group relative">
-            {/* Glassmorphism Container */}
-            <div className="backdrop-blur-lg bg-white/90 dark:bg-black/90 rounded-3xl shadow-2xl overflow-hidden border border-white/30 dark:border-gray-800/50 transition-all duration-500 group-hover:shadow-3xl">
+          <motion.section 
+            id="section-3" 
+            className="group relative"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            viewport={{ once: true }}
+          >
+            {/* Glassmorphism Container with Enhanced 3D Effects */}
+            <div className="backdrop-blur-lg bg-white/90 dark:bg-black/90 rounded-3xl shadow-2xl overflow-hidden border border-white/30 dark:border-gray-800/50 transition-all duration-500 group-hover:shadow-3xl transform group-hover:scale-[1.02]">
               
               {/* Premium Section Header */}
               <div className="relative bg-gradient-to-r from-amber-600 via-yellow-600 to-red-600 p-8">
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-600/90 to-red-500/90 backdrop-blur-sm"></div>
+                {/* Floating Decorative Elements */}
+                <div className="absolute top-4 right-8 w-20 h-20 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+                <div className="absolute bottom-4 left-8 w-16 h-16 bg-white/5 rounded-full blur-lg animate-bounce"></div>
+                
                 <div className="relative z-10 flex items-center">
-                  <div className="mr-6 p-4 bg-white/20 rounded-2xl backdrop-blur-sm border border-white/30 shadow-lg">
+                  <motion.div 
+                    className="mr-6 p-4 bg-white/20 rounded-2xl backdrop-blur-sm border border-white/30 shadow-lg"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <Shield className="w-10 h-10 text-white" />
-                  </div>
+                  </motion.div>
                   <div>
-                    <h3 className="text-3xl font-black text-white mb-2 tracking-wide">
+                    <motion.h3 
+                      className="text-3xl font-black text-white mb-2 tracking-wide"
+                      initial={{ x: -20 }}
+                      whileInView={{ x: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
                       <span className="text-5xl font-black mr-4">3.</span>Terms & Privacy
-                    </h3>
+                    </motion.h3>
                     <p className="text-xl text-white/90 font-medium">
                       Your Data, Your Rights, Your Protection
                     </p>
                   </div>
                   <div className="ml-auto">
-                    <Star className="w-8 h-8 text-white animate-pulse" />
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Sparkles className="w-8 h-8 text-white" />
+                    </motion.div>
                   </div>
                 </div>
               </div>
 
               {/* Premium Content */}
               <div className="p-10 bg-gradient-to-br from-stone-50/50 to-amber-50/30 dark:from-gray-900/50 dark:to-amber-950/20">
+                {/* Premium Hero Image */}
+                <motion.div 
+                  className="relative group/image mb-8"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-red-500/20 rounded-2xl blur-xl transform scale-105 opacity-0 group-hover/image:opacity-100 transition-all duration-500"></div>
+                  <div className="relative backdrop-blur-sm bg-white/90 dark:bg-black/90 rounded-2xl p-4 border border-white/30 shadow-xl">
+                    <img 
+                      src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80" 
+                      alt="Legal documents, privacy protection, and professional compliance in healthcare education" 
+                      className="w-full h-48 object-cover rounded-xl shadow-2xl transition-transform duration-500 group-hover/image:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
+                  </div>
+                </motion.div>
+
                 <div className="space-y-10">
-                  
                   {/* Legal Protection Card */}
-                  <div className="backdrop-blur-sm bg-gradient-to-br from-red-50/80 to-red-100/80 dark:from-red-950/30 dark:to-red-900/20 rounded-3xl p-10 border-2 border-red-200/50 dark:border-red-800/30 shadow-2xl">
-                    <div className="flex items-start">
-                      <div className="mr-6 p-4 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-2xl">
-                        <Shield className="w-10 h-10 text-white" />
+                  <motion.div 
+                    className="backdrop-blur-sm bg-gradient-to-br from-red-50/80 to-red-100/80 dark:from-red-950/30 dark:to-red-900/20 rounded-3xl p-10 border-2 border-red-200/50 dark:border-red-800/30 shadow-2xl hover:shadow-2xl transition-all duration-300"
+                    whileHover={{ y: -5, scale: 1.02 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="flex items-center mb-6">
+                      <motion.div 
+                        className="p-3 bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg mr-4"
+                        whileHover={{ rotate: 10, scale: 1.1 }}
+                      >
+                        <Shield className="w-8 h-8 text-white" />
+                      </motion.div>
+                      <h4 className="text-2xl font-bold text-black dark:text-white">Legal Compliance & Protection</h4>
+                    </div>
+                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                      By joining GLOHSEN, you agree to our Terms of Service and Privacy Policy, which protect your data and privacy in line with 
+                      global standards including HIPAA where applicable.
+                    </p>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        {[
+                          "Your personal information is encrypted and securely stored",
+                          "We comply with international privacy regulations (GDPR, HIPAA)", 
+                          "You maintain control over your personal data and privacy settings"
+                        ].map((item, index) => (
+                          <motion.div 
+                            key={index}
+                            className="flex items-start mb-4"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 + index * 0.1 }}
+                          >
+                            <motion.div
+                              whileHover={{ scale: 1.2, rotate: 360 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <CheckCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
+                            </motion.div>
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                          </motion.div>
+                        ))}
                       </div>
-                      <div className="flex-1">
-                        <h4 className="text-3xl font-black text-black dark:text-stone-100 mb-6">
-                          <span className="text-transparent bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text">Legal Compliance</span> & Protection
-                        </h4>
-                        <p className="text-xl text-gray-800 dark:text-stone-200 leading-relaxed mb-8">
-                          By joining GLOHSEN, you agree to our <span className="font-bold text-red-600">Terms of Service</span> and 
-                          <span className="font-bold text-yellow-600"> Privacy Policy</span>, which protect your data and privacy in line with 
-                          <span className="font-semibold text-red-600">global standards including HIPAA</span> where applicable.
-                        </p>
-                        
-                        {/* Premium Feature List */}
-                        <div className="grid md:grid-cols-2 gap-6">
-                          {[
-                            'Your personal information is encrypted and securely stored',
-                            'We comply with international privacy regulations (GDPR, HIPAA)',
-                            'You maintain control over your personal data and privacy settings',
-                            'All educational content is reviewed for accuracy and safety',
-                            'Platform interactions are monitored for safety and appropriateness'
-                          ].map((item, index) => (
-                            <div key={index} className="flex items-start">
-                              <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mr-4 mt-1 shadow-lg">
-                                <span className="text-white text-xs font-bold">✓</span>
-                              </div>
-                              <span className="text-gray-800 dark:text-stone-200 font-medium leading-relaxed">{item}</span>
-                            </div>
-                          ))}
-                        </div>
+                      <div>
+                        {[
+                          "All educational content is reviewed for accuracy and safety",
+                          "Platform interactions are monitored for safety and appropriateness",
+                        ].map((item, index) => (
+                          <motion.div 
+                            key={index}
+                            className="flex items-start mb-4"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.6 + index * 0.1 }}
+                          >
+                            <motion.div
+                              whileHover={{ scale: 1.2, rotate: 360 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <CheckCircle className="w-5 h-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" />
+                            </motion.div>
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                          </motion.div>
+                        ))}
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Student Responsibilities - Premium Design */}
                   <div className="backdrop-blur-sm bg-gradient-to-br from-yellow-50/80 to-amber-100/80 dark:from-yellow-950/30 dark:to-yellow-900/20 rounded-3xl p-10 border-2 border-yellow-200/50 dark:border-yellow-800/30 shadow-2xl">
@@ -543,15 +705,15 @@ export default function StudentsHandbook() {
                           'Report any inappropriate behavior or content',
                           'Keep login credentials secure and confidential'
                         ].map((item, index) => (
-                          <div key={index} className="flex items-start">
-                            <div className="w-6 h-6 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-full flex items-center justify-center mr-4 mt-1 shadow-lg">
+                          <div key={index} className="flex items-start">                            <div className="w-6 h-6 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-full flex items-center justify-center mr-4 mt-1 shadow-lg">
                               <span className="text-white text-xs font-bold">✓</span>
                             </div>
                             <span className="text-gray-800 dark:text-stone-200 font-medium leading-relaxed">{item}</span>
                           </div>
                         ))}
                       </div>
-                    </div>                  </div>
+                    </div>
+                  </div>
 
                   {/* Certificate Tracking Card */}
                   <div className="backdrop-blur-sm bg-white/80 dark:bg-black/80 rounded-2xl p-8 border border-white/20 shadow-xl">
@@ -583,54 +745,144 @@ export default function StudentsHandbook() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
                     </div>
-                  </div>
-
-                </div>
+                  </div>                </div>
               </div>
             </div>
-          </section>          {/* Premium Section 4 */}
-          <section id="section-4" className="group relative">
-            {/* Glassmorphism Container */}
-            <div className="backdrop-blur-lg bg-white/90 dark:bg-black/90 rounded-3xl shadow-2xl overflow-hidden border border-white/30 dark:border-gray-800/50 transition-all duration-500 group-hover:shadow-3xl">
+          </motion.section>
+
+          {/* Premium Section 4 */}
+          <motion.section 
+            id="section-4" 
+            className="group relative"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            viewport={{ once: true }}
+          >
+            {/* Glassmorphism Container with Enhanced 3D Effects */}
+            <div className="backdrop-blur-lg bg-white/90 dark:bg-black/90 rounded-3xl shadow-2xl overflow-hidden border border-white/30 dark:border-gray-800/50 transition-all duration-500 group-hover:shadow-3xl transform group-hover:scale-[1.02]">
               
               {/* Premium Section Header */}
               <div className="relative bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700 p-8">
                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/90 to-amber-500/90 backdrop-blur-sm"></div>
+                {/* Floating Decorative Elements */}
+                <div className="absolute top-4 right-8 w-20 h-20 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+                <div className="absolute bottom-4 left-8 w-16 h-16 bg-white/5 rounded-full blur-lg animate-bounce"></div>
+                
                 <div className="relative z-10 flex items-center">
-                  <div className="mr-6 p-4 bg-white/20 rounded-2xl backdrop-blur-sm border border-white/30 shadow-lg">
+                  <motion.div 
+                    className="mr-6 p-4 bg-white/20 rounded-2xl backdrop-blur-sm border border-white/30 shadow-lg"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <DollarSign className="w-10 h-10 text-white" />
-                  </div>
+                  </motion.div>
                   <div>
-                    <h3 className="text-3xl font-black text-white mb-2 tracking-wide">
+                    <motion.h3 
+                      className="text-3xl font-black text-white mb-2 tracking-wide"
+                      initial={{ x: -20 }}
+                      whileInView={{ x: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
                       <span className="text-5xl font-black mr-4">4.</span>Make Money on GLOHSEN
-                    </h3>
+                    </motion.h3>
                     <p className="text-xl text-white/90 font-medium">
                       Turn Your Knowledge Into Income
                     </p>
                   </div>
                   <div className="ml-auto">
-                    <TrendingUp className="w-8 h-8 text-white animate-pulse" />
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <TrendingUp className="w-8 h-8 text-white" />
+                    </motion.div>
                   </div>
                 </div>
               </div>
 
               {/* Premium Content */}
               <div className="p-10 bg-gradient-to-br from-stone-50/50 to-yellow-50/30 dark:from-gray-900/50 dark:to-yellow-950/20">
+                {/* Premium Hero Image */}
+                <motion.div 
+                  className="relative group/image mb-8"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-red-500/20 rounded-2xl blur-xl transform scale-105 opacity-0 group-hover/image:opacity-100 transition-all duration-500"></div>
+                  <div className="relative backdrop-blur-sm bg-white/90 dark:bg-black/90 rounded-2xl p-4 border border-white/30 shadow-xl">
+                    <img 
+                      src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80" 
+                      alt="Student earning money through online education and tutoring" 
+                      className="w-full h-48 object-cover rounded-xl shadow-2xl transition-transform duration-500 group-hover/image:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
+                  </div>
+                </motion.div>
+
                 <div className="space-y-10">
-                  
+                  {/* Money-Making Opportunities - Interactive Steps */}
+                  <motion.div 
+                    className="backdrop-blur-sm bg-gradient-to-br from-yellow-50/80 to-yellow-100/80 dark:from-yellow-950/30 dark:to-yellow-900/20 rounded-3xl p-10 border-2 border-yellow-200/50 dark:border-yellow-800/30 shadow-2xl"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="text-center mb-8">
+                      <h4 className="text-3xl font-black text-black dark:text-white mb-4">
+                        Earning <span className="text-transparent bg-gradient-to-r from-yellow-600 to-red-600 bg-clip-text">Opportunities</span>
+                      </h4>
+                      <div className="w-24 h-1 bg-gradient-to-r from-yellow-500 to-red-500 rounded-full mx-auto"></div>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-4 gap-6">
+                      {[
+                        { step: "1", title: "Participate", desc: "Join discussions and activities", color: "from-yellow-500 to-yellow-600", icon: Users },
+                        { step: "2", title: "Compete", desc: "Win challenges and competitions", color: "from-yellow-600 to-red-500", icon: Trophy },
+                        { step: "3", title: "Create", desc: "Make study guides and content", color: "from-red-500 to-red-600", icon: BookOpen },
+                        { step: "4", title: "Tutor", desc: "Help other students learn", color: "from-red-600 to-yellow-600", icon: GraduationCap }
+                      ].map((item, index) => (
+                        <motion.div 
+                          key={index}
+                          className="text-center group/step cursor-pointer"
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.4 + index * 0.1 }}
+                          whileHover={{ y: -10, scale: 1.05 }}
+                        >
+                          <motion.div 
+                            className={`w-16 h-16 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center mx-auto mb-4 text-white font-black text-xl shadow-2xl group-hover/step:shadow-3xl transition-all duration-300`}
+                            whileHover={{ rotate: [0, -10, 10, 0] }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <item.icon className="w-8 h-8" />
+                          </motion.div>
+                          <h6 className="font-black text-lg text-black dark:text-white mb-2 group-hover/step:text-yellow-600 transition-colors">{item.title}</h6>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.desc}</p>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+
                   {/* Money-Making Opportunities Grid */}
                   <div className="grid md:grid-cols-2 gap-8">
-                      {/* Active Participation Card */}
-                    <div className="backdrop-blur-sm bg-gradient-to-br from-yellow-50/80 to-amber-100/80 dark:from-yellow-950/30 dark:to-yellow-900/20 rounded-3xl p-8 border-2 border-yellow-200/50 dark:border-yellow-800/30 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105"
-                      onMouseEnter={playWhooshSound}
+                    
+                    {/* Active Participation Card */}
+                    <motion.div 
+                      className="backdrop-blur-sm bg-gradient-to-br from-yellow-50/80 to-amber-100/80 dark:from-yellow-950/30 dark:to-yellow-900/20 rounded-3xl p-8 border-2 border-yellow-200/50 dark:border-yellow-800/30 shadow-2xl hover:shadow-3xl transition-all duration-300"
+                      whileHover={{ y: -5, rotateY: 5 }}
+                      initial={{ opacity: 0, x: -30 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 }}
                     >
                       <div className="flex items-center mb-6">
-                        <div className="p-4 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-2xl shadow-2xl mr-4">
-                          <Target className="w-10 h-10 text-white" />
-                        </div>
-                        <h4 className="text-2xl font-black text-black dark:text-stone-100">
-                          Active <span className="text-transparent bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text">Participation</span>
-                        </h4>
+                        <motion.div 
+                          className="p-3 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl shadow-lg mr-4"
+                          whileHover={{ rotate: 15, scale: 1.1 }}
+                        >
+                          <Target className="w-8 h-8 text-white" />
+                        </motion.div>
+                        <h4 className="text-2xl font-bold text-black dark:text-white">Active Participation</h4>
                       </div>
                       
                       <div className="space-y-6">
@@ -662,16 +914,14 @@ export default function StudentsHandbook() {
                               <div className="flex-1">
                                 <h5 className="font-bold text-black dark:text-stone-100 mb-2">{item.title}</h5>
                                 <p className="text-gray-800 dark:text-stone-200 text-sm leading-relaxed">{item.desc}</p>
-                              </div>
-                            </div>
+                              </div>                            </div>
                           </div>
                         ))}
                       </div>
-                    </div>
-                      {/* Content Creation Card */}
-                    <div className="backdrop-blur-sm bg-gradient-to-br from-red-50/80 to-red-100/80 dark:from-red-950/30 dark:to-red-900/20 rounded-3xl p-8 border-2 border-red-200/50 dark:border-red-800/30 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105"
-                      onMouseEnter={playWhooshSound}
-                    >
+                    </motion.div>
+                    
+                    {/* Content Creation Card */}
+                    <div className="backdrop-blur-sm bg-gradient-to-br from-red-50/80 to-red-100/80 dark:from-red-950/30 dark:to-red-900/20 rounded-3xl p-8 border-2 border-red-200/50 dark:border-red-800/30 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105">
                       <div className="flex items-center mb-6">
                         <div className="p-4 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-2xl mr-4">
                           <BookOpen className="w-10 h-10 text-white" />
@@ -710,11 +960,11 @@ export default function StudentsHandbook() {
                                 <h5 className="font-bold text-black dark:text-stone-100 mb-2">{item.title}</h5>
                                 <p className="text-gray-800 dark:text-stone-200 text-sm leading-relaxed">{item.desc}</p>
                               </div>
-                            </div>
-                          </div>
+                            </div>                          </div>
                         ))}
                       </div>
-                    </div>                  </div>
+                    </div>
+                  </div>
 
                   {/* Scholarship & Prize Opportunities - Premium Design */}
                   <div className="backdrop-blur-sm bg-gradient-to-br from-amber-50/80 to-yellow-50/80 dark:from-amber-950/30 dark:to-yellow-950/30 rounded-3xl p-10 border-2 border-amber-200/50 dark:border-amber-800/30 shadow-2xl">
@@ -785,8 +1035,7 @@ export default function StudentsHandbook() {
                     <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 rounded-2xl blur-xl transform scale-105 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     <div className="relative backdrop-blur-sm bg-white/90 dark:bg-black/90 rounded-2xl p-6 border border-white/30 shadow-xl">
                       <img 
-                        src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80" 
-                        alt="Student earning money through online education and tutoring" 
+                        src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80"                        alt="Student earning money through online education and tutoring" 
                         className="w-full h-64 object-cover rounded-xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
@@ -794,7 +1043,7 @@ export default function StudentsHandbook() {
                   </div>                </div>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* Premium Section 5 */}
           <section id="section-5" className="group relative">
@@ -964,10 +1213,7 @@ export default function StudentsHandbook() {
                         ]
                       }
                     ].map((benefit, index) => (
-                      <div key={index} className={`group relative backdrop-blur-sm bg-gradient-to-br ${benefit.bgGradient} dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-8 border-2 border-white/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105`}
-                        onMouseEnter={playWhooshSound}
-                        onClick={playClickSound}
-                      >
+                      <div key={index} className={`group relative backdrop-blur-sm bg-gradient-to-br ${benefit.bgGradient} dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-8 border-2 border-white/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105`}>
                         {/* Premium Icon Container */}
                         <div className={`relative w-16 h-16 bg-gradient-to-br ${benefit.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl group-hover:scale-110 transition-transform duration-300`}>
                           <Award className="w-8 h-8 text-white" />
@@ -1107,10 +1353,7 @@ export default function StudentsHandbook() {
                     ].map((activity, index) => {
                       const IconComponent = activity.icon;
                       return (
-                        <div key={index} className={`group/item relative backdrop-blur-sm bg-gradient-to-br ${activity.bgGradient} dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-8 border-2 border-white/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-center`}
-                          onMouseEnter={playWhooshSound}
-                          onClick={playChimeSound}
-                        >
+                        <div key={index} className={`group/item relative backdrop-blur-sm bg-gradient-to-br ${activity.bgGradient} dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-8 border-2 border-white/50 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-center`}>
                           {/* Premium Icon Container */}
                           <div className={`relative w-20 h-20 bg-gradient-to-br ${activity.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl group-hover/item:scale-110 transition-transform duration-300`}>
                             <IconComponent className="w-10 h-10 text-white" />
@@ -1511,21 +1754,21 @@ export default function StudentsHandbook() {
                   <div className="relative group">
                     <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-yellow-500/20 rounded-2xl blur-xl transform scale-105 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     <div className="relative backdrop-blur-sm bg-white/90 dark:bg-black/90 rounded-2xl p-6 border border-white/30 shadow-xl">
-                      <img 
-                        src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80" 
+                      <img                        src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80" 
                         alt="Students following academic integrity guidelines while studying" 
                         className="w-full h-64 object-cover rounded-xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
           </section>
         </div>
-          <section id="section-8" className="group relative">
+
+        {/* Premium Section 8 */}
+        <section id="section-8" className="group relative">
             {/* Glassmorphism Container */}
             <div className="backdrop-blur-lg bg-white/90 dark:bg-black/90 rounded-3xl shadow-2xl overflow-hidden border border-white/30 dark:border-gray-800/50 transition-all duration-500 group-hover:shadow-3xl">
               
@@ -1781,12 +2024,12 @@ export default function StudentsHandbook() {
                     <div className="relative backdrop-blur-sm bg-white/90 dark:bg-black/90 rounded-2xl p-6 border border-white/30 shadow-xl">
                       <img 
                         src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=80" 
-                        alt="Healthcare students collaborating and building community relationships" 
-                        className="w-full h-64 object-cover rounded-xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                        alt="Healthcare students collaborating and building community relationships"                        className="w-full h-64 object-cover rounded-xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
                     </div>
-                  </div>                </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -1812,46 +2055,36 @@ export default function StudentsHandbook() {
               Join thousands of healthcare students who are already transforming their careers with GLOHSEN. 
               Experience the future of medical education today.
             </p>
-              {/* Premium Action Buttons */}
+            
+            {/* Premium Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <button 
-                onClick={playChimeSound}
-                onMouseEnter={playWhooshSound}
-                className="group relative px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-3xl hover:scale-105 overflow-hidden"
-              >
+              <button className="group relative px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-3xl hover:scale-105 overflow-hidden">
                 <span className="relative z-10 text-white font-bold text-lg">Start Learning Today</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-red-700 to-red-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
               
-              <button 
-                onClick={playChimeSound}
-                onMouseEnter={playWhooshSound}
-                className="group relative px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-3xl hover:scale-105 overflow-hidden"
-              >
+              <button className="group relative px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-3xl hover:scale-105 overflow-hidden">
                 <span className="relative z-10 text-white font-bold text-lg">Explore Platform</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-yellow-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
             </div>
-          </div>
-
-          {/* Premium Footer */}
+          </div>          {/* Premium Footer */}
           <div className="mt-16 pb-8">
             <div className="text-center">
               <div className="text-4xl font-black text-transparent bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text mb-4">
                 GLOHSEN
               </div>              <p className="text-gray-600 dark:text-stone-400 font-medium">
                 Empowering the next generation of healthcare professionals
-              </p>              <div className="mt-6 flex justify-center space-x-8">
+              </p>
+              <div className="mt-6 flex justify-center space-x-8">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                 <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse delay-300"></div>
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-600"></div>
-              </div>
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-600"></div>              </div>
             </div>
           </div>
         </div>
-      </div>
       
-      <Footer isActive={true} />
+      <Footer isActive={false} />
     </>
   );
 }
