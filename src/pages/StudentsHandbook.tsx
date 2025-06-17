@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { GraduationCap, BookOpen, Gamepad2, Users, DollarSign, Shield, TrendingUp, AlertTriangle, Heart, Award, Sparkles, Star, Target, Zap, CheckCircle, Crown, Medal, Trophy, Briefcase, Globe, Clock, X, ChevronRight, ArrowUpRight, FileText, PlayCircle, Brain, Search, RefreshCw, MessageSquare } from 'lucide-react';
-import PreHeader from '../components/PreHeader';
-import Footer from '../components/Footer';
 
 export default function StudentsHandbook() {
   // Sound effects (if audio files are available)
@@ -16,11 +14,8 @@ export default function StudentsHandbook() {
       // Silently handle audio errors
     }
   }, []);
-
   return (
     <>
-      <PreHeader />
-      
       {/* Premium Background with Animated Elements */}
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-yellow-50 to-red-50 dark:from-gray-900 dark:via-red-950 dark:to-black relative overflow-hidden">
         {/* Animated Background Elements */}
@@ -169,16 +164,16 @@ export default function StudentsHandbook() {
                       description: 'Essential legal framework'
                     },
                     { 
-                      title: '4. How to Create and Manage Your Student Profile',
-                      icon: Users,
-                      color: 'from-yellow-500 to-red-500',
-                      description: 'Setting up your learning profile'
-                    },
-                    { 
-                      title: '5. QUID Currency and Transaction Policies',
+                      title: '4. Ways to make money on the GLOHSEN platform',
                       icon: DollarSign,
                       color: 'from-yellow-500 to-yellow-600',
-                      description: 'Financial ecosystem for students'
+                      description: 'Turn your knowledge into income'
+                    },
+                       { 
+                      title: '5. Become a Creator/Tutor',
+                      icon: BookOpen,
+                      color: 'from-yellow-500 to-red-500',
+                      description: 'Transform Your Knowledge Into Teaching Excellence'
                     },
                     { 
                       title: '6. Games, Quizzes, and Interactive Learning',
@@ -186,20 +181,15 @@ export default function StudentsHandbook() {
                       color: 'from-red-500 to-yellow-500',
                       description: 'Engaging educational activities'
                     },
+                 
                     { 
-                      title: '7. Tutoring and Mentorship Opportunities',
-                      icon: BookOpen,
-                      color: 'from-yellow-500 to-red-500',
-                      description: 'Access to expert guidance'
-                    },
-                    { 
-                      title: '8. Platform Rules and Academic Integrity',
+                      title: '7. Platform Rules and Academic Integrity',
                       icon: AlertTriangle,
                       color: 'from-red-500 to-black',
                       description: 'Academic standards & guidelines'
                     },
                     { 
-                      title: '9. Making the Most of GLOHSEN Community',
+                      title: '8. Making the Most of GLOHSEN Community',
                       icon: Users,
                       color: 'from-yellow-500 to-red-500',
                       description: 'Community engagement strategies'
@@ -2081,10 +2071,7 @@ export default function StudentsHandbook() {
                 <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse delay-300"></div>
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-600"></div>              </div>
             </div>
-          </div>
-        </div>
-      
-      <Footer isActive={false} />
+          </div>        </div>
     </>
   );
 }
