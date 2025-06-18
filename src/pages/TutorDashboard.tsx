@@ -21,7 +21,6 @@ const TutorDashboard: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Tutor Dashboard</h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">Welcome back, Dr. Nkechi!</p>
             </div>
           </div>

@@ -117,8 +117,7 @@
     #B38728 40%, /* Medium Gold */
     #FBF5B7 60%, /* Light Gold/Cream */
     #AA771C 80%, /* Darker Gold */
-    #BF953F 100% /* Darker Gold */
-  );
+    #BF953F 100% /* Darker Gold */  );
   background-size: 200% auto;
   color: transparent;
   background-clip: text;
@@ -127,6 +126,20 @@
   /* Ensure the text is still readable if animation/gradient fails */
   /* Fallback color - choose one that fits your theme */
   /* color: #FFD700;  */ 
+}
+
+.animate-shine {
+  background-image: linear-gradient(
+    to right,
+    #BF953F 0%, /* Darker Gold */
+    #FCF6BA 20%, /* Light Gold/Cream */
+    #B38728 40%, /* Medium Gold */
+    #FBF5B7 60%, /* Light Gold/Cream */
+    #AA771C 80%, /* Darker Gold */
+    #BF953F 100% /* Darker Gold */
+  );
+  background-size: 200% auto;
+  animation: shine 3s ease-in-out infinite;
 }
 
 @keyframes spin-slow {
@@ -654,4 +667,27 @@
   bottom: 16px; /* Update this value */
   left: 50%;
   transform: translateX(-50%);
+}
+
+@keyframes shine-red {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animate-shine-red {
+  background-image: linear-gradient(
+    to right,
+    #dc2626 0%, /* Red-600 */
+    #f87171 20%, /* Red-400 */
+    #ef4444 40%, /* Red-500 */
+    #f87171 60%, /* Red-400 */
+    #dc2626 80%, /* Red-600 */
+    #dc2626 100% /* Red-600 */
+  );
+  background-size: 200% auto;
+  animation: shine-red 0.8s ease-in-out;
 }

@@ -107,7 +107,6 @@ const EmployerSidebar: React.FC = () => {
           <Link 
             to="/employer-dashboard/purse"
             className={getLinkClass("/employer-dashboard/purse")}
-            onClick={() => handleLinkClick("/employer-dashboard/purse")}
           >
             <CreditCard className="h-3 w-3 mr-1" /> {/* Changed from Wallet*/}
             Purse {/* Changed from Wallet*/}
