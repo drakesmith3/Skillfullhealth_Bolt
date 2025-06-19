@@ -64,6 +64,7 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(true);
   const [showDemoModal, setShowDemoModal] = useState(false);
+  const [videoLoading, setVideoLoading] = useState(true);
   const canvasRef = useRef<HTMLDivElement>(null);
   const particleSystemRef = useRef<any>(null);
 
@@ -344,7 +345,10 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
       {/* Demo and Scroll Buttons - Bottom Center */}
       <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-6">        {/* Demo Button - Luxurious gold with red hover and black text */}
         <Button
-          onClick={() => setShowDemoModal(true)}
+          onClick={() => {
+            setVideoLoading(true);
+            setShowDemoModal(true);
+          }}
           className="backdrop-blur-xl bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 hover:from-red-500 hover:via-red-600 hover:to-red-700 border-2 border-amber-400/70 hover:border-red-500/80 rounded-full px-8 py-4 transition-all duration-500 transform hover:scale-110 shadow-2xl hover:shadow-red-500/30 pointer-events-auto text-black font-bold tracking-wide text-lg"
         >
           <Play className="w-6 h-6 mr-3" />
@@ -388,17 +392,30 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
               }`}>
                 GLOHSEN Platform Demo
               </h2>
-                {/* Video Placeholder */}
-              <div className={`w-full h-96 rounded-2xl flex items-center justify-center border-2 border-dashed mb-6 ${
-                isDark 
-                  ? 'bg-gray-800/50 border-gray-600 text-gray-400' 
-                  : 'bg-gray-100/50 border-gray-400 text-gray-600'
-              }`}>
-                <div className="text-center">
-                  <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p className="text-xl font-semibold">Demo Video Coming Soon</p>
-                  <p className="mt-2">Discover how GLOHSEN transforms healthcare experiences</p>
-                </div>
+                {/* YouTube Video */}
+              <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-6 bg-black">
+                {videoLoading && (
+                  <div className={`absolute inset-0 flex items-center justify-center z-10 ${
+                    isDark 
+                      ? 'bg-gray-800/90 text-gray-400' 
+                      : 'bg-gray-100/90 text-gray-600'
+                  }`}>
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto mb-4"></div>
+                      <p className="text-lg font-semibold">Loading Demo Video...</p>
+                    </div>
+                  </div>
+                )}
+                <iframe
+                  src="https://www.youtube.com/embed/n1hFZu3vLro?autoplay=0&controls=1&rel=0&modestbranding=1&playsinline=1"
+                  title="GLOHSEN Platform Demo Video"
+                  className="w-full h-full rounded-2xl"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  loading="lazy"
+                  onLoad={() => setVideoLoading(false)}
+                  onError={() => setVideoLoading(false)}
+                />
               </div>
                 {/* Blur Glassmorphism Close Button Below Video */}
               <div className="flex justify-center">
