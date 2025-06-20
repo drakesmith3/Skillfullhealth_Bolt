@@ -13,7 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import PreHeader from "@/components/PreHeader";
 import Footer from "@/components/Footer";
 import { toast } from "@/hooks/use-toast";
-import { MessageCircle, ThumbsUp, ThumbsDown, CheckCircle2, AlertTriangle, Star, ArrowRight, Check, Info } from "lucide-react";
+import { MessageCircle, ThumbsUp, ThumbsDown, CheckCircle2, AlertTriangle, Star, ArrowRight, Check, Info, X } from "lucide-react";
 import QRCode from 'react-qr-code';
 
 const FeedbackForm: React.FC = () => {
@@ -31,6 +31,52 @@ const FeedbackForm: React.FC = () => {
   const [customProfessionalName, setCustomProfessionalName] = useState<string>("");
   const [customFacilityName, setCustomFacilityName] = useState<string>("");
   const [customTutorName, setCustomTutorName] = useState<string>("");
+
+  // Occupational Health & Safety state
+  const [safetyFeedbackType, setSafetyFeedbackType] = useState<string>("general");
+  const [rootCauseOpened, setRootCauseOpened] = useState<boolean>(false);
+  const [incidentDescription, setIncidentDescription] = useState<string>("");
+  const [companyResponse, setCompanyResponse] = useState<string>("");
+  const [generalDescription, setGeneralDescription] = useState<string>("");
+  const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
+  
+  // Image upload states for all tabs
+  const [professionalEvidenceFiles, setProfessionalEvidenceFiles] = useState<File[]>([]);
+  const [facilityEvidenceFiles, setFacilityEvidenceFiles] = useState<File[]>([]);
+  const [tutorEvidenceFiles, setTutorEvidenceFiles] = useState<File[]>([]);
+  
+  // OHS additional states to match other tabs
+  const [selectedWorkplace, setSelectedWorkplace] = useState<string>("");
+  const [customWorkplaceName, setCustomWorkplaceName] = useState<string>("");
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("");
+  const [incidentDate, setIncidentDate] = useState<string>("");
+  
+  // Walkthrough state
+  const [showWalkthrough, setShowWalkthrough] = useState<boolean>(false);
+  const [walkthroughStep, setWalkthroughStep] = useState<number>(0);
+  const [walkthroughPosition, setWalkthroughPosition] = useState<any>({ top: 0, left: 0 });
+    // Check if user is first time visitor
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('feedback-form-visited');
+    if (!hasVisited) {
+      // Delay showing walkthrough to ensure elements are rendered
+      setTimeout(() => {
+        setShowWalkthrough(true);
+        const initialPosition = getTooltipPosition();
+        setWalkthroughPosition(initialPosition);
+      }, 1000);
+      localStorage.setItem('feedback-form-visited', 'true');
+    }
+  }, []);
+  
+  const workplaceOptions = [
+    { value: "factory-a", label: "Manufacturing Plant A" },
+    { value: "warehouse-b", label: "Distribution Center B" },
+    { value: "office-c", label: "Corporate Office C" },
+    { value: "construction-d", label: "Construction Site D" },
+    { value: "laboratory-e", label: "Research Laboratory E" },
+    { value: "other", label: "Other (specify)" }
+  ];
   
   const hospitalOptions = [
     { value: "hospital-y", label: "Hospital Y" },
@@ -206,9 +252,8 @@ const FeedbackForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Prepare form data with custom inputs if needed
-    const formData = {
+      // Prepare form data with custom inputs if needed
+    const formData: any = {
       tab: activeTab,
       professional: selectedProfessional === "other" ? customProfessionalName : selectedProfessional,
       facility: selectedFacility === "other" ? customFacilityName : selectedFacility,
@@ -216,6 +261,31 @@ const FeedbackForm: React.FC = () => {
       feedbackType
     };
     
+    // Include OHS-specific fields
+    if (activeTab === "factory") {
+      formData.safetyType = safetyFeedbackType;
+      formData.workplace = selectedWorkplace === "other" ? customWorkplaceName : selectedWorkplace;
+      formData.department = selectedDepartment;
+      formData.incidentDate = incidentDate;
+      if (safetyFeedbackType === "general") {
+        formData.generalDescription = generalDescription;
+      } else {
+        formData.incidentDescription = incidentDescription;
+        formData.investigationOpened = rootCauseOpened;
+        formData.companyResponse = companyResponse;
+      }
+      formData.evidenceFiles = evidenceFiles;
+    }
+
+    // Include image files for all tabs
+    if (activeTab === "professionals") {
+      formData.evidenceFiles = professionalEvidenceFiles;
+    } else if (activeTab === "facilities") {
+      formData.evidenceFiles = facilityEvidenceFiles;
+    } else if (activeTab === "tutors") {
+      formData.evidenceFiles = tutorEvidenceFiles;
+    }
+
     console.log("Submitting feedback:", formData);
     
     // Simulate API call
@@ -239,6 +309,19 @@ const FeedbackForm: React.FC = () => {
     setCustomFacilityName("");
     setCustomTutorName("");
     setFeedbackType("positive");
+    setSafetyFeedbackType("general");
+    setRootCauseOpened(false);
+    setIncidentDescription("");
+    setCompanyResponse("");
+    setGeneralDescription("");
+    setEvidenceFiles([]);
+    setProfessionalEvidenceFiles([]);
+    setFacilityEvidenceFiles([]);
+    setTutorEvidenceFiles([]);
+    setSelectedWorkplace("");
+    setCustomWorkplaceName("");
+    setSelectedDepartment("");
+    setIncidentDate("");
   };
 
   const generateQRCode = () => {
@@ -296,9 +379,235 @@ const FeedbackForm: React.FC = () => {
       </div>
     );
   }
-  
+    // Walkthrough steps
+  const walkthroughSteps = [
+    {
+      target: '[data-walkthrough="tabs"]',
+      content: "Choose the appropriate feedback category. Each tab is designed for different types of feedback.",
+      title: "Step 1: Select Feedback Type",
+      position: "bottom"
+    },
+    {
+      target: '[data-walkthrough="form-fields"]',
+      content: "Fill in the required information. All fields marked with * are mandatory.",
+      title: "Step 2: Complete Form Fields",
+      position: "right"
+    },
+    {
+      target: '[data-walkthrough="evidence"]',
+      content: "Upload any supporting evidence or images related to your feedback.",
+      title: "Step 3: Add Evidence (Optional)",
+      position: "left"
+    },
+    {
+      target: '[data-walkthrough="rating"]',
+      content: "Rate your overall experience and provide detailed feedback.",
+      title: "Step 4: Rate Your Experience",
+      position: "top"
+    },
+    {
+      target: '[data-walkthrough="submit"]',
+      content: "Review your information and submit your feedback. You'll receive a confirmation ID.",
+      title: "Step 5: Submit Feedback",
+      position: "top"
+    }
+  ];
+  const getTargetElement = () => {
+    const currentStep = walkthroughSteps[walkthroughStep];
+    
+    // For the evidence step, target the evidence section for the current tab
+    if (currentStep.target === '[data-walkthrough="evidence"]') {
+      const activeTabElement = document.querySelector(`[data-walkthrough="evidence"][data-walkthrough-tab="${activeTab}"]`);
+      if (activeTabElement) {
+        return activeTabElement;
+      }
+      // Fallback to any visible evidence section
+      const allEvidenceSections = document.querySelectorAll('[data-walkthrough="evidence"]');
+      for (const section of allEvidenceSections) {
+        const tabContent = section.closest('[role="tabpanel"]');
+        if (tabContent && !tabContent.hasAttribute('hidden') && tabContent.getAttribute('data-state') !== 'inactive') {
+          return section;
+        }
+      }
+    }
+    
+    return document.querySelector(currentStep.target);
+  };
+
+  const getTooltipPosition = () => {
+    const targetElement = getTargetElement();
+    if (!targetElement) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+
+    const rect = targetElement.getBoundingClientRect();
+    const currentStep = walkthroughSteps[walkthroughStep];
+    
+    switch (currentStep.position) {
+      case 'bottom':
+        return {
+          top: rect.bottom + 20,
+          left: rect.left + rect.width / 2,
+          transform: 'translateX(-50%)'
+        };
+      case 'top':
+        return {
+          top: rect.top - 20,
+          left: rect.left + rect.width / 2,
+          transform: 'translate(-50%, -100%)'
+        };
+      case 'left':
+        return {
+          top: rect.top + rect.height / 2,
+          left: rect.left - 20,
+          transform: 'translate(-100%, -50%)'
+        };
+      case 'right':
+        return {
+          top: rect.top + rect.height / 2,
+          left: rect.right + 20,
+          transform: 'translateY(-50%)'
+        };
+      default:
+        return {
+          top: rect.bottom + 20,
+          left: rect.left + rect.width / 2,
+          transform: 'translateX(-50%)'
+        };
+    }
+  };
+
+  const nextWalkthroughStep = () => {
+    if (walkthroughStep < walkthroughSteps.length - 1) {
+      setWalkthroughStep(walkthroughStep + 1);
+      // Scroll to the next target element
+      setTimeout(() => {
+        const nextTarget = document.querySelector(walkthroughSteps[walkthroughStep + 1].target);
+        if (nextTarget) {
+          nextTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    } else {
+      setShowWalkthrough(false);
+    }
+  };
+
+  const skipWalkthrough = () => {
+    setShowWalkthrough(false);
+  };
+  // Scroll to current target when walkthrough step changes
+  useEffect(() => {
+    if (showWalkthrough) {
+      const targetElement = getTargetElement();
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Update position after scrolling
+        setTimeout(() => {
+          const newPosition = getTooltipPosition();
+          setWalkthroughPosition(newPosition);
+        }, 500);
+      }
+    }
+  }, [walkthroughStep, showWalkthrough]);
+
+  // Update position on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (showWalkthrough) {
+        const newPosition = getTooltipPosition();
+        setWalkthroughPosition(newPosition);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [showWalkthrough, walkthroughStep]);
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">      {/* Walkthrough Overlay */}
+      {showWalkthrough && (
+        <>
+          {/* Dark overlay */}
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={skipWalkthrough} />
+          
+          {/* Spotlight effect on target element */}
+          <div 
+            className="fixed inset-0 z-45 pointer-events-none"
+            style={{
+              boxShadow: getTargetElement() ? 
+                `0 0 0 4px rgba(239, 68, 68, 0.5), 0 0 0 8px rgba(239, 68, 68, 0.25)` : 
+                'none'
+            }}
+          />
+            {/* Tooltip */}
+          <div 
+            className="fixed z-50 bg-white rounded-lg shadow-xl border-2 border-red-500 max-w-sm"
+            style={walkthroughPosition}
+          >
+            <div className="p-4">
+              <div className="flex justify-between items-start mb-3">
+                <h3 className="text-lg font-semibold text-gray-900">{walkthroughSteps[walkthroughStep].title}</h3>
+                <Button variant="ghost" size="sm" onClick={skipWalkthrough} className="h-6 w-6 p-0">
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-gray-600 mb-4 text-sm">{walkthroughSteps[walkthroughStep].content}</p>
+              
+              <div className="flex justify-between items-center">
+                <div className="flex space-x-1">
+                  {walkthroughSteps.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full ${
+                        index === walkthroughStep ? 'bg-red-600' : 'bg-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="space-x-2 flex">
+                  <Button variant="outline" size="sm" onClick={skipWalkthrough}>Skip</Button>
+                  <Button size="sm" onClick={nextWalkthroughStep} className="bg-red-600 hover:bg-red-700">
+                    {walkthroughStep === walkthroughSteps.length - 1 ? 'Finish' : 'Next'}
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Arrow pointing to target */}
+            <div 
+              className="absolute w-3 h-3 bg-white border-red-500 transform rotate-45"
+              style={{
+                ...(() => {
+                  const position = walkthroughSteps[walkthroughStep].position;
+                  switch (position) {
+                    case 'bottom':
+                      return { top: '-6px', left: '50%', transform: 'translateX(-50%) rotate(45deg)', borderTop: '2px solid', borderLeft: '2px solid' };
+                    case 'top':
+                      return { bottom: '-6px', left: '50%', transform: 'translateX(-50%) rotate(45deg)', borderBottom: '2px solid', borderRight: '2px solid' };
+                    case 'left':
+                      return { top: '50%', right: '-6px', transform: 'translateY(-50%) rotate(45deg)', borderTop: '2px solid', borderRight: '2px solid' };
+                    case 'right':
+                      return { top: '50%', left: '-6px', transform: 'translateY(-50%) rotate(45deg)', borderBottom: '2px solid', borderLeft: '2px solid' };
+                    default:
+                      return { top: '-6px', left: '50%', transform: 'translateX(-50%) rotate(45deg)', borderTop: '2px solid', borderLeft: '2px solid' };
+                  }
+                })()
+              }}
+            />
+          </div>
+          
+          {/* Highlight target element */}
+          {getTargetElement() && (
+            <div 
+              className="fixed z-45 border-4 border-red-500 rounded-lg pointer-events-none animate-pulse"
+              style={{
+                top: getTargetElement()!.getBoundingClientRect().top - 4,
+                left: getTargetElement()!.getBoundingClientRect().left - 4,
+                width: getTargetElement()!.getBoundingClientRect().width + 8,
+                height: getTargetElement()!.getBoundingClientRect().height + 8,
+              }}
+            />
+          )}
+        </>
+      )}
+
       <PreHeader currentPage="Feedback" />
       
       <main className="flex-grow pt-32 pb-16 px-4 bg-gray-50">
@@ -333,7 +642,7 @@ const FeedbackForm: React.FC = () => {
               </div>
             
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid grid-cols-3 mb-6">
+                <TabsList className="grid grid-cols-4 mb-6" data-walkthrough="tabs">
                   <TabsTrigger value="professionals" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
                     Professionals
                   </TabsTrigger>
@@ -343,9 +652,11 @@ const FeedbackForm: React.FC = () => {
                   <TabsTrigger value="tutors" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
                     Tutors/Advisers
                   </TabsTrigger>
-                </TabsList>
-                
-                <form onSubmit={handleSubmit}>
+                  <TabsTrigger value="factory" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
+                    Occupational Health & Safety
+                  </TabsTrigger>
+                </TabsList>                  <form onSubmit={handleSubmit}>
+                  <div data-walkthrough="form-fields">
                   <TabsContent value="professionals" className="mt-0">
                     <div className="space-y-6">
                       <div className="space-y-3">
@@ -405,7 +716,23 @@ const FeedbackForm: React.FC = () => {
                       <RatingSection 
                         feedbackType={feedbackType} 
                         setFeedbackType={setFeedbackType} 
-                      />
+                      />                      <div className="space-y-3" data-walkthrough="evidence" data-walkthrough-tab="professionals">
+                        <Label htmlFor="professionalEvidenceFiles">Upload Evidence Images</Label>
+                        <Input
+                          type="file"
+                          id="professionalEvidenceFiles"
+                          accept="image/*"
+                          multiple
+                          onChange={e => setProfessionalEvidenceFiles(Array.from(e.target.files || []))}
+                        />
+                        {professionalEvidenceFiles.length > 0 && (
+                          <ul className="text-sm text-gray-600 mt-1">
+                            {professionalEvidenceFiles.map((file, idx) => (
+                              <li key={idx}>{file.name}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     </div>
                   </TabsContent>
                   
@@ -468,7 +795,23 @@ const FeedbackForm: React.FC = () => {
                       <RatingSection 
                         feedbackType={feedbackType} 
                         setFeedbackType={setFeedbackType} 
-                      />
+                      />                      <div className="space-y-3" data-walkthrough="evidence" data-walkthrough-tab="facilities">
+                        <Label htmlFor="facilityEvidenceFiles">Upload Evidence Images</Label>
+                        <Input
+                          type="file"
+                          id="facilityEvidenceFiles"
+                          accept="image/*"
+                          multiple
+                          onChange={e => setFacilityEvidenceFiles(Array.from(e.target.files || []))}
+                        />
+                        {facilityEvidenceFiles.length > 0 && (
+                          <ul className="text-sm text-gray-600 mt-1">
+                            {facilityEvidenceFiles.map((file, idx) => (
+                              <li key={idx}>{file.name}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     </div>
                   </TabsContent>
                   
@@ -521,10 +864,239 @@ const FeedbackForm: React.FC = () => {
                         feedbackType={feedbackType} 
                         setFeedbackType={setFeedbackType} 
                       />
+                        <div className="space-y-3" data-walkthrough="evidence" data-walkthrough-tab="tutors">
+                        <Label htmlFor="tutorEvidenceFiles">Upload Evidence Images</Label>
+                        <Input
+                          type="file"
+                          id="tutorEvidenceFiles"
+                          accept="image/*"
+                          multiple
+                          onChange={e => setTutorEvidenceFiles(Array.from(e.target.files || []))}
+                        />
+                        {tutorEvidenceFiles.length > 0 && (
+                          <ul className="text-sm text-gray-600 mt-1">
+                            {tutorEvidenceFiles.map((file, idx) => (
+                              <li key={idx}>{file.name}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     </div>
                   </TabsContent>
+                    <TabsContent value="factory" className="mt-0">
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <Label htmlFor="workplace">Workplace / Facility</Label>
+                        <Select 
+                          required
+                          value={selectedWorkplace}
+                          onValueChange={setSelectedWorkplace}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your workplace" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {workplaceOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        
+                        {selectedWorkplace === "other" && (
+                          <div className="mt-2">
+                            <Label htmlFor="customWorkplaceName">Specify Workplace</Label>
+                            <Input 
+                              id="customWorkplaceName"
+                              value={customWorkplaceName}
+                              onChange={(e) => setCustomWorkplaceName(e.target.value)}
+                              placeholder="Enter workplace name"
+                              required
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label htmlFor="department">Department / Area</Label>
+                        <Select
+                          value={selectedDepartment}
+                          onValueChange={setSelectedDepartment}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select department or area" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="production">Production</SelectItem>
+                            <SelectItem value="maintenance">Maintenance</SelectItem>
+                            <SelectItem value="warehouse">Warehouse</SelectItem>
+                            <SelectItem value="administration">Administration</SelectItem>
+                            <SelectItem value="quality">Quality Control</SelectItem>
+                            <SelectItem value="security">Security</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Feedback Category</Label>
+                        <RadioGroup
+                          value={safetyFeedbackType}
+                          onValueChange={setSafetyFeedbackType}
+                          className="flex space-x-6"
+                          required
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem id="ohs-general" value="general" />
+                            <Label htmlFor="ohs-general">General Safety</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem id="ohs-injury" value="injury" />
+                            <Label htmlFor="ohs-injury">Injury Incident</Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+
+                      {safetyFeedbackType === "general" && (
+                        <div className="space-y-3">
+                          <Label htmlFor="generalDescription">Describe Your Safety Concern</Label>
+                          <Textarea
+                            id="generalDescription"
+                            value={generalDescription}
+                            onChange={e => setGeneralDescription(e.target.value)}
+                            placeholder="Describe safety concerns, hazards, near misses, unsafe conditions..."
+                            className="min-h-[150px]"
+                            required
+                          />
+                        </div>
+                      )}
+
+                      {safetyFeedbackType === "injury" && (
+                        <>
+                          <div className="space-y-3">
+                            <Label htmlFor="incidentDate">Date of Incident</Label>
+                            <Input 
+                              type="date" 
+                              id="incidentDate" 
+                              value={incidentDate}
+                              onChange={(e) => setIncidentDate(e.target.value)}
+                              required 
+                            />
+                          </div>
+
+                          <div className="space-y-3">
+                            <Label htmlFor="incidentDescription">Incident Description</Label>
+                            <Textarea
+                              id="incidentDescription"
+                              value={incidentDescription}
+                              onChange={e => setIncidentDescription(e.target.value)}
+                              placeholder="Describe what happened, where, when, who was involved, what injuries occurred..."
+                              className="min-h-[150px]"
+                              required
+                            />
+                          </div>
+
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id="rootCauseOpened"
+                              checked={rootCauseOpened}
+                              onCheckedChange={(checked) => setRootCauseOpened(checked === true)}
+                            />
+                            <Label htmlFor="rootCauseOpened">
+                              Root‐cause / incident investigation has been opened
+                            </Label>
+                          </div>
+
+                          <div className="space-y-3">
+                            <Label htmlFor="companyResponse">Company Response & Actions</Label>
+                            <Textarea
+                              id="companyResponse"
+                              value={companyResponse}
+                              onChange={e => setCompanyResponse(e.target.value)}
+                              placeholder="What actions has the company taken or failed to take? Include medical treatment, safety measures, follow-up..."
+                              className="min-h-[120px]"
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      <Separator />
+
+                      <div className="space-y-3">
+                        <Label>Overall Safety Experience</Label>
+                        <RadioGroup 
+                          value={feedbackType} 
+                          onValueChange={setFeedbackType}
+                          className="flex space-x-4"
+                          required
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="positive" id="positive-safety" />
+                            <Label htmlFor="positive-safety" className="flex items-center">
+                              <ThumbsUp className="mr-1 h-4 w-4 text-green-500" />
+                              Satisfactory
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="mixed" id="mixed-safety" />
+                            <Label htmlFor="mixed-safety">Needs Improvement</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="negative" id="negative-safety" />
+                            <Label htmlFor="negative-safety" className="flex items-center">
+                              <ThumbsDown className="mr-1 h-4 w-4 text-red-500" />
+                              Unsafe
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </div>                      <div className="space-y-3" data-walkthrough="evidence" data-walkthrough-tab="factory">
+                        <Label htmlFor="evidenceFiles">Upload Evidence Images</Label>
+                        <Input
+                          type="file"
+                          id="evidenceFiles"
+                          accept="image/*"
+                          multiple
+                          onChange={e => setEvidenceFiles(Array.from(e.target.files || []))}
+                        />
+                        <p className="text-xs text-gray-500">
+                          Upload photos of hazards, injuries, unsafe conditions, or related documentation
+                        </p>
+                        {evidenceFiles.length > 0 && (
+                          <ul className="text-sm text-gray-600 mt-1">
+                            {evidenceFiles.map((file, idx) => (
+                              <li key={idx} className="flex items-center gap-2">
+                                <Check className="h-3 w-3 text-green-500" />
+                                {file.name}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Checkbox id="anonymous" />
+                        <Label htmlFor="anonymous" className="text-sm">
+                          Submit this report anonymously
+                        </Label>
+                      </div>
+
+                      <div className="p-4 bg-red-50 border border-red-200 rounded-md flex items-start space-x-3">
+                        <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                        <div className="text-sm text-red-800">
+                          <p className="font-medium">Important Safety Notice:</p>
+                          <p>For immediate safety emergencies, contact your supervisor or emergency services directly. This form is for reporting and feedback purposes.</p>
+                        </div>
+                      </div>
+
+                      <div className="pt-4 text-xs text-gray-500 border-t">
+                        <p>This form follows ILO Convention C155 (Occupational Safety and Health) and Recommendation R164 for hazard, incident and accident reporting.</p>
+                        <p className="mt-1">All submissions are handled according to our Privacy Policy and applicable labor regulations.</p>
+                      </div>                    </div>
+                  </TabsContent>
+                  </div>
                   
-                  <div className="pt-6">
+                  <div className="pt-6" data-walkthrough="submit">
                     <div className="flex justify-between items-center">
                       <Button 
                         type="submit" 
@@ -547,7 +1119,22 @@ const FeedbackForm: React.FC = () => {
                         onClick={generateQRCode}
                         className="border-amber-500 text-amber-700 hover:bg-amber-50"
                       >
-                        Generate Feedback QR Code
+                        Generate Feedback QR Code                      </Button>
+                      
+                      <Button 
+                        type="button" 
+                        variant="outline"
+                        onClick={() => {
+                          setShowWalkthrough(true);
+                          setWalkthroughStep(0);
+                          setTimeout(() => {
+                            const initialPosition = getTooltipPosition();
+                            setWalkthroughPosition(initialPosition);
+                          }, 100);
+                        }}
+                        className="border-blue-500 text-blue-700 hover:bg-blue-50"
+                      >
+                        Show Tutorial
                       </Button>
                     </div>
                   </div>
@@ -590,7 +1177,7 @@ const FeedbackForm: React.FC = () => {
 
 // Extracted components
 const RatingSection = ({ feedbackType, setFeedbackType }: { feedbackType: string, setFeedbackType: React.Dispatch<React.SetStateAction<string>> }) => (
-  <>
+  <div data-walkthrough="rating">
     <Separator />
     
     <div className="space-y-3">
@@ -681,11 +1268,10 @@ const RatingSection = ({ feedbackType, setFeedbackType }: { feedbackType: string
       <label
         htmlFor="terms"
         className="text-sm font-medium leading-none"
-      >
-        I confirm this feedback is based on my personal experience and is truthful
-      </label>
-    </div>
-  </>
+      >      I confirm this feedback is based on my personal experience and is truthful
+    </label>
+  </div>
+  </div>
 );
 
 const StarRating = () => {

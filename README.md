@@ -1,10 +1,22 @@
-
 # GLOHSEN Application
 
 ## About GLOHSEN
 GLOHSEN is a comprehensive healthcare professional platform designed to connect healthcare professionals (especially locums) with employers, provide continuing medical education, and offer an innovative scoring system for professional evaluation.
 
 ## 🚀 Features
+
+### General Features
+- Professional profile management with GLOHSEN Score tracking
+- Job application tracking and matching system
+- Continuing Medical Education (CME) courses with certifications
+- Interactive game-based learning and quizzes
+- MLM referral system with multi-level rewards
+- Purse and transaction history management
+- Community forum access and networking
+- KPI tracking and analytics dashboard
+- **Comprehensive Feedback System** with image upload capabilities
+- **Occupational Health & Safety Feedback** following ILO standards
+- **Interactive Walkthrough Tutorial** for new users
 
 ### For Professionals
 - Professional profile management with GLOHSEN Score tracking
@@ -47,6 +59,17 @@ GLOHSEN is a comprehensive healthcare professional platform designed to connect 
 - Community discussion access
 - Feedback and rating system
 - Service booking and management
+
+### Feedback System
+
+- **Multi-Category Feedback**: Separate tabs for Professionals, Facilities/Hospitals/Pharmacy, Tutors/Advisers, and Occupational Health & Safety
+- **Image Upload**: Support for uploading evidence images with all feedback types
+- **OHS Compliance**: Occupational Health & Safety tab follows ILO Convention C155 and Recommendation R164
+- **Interactive Walkthrough**: 5-step guided tutorial for new users
+- **Live Feedback Stream**: Real-time display of recent feedback submissions
+- **QR Code Generation**: Generate shareable QR codes for feedback collection
+- **Star Ratings**: Multi-aspect rating system for detailed feedback
+- **Anonymous Submissions**: Option for anonymous safety reporting
 
 ## 🏗️ Technical Architecture
 
