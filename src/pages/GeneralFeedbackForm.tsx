@@ -392,10 +392,9 @@ const FeedbackForm: React.FC = () => {
       content: "Fill in the required information. All fields marked with * are mandatory.",
       title: "Step 2: Complete Form Fields",
       position: "right"
-    },
-    {
+    },    {
       target: '[data-walkthrough="evidence"]',
-      content: "Upload any supporting evidence or images related to your feedback.",
+      content: "Upload any supporting evidence or images related to your feedback. Each feedback type has its own evidence section.",
       title: "Step 3: Add Evidence (Optional)",
       position: "left"
     },
