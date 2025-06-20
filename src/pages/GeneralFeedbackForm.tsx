@@ -410,24 +410,31 @@ const FeedbackForm: React.FC = () => {
       title: "Step 5: Submit Feedback",
       position: "top"
     }
-  ];
-  const getTargetElement = () => {
+  ];  const getTargetElement = () => {
     const currentStep = walkthroughSteps[walkthroughStep];
     
     // For the evidence step, target the evidence section for the current tab
     if (currentStep.target === '[data-walkthrough="evidence"]') {
+      // First try to find evidence section for the current active tab
       const activeTabElement = document.querySelector(`[data-walkthrough="evidence"][data-walkthrough-tab="${activeTab}"]`);
       if (activeTabElement) {
         return activeTabElement;
       }
-      // Fallback to any visible evidence section
+      
+      // Fallback: find any visible evidence section
       const allEvidenceSections = document.querySelectorAll('[data-walkthrough="evidence"]');
       for (const section of allEvidenceSections) {
         const tabContent = section.closest('[role="tabpanel"]');
-        if (tabContent && !tabContent.hasAttribute('hidden') && tabContent.getAttribute('data-state') !== 'inactive') {
-          return section;
+        if (tabContent) {
+          const computedStyle = window.getComputedStyle(tabContent);
+          if (computedStyle.display !== 'none' && !tabContent.hasAttribute('hidden')) {
+            return section;
+          }
         }
       }
+      
+      // Final fallback: just return the first evidence section found
+      return allEvidenceSections[0] || null;
     }
     
     return document.querySelector(currentStep.target);
@@ -473,15 +480,16 @@ const FeedbackForm: React.FC = () => {
         };
     }
   };
-
   const nextWalkthroughStep = () => {
     if (walkthroughStep < walkthroughSteps.length - 1) {
-      setWalkthroughStep(walkthroughStep + 1);
+      const nextStep = walkthroughStep + 1;
+      setWalkthroughStep(nextStep);
+      
       // Scroll to the next target element
       setTimeout(() => {
-        const nextTarget = document.querySelector(walkthroughSteps[walkthroughStep + 1].target);
-        if (nextTarget) {
-          nextTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const targetElement = getTargetElement();
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }, 100);
     } else {
