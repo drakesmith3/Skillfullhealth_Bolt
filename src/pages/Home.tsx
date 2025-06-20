@@ -189,12 +189,35 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
               { label: 'GAMES & QUIZZES', path: '/games-quizzes' },
               { label: 'COMMUNITY', path: '/community-forum' },
               { label: 'BLOG', path: '/blog' }            ].map((nav, index) => (
-              <Link key={index} to={nav.path}>                <Button
+              <Link key={index} to={nav.path}>
+                <Button
                   size="sm"
-                  className="px-4 py-2 text-xs font-bold text-black bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 rounded-full transition-all duration-300 transform hover:scale-105 border-0 shadow-lg hover:shadow-xl relative overflow-hidden group"
+                  className="group relative px-4 py-2 text-xs font-bold text-black rounded-full transition-all duration-300 transform hover:scale-105 border-0 shadow-lg hover:shadow-xl overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)',
+                    border: '1px solid #DAA520',
+                    boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)'
+                  }}
+                  onMouseEnter={(e) => {
+                     e.currentTarget.style.background = 'linear-gradient(135deg, #DC143C 0%, #B22222 50%, #8B0000 100%)';
+                     e.currentTarget.style.borderColor = '#DC143C';
+                     e.currentTarget.style.boxShadow = '0 6px 20px rgba(220, 20, 60, 0.4)';
+                     e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)';
+                     const shineElement = e.currentTarget.querySelector('.shine-effect');
+                     if (shineElement) {
+                       shineElement.style.background = 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%)';
+                     }
+                   }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)';
+                    e.currentTarget.style.borderColor = '#DAA520';
+                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(212, 175, 55, 0.3)';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                 >
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-red-300/30 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
-                  {nav.label}
+                  {/* Shine effect on hover */}
+                   <div className="shine-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-600 ease-in-out" />
+                  <span className="relative z-10">{nav.label}</span>
                 </Button>
               </Link>))}
           </div>
@@ -343,31 +366,52 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
       </div>
 
       {/* Demo and Scroll Buttons - Bottom Center */}
-      <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-6">        {/* Demo Button - Luxurious gold with red hover and black text */}
+      <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-6">        {/* Demo Button - Metallic luxurious gold with red hover shine */}
         <Button
           onClick={() => {
             setVideoLoading(true);
             setShowDemoModal(true);
           }}
-          className="backdrop-blur-xl bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 hover:from-red-500 hover:via-red-600 hover:to-red-700 border-2 border-amber-400/70 hover:border-red-500/80 rounded-full px-8 py-4 transition-all duration-500 transform hover:scale-110 shadow-2xl hover:shadow-red-500/30 pointer-events-auto text-black font-bold tracking-wide text-lg"
+          className="group relative backdrop-blur-xl rounded-full px-6 py-3 transition-all duration-700 transform hover:scale-110 shadow-2xl pointer-events-auto text-white font-bold tracking-wide text-base overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, #DC143C 0%, #FF6B35 50%, #FFA500 100%)',
+            border: '2px solid #DC143C',
+            boxShadow: '0 6px 24px rgba(220, 20, 60, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.1)'
+          }}
         >
-          <Play className="w-6 h-6 mr-3" />
-          <span>DEMO</span>
-        </Button>        {/* Scroll Button - White in light mode, gold in dark mode */}
+          {/* Shine effect on hover */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+          <Play className="w-5 h-5 mr-2 relative z-10" />
+          <span className="relative z-10">DEMO</span>
+        </Button>        {/* Double Chevron Scroll Button - Responsive Color */}
         <Button
           onClick={() => {
             if (scrollToSection) {
               scrollToSection(1); // Index 1 is Features section
             }
           }}
-          className={`backdrop-blur-2xl border rounded-full px-6 py-4 transition-all duration-500 transform hover:scale-110 shadow-2xl animate-bounce pointer-events-auto ${
-            isDark 
-              ? 'bg-gradient-to-r from-amber-400/30 via-yellow-500/40 to-amber-600/30 hover:from-amber-500/40 hover:via-yellow-600/50 hover:to-amber-700/40 border-amber-400/30 hover:border-amber-500/50 hover:shadow-amber-500/30 text-amber-600 hover:text-amber-500'
-              : 'bg-gradient-to-r from-white/60 via-white/80 to-white/60 hover:from-white/80 hover:via-white/90 hover:to-white/80 border-gray-300/50 hover:border-gray-400/70 hover:shadow-gray-500/20 text-black hover:text-gray-800'
-          }`}
+          className="group relative bg-transparent border-none p-6 transition-all duration-500 transform hover:scale-110 pointer-events-auto focus:outline-none focus:ring-4 focus:ring-yellow-500/50 hover:bg-yellow-500/10 rounded-xl"
+          aria-label="Scroll to next section"
+          tabIndex={0}
         >
-          <ChevronRight className="w-6 h-6" />
-          <ChevronRight className="w-6 h-6 -ml-4" />
+          <div className="animate-bounce group-hover:animate-pulse">
+            <ChevronRight 
+              className={`w-72 h-72 transform group-hover:translate-x-1 transition-all duration-300 drop-shadow-lg group-hover:drop-shadow-2xl ${
+                isDark ? 'text-yellow-500 group-hover:text-yellow-400' : 'text-black group-hover:text-gray-800'
+              }`} 
+              style={{color: isDark ? '#FFD700' : '#000000'}} 
+            />
+          </div>
+          <div className="animate-bounce group-hover:animate-pulse" style={{animationDelay: '0.1s'}}>
+            <ChevronRight 
+              className={`w-72 h-72 -ml-2 transform group-hover:translate-x-2 transition-all duration-300 delay-75 drop-shadow-lg group-hover:drop-shadow-2xl ${
+                isDark ? 'text-yellow-900 group-hover:text-yellow-900' : 'text-black group-hover:text-gray-800'
+              }`} 
+              style={{color: isDark ? '#FFD700' : '#000000'}} 
+            />
+          </div>
+          {/* Hover indicator background */}
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-yellow-500/0 via-yellow-500/20 to-yellow-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
         </Button>
       </div>
 
@@ -407,9 +451,11 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                   </div>
                 )}
                 <iframe
-                  src="https://www.youtube.com/embed/n1hFZu3vLro?autoplay=0&controls=1&rel=0&modestbranding=1&playsinline=1"
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&controls=1&rel=0&modestbranding=1&playsinline=1&origin=https://localhost"
                   title="GLOHSEN Platform Demo Video"
                   className="w-full h-full rounded-2xl"
+                  frameBorder="0"
+                  referrerPolicy="strict-origin-when-cross-origin"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   loading="lazy"
@@ -809,14 +855,22 @@ const Home: React.FC = () => {
                 if (isSoundEnabled) audioPlayer.play('/click.mp3', volume);
                 scrollToSection(index);
               }}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                currentSection === index 
-                  ? 'bg-[#ea384c] scale-125 shadow-lg' 
-                  : 'bg-white/50 hover:bg-white/70'
-              }`}
-              aria-label={`Go to ${section.title}`}
-              title={section.title}
-            />
+              className={`group relative w-3 h-3 rounded-full transition-all duration-500 overflow-hidden ${
+              currentSection === index 
+                ? 'bg-[#ea384c] scale-125 shadow-lg shadow-[#ea384c]/50' 
+                : 'bg-gradient-to-br from-[#FFD700] via-[#FFA500] to-[#DAA520] hover:scale-110 shadow-md hover:shadow-[#FF6B6B]/30'
+            }`}
+            style={{
+              boxShadow: currentSection !== index ? '0 2px 8px rgba(255, 215, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)' : undefined
+            }}
+            aria-label={`Go to ${section.title}`}
+            title={section.title}
+          >
+            {/* Red shine effect for navigation dots */}
+            {currentSection !== index && (
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-in-out rounded-full" />
+            )}
+          </button>
           ))}
         </div>
 
