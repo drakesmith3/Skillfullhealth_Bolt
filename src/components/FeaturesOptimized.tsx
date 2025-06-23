@@ -14,30 +14,64 @@ const FeaturesOptimized: React.FC<FeaturesOptimizedProps> = ({
   isActive = false, 
   playClickSound // Destructure the prop here
 }) => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [activeTab, setActiveTab] = useState<'book' | 'tree'>('book');
-  const [isMounted, setIsMounted] = useState(true);
+  const sectionRef = useRef<HTMLDivElement>(null);  const [activeTab, setActiveTab] = useState<'book' | 'tree'>('book');
+  const mountedRef = useRef(true);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
   const resizeTimeoutRef = useRef<NodeJS.Timeout>();
   const { isDark } = useTheme();
-  const { playClick: localPlayClick } = useClickSound(); // Rename to avoid conflict if needed, though direct use of prop is better
-  
-  // Memoized click handler that prioritizes the prop sound function
+  const { playClick: localPlayClick } = useClickSound(); // Rename to avoid conflict if needed, though direct use of prop is better  // Track screen size for responsive behavior
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const newIsLargeScreen = window.innerWidth >= 1024;
+      setIsLargeScreen(newIsLargeScreen);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+  // Optimized resize handler with throttling
+  const handleResize = useCallback(() => {
+    if (!mountedRef.current || !isActive) return;
+    
+    if (resizeTimeoutRef.current) {
+      clearTimeout(resizeTimeoutRef.current);
+    }
+    
+    resizeTimeoutRef.current = setTimeout(() => {
+      if (mountedRef.current) {
+        window.dispatchEvent(new Event('resize'));
+      }
+    }, 100);
+  }, [isActive]);  // Memoized click handler that prioritizes the prop sound function
   const handleClickWithSound = useCallback(() => {
-    if (!isMounted) return;
+    if (!mountedRef.current) return;
     
     if (typeof playClickSound === 'function') {
       playClickSound(); // Use the sound function passed from Home.tsx
     } else {
       localPlayClick(); // Fallback to the local sound hook if no prop is provided
     }
-  }, [playClickSound, localPlayClick, isMounted]);
-
-  // Memoized tab switcher for mobile
+  }, [playClickSound, localPlayClick]);// Memoized tab switcher for mobile with smooth transition
   const switchTab = useCallback((tab: 'book' | 'tree') => {
-    if (!isMounted) return;
+    if (!mountedRef.current) return;
+    
+    // Always play sound effect when button is clicked
+    handleClickWithSound();
+    
+    if (activeTab === tab) return;
+    
+    // Update the active tab
     setActiveTab(tab);
-    handleClickWithSound(); // Play sound on tab switch using the centralized handler
-  }, [isMounted, handleClickWithSound]);
+    
+    // Force a resize event to ensure components update correctly
+    setTimeout(() => {
+      if (mountedRef.current) {
+        handleResize();
+      }
+    }, 100);
+  }, [handleClickWithSound, activeTab, handleResize]);
 
   // Memoized background styles for performance
   const backgroundStyles = useMemo(() => ({
@@ -48,26 +82,9 @@ const FeaturesOptimized: React.FC<FeaturesOptimizedProps> = ({
     visibility: isActive ? 'visible' as const : 'hidden' as const,
     transitionProperty: 'opacity, visibility, background, transform',
     transitionDuration: '1000ms',
-  }), [isDark, isActive]);
-
-  // Optimized resize handler with throttling
-  const handleResize = useCallback(() => {
-    if (!isMounted || !isActive) return;
-    
-    if (resizeTimeoutRef.current) {
-      clearTimeout(resizeTimeoutRef.current);
-    }
-    
-    resizeTimeoutRef.current = setTimeout(() => {
-      if (isMounted) {
-        window.dispatchEvent(new Event('resize'));
-      }
-    }, 100);
-  }, [isActive, isMounted]);
-
-  // Enhanced visibility management when section becomes active
+  }), [isDark, isActive]);  // Enhanced visibility management when section becomes active
   useEffect(() => {
-    if (!sectionRef.current || !isMounted) return;
+    if (!sectionRef.current || !mountedRef.current) return;
     
     const section = sectionRef.current;
     
@@ -80,7 +97,7 @@ const FeaturesOptimized: React.FC<FeaturesOptimizedProps> = ({
       
       // Delayed resize event for child components
       const timeoutId = setTimeout(() => {
-        if (isMounted) {
+        if (mountedRef.current) {
           handleResize();
         }
       }, 300);
@@ -90,58 +107,48 @@ const FeaturesOptimized: React.FC<FeaturesOptimizedProps> = ({
       section.classList.add('opacity-0');
       section.classList.remove('opacity-100');
     }
-  }, [isActive, isMounted, handleResize]);
-
+  }, [isActive, handleResize]);
   // Optimized tab change handler
   useEffect(() => {
-    if (!isActive || !isMounted) return;
+    if (!isActive || !mountedRef.current) return;
     
     const timeoutId = setTimeout(() => {
-      if (isMounted) {
+      if (mountedRef.current) {
         handleResize();
       }
     }, 100);
     
     return () => clearTimeout(timeoutId);
-  }, [activeTab, isActive, isMounted, handleResize]);
-
+  }, [activeTab, isActive, handleResize]);
   // Mount state tracking for cleanup
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
-      setIsMounted(false);
+      mountedRef.current = false;
       if (resizeTimeoutRef.current) {
         clearTimeout(resizeTimeoutRef.current);
       }
     };
-  }, []);
-
-  // Memoized tab navigation for mobile
+  }, []);// Memoized tab navigation for mobile with improved styling
   const TabNavigation = useMemo(() => (
     <div className="lg:hidden flex justify-center mb-6">
-      <div className="flex bg-card/50 backdrop-blur-sm rounded-lg p-1 border border-border/20">
-        <button
-          onClick={() => {
-            console.log('Book tab clicked');
-            switchTab('book');
-          }}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+      <div className="flex bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-xl p-1 border border-amber-400/20 shadow-lg">        <button
+          onClick={() => switchTab('book')}
+          className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-500 transform hover:scale-105 ${
             activeTab === 'book'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground'
+              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/30 scale-105'
+              : 'text-amber-300 hover:text-amber-100 hover:bg-white/10'
           }`}
           aria-label="View Interactive Book"
         >
           📖 Book
         </button>
         <button
-          onClick={() => {
-            console.log('Tree tab clicked');
-            switchTab('tree');
-          }}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+          onClick={() => switchTab('tree')}
+          className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-500 transform hover:scale-105 ${
             activeTab === 'tree'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground'
+              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/30 scale-105'
+              : 'text-amber-300 hover:text-amber-100 hover:bg-white/10'
           }`}
           aria-label="View Stakeholder Tree"
         >
@@ -191,23 +198,81 @@ const FeaturesOptimized: React.FC<FeaturesOptimizedProps> = ({
         <p className="text-sm sm:text-base md:text-lg lg:text-xl text-foreground max-w-4xl mx-auto leading-relaxed">
           GLOHSEN connects healthcare stakeholders through an integrated platform designed to elevate standards and foster professional growth.
         </p>
-      </header>
+      </header>      {/* Mobile Tab Navigation */}
+      {TabNavigation}      {/* Main Content Grid */}
+      <main className="w-full lg:grid lg:grid-cols-2 lg:gap-4 lg:sm:gap-6 lg:md:gap-8 lg:xl:gap-12">
+        <div className="lg:hidden relative w-full">
+          {/* Mobile: Show only active tab content */}
+          {activeTab === 'book' && (
+            <section
+              className="features-card-3d rounded-xl flex flex-col space-y-4 p-4 sm:p-6 md:p-8 bg-card/30 backdrop-blur-sm border border-border/20 shadow-lg transition-all duration-500 ease-in-out"
+              aria-labelledby="book-heading"
+            >
+              <h3 
+                id="book-heading"
+                className="text-base sm:text-lg md:text-xl text-amber-700 dark:text-amber-400 font-semibold text-center"
+              >
+                📖 Interactive Book
+              </h3>
+              
+              <div className="w-full flex-1 flex items-center justify-center min-h-[300px]">
+                {isActive && mountedRef.current && <AnimatedBook />}
+              </div>
+              
+              <p className="text-center max-w-md text-sm text-foreground/80 mx-auto leading-relaxed">
+                Discover the core principles and opportunities within the GLOHSEN ecosystem. Each page unfolds a new dimension of our commitment to healthcare excellence.
+              </p>
+            </section>
+          )}
+          
+          {activeTab === 'tree' && (
+            <section
+              className="features-card-3d rounded-xl flex flex-col items-center justify-center space-y-4 p-4 sm:p-6 md:p-8 bg-card/30 backdrop-blur-sm border border-border/20 shadow-lg transition-all duration-500 ease-in-out"
+              aria-labelledby="tree-heading"
+            >
+              <h3 
+                id="tree-heading"
+                className="text-sm sm:text-base text-amber-700 dark:text-amber-400 font-semibold text-center" 
+                style={{ fontSize: '1.3em' }}
+              >
+                🌳 Stakeholder Relationship Tree
+              </h3>
+              
+              <div className="flex-1 flex items-center justify-center stakeholder-tree-container overflow-visible min-h-[300px]">
+                {isActive && mountedRef.current && (
+                  <div 
+                    style={{ 
+                      transform: 'scale(1.4)', 
+                      transformOrigin: 'center',
+                      transition: 'transform 0.3s ease'
+                    }}
+                  >
+                    <StakeholderTree playClickSound={handleClickWithSound} /> 
+                  </div>
+                )}
+              </div>
+              
+              <p className="text-center max-w-md text-xs sm:text-sm text-foreground/80 mx-auto leading-relaxed">
+                <span className="md:hidden">Tap on</span> each node to learn how GLOHSEN connects with different healthcare stakeholders.
+              </p>
+            </section>
+          )}
+        </div>
 
-      {/* Mobile Tab Navigation */}
-      {TabNavigation}
-
-      {/* Main Content Grid */}
-      <main className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 xl:gap-12">
-        {/* Interactive Book Card */}
-        <section
-          className={`features-card-3d rounded-xl lg:rounded-2xl flex flex-col space-y-4 p-4 sm:p-6 md:p-8 bg-card/30 backdrop-blur-sm border border-border/20 shadow-lg hover:shadow-xl transition-all duration-500 ${
-            activeTab === 'tree' ? 'hidden lg:flex' : 'flex'
+        {/* Desktop: Show both sections side by side */}
+        <div className="hidden lg:contents">
+          {/* Interactive Book Card */}<section
+          className={`features-card-3d rounded-xl lg:rounded-2xl flex flex-col space-y-4 p-4 sm:p-6 md:p-8 bg-card/30 backdrop-blur-sm border border-border/20 shadow-lg hover:shadow-xl transition-all duration-500 ease-in-out ${
+            activeTab === 'tree' ? 'lg:flex' : 'flex'
           }`}
           style={{ 
-            opacity: 1, 
-            visibility: 'visible', 
+            opacity: (activeTab === 'book' || isLargeScreen) ? 1 : 0,
+            transform: (activeTab === 'book' || isLargeScreen) ? 'translateX(0) scale(1)' : 'translateX(-20px) scale(0.95)',
+            pointerEvents: (activeTab === 'book' || isLargeScreen) ? 'auto' : 'none',
             position: 'relative',
-            transformStyle: 'preserve-3d'
+            transformStyle: 'preserve-3d',
+            zIndex: activeTab === 'book' ? 10 : 1,
+            transition: 'opacity 0.4s ease-in-out, transform 0.4s ease-in-out'
           }}
           aria-labelledby="book-heading"
         >
@@ -216,12 +281,8 @@ const FeaturesOptimized: React.FC<FeaturesOptimizedProps> = ({
             className="text-base sm:text-lg md:text-xl lg:text-2xl text-amber-700 dark:text-amber-400 font-semibold text-center"
           >
             📖 Interactive Book
-          </h3>
-          
-          <div className="w-full flex-1 flex items-center justify-center min-h-[300px] lg:min-h-[400px]">
-            {(isActive && (activeTab === 'book' || window.innerWidth >= 1024)) && (
-              <AnimatedBook />
-            )}
+          </h3>            <div className="w-full flex-1 flex items-center justify-center min-h-[300px] lg:min-h-[400px]">
+            {isActive && mountedRef.current && <AnimatedBook />}
           </div>
           
           <p className="text-center max-w-md text-sm lg:text-base text-foreground/80 mx-auto leading-relaxed">
@@ -229,16 +290,18 @@ const FeaturesOptimized: React.FC<FeaturesOptimizedProps> = ({
           </p>
         </section>
 
-        {/* Stakeholder Relationship Tree Card */}
-        <section
-          className={`features-card-3d rounded-xl lg:rounded-2xl flex flex-col items-center justify-center space-y-4 p-4 sm:p-6 md:p-8 bg-card/30 backdrop-blur-sm border border-border/20 shadow-lg hover:shadow-xl transition-all duration-500 ${
-            activeTab === 'book' ? 'hidden lg:flex' : 'flex'
+        {/* Stakeholder Relationship Tree Card */}        <section
+          className={`features-card-3d rounded-xl lg:rounded-2xl flex flex-col items-center justify-center space-y-4 p-4 sm:p-6 md:p-8 bg-card/30 backdrop-blur-sm border border-border/20 shadow-lg hover:shadow-xl transition-all duration-500 ease-in-out ${
+            activeTab === 'book' ? 'lg:flex' : 'flex'
           }`}
           style={{ 
-            opacity: 1, 
-            visibility: 'visible', 
+            opacity: (activeTab === 'tree' || isLargeScreen) ? 1 : 0,
+            transform: (activeTab === 'tree' || isLargeScreen) ? 'translateX(0) scale(1)' : 'translateX(20px) scale(0.95)',
+            pointerEvents: (activeTab === 'tree' || isLargeScreen) ? 'auto' : 'none',
             position: 'relative',
-            transformStyle: 'preserve-3d'
+            transformStyle: 'preserve-3d',
+            zIndex: activeTab === 'tree' ? 10 : 1,
+            transition: 'opacity 0.4s ease-in-out, transform 0.4s ease-in-out'
           }}
           aria-labelledby="tree-heading"
         >
@@ -248,10 +311,8 @@ const FeaturesOptimized: React.FC<FeaturesOptimizedProps> = ({
             style={{ fontSize: '1.3em' }}
           >
             🌳 Stakeholder Relationship Tree
-          </h3>
-          
-          <div className="flex-1 flex items-center justify-center stakeholder-tree-container overflow-visible min-h-[300px] lg:min-h-[65vh]">
-            {(isActive && (activeTab === 'tree' || window.innerWidth >= 1024)) && (
+          </h3>          <div className="flex-1 flex items-center justify-center stakeholder-tree-container overflow-visible min-h-[300px] lg:min-h-[65vh]">
+            {isActive && mountedRef.current && (
               <div 
                 style={{ 
                   transform: 'scale(1.4)', 
@@ -264,13 +325,13 @@ const FeaturesOptimized: React.FC<FeaturesOptimizedProps> = ({
               </div>
             )}
           </div>
-          
-          <p className="text-center max-w-md text-xs sm:text-sm lg:text-base text-foreground/80 mx-auto leading-relaxed">
+            <p className="text-center max-w-md text-xs sm:text-sm lg:text-base text-foreground/80 mx-auto leading-relaxed">
             <span className="hidden md:inline">Hover over</span>
             <span className="md:hidden">Tap on</span> each node to learn how GLOHSEN connects with different healthcare stakeholders.
           </p>
         </section>
-      </main>      {/* Enhanced CSS animations */}
+        </div>
+      </main>{/* Enhanced CSS animations */}
       <style>{`
         .features-3d-container {
           perspective: 1000px;

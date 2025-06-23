@@ -22,10 +22,26 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedNodeRef = useRef<string | null>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null);  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });const { playClick } = useClickSound();
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+
+  const { playClick } = useClickSound();
+
+  // Track screen size for responsive behavior
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
       // Handle click with sound - simplified and optimized
   const handleClick = useCallback(() => {
     // Always try to play click sound immediately
@@ -778,11 +794,14 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
       </div>      {/* Detailed Tooltip */}
       {selectedNode && (
         <div
-          className="absolute bg-gradient-to-br from-gray-800 to-black p-4 rounded-lg shadow-lg border border-gray-700 z-50 max-w-xs animate-slide-up"          style={{
+          className={`absolute bg-gradient-to-br from-gray-800 to-black p-3 md:p-4 rounded-lg shadow-lg border border-gray-700 z-50 animate-slide-up ${
+            isMobile ? 'max-w-[280px] text-sm' : 'max-w-xs'
+          }`}
+          style={{
             // Center horizontally over node and clamp within container
             left: (() => {
-              const tooltipWidth = 220;
-              const margin = 20;
+              const tooltipWidth = isMobile ? 280 : 220; // Wider on mobile for better text layout
+              const margin = isMobile ? 10 : 20; // Less margin on mobile
               const centered = tooltipPosition.x - tooltipWidth / 2;
               const min = margin;
               const max = dimensions.width - tooltipWidth - margin;
@@ -790,8 +809,8 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
             })(),
             // Position above node by default, fallback below if too close to top
             top: (() => {
-              const tooltipHeight = 200;
-              const margin = 20;
+              const tooltipHeight = isMobile ? 240 : 200; // Taller on mobile for more content
+              const margin = isMobile ? 10 : 20; // Less margin on mobile
               let above = tooltipPosition.y - tooltipHeight - margin;
               if (above < margin) {
                 above = tooltipPosition.y + margin;
@@ -805,14 +824,15 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
             const node = data.find(d => d.id === selectedNode);
             if (!node) return <div className="text-center text-gray-400">Loading...</div>;
             
-            return (
-              <>
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-lg font-bold" style={{ color: node.textColor }}>
+            return (              <>
+                <div className="flex items-center justify-between mb-2 md:mb-3">
+                  <h4 className={`font-bold ${isMobile ? 'text-base' : 'text-lg'}`} style={{ color: node.textColor }}>
                     {node.name}
                   </h4>
                   <button 
-                    className="text-gray-400 hover:text-white text-xl leading-none transition-colors"
+                    className={`text-gray-400 hover:text-white leading-none transition-colors ${
+                      isMobile ? 'text-lg' : 'text-xl'
+                    }`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleClick();
@@ -824,16 +844,22 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
                   </button>
                 </div>
                 
-                <p className="text-gray-300 text-sm mb-3">
+                <p className={`text-gray-300 mb-2 md:mb-3 ${
+                  isMobile ? 'text-xs leading-relaxed' : 'text-sm'
+                }`}>
                   {node.longDescription || node.description}
                 </p>
                 
-                <h5 className="text-amber-400 font-semibold text-sm mb-2 flex items-center">
+                <h5 className={`text-amber-400 font-semibold mb-1 md:mb-2 flex items-center ${
+                  isMobile ? 'text-xs' : 'text-sm'
+                }`}>
                   <span className="mr-2">🎯</span>
                   Key Benefits
                 </h5>
                 
-                <ul className="text-left text-xs text-gray-300 mb-2">
+                <ul className={`text-left text-gray-300 mb-2 ${
+                  isMobile ? 'text-xs' : 'text-xs'
+                }`}>
                   {node.benefits?.map((benefit, index) => (
                     <li key={index} className="flex items-start mb-1">
                       <span className="text-amber-400 mr-2">•</span>
@@ -842,9 +868,11 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
                   ))}
                 </ul>
                 
-                <div className="text-center mt-4">
+                <div className="text-center mt-3 md:mt-4">
                   <button 
-                    className="text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-black font-semibold py-1.5 px-3 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
+                    className={`bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-black font-semibold rounded-full transition-all duration-200 shadow-md hover:shadow-lg ${
+                      isMobile ? 'text-xs py-2 px-4' : 'text-xs py-1.5 px-3'
+                    }`}
                     onClick={() => {
                       handleClick();
                       setSelectedNode(null);
@@ -864,11 +892,12 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
       <div className="absolute bottom-2 left-0 right-0 text-center text-xs text-gray-400 md:hidden animate-fadeIn">
         <p>Tap on any node for details</p>
         <p className="mt-1">Drag to rotate the view</p>
-      </div>
-
-      {/* Information panel */}
-      <div className="absolute top-2 right-2 z-30">        <button 
-          className="w-6 h-6 rounded-full bg-amber-500 text-black flex items-center justify-center text-xs font-bold shadow-md hover:bg-amber-400 transition-colors duration-200"
+      </div>      {/* Information panel */}
+      <div className="absolute top-2 right-2 z-30">
+        <button 
+          className={`rounded-full bg-amber-500 text-black flex items-center justify-center font-bold shadow-md hover:bg-amber-400 transition-colors duration-200 ${
+            isMobile ? 'w-8 h-8 text-sm' : 'w-6 h-6 text-xs'
+          }`}
           onClick={() => {
             handleClick();
             setIsAnimating(false);
@@ -882,27 +911,38 @@ const StakeholderTree: React.FC<StakeholderTreeProps> = ({ playClickSound }) => 
           i
         </button>
         
-        <div id="stakeholder-info-panel" className="hidden absolute top-8 right-0 w-64 bg-gray-900/90 rounded-lg shadow-xl border border-amber-500/30 p-3 text-xs text-gray-300 animate-fadeInScale">
-          <h5 className="text-amber-400 text-sm font-bold mb-2">How to interact:</h5>
+        <div id="stakeholder-info-panel" className={`hidden absolute top-10 md:top-8 right-0 bg-gray-900/90 rounded-lg shadow-xl border border-amber-500/30 p-3 text-gray-300 animate-fadeInScale ${
+          isMobile ? 'w-72 text-xs' : 'w-64 text-xs'
+        }`}>
+          <h5 className={`text-amber-400 font-bold mb-2 ${
+            isMobile ? 'text-sm' : 'text-sm'
+          }`}>How to interact:</h5>
           <ul className="space-y-1.5">
             <li className="flex items-start">
               <span className="text-amber-400 mr-1">•</span>
-              <span><span className="text-white">Click/tap</span> on nodes to see details</span>
+              <span><span className="text-white">Tap</span> on nodes to see details</span>
             </li>
             <li className="flex items-start">
               <span className="text-amber-400 mr-1">•</span>
-              <span><span className="text-white">Hover</span> over nodes for quick info</span>
+              <span className="md:hidden"><span className="text-white">Long press</span> for quick info</span>
+              <span className="hidden md:inline"><span className="text-white">Hover</span> over nodes for quick info</span>
             </li>
             <li className="flex items-start">
               <span className="text-amber-400 mr-1">•</span>
-              <span><span className="text-white">Move mouse/drag</span> to rotate the view</span>
+              <span className="md:hidden"><span className="text-white">Drag</span> to rotate the view</span>
+              <span className="hidden md:inline"><span className="text-white">Move mouse/drag</span> to rotate the view</span>
             </li>
             <li className="flex items-start">
               <span className="text-amber-400 mr-1">•</span>
               <span>Colored lines show stakeholder relationships</span>
             </li>
-          </ul>          <button 
-            className="mt-2 text-amber-400 hover:text-amber-300 text-xs"            onClick={() => {
+          </ul>
+          
+          <button 
+            className={`mt-2 text-amber-400 hover:text-amber-300 ${
+              isMobile ? 'text-sm' : 'text-xs'
+            }`}
+            onClick={() => {
               handleClick();
               const infoPanel = document.getElementById('stakeholder-info-panel');
               if (infoPanel) {
