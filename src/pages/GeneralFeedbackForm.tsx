@@ -13,7 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import PreHeader from "@/components/PreHeader";
 import Footer from "@/components/Footer";
 import { toast } from "@/hooks/use-toast";
-import { MessageCircle, ThumbsUp, ThumbsDown, CheckCircle2, AlertTriangle, Star, ArrowRight, Check, Info, X } from "lucide-react";
+import { MessageCircle, ThumbsUp, ThumbsDown, CheckCircle2, AlertTriangle, Star, ArrowRight, Check, Info, X, Menu, HelpCircle } from "lucide-react";
 import QRCode from 'react-qr-code';
 
 const FeedbackForm: React.FC = () => {
@@ -50,11 +50,11 @@ const FeedbackForm: React.FC = () => {
   const [customWorkplaceName, setCustomWorkplaceName] = useState<string>("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
   const [incidentDate, setIncidentDate] = useState<string>("");
-  
-  // Walkthrough state
+    // Walkthrough state
   const [showWalkthrough, setShowWalkthrough] = useState<boolean>(false);
   const [walkthroughStep, setWalkthroughStep] = useState<number>(0);
   const [walkthroughPosition, setWalkthroughPosition] = useState<any>({ top: 0, left: 0 });
+  const [highlightUpdate, setHighlightUpdate] = useState<number>(0); // Force highlight re-render
     // Check if user is first time visitor
   useEffect(() => {
     const hasVisited = localStorage.getItem('feedback-form-visited');
@@ -180,13 +180,13 @@ const FeedbackForm: React.FC = () => {
     // Initialize feedback list
     setFeedbackList(mockRecentFeedback);
   }, []);
-  
-  const fetchMoreFeedback = () => {
+    const fetchMoreFeedback = () => {
     // Simulate API call to fetch more feedback
     setTimeout(() => {
+      const currentMaxId = Math.max(...feedbackList.map(item => item.id));
       const newFeedback = [
         {
-          id: 6,
+          id: currentMaxId + 1,
           initials: "BP",
           name: "Valley Health Center",
           verified: true,
@@ -197,7 +197,7 @@ const FeedbackForm: React.FC = () => {
           likes: 33
         },
         {
-          id: 7,
+          id: currentMaxId + 2,
           initials: "TM",
           name: "Evergreen Medical",
           verified: false,
@@ -208,7 +208,7 @@ const FeedbackForm: React.FC = () => {
           likes: 18
         },
         {
-          id: 8,
+          id: currentMaxId + 3,
           initials: "NC",
           name: "Westview Hospital",
           verified: true,
@@ -219,7 +219,7 @@ const FeedbackForm: React.FC = () => {
           likes: 42
         },
         {
-          id: 9,
+          id: currentMaxId + 4,
           initials: "LR",
           name: "City Medical Center",
           verified: false,
@@ -230,7 +230,7 @@ const FeedbackForm: React.FC = () => {
           likes: 24
         },
         {
-          id: 10,
+          id: currentMaxId + 5,
           initials: "KD",
           name: "Harbor Health Clinic",
           verified: true,
@@ -261,8 +261,14 @@ const FeedbackForm: React.FC = () => {
       feedbackType
     };
     
-    // Include OHS-specific fields
-    if (activeTab === "factory") {
+    // Include OHS-specific fields and evidence files based on active tab
+    if (activeTab === "professionals") {
+      formData.evidenceFiles = professionalEvidenceFiles;
+    } else if (activeTab === "facilities") {
+      formData.evidenceFiles = facilityEvidenceFiles;
+    } else if (activeTab === "tutors") {
+      formData.evidenceFiles = tutorEvidenceFiles;
+    } else if (activeTab === "factory") {
       formData.safetyType = safetyFeedbackType;
       formData.workplace = selectedWorkplace === "other" ? customWorkplaceName : selectedWorkplace;
       formData.department = selectedDepartment;
@@ -275,15 +281,6 @@ const FeedbackForm: React.FC = () => {
         formData.companyResponse = companyResponse;
       }
       formData.evidenceFiles = evidenceFiles;
-    }
-
-    // Include image files for all tabs
-    if (activeTab === "professionals") {
-      formData.evidenceFiles = professionalEvidenceFiles;
-    } else if (activeTab === "facilities") {
-      formData.evidenceFiles = facilityEvidenceFiles;
-    } else if (activeTab === "tutors") {
-      formData.evidenceFiles = tutorEvidenceFiles;
     }
 
     console.log("Submitting feedback:", formData);
@@ -412,73 +409,122 @@ const FeedbackForm: React.FC = () => {
     }
   ];  const getTargetElement = () => {
     const currentStep = walkthroughSteps[walkthroughStep];
-    
-    // For the evidence step, target the evidence section for the current tab
-    if (currentStep.target === '[data-walkthrough="evidence"]') {
-      // First try to find evidence section for the current active tab
-      const activeTabElement = document.querySelector(`[data-walkthrough="evidence"][data-walkthrough-tab="${activeTab}"]`);
-      if (activeTabElement) {
-        return activeTabElement;
-      }
+    if (!currentStep) return null;
+
+    const targetSelector = currentStep.target;
+
+    if (targetSelector === '[data-walkthrough="evidence"]') {
+      // For the evidence step, we need to find the control in the active tab.
       
-      // Fallback: find any visible evidence section
-      const allEvidenceSections = document.querySelectorAll('[data-walkthrough="evidence"]');
-      for (const section of allEvidenceSections) {
-        const tabContent = section.closest('[role="tabpanel"]');
-        if (tabContent) {
-          const computedStyle = window.getComputedStyle(tabContent);
-          if (computedStyle.display !== 'none' && !tabContent.hasAttribute('hidden')) {
-            return section;
-          }
+      // Strategy 1: Use the `activeTab` state to build a precise selector.
+      const preciseSelector = `[data-walkthrough="evidence"][data-walkthrough-tab="${activeTab}"]`;
+      const element = document.querySelector(preciseSelector);
+      if (element) {
+        return element;
+      }
+
+      // Strategy 2: If the first fails (e.g., state update delay), find the active tab panel in the DOM
+      // and then find the evidence control inside it. This is more resilient.
+      const activeTabPanel = document.querySelector('[role="tabpanel"][data-state="active"]');
+      if (activeTabPanel) {
+        const evidenceInSection = activeTabPanel.querySelector('[data-walkthrough="evidence"]');
+        if (evidenceInSection) {
+          return evidenceInSection;
         }
       }
-      
-      // Final fallback: just return the first evidence section found
-      return allEvidenceSections[0] || null;
+
+      // Strategy 3: As a last resort, just find the first matching element.
+      return document.querySelector(targetSelector);
     }
     
-    return document.querySelector(currentStep.target);
-  };
-
-  const getTooltipPosition = () => {
+    return document.querySelector(targetSelector);
+  };  const getTooltipPosition = () => {
     const targetElement = getTargetElement();
     if (!targetElement) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
 
     const rect = targetElement.getBoundingClientRect();
     const currentStep = walkthroughSteps[walkthroughStep];
     
-    switch (currentStep.position) {
-      case 'bottom':
-        return {
-          top: rect.bottom + 20,
-          left: rect.left + rect.width / 2,
-          transform: 'translateX(-50%)'
-        };
-      case 'top':
-        return {
-          top: rect.top - 20,
-          left: rect.left + rect.width / 2,
-          transform: 'translate(-50%, -100%)'
-        };
-      case 'left':
-        return {
-          top: rect.top + rect.height / 2,
-          left: rect.left - 20,
-          transform: 'translate(-100%, -50%)'
-        };
-      case 'right':
-        return {
-          top: rect.top + rect.height / 2,
-          left: rect.right + 20,
-          transform: 'translateY(-50%)'
-        };
-      default:
-        return {
-          top: rect.bottom + 20,
-          left: rect.left + rect.width / 2,
-          transform: 'translateX(-50%)'
-        };
+    // Account for scroll position and viewport
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    // Mobile-specific adjustments
+    const isMobile = viewportWidth < 640; // sm breakpoint
+    const tooltipWidth = isMobile ? 280 : 320;
+    const tooltipHeight = isMobile ? 180 : 200;
+    const margin = isMobile ? 8 : 20;
+    
+    let position: { top?: number | string; left?: number | string; transform?: string } = {};
+    
+    // On mobile, always position tooltip at bottom center for better UX
+    if (isMobile) {
+      position = {
+        top: rect.bottom + margin,
+        left: '50%',
+        transform: 'translateX(-50%)'
+      };
+    } else {
+      switch (currentStep.position) {
+        case 'bottom':
+          position = {
+            top: rect.bottom + margin,
+            left: rect.left + rect.width / 2,
+            transform: 'translateX(-50%)'
+          };
+          break;
+        case 'top':
+          position = {
+            top: rect.top - margin,
+            left: rect.left + rect.width / 2,
+            transform: 'translate(-50%, -100%)'
+          };
+          break;
+        case 'left':
+          position = {
+            top: rect.top + rect.height / 2,
+            left: rect.left - margin,
+            transform: 'translate(-100%, -50%)'
+          };
+          break;
+        case 'right':
+          position = {
+            top: rect.top + rect.height / 2,
+            left: rect.right + margin,
+            transform: 'translateY(-50%)'
+          };
+          break;
+        default:
+          position = {
+            top: rect.bottom + margin,
+            left: rect.left + rect.width / 2,
+            transform: 'translateX(-50%)'
+          };
+      }
     }
+    
+    // Ensure tooltip stays within viewport bounds
+    if (typeof position.left === 'number') {
+      if (position.left < tooltipWidth / 2) {
+        position.left = tooltipWidth / 2;
+        position.transform = 'translateX(-50%)';
+      } else if (position.left > viewportWidth - tooltipWidth / 2) {
+        position.left = viewportWidth - tooltipWidth / 2;
+        position.transform = 'translateX(-50%)';
+      }
+    }
+    
+    if (typeof position.top === 'number') {
+      if (position.top < margin) {
+        position.top = margin;
+      } else if (position.top > viewportHeight - tooltipHeight - margin) {
+        position.top = viewportHeight - tooltipHeight - margin;
+      }
+    }
+    
+    return position;
   };
   const nextWalkthroughStep = () => {
     if (walkthroughStep < walkthroughSteps.length - 1) {
@@ -513,22 +559,58 @@ const FeedbackForm: React.FC = () => {
         }, 500);
       }
     }
-  }, [walkthroughStep, showWalkthrough]);
-
-  // Update position on window resize
+  }, [walkthroughStep, showWalkthrough]);  // Update position on window resize and scroll
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     const handleResize = () => {
       if (showWalkthrough) {
         const newPosition = getTooltipPosition();
         setWalkthroughPosition(newPosition);
       }
+    };    const handleScroll = () => {
+      if (showWalkthrough) {
+        // Debounce scroll updates to improve performance
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          const newPosition = getTooltipPosition();
+          setWalkthroughPosition(newPosition);
+          setHighlightUpdate(prev => prev + 1); // Force highlight re-render
+        }, 10); // Small delay to debounce rapid scroll events
+      }
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [showWalkthrough, walkthroughStep]);
-  return (
-    <div className="min-h-screen flex flex-col">      {/* Walkthrough Overlay */}
+    window.addEventListener('scroll', handleScroll, true); // Use capture to catch scroll events on all elements
+    document.addEventListener('scroll', handleScroll, true);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll, true);
+      document.removeEventListener('scroll', handleScroll, true);
+    };
+  }, [showWalkthrough, walkthroughStep]);  return (
+    <div className="min-h-screen flex flex-col">
+      {/* Mobile Tutorial FAB - Only visible on mobile */}
+      <div className="fixed bottom-4 right-4 z-30 sm:hidden">
+        <Button
+          onClick={() => {
+            setShowWalkthrough(true);
+            setWalkthroughStep(0);
+            setTimeout(() => {
+              const initialPosition = getTooltipPosition();
+              setWalkthroughPosition(initialPosition);
+            }, 100);
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+          size="sm"
+        >
+          <HelpCircle className="h-5 w-5" />
+        </Button>
+      </div>
+
+      {/* Walkthrough Overlay */}
       {showWalkthrough && (
         <>
           {/* Dark overlay */}
@@ -542,35 +624,40 @@ const FeedbackForm: React.FC = () => {
                 `0 0 0 4px rgba(239, 68, 68, 0.5), 0 0 0 8px rgba(239, 68, 68, 0.25)` : 
                 'none'
             }}
-          />
-            {/* Tooltip */}
+          />          {/* Tooltip - Mobile Responsive */}
           <div 
-            className="fixed z-50 bg-white rounded-lg shadow-xl border-2 border-red-500 max-w-sm"
+            className="fixed z-50 bg-white rounded-lg shadow-xl border-2 border-red-500 mx-2 sm:mx-0 max-w-xs sm:max-w-sm"
             style={walkthroughPosition}
           >
-            <div className="p-4">
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="text-lg font-semibold text-gray-900">{walkthroughSteps[walkthroughStep].title}</h3>
-                <Button variant="ghost" size="sm" onClick={skipWalkthrough} className="h-6 w-6 p-0">
+            <div className="p-3 sm:p-4">
+              <div className="flex justify-between items-start mb-2 sm:mb-3">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-tight pr-2">
+                  {walkthroughSteps[walkthroughStep].title}
+                </h3>
+                <Button variant="ghost" size="sm" onClick={skipWalkthrough} className="h-6 w-6 p-0 flex-shrink-0">
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-gray-600 mb-4 text-sm">{walkthroughSteps[walkthroughStep].content}</p>
+              <p className="text-gray-600 mb-3 sm:mb-4 text-xs sm:text-sm leading-relaxed">
+                {walkthroughSteps[walkthroughStep].content}
+              </p>
               
               <div className="flex justify-between items-center">
                 <div className="flex space-x-1">
                   {walkthroughSteps.map((_, index) => (
                     <div
                       key={index}
-                      className={`w-2 h-2 rounded-full ${
+                      className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
                         index === walkthroughStep ? 'bg-red-600' : 'bg-gray-300'
                       }`}
                     />
                   ))}
                 </div>
-                <div className="space-x-2 flex">
-                  <Button variant="outline" size="sm" onClick={skipWalkthrough}>Skip</Button>
-                  <Button size="sm" onClick={nextWalkthroughStep} className="bg-red-600 hover:bg-red-700">
+                <div className="space-x-1 sm:space-x-2 flex">
+                  <Button variant="outline" size="sm" onClick={skipWalkthrough} className="text-xs px-2 py-1">
+                    Skip
+                  </Button>
+                  <Button size="sm" onClick={nextWalkthroughStep} className="bg-red-600 hover:bg-red-700 text-xs px-2 py-1">
                     {walkthroughStep === walkthroughSteps.length - 1 ? 'Finish' : 'Next'}
                   </Button>
                 </div>
@@ -598,82 +685,145 @@ const FeedbackForm: React.FC = () => {
                 })()
               }}
             />
-          </div>
-          
-          {/* Highlight target element */}
+          </div>          {/* Highlight target element */}
           {getTargetElement() && (
             <div 
+              key={`highlight-${highlightUpdate}`} // Force re-render on scroll
               className="fixed z-45 border-4 border-red-500 rounded-lg pointer-events-none animate-pulse"
-              style={{
-                top: getTargetElement()!.getBoundingClientRect().top - 4,
-                left: getTargetElement()!.getBoundingClientRect().left - 4,
-                width: getTargetElement()!.getBoundingClientRect().width + 8,
-                height: getTargetElement()!.getBoundingClientRect().height + 8,
-              }}
+              style={(() => {
+                const element = getTargetElement();
+                if (!element) return {};
+                const rect = element.getBoundingClientRect();
+                return {
+                  top: rect.top - 4,
+                  left: rect.left - 4,
+                  width: rect.width + 8,
+                  height: rect.height + 8,
+                };
+              })()}
             />
           )}
         </>
-      )}
-
-      <PreHeader currentPage="Feedback" />
+      )}      <PreHeader currentPage="Feedback" />
       
-      <main className="flex-grow pt-32 pb-16 px-4 bg-gray-50">
+      <main className="flex-grow pt-20 sm:pt-32 pb-8 sm:pb-16 px-2 sm:px-4 bg-gray-50">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-center leading-tight">
             <span className="bg-gradient-to-r from-red-600 to-amber-500 text-transparent bg-clip-text">
               Share Your Healthcare Experience
             </span>
           </h1>
-          <p className="text-xl text-gray-700 text-center mb-12 max-w-2xl mx-auto">
+          <p className="text-base sm:text-xl text-gray-700 text-center mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed">
             Your voice matters. Help improve healthcare for everyone by providing your honest feedback.
           </p>
-          
-          <Card className="shadow-xl border-0 mb-10">
-            <CardHeader className="bg-gradient-to-r from-red-600 to-amber-500 text-white rounded-t-lg">
-              <CardTitle className="text-2xl">Feedback</CardTitle>
-              <CardDescription className="text-white opacity-90">
+            <Card className="shadow-xl border-0 mb-6 sm:mb-10">
+            <CardHeader className="bg-gradient-to-r from-red-600 to-amber-500 text-white rounded-t-lg p-4 sm:p-6">
+              <CardTitle className="text-xl sm:text-2xl leading-tight">Feedback</CardTitle>
+              <CardDescription className="text-white opacity-90 text-sm sm:text-base leading-relaxed">
                 Share your experience about healthcare professionals, facilities, and educational resources. 
-                Your feedback helps us improve the platform for everyone.
+                Your feedback helps us improve the platform and the entire ecosystem for everyone.
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="p-6 pb-4">
-              <div className="bg-amber-50 border border-amber-200 rounded-md p-4 mb-6 text-sm">
+            <CardContent className="p-3 sm:p-6 pb-3 sm:pb-4">
+              <div className="bg-amber-50 border border-amber-200 rounded-md p-3 sm:p-4 mb-4 sm:mb-6 text-xs sm:text-sm">
                 <div className="flex gap-2">
-                  <Info className="h-5 w-5 text-amber-500 flex-shrink-0" />
-                  <p className="text-amber-800">
+                  <Info className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-amber-800 leading-relaxed">
                     By submitting feedback, you agree to our <a href="#" className="underline font-medium">Privacy Policy</a> and <a href="#" className="underline font-medium">Terms of Service</a>, 
                     including the requirement to provide evidence if your feedback is disputed.
                   </p>
                 </div>
               </div>
-            
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid grid-cols-4 mb-6" data-walkthrough="tabs">
-                  <TabsTrigger value="professionals" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
-                    Professionals
+                <TabsList 
+                  className="
+                    grid grid-cols-2 gap-1 mb-6 p-1 h-auto bg-gray-50 rounded-xl
+                    md:grid-cols-4 md:gap-2 md:p-2
+                    border border-gray-200 shadow-sm
+                  " 
+                  data-walkthrough="tabs"
+                >
+                  <TabsTrigger 
+                    value="professionals" 
+                    className="
+                      px-2 py-3 text-xs font-medium rounded-lg transition-all duration-200
+                      data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600
+                      data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:scale-[1.02]
+                      hover:bg-gray-100 hover:text-gray-800
+                      text-gray-600 bg-white border border-gray-200
+                      md:px-4 md:py-3 md:text-sm
+                      min-h-[3rem] flex items-center justify-center text-center leading-tight
+                    "
+                  >
+                    <span className="block">
+                      Healthcare<br className="md:hidden" />
+                      <span className="md:ml-1">Professionals</span>
+                    </span>
                   </TabsTrigger>
-                  <TabsTrigger value="facilities" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
-                    Hospitals/Facilities/Pharmacy
+                  <TabsTrigger 
+                    value="facilities" 
+                    className="
+                      px-2 py-3 text-xs font-medium rounded-lg transition-all duration-200
+                      data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600
+                      data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:scale-[1.02]
+                      hover:bg-gray-100 hover:text-gray-800
+                      text-gray-600 bg-white border border-gray-200
+                      md:px-4 md:py-3 md:text-sm
+                      min-h-[3rem] flex items-center justify-center text-center leading-tight
+                    "
+                  >
+                    <span className="block">
+                      Hospitals/<br className="md:hidden" />
+                      <span className="md:ml-1">Facilities/Pharmacy </span>
+                    </span>
                   </TabsTrigger>
-                  <TabsTrigger value="tutors" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
-                    Tutors/Advisers
+                  <TabsTrigger 
+                    value="tutors" 
+                    className="
+                      px-2 py-3 text-xs font-medium rounded-lg transition-all duration-200
+                      data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600
+                      data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:scale-[1.02]
+                      hover:bg-gray-100 hover:text-gray-800
+                      text-gray-600 bg-white border border-gray-200
+                      md:px-4 md:py-3 md:text-sm
+                      min-h-[3rem] flex items-center justify-center text-center leading-tight
+                    "
+                  >
+                    <span className="block">
+                      Tutors /<br className="md:hidden" />
+                      <span className="md:ml-1">Advisers</span>
+                    </span>
                   </TabsTrigger>
-                  <TabsTrigger value="factory" className="data-[state=active]:bg-red-100 data-[state=active]:text-red-700">
-                    Occupational Health & Safety
+                  <TabsTrigger 
+                    value="factory" 
+                    className="
+                      px-2 py-3 text-xs font-medium rounded-lg transition-all duration-200
+                      data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600
+                      data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:scale-[1.02]
+                      hover:bg-gray-100 hover:text-gray-800
+                      text-gray-600 bg-white border border-gray-200
+                      md:px-4 md:py-3 md:text-sm
+                      min-h-[3rem] flex items-center justify-center text-center leading-tight
+                    "
+                  >
+                    <span className="block">
+                      Occupational<br className="md:hidden" />
+                      <span className="md:ml-1">Health & Safety</span>
+                    </span>
                   </TabsTrigger>
-                </TabsList>                  <form onSubmit={handleSubmit}>
-                  <div data-walkthrough="form-fields">
+                </TabsList>                <form onSubmit={handleSubmit}>
+                  <div data-walkthrough="form-fields" className="space-y-4 sm:space-y-6">
                   <TabsContent value="professionals" className="mt-0">
-                    <div className="space-y-6">
-                      <div className="space-y-3">
-                        <Label htmlFor="professional">Healthcare Professional</Label>
+                    <div className="space-y-4 sm:space-y-6">
+                      <div className="space-y-2 sm:space-y-3">
+                        <Label htmlFor="professional" className="text-sm font-medium">Healthcare Professional</Label>
                         <Select 
                           required
                           value={selectedProfessional}
                           onValueChange={setSelectedProfessional}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="h-11">
                             <SelectValue placeholder="Select a healthcare professional" />
                           </SelectTrigger>
                           <SelectContent>
@@ -684,25 +834,25 @@ const FeedbackForm: React.FC = () => {
                             ))}
                           </SelectContent>
                         </Select>
-                        
-                        {selectedProfessional === "other" && (
+                          {selectedProfessional === "other" && (
                           <div className="mt-2">
-                            <Label htmlFor="customProfessionalName">Specify Healthcare Professional</Label>
+                            <Label htmlFor="customProfessionalName" className="text-sm font-medium">Specify Healthcare Professional</Label>
                             <Input 
                               id="customProfessionalName"
                               value={customProfessionalName}
                               onChange={(e) => setCustomProfessionalName(e.target.value)}
                               placeholder="Enter healthcare professional's name"
+                              className="h-11 mt-1"
                               required
                             />
                           </div>
                         )}
                       </div>
                       
-                      <div className="space-y-3">
-                        <Label htmlFor="specialty">Specialty</Label>
+                      <div className="space-y-2 sm:space-y-3">
+                        <Label htmlFor="specialty" className="text-sm font-medium">Specialty</Label>
                         <Select>
-                          <SelectTrigger>
+                          <SelectTrigger className="h-11">
                             <SelectValue placeholder="Select specialty" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1016,48 +1166,19 @@ const FeedbackForm: React.FC = () => {
                           </div>
 
                           <div className="space-y-3">
-                            <Label htmlFor="companyResponse">Company Response & Actions</Label>
+                            <Label htmlFor="companyResponse">Company Response</Label>
                             <Textarea
                               id="companyResponse"
                               value={companyResponse}
                               onChange={e => setCompanyResponse(e.target.value)}
-                              placeholder="What actions has the company taken or failed to take? Include medical treatment, safety measures, follow-up..."
-                              className="min-h-[120px]"
+                              placeholder="Describe the company's response to the incident..."
+                              className="min-h-[150px]"
                             />
                           </div>
                         </>
                       )}
 
-                      <Separator />
-
-                      <div className="space-y-3">
-                        <Label>Overall Safety Experience</Label>
-                        <RadioGroup 
-                          value={feedbackType} 
-                          onValueChange={setFeedbackType}
-                          className="flex space-x-4"
-                          required
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="positive" id="positive-safety" />
-                            <Label htmlFor="positive-safety" className="flex items-center">
-                              <ThumbsUp className="mr-1 h-4 w-4 text-green-500" />
-                              Satisfactory
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="mixed" id="mixed-safety" />
-                            <Label htmlFor="mixed-safety">Needs Improvement</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="negative" id="negative-safety" />
-                            <Label htmlFor="negative-safety" className="flex items-center">
-                              <ThumbsDown className="mr-1 h-4 w-4 text-red-500" />
-                              Unsafe
-                            </Label>
-                          </div>
-                        </RadioGroup>
-                      </div>                      <div className="space-y-3" data-walkthrough="evidence" data-walkthrough-tab="factory">
+                      <div className="space-y-3" data-walkthrough="evidence" data-walkthrough-tab="factory">
                         <Label htmlFor="evidenceFiles">Upload Evidence Images</Label>
                         <Input
                           type="file"
@@ -1102,60 +1223,64 @@ const FeedbackForm: React.FC = () => {
                       </div>                    </div>
                   </TabsContent>
                   </div>
-                  
-                  <div className="pt-6" data-walkthrough="submit">
-                    <div className="flex justify-between items-center">
+                    <div className="pt-4 sm:pt-6" data-walkthrough="submit">
+                    <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-4">
                       <Button 
                         type="submit" 
-                        className="bg-red-600 hover:bg-red-700"
+                        className="bg-red-600 hover:bg-red-700 order-1 sm:order-none flex-1 sm:flex-none"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
-                          <>Submitting Feedback...</>
+                          <span className="text-sm sm:text-base">Submitting...</span>
                         ) : (
                           <>
                             <MessageCircle className="mr-2 h-4 w-4" />
-                            Submit Feedback
+                            <span className="hidden sm:inline">Submit Feedback</span>
+                            <span className="sm:hidden">Submit</span>
                           </>
                         )}
                       </Button>
                       
-                      <Button 
-                        type="button" 
-                        variant="outline"
-                        onClick={generateQRCode}
-                        className="border-amber-500 text-amber-700 hover:bg-amber-50"
-                      >
-                        Generate Feedback QR Code                      </Button>
-                      
-                      <Button 
-                        type="button" 
-                        variant="outline"
-                        onClick={() => {
-                          setShowWalkthrough(true);
-                          setWalkthroughStep(0);
-                          setTimeout(() => {
-                            const initialPosition = getTooltipPosition();
-                            setWalkthroughPosition(initialPosition);
-                          }, 100);
-                        }}
-                        className="border-blue-500 text-blue-700 hover:bg-blue-50"
-                      >
-                        Show Tutorial
-                      </Button>
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 order-2 sm:order-none">
+                        <Button 
+                          type="button" 
+                          variant="outline"
+                          onClick={generateQRCode}
+                          className="border-amber-500 text-amber-700 hover:bg-amber-50 text-xs sm:text-sm px-3 py-2"
+                        >
+                          <span className="hidden sm:inline">Generate QR Code</span>
+                          <span className="sm:hidden">QR Code</span>
+                        </Button>
+                        
+                        <Button 
+                          type="button" 
+                          variant="outline"
+                          onClick={() => {
+                            setShowWalkthrough(true);
+                            setWalkthroughStep(0);
+                            setTimeout(() => {
+                              const initialPosition = getTooltipPosition();
+                              setWalkthroughPosition(initialPosition);
+                            }, 100);
+                          }}
+                          className="border-blue-500 text-blue-700 hover:bg-blue-50 text-xs sm:text-sm px-3 py-2"
+                        >
+                          <span className="hidden sm:inline">Show Tutorial</span>
+                          <span className="sm:hidden">Tutorial</span>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </form>
               </Tabs>
             </CardContent>
           </Card>
-          
-          <div className="mt-16" id="recent">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <MessageCircle className="text-red-600" />
+            <div className="mt-8 sm:mt-16" id="recent">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2">
+              <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+                <MessageCircle className="text-red-600 h-5 w-5 sm:h-6 sm:w-6" />
                 <span>Recent Feedback</span>
-                <span className="text-sm bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full ml-2">
+                <span className="text-xs sm:text-sm bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full ml-2">
                   Live
                 </span>
               </h2>

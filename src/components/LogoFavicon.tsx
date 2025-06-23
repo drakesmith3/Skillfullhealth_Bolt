@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-const EARTH_SIZE = 18; // Even smaller for favicon
-const SUN_SIZE = 32;   // Sun is bigger than earth
-const ORBIT_RADIUS = 10; // Small orbit for favicon
-const FAST_SPIN_DEG = 24; // Very fast spin per frame
-const FAST_ORBIT_DEG = 6; // Fast orbit per frame
+// Standard favicon sizes: 16x16, 32x32, 48x48
+const FAVICON_SIZE = 32; // Standard favicon size
+const EARTH_SIZE = 10; // Smaller earth for better visibility
+const SUN_SIZE = 20;   // Larger sun for better contrast
+const ORBIT_RADIUS = 6; // Tighter orbit for favicon
+const FAST_SPIN_DEG = 12; // Slower spin for better visibility
+const FAST_ORBIT_DEG = 3; // Slower orbit for better visibility
 
 const LogoFavicon = () => {
   const [earthAngle, setEarthAngle] = useState(0);
@@ -20,39 +22,35 @@ const LogoFavicon = () => {
     requestAnimationFrame(spin);
     return () => { running = false; };
   }, []);
-
-  // Calculate earth's orbital position
-  const sunCenter = SUN_SIZE / 2;
-  const earthCenter = EARTH_SIZE / 2;
-  const earthX =
-    sunCenter +
-    ORBIT_RADIUS * Math.cos((orbitAngle * Math.PI) / 180) -
-    earthCenter;
-  const earthY =
-    sunCenter +
-    ORBIT_RADIUS * Math.sin((orbitAngle * Math.PI) / 180) -
-    earthCenter;
-
+  // Calculate earth's orbital position within favicon bounds
+  const centerX = FAVICON_SIZE / 2;
+  const centerY = FAVICON_SIZE / 2;
+  const sunRadius = SUN_SIZE / 2;
+  const earthRadius = EARTH_SIZE / 2;
+  
+  const earthX = centerX + ORBIT_RADIUS * Math.cos((orbitAngle * Math.PI) / 180) - earthRadius;
+  const earthY = centerY + ORBIT_RADIUS * Math.sin((orbitAngle * Math.PI) / 180) - earthRadius;
   return (
     <span
       style={{
         display: "inline-block",
-        width: SUN_SIZE + ORBIT_RADIUS * 2,
-        height: SUN_SIZE + ORBIT_RADIUS * 2,
+        width: FAVICON_SIZE,
+        height: FAVICON_SIZE,
         verticalAlign: "middle",
-        position: "relative"
+        position: "relative",
+        minWidth: FAVICON_SIZE, // Ensure minimum size
+        minHeight: FAVICON_SIZE
       }}
       aria-label="Spinning Earth Orbiting Sun Logo"
       role="img"
-    >
-      {/* Sun */}
+    >      {/* Sun - centered in favicon */}
       <svg
         width={SUN_SIZE}
         height={SUN_SIZE}
         style={{
           position: "absolute",
-          left: ORBIT_RADIUS,
-          top: ORBIT_RADIUS,
+          left: centerX - sunRadius,
+          top: centerY - sunRadius,
           zIndex: 2
         }}
         viewBox={`0 0 ${SUN_SIZE} ${SUN_SIZE}`}
@@ -70,11 +68,10 @@ const LogoFavicon = () => {
           cy={SUN_SIZE / 2}
           r={SUN_SIZE / 2 - 1}
           fill="url(#sunGold)"
-          stroke="#fff8"
-          strokeWidth="1"
+          stroke="#fff"
+          strokeWidth="0.5"
         />
-      </svg>
-      {/* Earth */}
+      </svg>      {/* Earth - orbiting around sun */}
       <svg
         width={EARTH_SIZE}
         height={EARTH_SIZE}
@@ -86,7 +83,7 @@ const LogoFavicon = () => {
           transform: `rotate(${earthAngle}deg)`,
           transition: "transform 0.1s linear"
         }}
-        viewBox="0 0 96 96"
+        viewBox="0 0 32 32"
       >
         <defs>
           <radialGradient id="earthBlue" cx="50%" cy="50%" r="50%">
@@ -99,12 +96,11 @@ const LogoFavicon = () => {
             <stop offset="100%" stopColor="#4caf50" />
           </linearGradient>
         </defs>
-        <circle cx="48" cy="48" r="44" fill="url(#earthBlue)" stroke="#fff" strokeWidth="2" />
-        <ellipse cx="38" cy="56" rx="16" ry="8" fill="url(#earthLand)" opacity="0.8" />
-        <ellipse cx="60" cy="38" rx="10" ry="5" fill="url(#earthLand)" opacity="0.7" />
-        <ellipse cx="60" cy="60" rx="6" ry="3" fill="url(#earthLand)" opacity="0.6" />
-        <ellipse cx="48" cy="40" rx="20" ry="4" fill="#fff" opacity="0.18" />
-        <ellipse cx="60" cy="54" rx="10" ry="2" fill="#fff" opacity="0.12" />
+        <circle cx="16" cy="16" r="14" fill="url(#earthBlue)" stroke="#fff" strokeWidth="1" />
+        <ellipse cx="13" cy="18" rx="5" ry="3" fill="url(#earthLand)" opacity="0.8" />
+        <ellipse cx="20" cy="13" rx="3" ry="2" fill="url(#earthLand)" opacity="0.7" />
+        <ellipse cx="20" cy="20" rx="2" ry="1" fill="url(#earthLand)" opacity="0.6" />
+        <ellipse cx="16" cy="14" rx="6" ry="1.5" fill="#fff" opacity="0.15" />
       </svg>
     </span>
   );
@@ -112,5 +108,6 @@ const LogoFavicon = () => {
 
 export default LogoFavicon;
 
-// In your header component:
+// Usage in header component or favicon generation:
 // <LogoFavicon />
+// For actual favicon, render to canvas and convert to .ico/.png format

@@ -8,7 +8,7 @@ import { Card } from "../components/ui/card";
 import { Progress } from "../components/ui/progress";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { ChevronRight, Play, X } from "lucide-react";
+import { ChevronRight, Play, X, AlertTriangle } from "lucide-react";
 
 import Features from "../components/FeaturesOptimized";
 import HowItWorks from "../components/HowItWorksWheel";
@@ -62,11 +62,22 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
   const [transformProgress, setTransformProgress] = useState(0);
   const [showStats, setShowStats] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(true);
-  const [showDemoModal, setShowDemoModal] = useState(false);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(true);  const [showDemoModal, setShowDemoModal] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
+  const [videoError, setVideoError] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
   const particleSystemRef = useRef<any>(null);
+  const videoTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup video timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (videoTimeoutRef.current) {
+        clearTimeout(videoTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Animate particle counter
   useEffect(() => {
@@ -162,75 +173,151 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
       duration: 0.8,
       ease: "power2.out",
       onComplete: () => ripple.remove()
-    });
-  }, [isDark]);  return (
+    });  }, [isDark]);
+
+  return (
     <div className={`relative w-full h-full min-h-screen overflow-hidden ${
       isDark 
         ? 'bg-gradient-to-br from-slate-900 via-red-950 to-amber-950' 
         : 'bg-gradient-to-br from-slate-50 via-red-50 to-amber-50'
     }`}>
-
-      {/* Top Navigation Bar */}
-      <div className="absolute top-0 left-0 right-0 z-50 px-6 py-4">
+      <div className="absolute top-0 left-0 right-0 z-50 px-3 py-2 md:px-6 md:py-4">
         <div className="flex items-center justify-between">
           
           {/* 3D Logo - Left Corner */}
-          <div className="w-16 h-16 relative">
+          <div className="w-12 h-12 md:w-16 md:h-16 relative flex-shrink-0">
             <Logo3DHyperRealistic />
           </div>
 
-          {/* Navigation Buttons - Right Corner */}
-          <div className="flex items-center gap-3">
+          {/* Navigation Buttons - Desktop and Mobile Responsive */}
+          <div className="flex items-center gap-1 md:gap-3 flex-wrap">
             {[
-              { label: 'ABOUT US', path: '/about-us' },
-              { label: 'SIGN IN', path: '/signin' },
-              { label: 'SIGN UP', path: '/signup' },
-              { label: 'LEAVE FEEDBACK', path: '/feedback' },
-              { label: 'GAMES & QUIZZES', path: '/games-quizzes' },
-              { label: 'COMMUNITY', path: '/community-forum' },
-              { label: 'BLOG', path: '/blog' }            ].map((nav, index) => (
+              { label: 'ABOUT US', path: '/about-us', mobile: 'ABOUT', priority: 1 },
+              { label: 'SIGN IN', path: '/signin', mobile: 'SIGN IN', priority: 1 },
+              { label: 'SIGN UP', path: '/signup', mobile: 'SIGN UP', priority: 1 },
+              { label: 'LEAVE FEEDBACK', path: '/feedback', mobile: 'FEEDBACK', priority: 2 },
+              { label: 'GAMES & QUIZZES', path: '/games-quizzes', mobile: 'GAMES', priority: 3 },
+              { label: 'COMMUNITY', path: '/community-forum', mobile: 'COMMUNITY', priority: 3 },
+              { label: 'BLOG', path: '/blog', mobile: 'BLOG', priority: 4 }
+            ].map((nav, index) => (
               <Link key={index} to={nav.path}>
                 <Button
                   size="sm"
-                  className="group relative px-4 py-2 text-xs font-bold text-black rounded-full transition-all duration-300 transform hover:scale-105 border-0 shadow-lg hover:shadow-xl overflow-hidden"
+                  className={`
+                    group relative transition-all duration-300 transform hover:scale-105 border-0 shadow-lg hover:shadow-xl overflow-hidden
+                    px-2 py-1.5 text-xs font-bold text-black rounded-full
+                    md:px-4 md:py-2 md:text-xs
+                    ${nav.priority > 2 ? 'hidden sm:flex' : ''}
+                    ${nav.priority > 3 ? 'hidden md:flex' : ''}
+                  `}
                   style={{
                     background: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)',
                     border: '1px solid #DAA520',
                     boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)'
                   }}
                   onMouseEnter={(e) => {
-                     e.currentTarget.style.background = 'linear-gradient(135deg, #DC143C 0%, #B22222 50%, #8B0000 100%)';
-                     e.currentTarget.style.borderColor = '#DC143C';
-                     e.currentTarget.style.boxShadow = '0 6px 20px rgba(220, 20, 60, 0.4)';
-                     e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)';
-                     const shineElement = e.currentTarget.querySelector('.shine-effect');
-                     if (shineElement) {
-                       shineElement.style.background = 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%)';
-                     }
-                   }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)';
-                    e.currentTarget.style.borderColor = '#DAA520';
-                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(212, 175, 55, 0.3)';
-                    e.currentTarget.style.transform = 'scale(1)';
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.background = 'linear-gradient(135deg, #DC143C 0%, #B22222 50%, #8B0000 100%)';
+                    target.style.borderColor = '#DC143C';
+                    target.style.boxShadow = '0 6px 20px rgba(220, 20, 60, 0.4)';
+                    target.style.transform = 'scale(1.05) translateY(-2px)';
+                    const shineElement = target.querySelector('.shine-effect') as HTMLElement;
+                    if (shineElement) {
+                      shineElement.style.background = 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%)';
+                    }
                   }}
-                >
-                  {/* Shine effect on hover */}
-                   <div className="shine-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-600 ease-in-out" />
-                  <span className="relative z-10">{nav.label}</span>
+                  onMouseLeave={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.background = 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)';
+                    target.style.borderColor = '#DAA520';
+                    target.style.boxShadow = '0 4px 15px rgba(212, 175, 55, 0.3)';
+                    target.style.transform = 'scale(1)';
+                  }}
+                >                  {/* Shine effect on hover */}
+                  <div className="shine-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-600 ease-in-out" />
+                  <span className="relative z-10 md:hidden">{nav.mobile}</span>
+                  <span className="relative z-10 hidden md:inline">{nav.label}</span>
                 </Button>
-              </Link>))}
+              </Link>
+            ))}
+              {/* Mobile Menu Button for hidden items */}
+            <div className="sm:hidden relative">
+              <Button
+                size="sm"
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="group relative px-2 py-1.5 text-xs font-bold text-black rounded-full transition-all duration-300 transform hover:scale-105 border-0 shadow-lg hover:shadow-xl overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)',
+                  border: '1px solid #DAA520',
+                  boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)'
+                }}
+              >
+                <span className="relative z-10">⋯</span>
+              </Button>
+              
+              {/* Mobile Dropdown Menu */}
+              {showMobileMenu && (
+                <>
+                  {/* Overlay to close menu when clicking outside */}
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowMobileMenu(false)}
+                  />                  {/* Dropdown Menu */}
+                  <div className="absolute right-[-50px] top-full mt-2 z-50 rounded-lg shadow-xl border border-amber-300/50 min-w-[140px] overflow-hidden backdrop-blur-md"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.95) 0%, rgba(255, 215, 0, 0.95) 50%, rgba(184, 134, 11, 0.95) 100%)',
+                      boxShadow: '0 8px 32px rgba(212, 175, 55, 0.3)'
+                    }}
+                  >
+                    {[
+                      { label: 'GAMES & QUIZZES', path: '/games-quizzes', mobile: 'GAMES', priority: 2 },
+                      { label: 'COMMUNITY', path: '/community-forum', mobile: 'COMMUNITY', priority: 3 },
+                      { label: 'BLOG', path: '/blog', mobile: 'BLOG', priority: 4 }
+                    ].map((nav, index) => (
+                      <Link key={index} to={nav.path}>
+                        <button
+                          onClick={() => setShowMobileMenu(false)}
+                          className="group relative w-full px-4 py-3 text-left text-sm font-bold text-black transition-all duration-300 border-b border-amber-400/30 last:border-b-0 overflow-hidden hover:scale-[1.02] active:scale-[0.98]"
+                          style={{
+                            background: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)'
+                          }}
+                          onMouseEnter={(e) => {
+                            const target = e.currentTarget as HTMLElement;
+                            target.style.background = 'linear-gradient(135deg, #DC143C 0%, #B22222 50%, #8B0000 100%)';
+                            target.style.color = 'white';
+                            target.style.transform = 'scale(1.02)';
+                          }}
+                          onMouseLeave={(e) => {
+                            const target = e.currentTarget as HTMLElement;
+                            target.style.background = 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)';
+                            target.style.color = 'black';
+                            target.style.transform = 'scale(1)';
+                          }}
+                        >
+                          {/* Shine effect on hover */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-in-out" />
+                          <span className="relative z-10">{nav.mobile}</span>
+                        </button>
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>      {/* UI Controls - Moved to middle left and made compact with transparent shortcuts */}
-      <div className="absolute top-1/2 left-4 transform -translate-y-1/2 z-30">
-        <Card className={`backdrop-blur-md p-2 max-w-[170px] ${
+      </div>
+
+      {/* UI Controls - Responsive positioning for mobile and desktop */}
+      <div className="absolute bottom-20 left-2 md:bottom-32 md:left-4 z-30">
+        <Card className={`backdrop-blur-md p-1.5 md:p-2 max-w-[140px] md:max-w-[170px] ${
           isDark 
             ? 'bg-black/15 border-amber-400/20' 
             : 'bg-white/60 border-amber-600/30'
-        }`}>          <div className="space-y-1.5">
-            {/* Transform and Reset buttons in top row */}
-            <div className="flex gap-1.5">
+        }`}>
+          <div className="space-y-1 md:space-y-1.5">
+            {/* Transform and Reset buttons - Stacked on mobile, side by side on desktop */}
+            <div className="flex flex-col sm:flex-row gap-1 sm:gap-1.5">
               <Button
                 onClick={handleTransform}
                 disabled={isTransformed || isAnimating}
@@ -241,7 +328,8 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                     : 'bg-amber-600/20 hover:bg-amber-600/30 text-amber-700 border-amber-600/50'
                 }`}
               >
-                Transform ✨
+                <span className="hidden sm:inline">Transform ✨</span>
+                <span className="sm:hidden">Transform</span>
               </Button>
               
               <Button
@@ -255,11 +343,12 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                     : 'text-slate-700 hover:text-amber-700'
                 }`}
               >
-                Reset 🔄
+                <span className="hidden sm:inline">Reset 🔄</span>
+                <span className="sm:hidden">Reset</span>
               </Button>
             </div>
             
-            {/* Stats button in second row under Transform */}
+            {/* Stats button */}
             <div className="flex justify-start">
               <Button
                 onClick={() => setShowStats(!showStats)}
@@ -271,7 +360,8 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                     : 'text-slate-400 hover:text-amber-700'
                 }`}
               >
-                Stats 📊
+                <span className="hidden sm:inline">Stats 📊</span>
+                <span className="sm:hidden">📊</span>
               </Button>
             </div>
             
@@ -280,15 +370,16 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                 <div className={`flex justify-between text-xs ${
                   isDark ? 'text-slate-300' : 'text-slate-700'
                 }`}>
-                  <span>Transforming</span>
+                  <span className="hidden sm:inline">Transforming</span>
+                  <span className="sm:hidden">...</span>
                   <span>{transformProgress.toFixed(0)}%</span>
                 </div>
                 <Progress value={transformProgress} className="h-1" />
               </div>
             )}
             
-            {/* Transparent keyboard shortcuts info */}
-            <div className={`text-xs opacity-50 space-y-1 ${
+            {/* Keyboard shortcuts - Hidden on very small screens */}
+            <div className={`text-xs opacity-50 space-y-1 hidden sm:block ${
               isDark ? 'text-slate-400' : 'text-slate-600'
             }`}>
               <div className="flex items-center gap-1">
@@ -297,7 +388,8 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                     ? 'bg-slate-700 text-amber-400' 
                     : 'bg-slate-200 text-amber-700'
                 }`}>Space</kbd>
-                <span>Transform</span>
+                <span className="hidden md:inline">Transform</span>
+                <span className="md:hidden">Trans</span>
               </div>
               <div className="flex items-center gap-1">
                 <kbd className={`px-1 py-0.5 rounded text-xs ${
@@ -308,30 +400,33 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                 <span>Reset</span>
               </div>
             </div>
-          </div></Card>
-          {showStats && (
-          <Card className={`backdrop-blur-md p-3 mt-2 max-w-[170px] ${
+          </div>
+        </Card>{showStats && (
+          <Card className={`backdrop-blur-md p-2 md:p-3 mt-2 max-w-[140px] md:max-w-[170px] ${
             isDark 
               ? 'bg-black/15 border-amber-400/20' 
               : 'bg-white/60 border-amber-600/30'
           }`}>
-            <div className={`space-y-1.5 text-xs ${
+            <div className={`space-y-1 md:space-y-1.5 text-xs ${
               isDark ? 'text-slate-300' : 'text-slate-700'
             }`}>
               <div className="flex justify-between">
-                <span>State:</span>
-                <span className={isDark ? "text-amber-400" : "text-amber-700"}>
+                <span className="hidden sm:inline">State:</span>
+                <span className="sm:hidden">S:</span>
+                <span className={`${isDark ? "text-amber-400" : "text-amber-700"} truncate`}>
                   {isTransformed ? "Caduceus" : "Playground"}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>Particles:</span>
+                <span className="hidden sm:inline">Particles:</span>
+                <span className="sm:hidden">P:</span>
                 <span className={isDark ? "text-amber-400" : "text-amber-700"}>
                   {particleCount.toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>Progress:</span>
+                <span className="hidden sm:inline">Progress:</span>
+                <span className="sm:hidden">%:</span>
                 <span className={isDark ? "text-amber-400" : "text-amber-700"}>
                   {transformProgress.toFixed(1)}%
                 </span>
@@ -348,31 +443,63 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                   : 'text-slate-700 hover:text-amber-700'
               }`}
             >
-              Close Stats
+              <span className="hidden sm:inline">Close Stats</span>
+              <span className="sm:hidden">Close</span>
             </Button>
           </Card>
         )}
-      </div>      {/* Title Overlay - Centered */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none">
-        <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text drop-shadow-2xl relative overflow-hidden bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 animate-shine text-center">
-          Welcome to GLOHSEN: Your Story Begins Here
+      </div>      {/* Title Overlay - Centered and Mobile Responsive */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none px-4">
+        <h1 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text drop-shadow-2xl relative overflow-hidden animate-shine text-center leading-tight ${
+          isDark 
+            ? 'bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600' 
+            : ''
+        }`}
+            style={{
+              backgroundImage: !isDark 
+                ? 'linear-gradient(to right, #dc2626, #ef4444, #f59e0b)'
+                : undefined
+            }}>
+          <span className="block sm:hidden">Welcome to GLOHSEN</span>
+          <span className="hidden sm:block">Welcome to GLOHSEN: Your Story Begins Here</span>
         </h1>
-        <p className={`text-2xl mt-6 drop-shadow-lg font-medium text-center max-w-4xl ${
+        <p className={`text-sm sm:text-lg md:text-xl lg:text-2xl mt-3 md:mt-6 drop-shadow-lg font-medium text-center max-w-xs sm:max-w-2xl md:max-w-4xl leading-tight ${
           isDark ? 'text-white/90' : 'text-slate-800'
         }`}>
-          An Exhilarating Journey Through an Empowering Ecosystem<br />
-          Transforming Healthcare Experiences
+          <span className="block sm:hidden">
+            Transforming Healthcare<br />
+            Experiences
+          </span>
+          <span className="hidden sm:block">
+            An Exhilarating Journey Through an Empowering Ecosystem<br />
+            Transforming Healthcare Experiences
+          </span>
         </p>
-      </div>
-
-      {/* Demo and Scroll Buttons - Bottom Center */}
-      <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-6">        {/* Demo Button - Metallic luxurious gold with red hover shine */}
-        <Button
+      </div>      {/* Demo and Scroll Buttons - Mobile Responsive Bottom Center */}
+      <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-1/2 transform -translate-x-1/2 z-30 flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
+        
+        {/* Demo Button - Responsive sizing */}        <Button
           onClick={() => {
             setVideoLoading(true);
+            setVideoError(false);
             setShowDemoModal(true);
+            
+            // Set a timeout to detect if video takes too long to load
+            if (videoTimeoutRef.current) {
+              clearTimeout(videoTimeoutRef.current);
+            }
+            videoTimeoutRef.current = setTimeout(() => {
+              if (videoLoading) {
+                console.warn('Video loading timeout - may indicate loading issues');
+                setVideoError(true);
+                setVideoLoading(false);
+              }
+            }, 15000); // 15 second timeout
           }}
-          className="group relative backdrop-blur-xl rounded-full px-6 py-3 transition-all duration-700 transform hover:scale-110 shadow-2xl pointer-events-auto text-white font-bold tracking-wide text-base overflow-hidden"
+          className="group relative backdrop-blur-xl rounded-full transition-all duration-700 transform hover:scale-110 shadow-2xl pointer-events-auto text-white font-bold tracking-wide overflow-hidden
+            px-4 py-2 text-sm
+            sm:px-5 sm:py-2.5 sm:text-base
+            md:px-6 md:py-3 md:text-base"
           style={{
             background: 'linear-gradient(135deg, #DC143C 0%, #FF6B35 50%, #FFA500 100%)',
             border: '2px solid #DC143C',
@@ -381,32 +508,35 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
         >
           {/* Shine effect on hover */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
-          <Play className="w-5 h-5 mr-2 relative z-10" />
+          <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2 relative z-10" />
           <span className="relative z-10">DEMO</span>
-        </Button>        {/* Double Chevron Scroll Button - Responsive Color */}
+        </Button>
+
+        {/* Double Chevron Scroll Button - Responsive sizing */}
         <Button
           onClick={() => {
             if (scrollToSection) {
               scrollToSection(1); // Index 1 is Features section
             }
           }}
-          className="group relative bg-transparent border-none p-6 transition-all duration-500 transform hover:scale-110 pointer-events-auto focus:outline-none focus:ring-4 focus:ring-yellow-500/50 hover:bg-yellow-500/10 rounded-xl"
+          className="group relative bg-transparent border-none transition-all duration-500 transform hover:scale-110 pointer-events-auto focus:outline-none focus:ring-4 focus:ring-yellow-500/50 hover:bg-yellow-500/10 rounded-xl
+            p-3 sm:p-4 md:p-6"
           aria-label="Scroll to next section"
           tabIndex={0}
         >
           <div className="animate-bounce group-hover:animate-pulse">
             <ChevronRight 
-              className={`w-72 h-72 transform group-hover:translate-x-1 transition-all duration-300 drop-shadow-lg group-hover:drop-shadow-2xl ${
-                isDark ? 'text-yellow-500 group-hover:text-yellow-400' : 'text-black group-hover:text-gray-800'
-              }`} 
+              className={`transform group-hover:translate-x-1 transition-all duration-300 drop-shadow-lg group-hover:drop-shadow-2xl
+                w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24
+                ${isDark ? 'text-yellow-500 group-hover:text-yellow-400' : 'text-black group-hover:text-gray-800'}`} 
               style={{color: isDark ? '#FFD700' : '#000000'}} 
             />
           </div>
-          <div className="animate-bounce group-hover:animate-pulse" style={{animationDelay: '0.1s'}}>
+          <div className="animate-bounce group-hover:animate-pulse -ml-1 sm:-ml-2" style={{animationDelay: '0.1s'}}>
             <ChevronRight 
-              className={`w-72 h-72 -ml-2 transform group-hover:translate-x-2 transition-all duration-300 delay-75 drop-shadow-lg group-hover:drop-shadow-2xl ${
-                isDark ? 'text-yellow-900 group-hover:text-yellow-900' : 'text-black group-hover:text-gray-800'
-              }`} 
+              className={`transform group-hover:translate-x-2 transition-all duration-300 delay-75 drop-shadow-lg group-hover:drop-shadow-2xl
+                w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24
+                ${isDark ? 'text-yellow-900 group-hover:text-yellow-900' : 'text-black group-hover:text-gray-800'}`} 
               style={{color: isDark ? '#FFD700' : '#000000'}} 
             />
           </div>
@@ -421,10 +551,21 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
           <div className={`relative max-w-4xl w-full mx-4 rounded-3xl overflow-hidden shadow-2xl ${
             isDark 
               ? 'bg-gradient-to-br from-gray-900/95 to-black/95' 
-              : 'bg-gradient-to-br from-white/95 to-gray-50/95'
-          }`}>
-            <Button
-              onClick={() => setShowDemoModal(false)}
+              : 'bg-gradient-to-br from-white/95 to-gray-50/95'          }`}>            <Button
+              onClick={() => {
+                setShowDemoModal(false);
+                setVideoLoading(true);
+                setVideoError(false);
+                // Clear video timeout
+                if (videoTimeoutRef.current) {
+                  clearTimeout(videoTimeoutRef.current);
+                }
+                // Stop video by removing src
+                const iframe = document.querySelector('#demo-video') as HTMLIFrameElement;
+                if (iframe) {
+                  iframe.src = '';
+                }
+              }}
               className="absolute top-4 right-4 z-10 bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 rounded-full p-2"
             >
               <X className="w-6 h-6 text-red-400" />
@@ -435,10 +576,9 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                 isDark ? 'text-white' : 'text-gray-900'
               }`}>
                 GLOHSEN Platform Demo
-              </h2>
-                {/* YouTube Video */}
+              </h2>              {/* YouTube Video */}
               <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-6 bg-black">
-                {videoLoading && (
+                {videoLoading && !videoError && (
                   <div className={`absolute inset-0 flex items-center justify-center z-10 ${
                     isDark 
                       ? 'bg-gray-800/90 text-gray-400' 
@@ -450,8 +590,62 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                     </div>
                   </div>
                 )}
-                <iframe
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&controls=1&rel=0&modestbranding=1&playsinline=1&origin=https://localhost"
+                
+                {videoError && (
+                  <div className={`absolute inset-0 flex items-center justify-center z-10 ${
+                    isDark 
+                      ? 'bg-gray-800/90 text-gray-400' 
+                      : 'bg-gray-100/90 text-gray-600'
+                  }`}>
+                    <div className="text-center p-6">
+                      <div className="text-red-500 mb-4">
+                        <AlertTriangle className="h-12 w-12 mx-auto" />
+                      </div>                      <p className="text-lg font-semibold mb-2">Video Load Error</p>
+                      <p className="text-sm mb-4">Unable to load the demo video. This may be due to network restrictions, YouTube access issues, or content blockers.</p>
+                      <div className="space-y-2">                        <Button 
+                          onClick={() => {
+                            setVideoError(false);
+                            setVideoLoading(true);
+                            // Clear any existing timeout
+                            if (videoTimeoutRef.current) {
+                              clearTimeout(videoTimeoutRef.current);
+                            }
+                            // Force reload by recreating the iframe
+                            const iframe = document.querySelector('#demo-video') as HTMLIFrameElement;
+                            if (iframe) {
+                              const src = iframe.src;
+                              iframe.src = '';
+                              setTimeout(() => {
+                                iframe.src = src;
+                                // Set new timeout for this retry
+                                videoTimeoutRef.current = setTimeout(() => {
+                                  if (videoLoading) {
+                                    setVideoError(true);
+                                    setVideoLoading(false);
+                                  }
+                                }, 15000);
+                              }, 100);
+                            }
+                          }}
+                          className="bg-amber-600 hover:bg-amber-700 text-white mr-2"
+                        >
+                          Retry
+                        </Button>
+                        <Button 
+                          onClick={() => {
+                            window.open('https://youtu.be/n1hFZu3vLro', '_blank');
+                          }}
+                          variant="outline"
+                          className="border-amber-600 text-amber-600 hover:bg-amber-50"
+                        >
+                          Open in YouTube
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}                <iframe
+                  id="demo-video"
+                  src="https://www.youtube.com/embed/n1hFZu3vLro?autoplay=0&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                   title="GLOHSEN Platform Demo Video"
                   className="w-full h-full rounded-2xl"
                   frameBorder="0"
@@ -459,14 +653,40 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   loading="lazy"
-                  onLoad={() => setVideoLoading(false)}
-                  onError={() => setVideoLoading(false)}
+                  onLoad={() => {
+                    console.log('Video iframe loaded successfully');
+                    setVideoLoading(false);
+                    setVideoError(false);
+                    if (videoTimeoutRef.current) {
+                      clearTimeout(videoTimeoutRef.current);
+                    }
+                  }}
+                  onError={(e) => {
+                    console.error('Video failed to load:', e);
+                    setVideoLoading(false);
+                    setVideoError(true);
+                    if (videoTimeoutRef.current) {
+                      clearTimeout(videoTimeoutRef.current);
+                    }
+                  }}
                 />
               </div>
                 {/* Blur Glassmorphism Close Button Below Video */}
-              <div className="flex justify-center">
-                <Button
-                  onClick={() => setShowDemoModal(false)}
+              <div className="flex justify-center">                <Button
+                  onClick={() => {
+                    setShowDemoModal(false);
+                    setVideoLoading(true);
+                    setVideoError(false);
+                    // Clear video timeout
+                    if (videoTimeoutRef.current) {
+                      clearTimeout(videoTimeoutRef.current);
+                    }
+                    // Stop video by removing src
+                    const iframe = document.querySelector('#demo-video') as HTMLIFrameElement;
+                    if (iframe) {
+                      iframe.src = '';
+                    }
+                  }}
                   className="backdrop-blur-xl bg-gradient-to-r from-red-500/20 via-red-600/30 to-red-700/20 hover:from-red-600/30 hover:via-red-700/40 hover:to-red-800/30 border-2 border-red-400/30 hover:border-red-500/50 rounded-full px-8 py-3 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-red-500/30 text-red-400 hover:text-red-300 font-bold"
                 >
                   <X className="w-5 h-5 mr-2" />
@@ -476,14 +696,13 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
             </div>
           </div>
         </div>
-      )}
-
-      {/* 3D Canvas */}
+      )}      {/* 3D Canvas */}
       <div 
         ref={canvasRef}
         className="absolute inset-0 cursor-crosshair"
         onClick={createRipple}
-      >        <Canvas
+      >
+        <Canvas
           camera={{ position: [0, 0, 10], fov: 60 }}
           dpr={[1, 2]}
           performance={{ min: 0.5 }}
@@ -885,7 +1104,7 @@ const Home: React.FC = () => {
         </div>
 
         {/* Navigation arrows */}
-        <div className="fixed top-1/2 left-4 transform -translate-y-1/2 z-40 opacity-70">
+        <div className="fixed top-1/2 left-4 transform -translate-y-1/2 z-40 opacity-90">
           <button
             onClick={() => { if (isSoundEnabled) audioPlayer.play('/click.mp3', volume); scrollToSection(Math.max(0, currentSection - 1)); }}
             disabled={currentSection === 0}
@@ -912,7 +1131,7 @@ const Home: React.FC = () => {
         </div>
 
         {/* Storytelling instructions overlay */}
-        <div className="fixed bottom-16 left-4 z-40 opacity-50">
+        <div className="fixed bottom-16 left-4 z-40 opacity-20">
           <div className="bg-black/30 backdrop-blur-sm rounded-lg p-3 text-white text-xs">
             <div>Use ← → arrows or swipe to navigate</div>
             <div>Mouse wheel also works</div>
