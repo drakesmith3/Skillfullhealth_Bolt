@@ -13,6 +13,12 @@ export default defineConfig({
   },
   server: {
     port: 8080,
-    // Removed middleware that was causing build errors
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   }
 })
