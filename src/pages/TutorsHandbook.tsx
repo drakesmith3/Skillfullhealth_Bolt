@@ -56,7 +56,7 @@ export default function TutorHandbook() {
                 Tutors Handbook
               </h1>
               
-              <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-700 dark:text-white max-w-4xl mx-auto leading-relaxed">
                 Your comprehensive guide to creating exceptional educational content and building a successful 
                 teaching career on the GLOHSEN platform. Share your expertise and make a difference in healthcare education.
               </p>
@@ -66,17 +66,17 @@ export default function TutorHandbook() {
                 <div className="text-center p-6 backdrop-blur-lg bg-red-50/50 dark:bg-red-900/20 rounded-2xl border border-red-200/30 dark:border-red-700/30 hover:scale-105 transition-transform duration-300">
                   <Trophy className="w-10 h-10 text-red-500 mx-auto mb-3" />
                   <h3 className="text-2xl font-bold text-gray-800 dark:text-white">10,000+</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Active Tutors</p>
+                  <p className="text-gray-600 dark:text-black">Active Tutors</p>
                 </div>
                 <div className="text-center p-6 backdrop-blur-lg bg-yellow-50/50 dark:bg-yellow-900/20 rounded-2xl border border-yellow-200/30 dark:border-yellow-700/30 hover:scale-105 transition-transform duration-300">
                   <Users className="w-10 h-10 text-yellow-600 mx-auto mb-3" />
                   <h3 className="text-2xl font-bold text-gray-800 dark:text-white">500,000+</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Students Reached</p>
+                  <p className="text-gray-600 dark:text-black">Students Reached</p>
                 </div>
                 <div className="text-center p-6 backdrop-blur-lg bg-black/10 dark:bg-black/20 rounded-2xl border border-gray-300/30 dark:border-gray-700/30 hover:scale-105 transition-transform duration-300">
-                  <BookOpen className="w-10 h-10 text-gray-700 dark:text-gray-300 mx-auto mb-3" />
+                  <BookOpen className="w-10 h-10 text-gray-700 dark:text-black mx-auto mb-3" />
                   <h3 className="text-2xl font-bold text-gray-800 dark:text-white">50,000+</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Courses Created</p>
+                  <p className="text-gray-600 dark:text-black">Courses Created</p>
                 </div>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function TutorHandbook() {
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors duration-300 leading-tight">
                               {item.title}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="text-sm text-gray-600 dark:text-black mt-1 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
                               {item.description}
                             </p>
                           </div>
@@ -207,7 +207,7 @@ export default function TutorHandbook() {
                       <Globe className="w-6 h-6 mr-3 text-red-500" />
                       GLOHSEN Platform Overview
                     </h4>
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed">
                       GLOHSEN (21st Century Global Health Services Network) is a comprehensive healthcare platform for 
                       education, staffing, and professional development. As a tutor, you play a crucial role in shaping 
                       the next generation of healthcare professionals through high-quality educational content.
@@ -219,7 +219,7 @@ export default function TutorHandbook() {
                       <Trophy className="w-6 h-6 mr-3 text-yellow-500" />
                       The GLOHSEN Standard for Education - Is It 'FREI'?
                     </h4>
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed mb-8">
                       All educational content must meet our three-pillar standard to ensure exceptional learning experiences:
                     </p>
                     <div className="grid md:grid-cols-3 gap-8">
@@ -228,7 +228,7 @@ export default function TutorHandbook() {
                           <span className="text-white font-bold text-xl">F</span>
                         </div>
                         <h5 className="font-bold text-gray-800 dark:text-white text-lg mb-3">FUN</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        <p className="text-sm text-gray-600 dark:text-black leading-relaxed">
                           Engaging, interactive, and enjoyable learning experiences that motivate students
                         </p>
                       </div>
@@ -237,7 +237,7 @@ export default function TutorHandbook() {
                           <span className="text-white font-bold text-lg">RE</span>
                         </div>
                         <h5 className="font-bold text-gray-800 dark:text-white text-lg mb-3">RIDICULOUSLY EASY</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        <p className="text-sm text-gray-600 dark:text-black leading-relaxed">
                           Well-structured, clear, and accessible content that simplifies complex concepts
                         </p>
                       </div>
@@ -246,7 +246,7 @@ export default function TutorHandbook() {
                           <span className="text-white font-bold text-xl">I</span>
                         </div>
                         <h5 className="font-bold text-gray-800 dark:text-white text-lg mb-3">INDIVIDUALIZED</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        <p className="text-sm text-gray-600 dark:text-black leading-relaxed">
                           Personalized content that adapts to different learning styles and needs
                         </p>
                       </div>
@@ -258,7 +258,7 @@ export default function TutorHandbook() {
                       <GraduationCap className="w-6 h-6 mr-3 text-yellow-500" />
                       Your Role as an Educator
                     </h4>
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed">
                       Tutors on GLOHSEN are more than content creators—you're mentors, innovators, and leaders in 
                       healthcare education. Your expertise helps bridge the gap between theoretical knowledge and 
                       practical application, preparing the next generation of healthcare professionals for real-world challenges.
@@ -292,7 +292,7 @@ export default function TutorHandbook() {
                         <Briefcase className="w-6 h-6 text-red-500 mr-3" />
                         <h4 className="text-xl font-semibold text-gray-800 dark:text-white">Professional Benefits</h4>
                       </div>
-                      <ul className="space-y-3 text-gray-700 dark:text-gray-300">
+                      <ul className="space-y-3 text-gray-700 dark:text-black">
                         <li className="flex items-start">
                           <CheckCircle className="w-5 h-5 text-yellow-500 mr-3 mt-0.5 flex-shrink-0" />
                           <span>Share your expertise with a global healthcare community</span>
@@ -325,7 +325,7 @@ export default function TutorHandbook() {
                         <Heart className="w-6 h-6 text-yellow-600 mr-3" />
                         <h4 className="text-xl font-semibold text-gray-800 dark:text-white">Impact & Recognition</h4>
                       </div>
-                      <ul className="space-y-3 text-gray-700 dark:text-gray-300">
+                      <ul className="space-y-3 text-gray-700 dark:text-black">
                         <li className="flex items-start">
                           <CheckCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                           <span>Make a meaningful difference in healthcare education</span>
@@ -362,17 +362,17 @@ export default function TutorHandbook() {
                       <div className="text-center p-4 bg-red-50/50 dark:bg-red-900/20 rounded-xl">
                         <Zap className="w-8 h-8 text-red-500 mx-auto mb-2" />
                         <h5 className="font-bold text-gray-800 dark:text-white">AI-POWERED TOOLS</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">CREATE-A-COURSE AI Agent for faster development</p>
+                        <p className="text-sm text-gray-600 dark:text-black">CREATE-A-COURSE AI Agent for faster development</p>
                       </div>
                       <div className="text-center p-4 bg-yellow-50/50 dark:bg-yellow-900/20 rounded-xl">
                         <Globe className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
                         <h5 className="font-bold text-gray-800 dark:text-white">GLOBAL REACH</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Access students worldwide</p>
+                        <p className="text-sm text-gray-600 dark:text-black">Access students worldwide</p>
                       </div>
                       <div className="text-center p-4 bg-black/10 dark:bg-black/20 rounded-xl">
-                        <Shield className="w-8 h-8 text-gray-700 dark:text-gray-300 mx-auto mb-2" />
+                        <Shield className="w-8 h-8 text-gray-700 dark:text-black mx-auto mb-2" />
                         <h5 className="font-bold text-gray-800 dark:text-white">COMPREHENSIVE SUPPORT</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Technical, marketing & educational resources</p>
+                        <p className="text-sm text-gray-600 dark:text-black">Technical, marketing & educational resources</p>
                       </div>
                     </div>
                   </div>
@@ -466,7 +466,7 @@ export default function TutorHandbook() {
                         </motion.div>
                         <h4 className="text-2xl font-bold text-black dark:text-white">Legal Compliance</h4>
                       </div>
-                      <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                      <p className="text-lg text-gray-700 dark:text-black leading-relaxed mb-6">
                         By joining as a tutor, you agree to GLOHSEN's Terms of Service and Privacy Policy, which protect 
                         your data and intellectual property while ensuring compliance with educational and healthcare standards.
                       </p>
@@ -490,7 +490,7 @@ export default function TutorHandbook() {
                               >
                                 <CheckCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                               </motion.div>
-                              <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                              <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                             </motion.div>
                           ))}
                         </div>
@@ -513,7 +513,7 @@ export default function TutorHandbook() {
                               >
                                 <CheckCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                               </motion.div>
-                              <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                              <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                             </motion.div>
                           ))}
                         </div>
@@ -579,7 +579,7 @@ export default function TutorHandbook() {
                             ].map((item, index) => (
                               <motion.li 
                                 key={index}
-                                className="flex items-start text-gray-600 dark:text-gray-400"
+                                className="flex items-start text-gray-600 dark:text-black"
                                 initial={{ opacity: 0, x: -10 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.6 + index * 0.1 }}
@@ -619,7 +619,7 @@ export default function TutorHandbook() {
                             ].map((item, index) => (
                               <motion.li 
                                 key={index}
-                                className="flex items-start text-gray-600 dark:text-gray-400"
+                                className="flex items-start text-gray-600 dark:text-black"
                                 initial={{ opacity: 0, x: 10 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.6 + index * 0.1 }}
@@ -655,7 +655,7 @@ export default function TutorHandbook() {
                         </motion.div>
                         <h4 className="text-2xl font-bold text-black dark:text-white">Professional Standards</h4>
                       </div>
-                      <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                      <p className="text-lg text-gray-700 dark:text-black leading-relaxed">
                         All tutors must maintain the highest professional and ethical standards. Content must be accurate, 
                         evidence-based, and aligned with current healthcare best practices. Regular updates may be required 
                         to keep content current and relevant.                      </p>
@@ -771,7 +771,7 @@ export default function TutorHandbook() {
                             {item.step}
                           </motion.div>
                           <h6 className="font-black text-lg text-black dark:text-white mb-2 group-hover/step:text-yellow-600 transition-colors">{item.title}</h6>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.desc}</p>
+                          <p className="text-sm text-gray-600 dark:text-black leading-relaxed">{item.desc}</p>
                         </motion.div>
                       ))}
                     </div>
@@ -817,7 +817,7 @@ export default function TutorHandbook() {
                             >
                               <CheckCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -861,7 +861,7 @@ export default function TutorHandbook() {
                             >
                               <CheckCircle className="w-5 h-5 text-yellow-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -885,7 +885,7 @@ export default function TutorHandbook() {
                       </motion.div>
                       <h4 className="text-2xl font-bold text-black dark:text-white">Approval Criteria</h4>
                     </div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed">
                       Applications are reviewed based on professional qualifications, teaching ability, content quality, 
                       and alignment with GLOHSEN standards. The review process typically takes 5-10 business days. 
                       Successful applicants receive access to our course creation tools and tutor resources.
@@ -986,7 +986,7 @@ export default function TutorHandbook() {
                       <div className="w-24 h-1 bg-gradient-to-r from-yellow-500 to-red-500 rounded-full mx-auto"></div>
                     </div>
                     
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8 text-center max-w-4xl mx-auto">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed mb-8 text-center max-w-4xl mx-auto">
                       QUID is our platform's digital currency for course sales, rewards, and withdrawals. All course 
                       revenue is tracked in your dashboard, and platform fees apply to transactions.
                     </p>
@@ -1014,7 +1014,7 @@ export default function TutorHandbook() {
                           ].map((item, index) => (
                             <motion.li 
                               key={index}
-                              className="flex items-start text-gray-600 dark:text-gray-400"
+                              className="flex items-start text-gray-600 dark:text-black"
                               initial={{ opacity: 0, x: -10 }}
                               whileInView={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.4 + index * 0.1 }}
@@ -1053,13 +1053,13 @@ export default function TutorHandbook() {
                           ].map((item, index) => (
                             <motion.li 
                               key={index}
-                              className="flex items-start text-gray-600 dark:text-gray-400"
+                              className="flex items-start text-gray-600 dark:text-black"
                               initial={{ opacity: 0, x: 10 }}
                               whileInView={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.4 + index * 0.1 }}
                             >
                               <motion.span 
-                                className="text-gray-600 dark:text-gray-400 mr-2 font-bold"
+                                className="text-gray-600 dark:text-black mr-2 font-bold"
                                 whileHover={{ scale: 1.5 }}
                               >
                                 •
@@ -1121,7 +1121,7 @@ export default function TutorHandbook() {
                           </motion.div>
                           <h5 className="text-xl font-bold text-gray-800 dark:text-white">Course Sales</h5>
                         </div>
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p className="text-gray-700 dark:text-black leading-relaxed">
                           Course payments are held in escrow for 30 days. If students don't object and the course meets 
                           GLOHSEN standards, payment is released to you at month-end.
                         </p>
@@ -1140,7 +1140,7 @@ export default function TutorHandbook() {
                           </motion.div>
                           <h5 className="text-xl font-bold text-gray-800 dark:text-white">Quality Standards</h5>
                         </div>
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p className="text-gray-700 dark:text-black leading-relaxed">
                           Courses must meet the 50% threshold criteria: 50% of students must rate the course as FUN, 
                           RIDICULOUSLY EASY, and INDIVIDUALIZED for payment to be processed.
                         </p>
@@ -1155,11 +1155,11 @@ export default function TutorHandbook() {
                             animate={{ rotate: [0, -10, 10, 0] }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                           >
-                            <AlertTriangle className="w-6 h-6 text-gray-600 mr-3" />
+                            <AlertTriangle className="w-6 h-6 text-gray-600 dark:text-black mr-3" />
                           </motion.div>
                           <h5 className="text-xl font-bold text-gray-800 dark:text-white">Refund Process</h5>
                         </div>
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p className="text-gray-700 dark:text-black leading-relaxed">
                           If courses don't meet standards, you have 90 days to improve content or provide individualized 
                           mentorship. Otherwise, payments may be refunded to students.
                         </p>
@@ -1184,7 +1184,7 @@ export default function TutorHandbook() {
                       </motion.div>
                       <h4 className="text-2xl font-bold text-black dark:text-white">Withdrawal Policy</h4>
                     </div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed">
                       Withdrawals are processed to the same currency/account used for platform registration. 
                       Minimum withdrawal amounts and processing fees may apply. See your dashboard for current 
                       withdrawal options and any applicable fees.
@@ -1285,7 +1285,7 @@ export default function TutorHandbook() {
                       <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-yellow-500 rounded-full mx-auto"></div>
                     </div>
                     
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8 text-center max-w-4xl mx-auto">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed mb-8 text-center max-w-4xl mx-auto">
                       Use our AI-powered Course Creation Wizard to develop engaging, high-quality educational content:
                     </p>
                     
@@ -1313,7 +1313,7 @@ export default function TutorHandbook() {
                           ].map((item, index) => (
                             <motion.li 
                               key={index}
-                              className="flex items-start text-gray-600 dark:text-gray-400"
+                              className="flex items-start text-gray-600 dark:text-black"
                               initial={{ opacity: 0, x: -10 }}
                               whileInView={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.4 + index * 0.1 }}
@@ -1353,13 +1353,13 @@ export default function TutorHandbook() {
                           ].map((item, index) => (
                             <motion.li 
                               key={index}
-                              className="flex items-start text-gray-600 dark:text-gray-400"
+                              className="flex items-start text-gray-600 dark:text-black"
                               initial={{ opacity: 0, x: 10 }}
                               whileInView={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.4 + index * 0.1 }}
                             >
                               <motion.span 
-                                className="text-gray-600 dark:text-gray-400 mr-2 font-bold"
+                                className="text-gray-600 dark:text-black mr-2 font-bold"
                                 whileHover={{ scale: 1.5 }}
                               >
                                 •
@@ -1423,7 +1423,7 @@ export default function TutorHandbook() {
                             <tool.icon className="w-8 h-8 text-white" />
                           </motion.div>
                           <h5 className="font-black text-lg text-black dark:text-white mb-3 group-hover/tool:text-red-600 transition-colors">{tool.title}</h5>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{tool.desc}</p>
+                          <p className="text-sm text-gray-600 dark:text-black leading-relaxed">{tool.desc}</p>
                         </motion.div>
                       ))}
                     </div>
@@ -1468,7 +1468,7 @@ export default function TutorHandbook() {
                             >
                               <CheckCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -1511,7 +1511,7 @@ export default function TutorHandbook() {
                             >
                               <CheckCircle className="w-5 h-5 text-yellow-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -1612,7 +1612,7 @@ export default function TutorHandbook() {
                       <div className="w-24 h-1 bg-gradient-to-r from-yellow-500 to-red-500 rounded-full mx-auto"></div>
                     </div>
                     
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8 text-center max-w-4xl mx-auto">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed mb-8 text-center max-w-4xl mx-auto">
                       Set competitive prices based on content depth, duration, and market demand:
                     </p>
                     
@@ -1682,13 +1682,13 @@ export default function TutorHandbook() {
                             {factor.items.map((item, itemIndex) => (
                               <motion.li 
                                 key={itemIndex}
-                                className="flex items-start text-gray-600 dark:text-gray-400"
+                                className="flex items-start text-gray-600 dark:text-black"
                                 initial={{ opacity: 0, x: -10 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.6 + itemIndex * 0.1 }}
                               >
                                 <motion.span 
-                                  className={`mr-2 font-bold ${index === 0 ? 'text-yellow-500' : index === 1 ? 'text-red-500' : 'text-gray-600 dark:text-gray-400'}`}
+                                  className={`mr-2 font-bold ${index === 0 ? 'text-yellow-500' : index === 1 ? 'text-red-500' : 'text-gray-600 dark:text-black'}`}
                                   whileHover={{ scale: 1.5 }}
                                 >
                                   •
@@ -1739,7 +1739,7 @@ export default function TutorHandbook() {
                           ].map((item, index) => (
                             <motion.li 
                               key={index}
-                              className="flex items-start text-gray-600 dark:text-gray-400"
+                              className="flex items-start text-gray-600 dark:text-black"
                               initial={{ opacity: 0, x: -10 }}
                               whileInView={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.6 + index * 0.1 }}
@@ -1778,7 +1778,7 @@ export default function TutorHandbook() {
                           ].map((item, index) => (
                             <motion.li 
                               key={index}
-                              className="flex items-start text-gray-600 dark:text-gray-400"
+                              className="flex items-start text-gray-600 dark:text-black"
                               initial={{ opacity: 0, x: 10 }}
                               whileInView={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.6 + index * 0.1 }}
@@ -1848,7 +1848,7 @@ export default function TutorHandbook() {
                           />
                           <div className="group-hover/strategy:text-red-600 transition-colors">
                             <h6 className="font-bold text-gray-800 dark:text-white mb-1">{strategy.title}</h6>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{strategy.desc}</p>
+                            <p className="text-gray-600 dark:text-black text-sm leading-relaxed">{strategy.desc}</p>
                           </div>
                         </motion.div>
                       ))}
@@ -1968,7 +1968,7 @@ export default function TutorHandbook() {
                             >
                               <CheckCircle className="w-5 h-5 text-yellow-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -2012,7 +2012,7 @@ export default function TutorHandbook() {
                             >
                               <X className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -2040,7 +2040,7 @@ export default function TutorHandbook() {
                       <div className="w-24 h-1 bg-gradient-to-r from-yellow-500 to-red-500 rounded-full mx-auto"></div>
                     </div>
                     
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8 text-center max-w-4xl mx-auto">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed mb-8 text-center max-w-4xl mx-auto">
                       All courses undergo review to ensure they meet GLOHSEN standards:
                     </p>
                     
@@ -2087,7 +2087,7 @@ export default function TutorHandbook() {
                             <process.icon className="w-8 h-8 text-white" />
                           </motion.div>
                           <h5 className="font-black text-lg text-black dark:text-white mb-3 group-hover/process:text-red-600 transition-colors">{process.title}</h5>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{process.desc}</p>
+                          <p className="text-sm text-gray-600 dark:text-black leading-relaxed">{process.desc}</p>
                         </motion.div>
                       ))}
                     </div>
@@ -2113,7 +2113,7 @@ export default function TutorHandbook() {
                       <h4 className="text-2xl font-bold text-black dark:text-white">Consequences for Violations</h4>
                     </div>
                     <div className="backdrop-blur-sm bg-red-50/50 dark:bg-red-900/20 p-6 rounded-xl border border-red-200/50 dark:border-red-800/30">
-                      <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                      <p className="text-lg text-gray-700 dark:text-black leading-relaxed">
                         Tutors who violate platform rules may face content removal, account warnings, temporary suspension, 
                         or permanent removal from the platform. Serious violations may be reported to relevant professional 
                         licensing boards. We work with tutors to address issues and maintain high standards.
@@ -2234,7 +2234,7 @@ export default function TutorHandbook() {
                             >
                               <CheckCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -2278,7 +2278,7 @@ export default function TutorHandbook() {
                             >
                               <CheckCircle className="w-5 h-5 text-yellow-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -2328,7 +2328,7 @@ export default function TutorHandbook() {
                               animate={{ scale: [1, 1.2, 1] }}
                               transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
                             />
-                            <span className="text-gray-700 dark:text-gray-300 font-medium group-hover/tip:text-yellow-600 transition-colors">{tip}</span>
+                            <span className="text-gray-700 dark:text-black font-medium group-hover/tip:text-yellow-600 transition-colors">{tip}</span>
                           </motion.div>
                         ))}
                       </div>
@@ -2353,7 +2353,7 @@ export default function TutorHandbook() {
                               animate={{ scale: [1, 1.2, 1] }}
                               transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
                             />
-                            <span className="text-gray-700 dark:text-gray-300 font-medium group-hover/tip:text-red-600 transition-colors">{tip}</span>
+                            <span className="text-gray-700 dark:text-black font-medium group-hover/tip:text-red-600 transition-colors">{tip}</span>
                           </motion.div>
                         ))}
                       </div>
@@ -2380,7 +2380,7 @@ export default function TutorHandbook() {
                       <h4 className="text-2xl font-bold text-black dark:text-white">Building Your Teaching Legacy</h4>
                     </div>
                     <div className="backdrop-blur-sm bg-gradient-to-r from-red-50/50 to-yellow-50/50 dark:from-red-900/20 dark:to-yellow-900/20 p-6 rounded-xl border border-gray-200/50 dark:border-gray-700/30">
-                      <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center">
+                      <p className="text-lg text-gray-700 dark:text-black leading-relaxed text-center">
                         As a GLOHSEN tutor, you have the opportunity to shape the future of healthcare education. 
                         <span className="font-black text-transparent bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text"> Build your educational legacy</span> 
                         through excellence in teaching, meaningful student relationships, and innovation in healthcare education.
@@ -2468,7 +2468,7 @@ export default function TutorHandbook() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                   >
-                    <p className="text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-4xl mx-auto">
+                    <p className="text-xl text-gray-700 dark:text-black leading-relaxed max-w-4xl mx-auto">
                       As a GLOHSEN educator, you have the opportunity to create a lasting impact on healthcare education. 
                       <span className="font-black text-transparent bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text"> Build your educational legacy</span> 
                       through excellence in teaching, meaningful student relationships, and innovation in healthcare education.
@@ -2526,7 +2526,7 @@ export default function TutorHandbook() {
                               >
                                 <CheckCircle className="w-5 h-5 text-yellow-500 mr-3 mt-0.5 flex-shrink-0" />
                               </motion.div>
-                              <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                              <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                             </motion.li>
                           ))}
                         </ul>
@@ -2565,7 +2565,7 @@ export default function TutorHandbook() {
                               >
                                 <CheckCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                               </motion.div>
-                              <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                              <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                             </motion.li>
                           ))}
                         </ul>
@@ -2627,7 +2627,7 @@ export default function TutorHandbook() {
                             <item.icon className="w-8 h-8 text-white" />
                           </motion.div>
                           <h5 className="font-black text-lg text-black dark:text-white mb-2 group-hover/item:text-red-600 transition-colors">{item.title}</h5>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.desc}</p>
+                          <p className="text-sm text-gray-600 dark:text-black leading-relaxed">{item.desc}</p>
                         </motion.div>
                       ))}
                     </div>
@@ -2653,7 +2653,7 @@ export default function TutorHandbook() {
                       <h4 className="text-2xl font-bold text-black dark:text-white">Your Teaching Legacy</h4>
                     </div>
                     <div className="backdrop-blur-sm bg-gradient-to-r from-red-50/50 to-yellow-50/50 dark:from-red-900/20 dark:to-yellow-900/20 p-6 rounded-xl border border-gray-200/50 dark:border-gray-700/30">
-                      <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                      <p className="text-lg text-gray-700 dark:text-black leading-relaxed mb-6">
                         Your impact extends far beyond individual courses. Through excellence in teaching, mentorship, and innovation, 
                         you contribute to the advancement of healthcare education and the development of future healthcare leaders. 
                         Every student you inspire, every concept you clarify, and every skill you teach contributes to better healthcare outcomes worldwide.

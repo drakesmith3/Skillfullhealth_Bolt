@@ -28,7 +28,8 @@ import Blog from "./pages/Blog";
 import CourseEnrollment from "./pages/CourseEnrollment";
 import JobBoard from "./pages/JobBoard";
 import CommunityForum from "./pages/CommunityForum";
-import MedicalGamesQuizzes from "./pages/MedicalGamesQuizzes";
+import GamesAndQuizzes from "./pages/GamesAndQuizzes";
+import DiagnosisDetective from "./pages/DiagnosisDetective";
 import GeneralFeedbackForm from "./pages/GeneralFeedbackForm";
 import EmployerPayment from "./pages/EmployerPayment";
 import KPIDashboard from "./pages/KPIDashboard";
@@ -54,7 +55,6 @@ import RefundPolicy from "./pages/RefundPolicy";
 import Testimonials from "./pages/Testimonials";
 import AccessibilityStatement from "./pages/AccessibilityStatement";
 import Support from "./pages/Support";
-import ScrollSound from "./components/ScrollSound";
 import ParticlePerformanceTest from "./pages/ParticlePerformanceTest";
 import ParticleButterflyExperience from "./pages/ParticleButterflyExperience";
 
@@ -247,14 +247,8 @@ function App() {
       <AccessibilityProvider>
         <SecurityProvider>
           <GlohsenScoreProvider>
-            <SoundProvider playClickSound={playClickSound} isSoundEnabled={isSoundEnabled}>
+            <SoundProvider playClickSound={playClickSound} isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} volume={volume} setVolume={setVolume}>
               {/* Sound toggle UI accessible on all pages */}
-              <ScrollSound
-                isSoundEnabled={isSoundEnabled}
-                toggleSound={toggleSound}
-                volume={volume}
-                setVolume={setVolume}
-              />
               <Router>
                 <Routes>
                   {/* Fully Public Routes - No sidebar */}                <Route path="/" element={<Home />} />
@@ -283,11 +277,11 @@ function App() {
                     <Route path="/jobs" element={<JobBoard />} />
                     <Route path="/community-forum" element={<CommunityForum />} />
                     <Route path="/forum" element={<CommunityForum />} />
-                    <Route path="/community" element={<CommunityForum />} />
-                    <Route path="/discussion" element={<CommunityForum />} />                  <Route path="/games-quizzes" element={<MedicalGamesQuizzes />} />
-                    <Route path="/medical-quizzes-games" element={<MedicalGamesQuizzes />} />
-                    <Route path="/games" element={<MedicalGamesQuizzes />} />
-                    <Route path="/quizzes" element={<MedicalGamesQuizzes />} />
+                    <Route path="/community" element={<CommunityForum />} />                    <Route path="/discussion" element={<CommunityForum />} />                    <Route path="/games-quizzes" element={<GamesAndQuizzes />} />
+                    <Route path="/diagnosis-detective" element={<DiagnosisDetective />} />
+                    <Route path="/medical-quizzes-games" element={<GamesAndQuizzes />} />
+                    <Route path="/games" element={<GamesAndQuizzes />} />
+                    <Route path="/quizzes" element={<GamesAndQuizzes />} />
                     <Route path="/blog" element={<Blog />} />
                     <Route path="/feedback" element={<GeneralFeedbackForm />} />
                     <Route path="/ProfessionalsHandbook" element={<ProfessionalsHandbook />} />

@@ -66,9 +66,11 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
   const [videoLoading, setVideoLoading] = useState(true);
   const [videoError, setVideoError] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [useLocalVideo, setUseLocalVideo] = useState(true); // Default to local video
   const canvasRef = useRef<HTMLDivElement>(null);
   const particleSystemRef = useRef<any>(null);
   const videoTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Cleanup video timeout on unmount
   useEffect(() => {
@@ -78,6 +80,43 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
       }
     };
   }, []);
+
+  // Handle video initialization when modal opens
+  useEffect(() => {
+    if (showDemoModal) {
+      // Small delay to ensure DOM elements are rendered
+      const initTimer = setTimeout(() => {
+        if (useLocalVideo) {
+          const video = document.querySelector('#demo-video-local') as HTMLVideoElement;
+          if (video) {
+            console.log('Initializing local video...');
+            video.load(); // Force reload of video element
+            // Set loading to false after a short delay if video is ready
+            const checkVideoReady = () => {
+              if (video.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+                setVideoLoading(false);
+                setVideoError(false);
+              } else if (video.error) {
+                setVideoLoading(false);
+                setVideoError(true);
+              } else {
+                // Check again in 100ms
+                setTimeout(checkVideoReady, 100);
+              }
+            };
+            checkVideoReady();
+          }
+        } else {
+          // For YouTube, set a shorter timeout since iframe loading is handled differently
+          setTimeout(() => {
+            setVideoLoading(false);
+          }, 2000);
+        }
+      }, 100);
+
+      return () => clearTimeout(initTimer);
+    }
+  }, [showDemoModal, useLocalVideo]);
 
   // Animate particle counter
   useEffect(() => {
@@ -175,6 +214,13 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
       onComplete: () => ripple.remove()
     });  }, [isDark]);
 
+  // When switching to local video, trigger a reload.
+  useEffect(() => {
+    if (useLocalVideo && videoRef.current) {
+      videoRef.current.load();
+    }
+  }, [useLocalVideo]);
+
   return (
     <div className={`relative w-full h-full min-h-screen overflow-hidden ${
       isDark 
@@ -221,10 +267,6 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                     target.style.borderColor = '#DC143C';
                     target.style.boxShadow = '0 6px 20px rgba(220, 20, 60, 0.4)';
                     target.style.transform = 'scale(1.05) translateY(-2px)';
-                    const shineElement = target.querySelector('.shine-effect') as HTMLElement;
-                    if (shineElement) {
-                      shineElement.style.background = 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%)';
-                    }
                   }}
                   onMouseLeave={(e) => {
                     const target = e.currentTarget as HTMLElement;
@@ -234,7 +276,7 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                     target.style.transform = 'scale(1)';
                   }}
                 >                  {/* Shine effect on hover */}
-                  <div className="shine-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-600 ease-in-out" />
+                  <div className="shine-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-in-out" />
                   <span className="relative z-10 md:hidden">{nav.mobile}</span>
                   <span className="relative z-10 hidden md:inline">{nav.label}</span>
                 </Button>
@@ -295,7 +337,7 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                           }}
                         >
                           {/* Shine effect on hover */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-in-out" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-in-out" />
                           <span className="relative z-10">{nav.mobile}</span>
                         </button>
                       </Link>
@@ -480,9 +522,9 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
         
         {/* Demo Button - Responsive sizing */}        <Button
           onClick={() => {
+            setShowDemoModal(true);
             setVideoLoading(true);
             setVideoError(false);
-            setShowDemoModal(true);
             
             // Set a timeout to detect if video takes too long to load
             if (videoTimeoutRef.current) {
@@ -494,7 +536,7 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                 setVideoError(true);
                 setVideoLoading(false);
               }
-            }, 15000); // 15 second timeout
+            }, 10000); // 10 second timeout for local video
           }}
           className="group relative backdrop-blur-xl rounded-full transition-all duration-700 transform hover:scale-110 shadow-2xl pointer-events-auto text-white font-bold tracking-wide overflow-hidden
             px-4 py-2 text-sm
@@ -562,8 +604,13 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                 }
                 // Stop video by removing src
                 const iframe = document.querySelector('#demo-video') as HTMLIFrameElement;
+                const video = document.querySelector('#demo-video-local') as HTMLVideoElement;
                 if (iframe) {
                   iframe.src = '';
+                }
+                if (video) {
+                  video.pause();
+                  video.currentTime = 0;
                 }
               }}
               className="absolute top-4 right-4 z-10 bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 rounded-full p-2"
@@ -578,6 +625,57 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                 GLOHSEN Platform Demo
               </h2>              {/* YouTube Video */}
               <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-6 bg-black">
+                {/* Video Source Toggle */}
+                <div className="absolute top-4 left-4 z-20 flex gap-2">
+                  <Button
+                    onClick={() => {
+                      setUseLocalVideo(false);
+                      setVideoLoading(true);
+                      setVideoError(false);
+                      // Clear any existing timeout
+                      if (videoTimeoutRef.current) {
+                        clearTimeout(videoTimeoutRef.current);
+                      }
+                      // Set timeout for YouTube loading
+                      videoTimeoutRef.current = setTimeout(() => {
+                        setVideoLoading(false);
+                      }, 3000);
+                    }}
+                    size="sm"
+                    className={`text-xs ${!useLocalVideo 
+                      ? 'bg-amber-600 text-white' 
+                      : 'bg-gray-600/80 text-gray-300 hover:bg-gray-500/80'
+                    }`}
+                  >
+                    YouTube
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setUseLocalVideo(true);
+                      setVideoLoading(true);
+                      setVideoError(false);
+                      // Clear any existing timeout
+                      if (videoTimeoutRef.current) {
+                        clearTimeout(videoTimeoutRef.current);
+                      }
+                      // Force reload local video after state change
+                      setTimeout(() => {
+                        const video = document.querySelector('#demo-video-local') as HTMLVideoElement;
+                        if (video) {
+                          video.load();
+                        }
+                      }, 100);
+                    }}
+                    size="sm"
+                    className={`text-xs ${useLocalVideo 
+                      ? 'bg-amber-600 text-white' 
+                      : 'bg-gray-600/80 text-gray-300 hover:bg-gray-500/80'
+                    }`}
+                  >
+                    Local
+                  </Button>
+                </div>
+
                 {videoLoading && !videoError && (
                   <div className={`absolute inset-0 flex items-center justify-center z-10 ${
                     isDark 
@@ -586,7 +684,7 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                   }`}>
                     <div className="text-center">
                       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto mb-4"></div>
-                      <p className="text-lg font-semibold">Loading Demo Video...</p>
+                      <p className="text-lg font-semibold">Loading {useLocalVideo ? 'Local' : 'Demo'} Video...</p>
                     </div>
                   </div>
                 )}
@@ -600,76 +698,166 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                     <div className="text-center p-6">
                       <div className="text-red-500 mb-4">
                         <AlertTriangle className="h-12 w-12 mx-auto" />
-                      </div>                      <p className="text-lg font-semibold mb-2">Video Load Error</p>
-                      <p className="text-sm mb-4">Unable to load the demo video. This may be due to network restrictions, YouTube access issues, or content blockers.</p>
-                      <div className="space-y-2">                        <Button 
+                      </div>
+                      <p className="text-lg font-semibold mb-2">Video Load Error</p>
+                      <p className="text-sm mb-4">
+                        {useLocalVideo 
+                          ? 'Local video file not found. Please ensure demo-video.webm (or demo-video.mp4) is placed in the /public folder.'
+                          : 'Unable to load the YouTube video. This may be due to network restrictions, YouTube access issues, or content blockers.'
+                        }
+                      </p>
+                      <div className="space-y-2">
+                        <Button 
                           onClick={() => {
                             setVideoError(false);
                             setVideoLoading(true);
-                            // Clear any existing timeout
                             if (videoTimeoutRef.current) {
                               clearTimeout(videoTimeoutRef.current);
                             }
-                            // Force reload by recreating the iframe
-                            const iframe = document.querySelector('#demo-video') as HTMLIFrameElement;
-                            if (iframe) {
-                              const src = iframe.src;
-                              iframe.src = '';
-                              setTimeout(() => {
-                                iframe.src = src;
-                                // Set new timeout for this retry
-                                videoTimeoutRef.current = setTimeout(() => {
-                                  if (videoLoading) {
-                                    setVideoError(true);
-                                    setVideoLoading(false);
-                                  }
-                                }, 15000);
-                              }, 100);
+                            
+                            if (useLocalVideo) {
+                              // Retry local video
+                              const video = document.querySelector('#demo-video-local') as HTMLVideoElement;
+                              if (video) {
+                                video.load();
+                              }
+                            } else {
+                              // Retry YouTube iframe
+                              const iframe = document.querySelector('#demo-video') as HTMLIFrameElement;
+                              if (iframe) {
+                                const src = iframe.src;
+                                iframe.src = '';
+                                setTimeout(() => {
+                                  iframe.src = src;
+                                  videoTimeoutRef.current = setTimeout(() => {
+                                    if (videoLoading) {
+                                      setVideoError(true);
+                                      setVideoLoading(false);
+                                    }
+                                  }, 15000);
+                                }, 100);
+                              }
                             }
                           }}
                           className="bg-amber-600 hover:bg-amber-700 text-white mr-2"
                         >
                           Retry
                         </Button>
+                        {!useLocalVideo && (
+                          <Button 
+                            onClick={() => {
+                              window.open('https://youtu.be/p_PDSng7X0E', '_blank');
+                            }}
+                            variant="outline"
+                            className="border-amber-600 text-amber-600 hover:bg-amber-50"
+                          >
+                            Open in YouTube
+                          </Button>
+                        )}
                         <Button 
                           onClick={() => {
-                            window.open('https://youtu.be/n1hFZu3vLro', '_blank');
+                            setUseLocalVideo(!useLocalVideo);
+                            setVideoError(false);
+                            setVideoLoading(true);
                           }}
                           variant="outline"
-                          className="border-amber-600 text-amber-600 hover:bg-amber-50"
+                          className="border-gray-600 text-gray-600 hover:bg-gray-50"
                         >
-                          Open in YouTube
+                          Switch to {useLocalVideo ? 'YouTube' : 'Local'} Video
                         </Button>
                       </div>
                     </div>
                   </div>
-                )}                <iframe
-                  id="demo-video"
-                  src="https://www.youtube.com/embed/n1hFZu3vLro?autoplay=0&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
-                  title="GLOHSEN Platform Demo Video"
-                  className="w-full h-full rounded-2xl"
-                  frameBorder="0"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  loading="lazy"
-                  onLoad={() => {
-                    console.log('Video iframe loaded successfully');
-                    setVideoLoading(false);
-                    setVideoError(false);
-                    if (videoTimeoutRef.current) {
-                      clearTimeout(videoTimeoutRef.current);
-                    }
-                  }}
-                  onError={(e) => {
-                    console.error('Video failed to load:', e);
-                    setVideoLoading(false);
-                    setVideoError(true);
-                    if (videoTimeoutRef.current) {
-                      clearTimeout(videoTimeoutRef.current);
-                    }
-                  }}
-                />
+                )}
+
+                {/* YouTube Video */}
+                {!useLocalVideo && (
+                  <iframe
+                    id="demo-video"
+                    src="https://www.youtube.com/embed/p_PDSng7X0E?autoplay=0&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                    title="GLOHSEN Platform Demo Video"
+                    className="w-full h-full rounded-2xl"
+                    frameBorder="0"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    loading="lazy"
+                    onLoad={() => {
+                      console.log('YouTube video iframe loaded successfully');
+                      setVideoLoading(false);
+                      setVideoError(false);
+                      if (videoTimeoutRef.current) {
+                        clearTimeout(videoTimeoutRef.current);
+                      }
+                    }}
+                    onError={(e) => {
+                      console.error('YouTube video failed to load:', e);
+                      setVideoLoading(false);
+                      setVideoError(true);
+                      if (videoTimeoutRef.current) {
+                        clearTimeout(videoTimeoutRef.current);
+                      }
+                    }}
+                  />
+                )}
+
+                {/* Local Video */}
+                {useLocalVideo && (
+                  <video
+                    ref={videoRef}
+                    id="demo-video-local"
+                    className="w-full h-full rounded-2xl object-cover"
+                    controls
+                    preload="auto"
+                    onLoadStart={() => {
+                      console.log('Local video load started');
+                      setVideoLoading(true);
+                      setVideoError(false);
+                    }}
+                    onLoadedData={() => {
+                      console.log('Local video loaded successfully');
+                      setVideoLoading(false);
+                      setVideoError(false);
+                      if (videoTimeoutRef.current) {
+                        clearTimeout(videoTimeoutRef.current);
+                      }
+                    }}
+                    onError={(e) => {
+                      console.error('Local video failed to load:', e);
+                      setVideoLoading(false);
+                      setVideoError(true);
+                      if (videoTimeoutRef.current) {
+                        clearTimeout(videoTimeoutRef.current);
+                      }
+                    }}
+                    onCanPlay={() => {
+                      console.log('Local video can play');
+                      setVideoLoading(false);
+                      setVideoError(false);
+                      if (videoTimeoutRef.current) {
+                        clearTimeout(videoTimeoutRef.current);
+                      }
+                    }}
+                    onWaiting={() => {
+                      console.log('Local video waiting for data');
+                      setVideoLoading(true);
+                    }}
+                    onPlaying={() => {
+                      console.log('Local video playing');
+                      setVideoLoading(false);
+                    }}
+                  >
+                    <source src="/demo-video.webm" type="video/webm" />
+                    <source src="/demo-video.mp4" type="video/mp4" />
+                    <p className="text-center text-gray-500 p-8">
+                      Your browser doesn't support video playback. 
+                      <br />
+                      <a href="/demo-video.webm" download className="text-amber-600 hover:underline">
+                        Download the video instead
+                      </a>
+                    </p>
+                  </video>
+                )}
               </div>
                 {/* Blur Glassmorphism Close Button Below Video */}
               <div className="flex justify-center">                <Button
@@ -683,8 +871,13 @@ const HeaderSection: React.FC<SectionProps> = ({ scrollToSection }) => {
                     }
                     // Stop video by removing src
                     const iframe = document.querySelector('#demo-video') as HTMLIFrameElement;
+                    const video = document.querySelector('#demo-video-local') as HTMLVideoElement;
                     if (iframe) {
                       iframe.src = '';
+                    }
+                    if (video) {
+                      video.pause();
+                      video.currentTime = 0;
                     }
                   }}
                   className="backdrop-blur-xl bg-gradient-to-r from-red-500/20 via-red-600/30 to-red-700/20 hover:from-red-600/30 hover:via-red-700/40 hover:to-red-800/30 border-2 border-red-400/30 hover:border-red-500/50 rounded-full px-8 py-3 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-red-500/30 text-red-400 hover:text-red-300 font-bold"

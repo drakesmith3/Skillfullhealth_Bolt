@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import { ChevronsUp, MessageSquare, X, Send, Sun, Moon } from 'lucide-react';
+import { ChevronsUp, MessageSquare, X, Send, Sun, Moon, Volume2, VolumeX } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useSound } from '../contexts/SoundContext';
@@ -8,18 +8,14 @@ import { useSound } from '../contexts/SoundContext';
 const FloatingActionButtons: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   
-  // Safely use the sound context - only if we're within a SoundProvider
-  let playClickSound: (() => void) | null = null;
-  let isSoundEnabled = false;
-  
-  try {
-    const soundContext = useSound();
-    playClickSound = soundContext.playClickSound;
-    isSoundEnabled = soundContext.isSoundEnabled;
-  } catch (error) {
-    // Component is not within SoundProvider, which is fine
-    console.log('FloatingActionButtons: Not within SoundProvider context');
-  }
+  // Safely use the sound context
+  const soundContext = useSound();
+  const playClickSound = soundContext?.playClickSound;
+  const isSoundEnabled = soundContext?.isSoundEnabled ?? false;
+  const toggleSound = soundContext?.toggleSound;
+  const setVolume = soundContext?.setVolume;
+  const volume = soundContext?.volume ?? 1;
+
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [conversationUrl, setConversationUrl] = useState<string | null>(null);
@@ -147,23 +143,29 @@ const FloatingActionButtons: React.FC = () => {
     });
   };
 
+  const handleSoundToggle = () => {
+    if (playClickSound) {
+      playClickSound();
+    }
+    if (toggleSound) {
+      toggleSound();
+      toast({
+        title: `Sound ${!isSoundEnabled ? 'enabled' : 'muted'}`,
+      });
+    }
+  };
+
   return (
     <>
-      <div className="fixed right-4 bottom-4 flex flex-col gap-3 z-[9999]">
-        {/* Enhanced Theme toggle button with WCAG compliance */}
+      <div className="fixed right-4 bottom-16 flex flex-col items-center gap-3 z-[9999]">
+        {/* Enhanced Theme toggle button */}
         <button
           onClick={handleThemeToggle}
           className="group relative w-10 h-10 p-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:scale-110 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-2 border-gray-200 dark:border-gray-600 hover:border-[#ea384c] dark:hover:border-[#ea384c] focus:outline-none focus:ring-4 focus:ring-[#ea384c]/20 focus:border-[#ea384c]"
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode. Current mode: ${theme}`}
-          aria-describedby="theme-toggle-description"
           role="switch"
           aria-checked={theme === 'dark'}
         >
-          {/* Screen reader description */}
-          <span id="theme-toggle-description" className="sr-only">
-            Toggle between light and dark mode for better accessibility and user preference
-          </span>
-          
           {/* Icon with enhanced animations */}
           <div className="relative w-6 h-6">
             {theme === 'light' ? (
@@ -192,23 +194,62 @@ const FloatingActionButtons: React.FC = () => {
             Live AI Agent
             <div className="absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-l-gray-900"></div>
           </div>
-        </button>{/* Back to top button - only visible when scrolled down */}
+        </button>
+
+        {/* Back to top button */}
         {showBackToTop && (
           <button
             onClick={scrollToTop}
-            className="group relative p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:scale-110 bg-[#D4AF37] hover:bg-[#B8941F] text-black border-2 border-[#D4AF37] hover:border-[#B8941F] focus:outline-none focus:ring-4 focus:ring-[#D4AF37]/20"
+            className="group relative p-2 w-10 h-10 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:scale-110 bg-[#D4AF37] hover:bg-[#B8941F] text-black border-2 border-[#D4AF37] hover:border-[#B8941F] focus:outline-none focus:ring-4 focus:ring-[#D4AF37]/20"
             aria-label="Back to top of page"
           >
             <ChevronsUp className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
-            
-            {/* Tooltip */}
             <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap shadow-lg">
               Back to top
               <div className="absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-l-gray-900"></div>
             </div>
           </button>
         )}
-      </div>      {/* Enhanced Live AI Agent Modal with Tavus CVI */}
+
+        {/* Sound Toggle Button and Volume Slider */}
+        {toggleSound && (
+          <div className="flex flex-col items-center gap-2">
+            <button
+                onClick={handleSoundToggle}
+                className="group relative w-10 h-10 p-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:scale-110 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-2 border-gray-200 dark:border-gray-600 hover:border-[#ea384c] dark:hover:border-[#ea384c] focus:outline-none focus:ring-4 focus:ring-[#ea384c]/20 focus:border-[#ea384c]"
+                aria-label={isSoundEnabled ? "Mute sound" : "Unmute sound"}
+                role="switch"
+                aria-checked={isSoundEnabled}
+            >
+                <div className="relative w-6 h-6">
+                    {isSoundEnabled ? (
+                        <Volume2 className="w-6 h-6" />
+                    ) : (
+                        <VolumeX className="w-6 h-6" />
+                    )}
+                </div>
+                <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap shadow-lg">
+                    {isSoundEnabled ? "Mute" : "Unmute"}
+                    <div className="absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-l-gray-900 dark:border-l-white"></div>
+                </div>
+            </button>
+            {isSoundEnabled && setVolume && (
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={volume}
+                onChange={(e) => setVolume(parseFloat(e.target.value))}
+                className="w-20 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                aria-label="Volume slider"
+              />
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Enhanced Live AI Agent Modal */}
       {isChatOpen && (
         <div 
           className="fixed bottom-20 right-4 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-[9998] flex flex-col h-[600px] border-2 border-gray-200 dark:border-gray-600"

@@ -4,10 +4,12 @@ import React, { createContext, useContext, ReactNode, useCallback, useMemo } fro
 interface SoundContextType {
   playClickSound: () => void;
   isSoundEnabled: boolean;
+  toggleSound: () => void;
+  volume: number;
+  setVolume: (volume: number) => void;
 }
 
-// 2. Create the context with a default value (or undefined if you prefer to always check)
-// Using 'null' as a default and checking for it in the hook is a common pattern.
+// 2. Create the context with a default value
 const SoundContext = createContext<SoundContextType | null>(null);
 
 // 3. Create the SoundProvider component
@@ -15,24 +17,33 @@ interface SoundProviderProps {
   children: ReactNode;
   playClickSound: () => void;
   isSoundEnabled: boolean;
+  toggleSound: () => void;
+  volume: number;
+  setVolume: (volume: number) => void;
 }
 
-export const SoundProvider: React.FC<SoundProviderProps> = ({ children, playClickSound, isSoundEnabled }) => {
-  // Memoize playClickSound if it's passed as a prop and might change identity unnecessarily
-  // For this specific case, playClickSound is already a useCallback in Home.tsx, so this might be redundant
-  // but good practice if the prop source wasn't memoized.
+export const SoundProvider: React.FC<SoundProviderProps> = ({ children, playClickSound, isSoundEnabled, toggleSound, volume, setVolume }) => {
   const memoizedPlayClickSound = useCallback(() => {
     if (playClickSound) {
       playClickSound();
     }
   }, [playClickSound]);
 
+  const memoizedToggleSound = useCallback(() => {
+    if (toggleSound) {
+      toggleSound();
+    }
+  }, [toggleSound]);
+
   const contextValue = useMemo(
     () => ({
       playClickSound: memoizedPlayClickSound,
       isSoundEnabled: isSoundEnabled,
+      toggleSound: memoizedToggleSound,
+      volume,
+      setVolume,
     }),
-    [memoizedPlayClickSound, isSoundEnabled]
+    [memoizedPlayClickSound, isSoundEnabled, memoizedToggleSound, volume, setVolume]
   );
 
   return (

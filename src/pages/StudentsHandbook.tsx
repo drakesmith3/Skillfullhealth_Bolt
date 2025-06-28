@@ -72,7 +72,7 @@ export default function StudentsHandbook() {
               </motion.h1>
               
               <motion.p 
-                className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-medium max-w-4xl mx-auto leading-relaxed mb-8"
+                className="text-xl md:text-2xl text-gray-700 dark:text-white font-medium max-w-4xl mx-auto leading-relaxed mb-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -94,7 +94,7 @@ export default function StudentsHandbook() {
                 >
                   <BookOpen className="w-10 h-10 text-red-500 mx-auto mb-3" />
                   <h3 className="text-2xl font-bold text-gray-800 dark:text-white">250,000+</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Active Students</p>
+                  <p className="text-gray-600 dark:text-black">Active Students</p>
                 </motion.div>
                 <motion.div 
                   className="text-center p-6 backdrop-blur-lg bg-yellow-50/50 dark:bg-yellow-900/20 rounded-2xl border border-yellow-200/30 dark:border-yellow-700/30 hover:scale-105 transition-transform duration-300"
@@ -102,15 +102,15 @@ export default function StudentsHandbook() {
                 >
                   <Gamepad2 className="w-10 h-10 text-yellow-600 mx-auto mb-3" />
                   <h3 className="text-2xl font-bold text-gray-800 dark:text-white">10,000+</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Games & Quizzes</p>
+                  <p className="text-gray-600 dark:text-black">Games & Quizzes</p>
                 </motion.div>
                 <motion.div 
                   className="text-center p-6 backdrop-blur-lg bg-black/10 dark:bg-black/20 rounded-2xl border border-gray-300/30 dark:border-gray-700/30 hover:scale-105 transition-transform duration-300"
                   whileHover={{ y: -5 }}
                 >
-                  <Trophy className="w-10 h-10 text-gray-700 dark:text-gray-300 mx-auto mb-3" />
+                  <Trophy className="w-10 h-10 text-gray-700 dark:text-black mx-auto mb-3" />
                   <h3 className="text-2xl font-bold text-gray-800 dark:text-white">5,000+</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Certificates Earned</p>
+                  <p className="text-gray-600 dark:text-black">Certificates Earned</p>
                 </motion.div>
               </motion.div>
             </div>
@@ -217,7 +217,7 @@ export default function StudentsHandbook() {
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors duration-300 leading-tight">
                               {item.title}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="text-sm text-gray-600 dark:text-black mt-1 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
                               {item.description}
                             </p>
                           </div>
@@ -609,7 +609,7 @@ export default function StudentsHandbook() {
                       </motion.div>
                       <h4 className="text-2xl font-bold text-black dark:text-white">Legal Compliance & Protection</h4>
                     </div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                    <p className="text-lg text-gray-700 dark:text-black leading-relaxed mb-6">
                       By joining GLOHSEN, you agree to our Terms of Service and Privacy Policy, which protect your data and privacy in line with 
                       global standards including HIPAA where applicable.
                     </p>
@@ -633,7 +633,7 @@ export default function StudentsHandbook() {
                             >
                               <CheckCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.div>
                         ))}
                       </div>
@@ -655,7 +655,7 @@ export default function StudentsHandbook() {
                             >
                               <CheckCircle className="w-5 h-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" />
                             </motion.div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
+                            <span className="text-gray-700 dark:text-black font-medium">{item}</span>
                           </motion.div>
                         ))}
                       </div>
@@ -848,7 +848,7 @@ export default function StudentsHandbook() {
                             <item.icon className="w-8 h-8" />
                           </motion.div>
                           <h6 className="font-black text-lg text-black dark:text-white mb-2 group-hover/step:text-yellow-600 transition-colors">{item.title}</h6>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.desc}</p>
+                          <p className="text-sm text-gray-600 dark:text-black leading-relaxed">{item.desc}</p>
                         </motion.div>
                       ))}
                     </div>
