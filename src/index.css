@@ -97,8 +97,7 @@
 
   html, body {
     @apply bg-background text-foreground;
-    overflow-y: hidden !important;
-    overflow-x: auto !important;
+    overflow-x: auto;
   }
 
   body {
@@ -125,7 +124,6 @@
 
   /* Hide vertical scrollbar but allow scrolling */
   html {
-    overflow-y: scroll;
     scrollbar-width: none; /* For Firefox */
     -ms-overflow-style: none;  /* For Internet Explorer and Edge */
   }
@@ -726,34 +724,4 @@
   );
   background-size: 200% auto;
   animation: shine-red 0.8s ease-in-out;
-}
-
-/* Custom scrollbar styles */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-gray-400 dark:bg-gray-600 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500 dark:bg-gray-500;
-}
-
-/* Hide vertical scrollbar but allow scrolling */
-html {
-  overflow-y: scroll;
-  scrollbar-width: none; /* For Firefox */
-  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
-}
-
-html::-webkit-scrollbar {
-  width: 0; /* For WebKit browsers */
-  height: 0;
 }
