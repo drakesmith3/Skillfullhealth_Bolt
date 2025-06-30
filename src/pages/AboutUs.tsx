@@ -16,22 +16,46 @@ const AboutUs: React.FC = () => {
   
 const teamMembers = [
   {
-    name: "Dr. Olusiji Olawumi",
-    role: "Founder & CEO",
-    image: "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80 ",
-    bio: "Visionary leader, medical doctor, and digital transformation advocate. Passionate about empowering African professionals through technology and education."
+    name: "Dr. Olusiji Olawumi MD",
+    role: "co-Founder & CEO",
+    image: "/public/team/siji pic.png",
+    linkedinProfile: "https://www.linkedin.com/in/siji-olawumi-17348215/",
+    specialisation: "Healthcare Mentorship, Occupational Health & Safety",
+    bio: "Visionary Leader, Medical Doctor, and Digital Transformation Advocate. Passionate about empowering African professionals through Technology and Education."
   },
   {
-    name: "C Wizard",
+    name: "Enzoveli Drake",
     role: "Chief Technology Officer",
-    image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-    bio: "Full-stack engineer and AI enthusiast, driving the technical vision and product innovation for the GLOHSEN platform."
+    image: "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80 ",
+    bio: "Full-stack Engineer and AI Enthusiast, driving the technical vision and product innovation for the GLOHSEN platform."
+  },
+  {
+    name: "Akingbulu Michael",
+    role: "Chief Information Officer",
+    image: "/public/team/Michael Ayodele pic.jpg",
+    linkedinProfile: "https://linkedin.com/in/michael-ayodele-a-b0b2b4159/",
+    specialisation: "Database specialist, Data Science Expert and Big Data Analytics",
+    bio: "Database expert of 15+, Product strategist and partnership builder, making things run smoothly and connecting GLOHSEN with key stakeholders across Africa."
+  },
+  {
+    name: "Halima Fimihan",
+    role: "Chief Operations Officer",
+    image: "/public/team/Halima pic.jpg",
+    bio: "Medical Biochemist, Back-end Engineer, AI/ML Enthusiast  with passion for professional development and organisational growth. She is driving the daily technical operations for the GLOHSEN platform."
+  },
+    {
+    name: "Dr Kadiri Adaba MD",
+    role: "Medical Expert, Team Advisor and Tactical Strategist",
+    image: "/public/team/Kadiri Adaba pic.jpg",
+    linkedinProfile: "https://www.linkedin.com/in/kadiri-adaba/",
+    bio: "US-based Medical Doctor and founder of Stealth AI, providing strategic guidance and insights to ensure GLOHSEN's success in the healthcare sector."
   },
   {
     name: "Olufemi Agbaje",
-    role: "Head of Product & Partnerships",
-    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-    bio: "Product strategist and partnership builder, connecting GLOHSEN with key stakeholders across Africa."
+    role: "Chief Financial Officer",
+    image: "/public/team/Femi Agbaje pic.png",
+    linkedinProfile: "https://linkedin.com/in/olufemiagbaje/",
+    bio: "FINTECH expert with a passion for leveraging technology to enhance financial services in healthcare. Focused on integrating secure payment solutions into the GLOHSEN platform."
   },
   // Add more team members as needed
 ];
@@ -288,7 +312,13 @@ const timeline = [
               <img src={member.image} alt={member.name} className="w-28 h-28 rounded-full object-cover mb-4 border-4 border-[#D4AF37]/40 shadow-lg" />
               <h3 className="font-bold text-lg text-d4af37 mb-1">{member.name}</h3>
               <p className="text-sm font-semibold text-gray-700 mb-2">{member.role}</p>
-              <p className="text-gray-600 text-sm">{member.bio}</p>
+              {member.specialisation && (
+                <p className="text-xs font-semibold text-gray-500 mb-3">{member.specialisation}</p>
+              )}
+              {member.linkedinProfile && (
+                <a href={member.linkedinProfile} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:underline mt-2">LinkedIn Profile</a>
+              )}
+              <p className="text-gray-600 text-sm mt-2">{member.bio}</p>
             </div>
           ))}
         </div>
