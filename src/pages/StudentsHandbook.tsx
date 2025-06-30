@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { GraduationCap, BookOpen, Gamepad2, Users, DollarSign, Shield, TrendingUp, AlertTriangle, Heart, Award, Sparkles, Star, Target, Zap, CheckCircle, Crown, Medal, Trophy, Briefcase, Globe, Clock, X, ChevronRight, ArrowUpRight, FileText, PlayCircle, Brain, Search, RefreshCw, MessageSquare } from 'lucide-react';
+import Footer from '../components/Footer';
 
 export default function StudentsHandbook() {
   // Sound effects (if audio files are available)
@@ -2058,20 +2059,10 @@ export default function StudentsHandbook() {
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-yellow-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
             </div>
-          </div>          {/* Premium Footer */}
-          <div className="mt-16 pb-8">
-            <div className="text-center">
-              <div className="text-4xl font-black text-transparent bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text mb-4">
-                GLOHSEN
-              </div>              <p className="text-gray-600 dark:text-stone-400 font-medium">
-                Empowering the next generation of healthcare professionals
-              </p>
-              <div className="mt-6 flex justify-center space-x-8">
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse delay-300"></div>
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-600"></div>              </div>
-            </div>
-          </div>        </div>
+          </div>
+        </div>
+      
+      <Footer isActive={true} />
     </>
   );
 }

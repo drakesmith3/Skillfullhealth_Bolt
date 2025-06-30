@@ -355,13 +355,13 @@ function EmployersHandbook() {
                           </h3>
                           
                           {/* Description */}
-                          <p className="text-gray-700 dark:text-black leading-relaxed mb-6 group-hover:text-gray-600 dark:group-hover:text-gray-200 transition-colors duration-300">
+                          <p className="text-gray-700 dark:text-white leading-relaxed mb-6 group-hover:text-gray-600 dark:group-hover:text-gray-200 transition-colors duration-300">
                             {item.description}
                           </p>
                             {/* Action Button */}
                           <div className="flex items-center justify-between">
                             <span className={`text-sm font-bold ${
-                              isGold ? 'text-yellow-600' : isGray ? 'text-gray-600 dark:text-gray-400' : 'text-gray-800 dark:text-black'
+                              isGold ? 'text-yellow-600' : isGray ? 'text-gray-600 dark:text-gray-300' : 'text-gray-800 dark:text-white'
                             } group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors duration-300`}>
                               Read More
                             </span>
@@ -369,7 +369,7 @@ function EmployersHandbook() {
                               isGold ? 'bg-yellow-100 group-hover:bg-yellow-200' : isGray ? 'bg-gray-100 group-hover:bg-gray-200' : 'bg-gray-200 group-hover:bg-gray-300'
                             }`}>
                               <ArrowRight className={`w-4 h-4 ${
-                                isGold ? 'text-yellow-600' : isGray ? 'text-gray-600 dark:text-gray-400' : 'text-gray-800 dark:text-black'
+                                isGold ? 'text-yellow-600' : isGray ? 'text-gray-600 dark:text-gray-300' : 'text-gray-800 dark:text-white'
                               } group-hover:translate-x-1 transition-transform duration-300`} />
                             </div>
                           </div>
@@ -502,7 +502,9 @@ function EmployersHandbook() {
                         {/* Content Grid */}
                       <div className="grid lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
-                          <p className="text-lg text-gray-700 dark:text-black leading-relaxed mb-6">
+                          <p className="text-lg text-gray-700 dark:text-white leading-relaxed mb-6">
+                            <strong>GLOHSEN (21st Century Global Health Services Network)</strong> is a comprehensive healthcare platform 
+                            connecting professionals, employers, students, and tutors for career growth, education, and job opportunities. 
                             GLOHSEN is an AI-powered healthcare ecosystem that revolutionizes professional evaluation and development.
                           </p>
                         </div>
@@ -796,7 +798,7 @@ function EmployersHandbook() {
                               <li key={index} className="flex items-start group/item">                                <div className="w-6 h-6 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0 group-hover/item:scale-110 transition-transform duration-300">
                                   <IconComponent className="w-3 h-3 text-white" />
                                 </div>
-                                <span className="text-gray-800 dark:text-black print:text-gray-700 leading-relaxed font-medium group-hover/item:text-yellow-600 transition-colors duration-300">
+                                <span className="text-gray-800 dark:text-white print:text-gray-700 leading-relaxed font-medium group-hover/item:text-yellow-600 transition-colors duration-300">
                                   {item.text}
                                 </span>
                               </li>
@@ -858,7 +860,7 @@ function EmployersHandbook() {
                                 <div className="w-6 h-6 bg-gradient-to-br from-gray-700 to-black rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0 group-hover/item:scale-110 transition-transform duration-300">
                                   <IconComponent className="w-3 h-3 text-white" />
                                 </div>
-                                <span className="text-gray-800 dark:text-black print:text-gray-700 leading-relaxed font-medium group-hover/item:text-gray-600 transition-colors duration-300">
+                                <span className="text-gray-800 dark:text-white print:text-gray-700 leading-relaxed font-medium group-hover/item:text-gray-600 transition-colors duration-300">
                                   {item.text}
                                 </span>
                               </li>
@@ -975,7 +977,7 @@ function EmployersHandbook() {
                                 <h6 className="text-lg print:text-base font-black text-gray-900 dark:text-white print:text-black mb-3 leading-tight">
                                   {item.title}
                                 </h6>
-                                <p className="text-gray-700 dark:text-black print:text-gray-700 text-sm leading-relaxed">
+                                <p className="text-gray-700 dark:text-white print:text-gray-700 text-sm leading-relaxed">
                                   {item.description}
                                 </p>
                               </div>
@@ -1134,7 +1136,7 @@ function EmployersHandbook() {
                                 <h6 className="text-xl print:text-lg font-black text-gray-900 dark:text-white print:text-black mb-3">
                                   {kpi.title}
                                 </h6>
-                                <p className="text-gray-700 dark:text-black print:text-gray-700 leading-relaxed text-sm">
+                                <p className="text-gray-700 dark:text-white print:text-gray-700 leading-relaxed text-sm">
                                   {kpi.description}
                                 </p>
                               </div>
@@ -1185,7 +1187,7 @@ function EmployersHandbook() {
                                 
                                 {/* Icon */}
                                 <div className="mb-4">
-                                  <item.icon className="w-8 h-8 text-gray-700 dark:text-black mx-auto" />
+                                  <item.icon className="w-8 h-8 text-gray-700 dark:text-white mx-auto" />
                                 </div>
                                 
                                 {/* Title */}
@@ -1194,7 +1196,7 @@ function EmployersHandbook() {
                                 </h5>
                                 
                                 {/* Description */}
-                                <p className="text-gray-700 dark:text-black leading-relaxed group-hover:text-gray-600 dark:group-hover:text-gray-200 transition-colors duration-300">
+                                <p className="text-gray-700 dark:text-white leading-relaxed group-hover:text-gray-600 dark:group-hover:text-gray-200 transition-colors duration-300">
                                   {item.description}
                                 </p>
                                 
@@ -1301,7 +1303,7 @@ function EmployersHandbook() {
 
                   {/* Staffing/HR Activity KPIs */}
                   <div className="backdrop-blur-sm bg-white/70 dark:bg-black/70 rounded-2xl p-8 border border-white/20 shadow-lg">
-                    <h4 className="text-2xl font-bold text-black dark:text-stone-100 mb-6 flex items-center">
+                    <h4 className="text-2xl font-bold text-black dark:text-white mb-6 flex items-center">
                       <BarChart3 className="w-6 h-6 mr-3 text-yellow-600" />
                       Staffing/HR Activity KPIs
                     </h4>
@@ -1333,10 +1335,10 @@ function EmployersHandbook() {
                         }`}>
                           <div className="text-center">
                             <div className="text-3xl mb-3">{kpi.icon}</div>
-                            <h6 className="text-lg font-bold text-black dark:text-stone-100 mb-2">
+                            <h6 className="text-lg font-bold text-black dark:text-white mb-2">
                               {kpi.title}
                             </h6>
-                            <p className="text-gray-700 dark:text-stone-300 text-sm">
+                            <p className="text-gray-700 dark:text-gray-200 text-sm">
                               {kpi.description}
                             </p>
                           </div>
@@ -1408,7 +1410,7 @@ function EmployersHandbook() {
                           <h4 className="text-2xl font-bold text-gray-900 dark:text-white">Immediate Benefits</h4>
                         </div>
                         
-                        <ul className="space-y-3 text-gray-800 dark:text-black">
+                        <ul className="space-y-3 text-gray-800 dark:text-gray-200">
                           <li className="flex items-start group-hover/card:translate-x-1 transition-transform duration-300">
                             <CheckCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5 flex-shrink-0" />
                             <span>Access to pre-verified, high-quality professionals</span>
@@ -1449,7 +1451,7 @@ function EmployersHandbook() {
                           <h4 className="text-2xl font-bold text-gray-900 dark:text-white">Long-term Advantages</h4>
                         </div>
                         
-                        <ul className="space-y-3 text-gray-800 dark:text-black">
+                        <ul className="space-y-3 text-gray-800 dark:text-gray-200">
                           <li className="flex items-start group-hover/card:translate-x-1 transition-transform duration-300">
                             <CheckCircle className="w-5 h-5 text-gray-600 mr-3 mt-0.5 flex-shrink-0" />
                             <span>Improved patient satisfaction scores</span>
@@ -1490,7 +1492,7 @@ function EmployersHandbook() {
                         <h4 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                           Workflow Enhancement
                         </h4>
-                        <p className="text-lg text-gray-800 dark:text-black max-w-2xl mx-auto">
+                        <p className="text-lg text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
                           GLOHSEN streamlines your entire hiring workflow from job posting to onboarding with AI-powered precision
                         </p>
                       </div>
@@ -1521,8 +1523,8 @@ function EmployersHandbook() {
                             } rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg group-hover/step:scale-110 transition-transform duration-300`}>
                               <span className="text-white font-bold text-lg">{item.step}</span>
                             </div>
-                            <h6 className="font-bold text-gray-800 dark:text-black mb-2">{item.title}</h6>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                            <h6 className="font-bold text-gray-800 dark:text-white mb-2">{item.title}</h6>
+                            <p className="text-sm text-gray-600 dark:text-gray-200">{item.description}</p>
                           </div>
                         ))}
                       </div>
@@ -1679,7 +1681,7 @@ function EmployersHandbook() {
                           <h4 className="text-xl font-bold text-gray-900 dark:text-white">Platform Messaging</h4>
                         </div>
                         
-                        <ul className="space-y-2 text-gray-800 dark:text-black">
+                        <ul className="space-y-2 text-gray-800 dark:text-gray-200">
                           <li className="flex items-start group-hover/card:translate-x-1 transition-transform duration-300">
                             <CheckCircle className="w-5 h-5 text-gray-600 mr-3 mt-0.5 flex-shrink-0" />
                             <span>Secure in-platform messaging system</span>
@@ -1720,7 +1722,7 @@ function EmployersHandbook() {
                           <h4 className="text-xl font-bold text-gray-900 dark:text-white">Job Board Integration</h4>
                         </div>
                         
-                        <ul className="space-y-2 text-gray-800 dark:text-black">
+                        <ul className="space-y-2 text-gray-800 dark:text-gray-200">
                           <li className="flex items-start group-hover/card:translate-x-1 transition-transform duration-300">
                             <CheckCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5 flex-shrink-0" />
                             <span>Direct application responses</span>
@@ -1759,7 +1761,7 @@ function EmployersHandbook() {
                           </div>
                         </div>
                         <h4 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Best Practices for Candidate Contact</h4>
-                        <p className="text-lg text-gray-800 dark:text-black max-w-2xl mx-auto">
+                        <p className="text-lg text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
                           Proven strategies for effective communication and professional relationship building
                         </p>
                       </div>
@@ -1773,7 +1775,7 @@ function EmployersHandbook() {
                             </div>
                             <h5 className="text-lg font-bold text-gray-900 dark:text-white">Initial Contact</h5>
                           </div>
-                          <ul className="space-y-3 text-gray-800 dark:text-black">
+                          <ul className="space-y-3 text-gray-800 dark:text-gray-200">
                             <li className="flex items-start group-hover/practices:translate-x-1 transition-transform duration-300">
                               <CheckCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5 flex-shrink-0" />
                               <span>Review candidate profiles and GLOHSEN Scores before making contact</span>
@@ -1799,7 +1801,7 @@ function EmployersHandbook() {
                             </div>
                             <h5 className="text-lg font-bold text-gray-900 dark:text-white">Ongoing Communication</h5>
                           </div>
-                          <ul className="space-y-3 text-gray-800 dark:text-black">
+                          <ul className="space-y-3 text-gray-800 dark:text-gray-200">
                             <li className="flex items-start group-hover/practices:translate-x-1 transition-transform duration-300">
                               <CheckCircle className="w-5 h-5 text-gray-600 mr-3 mt-0.5 flex-shrink-0" />
                               <span>Provide constructive feedback even for unsuccessful candidates</span>
@@ -1833,7 +1835,7 @@ function EmployersHandbook() {
                             </div>
                           </div>
                           <h5 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Pro Tip</h5>
-                          <p className="text-gray-800 dark:text-black">
+                          <p className="text-gray-800 dark:text-gray-200">
                             Use GLOHSEN's built-in analytics to track your communication effectiveness and optimize your candidate outreach strategy for better hiring outcomes.
                           </p>
                         </div>

@@ -33,7 +33,9 @@ const DiagnosisDetectiveGame = () => {
   const [wrongAnswersHidden, setWrongAnswersHidden] = useState([]);
   const [showCurriculum, setShowCurriculum] = useState(false);
   const [streakBonus, setStreakBonus] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
   const [showStreakBonus, setShowStreakBonus] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const gameData = {
     1: {
       title: "Central Nervous System (CNS)",
@@ -46,7 +48,7 @@ const DiagnosisDetectiveGame = () => {
           symptoms: ["Severe headache", "Hypertension", "Bradycardia", "Irregular breathing"],
           signs: ["Systolic BP >180 mmHg", "HR <60 bpm", "Irregular respirations", "Papilledema"],
           triad: "Cushing's Triad",
-          imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Intracranial_pressure.svg",
+          imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Intracranial_pressure.svg/512px-Intracranial_pressure.svg.png",
           options: [
             { id: 'a', text: "Increased Intracranial Pressure", isCorrect: true },
             { id: 'b', text: "Hypertensive Crisis", isCorrect: false },
@@ -200,7 +202,7 @@ const DiagnosisDetectiveGame = () => {
           symptoms: ["Recurrent pneumonia", "Thrush", "Weight loss", "Night sweats"],
           signs: ["Lymphadenopathy", "Oral candidiasis", "CD4+ count <200", "Opportunistic infections"],
           triad: "AIDS-defining Conditions",
-          imageUrl: "https://upload.wikimedia.org/wikipedia/commons/8/8c/HIV_virion-en.svg",
+          imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/HIV_virion-en.svg/512px-HIV_virion-en.svg.png",
           options: [
             { id: 'a', text: "AIDS", isCorrect: true },
             { id: 'b', text: "Primary Immunodeficiency", isCorrect: false },
@@ -277,7 +279,7 @@ const DiagnosisDetectiveGame = () => {
           symptoms: ["Severe chest pain", "Shortness of breath", "Diaphoresis", "Anxiety"],
           signs: ["BP: 80/50 mmHg", "JVD present", "Muffled heart sounds", "Pulsus paradoxus"],
           triad: "Beck's Triad",
-          imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1c/Cardiac_tamponade.svg",
+          imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Cardiac_tamponade.svg/512px-Cardiac_tamponade.svg.png",
           options: [
             { id: 'a', text: "Cardiac Tamponade", isCorrect: true },
             { id: 'b', text: "Myocardial Infarction", isCorrect: false },
@@ -1126,9 +1128,10 @@ const DiagnosisDetectiveGame = () => {
             break;
           case 'escape':
             if (gameState === 'playing') {
-              setGameState('menu');
+                         setGameState('menu');
               setIsTimerActive(false);
               toast.info("Game exited successfully");
+
             }
             break;
         }
@@ -1162,41 +1165,41 @@ const DiagnosisDetectiveGame = () => {
     setSelectedAnswer(answer);
     setIsTimerActive(false);
     
-    setTimeout(() => {
-      setShowFeedback(true);
-      if (answer.isCorrect) {
-        playWhoosh(); // Success sound
-        const timeBonus = timeLeft * 10;
-        const streakBonusAmount = streakCount > 0 ? Math.pow(2, streakCount) * 50 : 0;
-        const totalPoints = 100 + timeBonus + streakBonusAmount;
-          setScore(prev => prev + totalPoints);
-        setStreakCount(prev => prev + 1);
-        setStreakBonus(streakBonusAmount);
-        setShowStreakBonus(streakBonusAmount > 0);
-        createParticles(25, 'success', window.innerWidth / 2, window.innerHeight / 2);
-        
-        // Success toast with score
-        toast.success(`Correct diagnosis! +${totalPoints} points${streakBonusAmount > 0 ? ` (streak bonus: +${streakBonusAmount})` : ''}`);
-        
-        // Award boosters for streaks
-        if ((streakCount + 1) % 3 === 0) {
-          setBoosters(prev => ({
-            ...prev,
-            hint: prev.hint + 1,
-            extraLife: prev.extraLife + 1
-          }));
-          createParticles(15, 'booster', window.innerWidth / 2, window.innerHeight / 2);
-          toast.success("Streak bonus! Gained extra hint and life!");
-        }
-      } else {
-        // Error sound and feedback
-        playWhoosh(); // Error sound (different tone)
-        setLives(prev => prev - 1);
-        setStreakCount(0);
-        createParticles(15, 'error', window.innerWidth / 2, window.innerHeight / 2);
-        toast.error("Incorrect diagnosis. Study the case more carefully!");
+    // Show feedback immediately without delay
+    setShowFeedback(true);
+    
+    if (answer.isCorrect) {
+      playWhoosh(); // Success sound
+      const timeBonus = timeLeft * 10;
+      const streakBonusAmount = streakCount > 0 ? Math.pow(2, streakCount) * 50 : 0;
+      const totalPoints = 100 + timeBonus + streakBonusAmount;
+        setScore(prev => prev + totalPoints);
+      setStreakCount(prev => prev + 1);
+      setStreakBonus(streakBonusAmount);
+      setShowStreakBonus(streakBonusAmount > 0);
+      createParticles(25, 'success', window.innerWidth / 2, window.innerHeight / 2);
+      
+      // Success toast with score
+      toast.success(`Correct diagnosis! +${totalPoints} points${streakBonusAmount > 0 ? ` (streak bonus: +${streakBonusAmount})` : ''}`);
+      
+      // Award boosters for streaks
+      if ((streakCount + 1) % 3 === 0) {
+        setBoosters(prev => ({
+          ...prev,
+          hint: prev.hint + 1,
+          extraLife: prev.extraLife + 1
+        }));
+        createParticles(15, 'booster', window.innerWidth / 2, window.innerHeight / 2);
+        toast.success("Streak bonus! Gained extra hint and life!");
       }
-    }, 800);
+    } else {
+      // Error sound and feedback
+      playWhoosh(); // Error sound (different tone)
+      setLives(prev => prev - 1);
+      setStreakCount(0);
+      createParticles(15, 'error', window.innerWidth / 2, window.innerHeight / 2);
+      toast.error("Incorrect diagnosis. Study the case more carefully!");
+    }
   }, [selectedAnswer, timeLeft, streakCount, createParticles]);
   const nextLevel = useCallback(() => {
     playWhoosh(); // Level transition sound
@@ -1209,16 +1212,13 @@ const DiagnosisDetectiveGame = () => {
       if (currentLevel < 13) {
         setCurrentLevel(prev => prev + 1);
         setCurrentQuestionIndex(0);
-        toast.success(`Level ${currentLevel + 1} unlocked! New challenge awaits.`);
         resetLevel();
       } else {
         setGameState('gameComplete');
-        toast.success("Congratulations! You've mastered all diagnostic challenges!");
       }
     } else {
       // Move to next question in same level
       setCurrentQuestionIndex(prev => prev + 1);
-      toast.success(`Next case in ${currentLevelData.title}!`);
       resetQuestion();
     }
   }, [currentLevel, currentQuestionIndex]);
@@ -1233,6 +1233,7 @@ const DiagnosisDetectiveGame = () => {
     setWrongAnswersHidden([]);
     setShowStreakBonus(false);
     setCurrentQuestionIndex(0);
+    setImageLoading(true);
   }, []);
 
   const resetQuestion = useCallback(() => {
@@ -1243,11 +1244,12 @@ const DiagnosisDetectiveGame = () => {
     setHintUsed(false);
     setWrongAnswersHidden([]);
     setShowStreakBonus(false);
+    setImageLoading(true);
   }, []);
 
   const startGame = useCallback(() => {
     playClick(); // Start game sound
-    setCurrentLevel(1);
+    // Do NOT reset currentLevel here!
     setCurrentQuestionIndex(0);
     setScore(0);
     setLives(3);
@@ -1501,6 +1503,35 @@ const DiagnosisDetectiveGame = () => {
           </div>
         </div>
       )}
+      
+      {/* Exit Confirmation Modal */}
+      {showExitConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-slate-900 rounded-2xl p-8 border border-gray-700/70 shadow-2xl max-w-sm w-full">
+            <h3 className="text-xl font-bold text-white mb-4">Exit Game?</h3>
+            <p className="text-gray-300 mb-6">Are you sure you want to exit the game? Your progress for this session will be lost.</p>
+            <div className="flex gap-4 justify-end">
+              <button
+                onClick={() => setShowExitConfirm(false)}
+                className="px-4 py-2 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowExitConfirm(false);
+                  setGameState('menu');
+                  setIsTimerActive(false);
+                  toast.info("Game exited successfully");
+                }}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition"
+              >
+                Yes, Exit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -1508,6 +1539,32 @@ const DiagnosisDetectiveGame = () => {
     const currentCase = gameData[currentLevel].questions[currentQuestionIndex];
     const IconComponent = gameData[currentLevel].icon;
     const totalQuestionsInLevel = gameData[currentLevel].questions.length;
+    
+    // Memoize option delay calculation to prevent flickering
+    const getOptionDelay = useCallback((optionId) => {
+      const order = { 'a': 0, 'b': 1, 'c': 2 };
+      return 0.1 * (order[optionId] || 0);
+    }, []);
+    
+    // Memoize button class calculation to prevent unnecessary re-renders
+    const getButtonClass = useCallback((option, isSelected, hasAnswered) => {
+      const isCorrect = option.isCorrect;
+      let buttonClass = "p-4 sm:p-5 rounded-xl border-2 transition-all duration-300 ";
+      
+      if (hasAnswered) {
+        if (isCorrect) {
+          buttonClass += "border-green-500 bg-green-500/20 text-green-300 shadow-green-500/20 shadow-lg";
+        } else if (isSelected) {
+          buttonClass += "border-red-500 bg-red-500/20 text-red-300 shadow-red-500/20 shadow-lg";
+        } else {
+          buttonClass += "border-gray-600 bg-gray-700/30 text-gray-400";
+        }
+      } else {
+        buttonClass += "border-gray-600 bg-gray-800/50 text-white hover:border-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300 cursor-pointer";
+      }
+      
+      return buttonClass;
+    }, []);
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
@@ -1581,12 +1638,7 @@ const DiagnosisDetectiveGame = () => {
               
               {/* Exit Game Button */}
               <motion.button
-                onClick={() => {
-                  playClick();
-                  setGameState('menu');
-                  setIsTimerActive(false);
-                  toast.info("Game exited successfully");
-                }}
+                onClick={() => setShowExitConfirm(true)}
                 className="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors duration-300 flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -1597,7 +1649,8 @@ const DiagnosisDetectiveGame = () => {
               </motion.button>
             </div>
           </div>
-        </div>        {/* Boosters */}
+        </div>
+        {/* Boosters */}
         <div className="p-4 border-b border-gray-700/30">
           <div className="max-w-6xl mx-auto flex gap-2 sm:gap-4 justify-center sm:justify-start">
             <motion.button
@@ -1696,12 +1749,11 @@ const DiagnosisDetectiveGame = () => {
                               src={currentCase.imageUrl} 
                               alt={`Medical illustration for ${currentCase.triad}`}
                               className="w-full h-32 object-contain rounded-lg mb-2 bg-white/10 block"
-                              crossOrigin="anonymous"
                               loading="lazy"
-                              referrerPolicy="no-referrer"
                               onError={(e) => {
                                 console.log('Primary image failed to load:', currentCase.imageUrl);
                                 const target = e.currentTarget;
+                                setImageLoading(false);
                                 
                                 // Show educational fallback immediately
                                 const fallback = target.parentElement?.querySelector('.fallback-image') as HTMLElement;
@@ -1711,9 +1763,9 @@ const DiagnosisDetectiveGame = () => {
                                     <div class="text-center p-4">
                                       <div class="text-5xl mb-3">🩺</div>
                                       <p class="text-gray-200 text-sm font-semibold mb-1">Medical Reference</p>
-                                      <p class="text-gray-300 text-xs px-2">${currentCase.triad}</p>
+                                      <p class="text-gray-300 text-xs px-2 leading-tight">${currentCase.triad}</p>
                                       <div class="mt-3 px-3 py-1 bg-blue-500/20 rounded-full">
-                                        <p class="text-blue-300 text-xs">Educational Content</p>
+                                        <p class="text-blue-300 text-xs">Study Material</p>
                                       </div>
                                     </div>
                                   `;
@@ -1722,16 +1774,17 @@ const DiagnosisDetectiveGame = () => {
                               }}
                               onLoad={(e) => {
                                 console.log('Image loaded successfully:', currentCase.imageUrl);
+                                setImageLoading(false);
                                 const fallback = e.currentTarget.parentElement?.querySelector('.fallback-image') as HTMLElement;
                                 if (fallback) {
                                   fallback.style.display = 'none';
                                 }
                               }}
                             />
-                            <div className="fallback-image hidden bg-gradient-to-br from-slate-600/50 to-slate-700/50 rounded-lg h-32 flex flex-col items-center justify-center border border-gray-600/30">
+                            <div className={`fallback-image ${imageLoading ? 'flex' : 'hidden'} bg-gradient-to-br from-slate-600/50 to-slate-700/50 rounded-lg h-32 flex-col items-center justify-center border border-gray-600/30`}>
                               <div className="text-4xl mb-2 animate-pulse">🏥</div>
                               <p className="text-gray-400 text-sm text-center font-medium">Medical Reference</p>
-                              <p className="text-gray-500 text-xs text-center">Image Loading...</p>
+                              <p className="text-gray-500 text-xs text-center">{imageLoading ? 'Loading Image...' : 'Image Not Available'}</p>
                             </div>
                           </>
                         ) : (
@@ -1756,34 +1809,24 @@ const DiagnosisDetectiveGame = () => {
                 
                 // Determine button state to prevent flickering
                 const isSelected = selectedAnswer === option;
-                const isCorrect = option.isCorrect;
                 const hasAnswered = selectedAnswer !== null;
-                
-                let buttonClass = "p-4 sm:p-5 rounded-xl border-2 transition-all duration-300 ";
-                
-                if (hasAnswered) {
-                  if (isCorrect) {
-                    buttonClass += "border-green-500 bg-green-500/20 text-green-300 shadow-green-500/20 shadow-lg";
-                  } else if (isSelected) {
-                    buttonClass += "border-red-500 bg-red-500/20 text-red-300 shadow-red-500/20 shadow-lg";
-                  } else {
-                    buttonClass += "border-gray-600 bg-gray-700/30 text-gray-400";
-                  }
-                } else {
-                  buttonClass += "border-gray-600 bg-gray-800/50 text-white hover:border-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300 cursor-pointer";
-                }
+                const buttonClass = getButtonClass(option, isSelected, hasAnswered);
 
                 return (
                   <motion.button
-                    key={option.id}
+                    key={`${currentLevel}-${currentQuestionIndex}-${option.id}`}
                     onClick={() => handleAnswerSelect(option)}
                     disabled={hasAnswered}
                     className={buttonClass}
                     whileHover={!hasAnswered ? { scale: 1.02 } : {}}
                     whileTap={!hasAnswered ? { scale: 0.98 } : {}}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 1, y: 0 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 * ['a', 'b', 'c'].indexOf(option.id) }}
+                    transition={{ 
+                      duration: 0.15,
+                      ease: "easeOut"
+                    }}
+                    layout={false}
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-7 h-7 rounded-full border-2 border-current flex items-center justify-center font-bold shrink-0">
@@ -1795,78 +1838,113 @@ const DiagnosisDetectiveGame = () => {
                 );
               })}
             </div>            {/* Feedback */}
-            <AnimatePresence>
-              {showFeedback && (
-                <motion.div 
-                  className="mt-6 bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50"
-                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <motion.div 
-                      className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                        selectedAnswer?.isCorrect ? 'bg-green-500' : 'bg-red-500'
-                      }`}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.1, type: "spring", stiffness: 300 }}
-                    >
-                      {selectedAnswer?.isCorrect ? (
-                        <Star className="text-white" size={20} />
-                      ) : (
-                        <RefreshCw className="text-white" size={20} />
-                      )}
-                    </motion.div>
-                    <div>
-                      <motion.h4 
-                        className={`text-xl font-bold ${selectedAnswer?.isCorrect ? 'text-green-400' : 'text-red-400'}`}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        {selectedAnswer?.isCorrect ? 'Correct Diagnosis!' : 'Incorrect Diagnosis'}
-                      </motion.h4>
-                      {showStreakBonus && (
-                        <motion.p 
-                          className="text-sm text-purple-300"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.3 }}
-                        >
-                          +{streakBonus} streak bonus!
-                        </motion.p>
-                      )}
-                    </div>
-                  </div>
-                  <motion.p 
-                    className="text-gray-300 mb-4"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
+            {showFeedback && (
+              <div className="mt-6 bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50">
+                <div className="flex items-center gap-3 mb-3">
+                  <div 
+                    className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+                      selectedAnswer?.isCorrect ? 'bg-green-500' : 'bg-red-500'
+                    }`}
                   >
-                    {currentCase.explanation}
-                  </motion.p>
-                  
-                  <div className="flex gap-3">
-                    <motion.button
-                      onClick={nextLevel}
-                      className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold text-white hover:scale-105 transform transition-all duration-300 flex-1 text-center"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {currentLevel < 13 ? 'Next Level' : 'Complete Game'}
-                    </motion.button>
+                    {selectedAnswer?.isCorrect ? (
+                      <Star className="text-white" size={20} />
+                    ) : (
+                      <RefreshCw className="text-white" size={20} />
+                    )}
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <div>
+                    <h4 
+                      className={`text-xl font-bold ${selectedAnswer?.isCorrect ? 'text-green-400' : 'text-red-400'}`}
+                    >
+                      {selectedAnswer?.isCorrect ? 'Correct Diagnosis!' : 'Incorrect Diagnosis'}
+                    </h4>
+                    {showStreakBonus && (
+                      <p className="text-sm text-purple-300">
+                        +{streakBonus} streak bonus!
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <p className="text-gray-300 mb-4">
+                  {currentCase.explanation}
+                </p>
+                
+                <div className="flex gap-3">
+                  <button
+                    onClick={nextLevel}
+                    className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold text-white hover:scale-105 transform transition-all duration-200 flex-1 text-center"
+                  >
+                    {currentLevel < 13 ? 'Next Level' : 'Complete Game'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* TODO: Add keyboard shortcuts and exit modal */}
+
+        {/* Keyboard Shortcuts Info Panel - Lower Left Corner */}
+        <div className="fixed bottom-4 left-4 bg-slate-900/90 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 shadow-2xl max-w-xs z-40">
+          <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
+            <span>⌨️</span> Keyboard Shortcuts
+          </h4>
+          <div className="space-y-1 text-xs text-gray-300">
+            <div className="flex justify-between">
+              <span>Answer A:</span>
+              <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-gray-200">1</kbd>
+            </div>
+            <div className="flex justify-between">
+              <span>Answer B:</span>
+              <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-gray-200">2</kbd>
+            </div>
+            <div className="flex justify-between">
+              <span>Answer C:</span>
+              <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-gray-200">3</kbd>
+            </div>
+            <div className="flex justify-between">
+              <span>Hint:</span>
+              <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-gray-200">H</kbd>
+            </div>
+            <div className="flex justify-between">
+              <span>Skip:</span>
+              <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-gray-200">S</kbd>
+            </div>
+            <div className="flex justify-between">
+              <span>Extra Life:</span>
+              <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-gray-200">L</kbd>
+            </div>
+          </div>
+        </div>
+
+        {/* Exit Confirmation Modal */}
+        {showExitConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+            <div className="bg-slate-900 rounded-2xl p-8 border border-gray-700/70 shadow-2xl max-w-sm w-full mx-4">
+              <h3 className="text-xl font-bold text-white mb-4">Exit Game?</h3>
+              <p className="text-gray-300 mb-6">Are you sure you want to exit the game? Your progress for this session will be lost.</p>
+              <div className="flex gap-4 justify-end">
+                <button
+                  onClick={() => setShowExitConfirm(false)}
+                  className="px-4 py-2 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowExitConfirm(false);
+                    setGameState('menu');
+                    setIsTimerActive(false);
+                    toast.info("Game exited successfully");
+                  }}
+                  className="px-4 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition"
+                >
+                  Yes, Exit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -2063,6 +2141,34 @@ const DiagnosisDetectiveGame = () => {
                   ))}
                 </div>
               </div>
+              
+              <div>
+                <h4 className="text-lg font-semibold text-green-400 mb-3">Game Mechanics</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-slate-800/30 rounded-xl p-4 border border-gray-700/30">
+                    <div className="flex items-center gap-2 text-yellow-400 mb-2">
+                      <Target size={18} />
+                      <h5 className="font-bold">Scoring</h5>
+                    </div>
+                    <p className="text-sm text-gray-300">
+                      Base points: 100 per correct diagnosis<br />
+                      Time bonus: 10 points per second remaining<br />
+                      Streak bonus: 2ⁿ×50 points for n consecutive correct answers
+                    </p>
+                  </div>
+                  <div className="bg-slate-800/30 rounded-xl p-4 border border-gray-700/30">
+                    <div className="flex items-center gap-2 text-blue-400 mb-2">
+                      <Zap size={18} />
+                      <h5 className="font-bold">Boosters</h5>
+                    </div>
+                    <p className="text-sm text-gray-300">
+                      <span className="text-yellow-400">Hint:</span> Eliminates one wrong answer<br />
+                      <span className="text-blue-400">Skip:</span> Pass to next question<br />
+                      <span className="text-red-400">+Life:</span> Gain an extra attempt
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
             
             <div className="p-6 border-t border-gray-700/50">
@@ -2076,10 +2182,42 @@ const DiagnosisDetectiveGame = () => {
           </div>
         </div>
       )}
+      
+      {/* Exit Confirmation Modal */}
+      {showExitConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-slate-900 rounded-2xl p-8 border border-gray-700/70 shadow-2xl max-w-sm w-full">
+            <h3 className="text-xl font-bold text-white mb-4">Exit Game?</h3>
+            <p className="text-gray-300 mb-6">Are you sure you want to exit the game? Your progress for this session will be lost.</p>
+            <div className="flex gap-4 justify-end">
+              <button
+                onClick={() => setShowExitConfirm(false)}
+                className="px-4 py-2 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowExitConfirm(false);
+                  setGameState('menu');
+                  setIsTimerActive(false);
+                  toast.info("Game exited successfully");
+                }}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition"
+              >
+                Yes, Exit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
+
+
+
   return (
-    <div className="font-sans min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
+    <div>
       {/* Only show PreHeader on menu screen for navigation */}
       {gameState === 'menu' && (
         <PreHeader currentPage="Diagnosis Detective" userName="Dr. Detective" />
@@ -2136,53 +2274,6 @@ const DiagnosisDetectiveGame = () => {
       
       {/* Only show Footer on menu screen */}
       {gameState === 'menu' && <Footer isActive={true} playClickSound={playClick} />}
-
-      {/* Keyboard navigation support*/}
-      {gameState === 'playing' && (
-        <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute left-2 right-22 bottom-10 bg-slate-800/80 backdrop-blur-md rounded-lg p-2 border border-gray-700/50">
-            <p className="text-sm text-gray-300 mb-2">Keyboard Shortcuts:</p>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                  <span className="text-white font-semibold">A</span>
-                </div>
-                <span className="text-sm text-gray-400">Select Option A</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                  <span className="text-white font-semibold">B</span>
-                </div>
-                <span className="text-sm text-gray-400">Select Option B</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                  <span className="text-white font-semibold">C</span>
-                </div>
-                <span className="text-sm text-gray-400">Select Option C</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center">
-                  <span className="text-white font-semibold">1</span>
-                </div>
-                <span className="text-sm text-gray-400">Use Hint</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
-                  <span className="text-white font-semibold">2</span>
-                </div>
-                <span className="text-sm text-gray-400">Skip Question</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center">
-                  <span className="text-white font-semibold">3</span>
-                </div>
-                <span className="text-sm text-gray-400">Extra Life</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

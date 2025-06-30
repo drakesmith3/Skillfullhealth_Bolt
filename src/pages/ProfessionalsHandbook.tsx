@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BookOpen, Award, DollarSign, Users, Shield, TrendingUp, Gamepad2, MessageSquare, AlertTriangle, Heart, Star, Target, Zap, Sparkles, ChevronRight, ArrowUpRight, CheckCircle, Crown, Medal, Trophy, GraduationCap, Briefcase, Globe, Clock, X } from 'lucide-react';
+import Footer from '../components/Footer';
 
 export default function ProfessionalsHandbook() {
   // Sound effects (if audio files are available)
@@ -16,7 +17,8 @@ export default function ProfessionalsHandbook() {
   }, []);
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-red-50/20 dark:from-black dark:via-gray-900 dark:to-red-950/20 py-16 relative overflow-hidden">
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-red-50/20 dark:from-black dark:via-gray-900 dark:to-red-950/20 py-16 relative overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-red-500/10 to-yellow-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -2052,5 +2054,8 @@ export default function ProfessionalsHandbook() {
           </div>
         </div>
       </div>
+      
+      <Footer isActive={true} />
+    </>
   );
 }
