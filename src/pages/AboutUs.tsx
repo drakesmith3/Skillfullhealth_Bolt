@@ -38,10 +38,11 @@ const teamMembers = [
     bio: "Database expert of 15+, Product strategist and partnership builder, making things run smoothly and connecting GLOHSEN with key stakeholders across Africa."
   },
   {
-    name: "Halima Fimihan",
+    name: "Halima Odunola",
     role: "Chief Operations Officer",
     image: "/public/team/Halima pic.jpg",
-    bio: "Medical Biochemist, Back-end Engineer, AI/ML Enthusiast  with passion for professional development and organisational growth. She is driving the daily technical operations for the GLOHSEN platform."
+    linkedinProfile: "https://www.linkedin.com/in/harlimat-odunola-2ab261235/",
+    bio: "Medical Biochemist, Back-end Engineer, AI/ML Enthusiast,  passionate about professional development and organisational growth. She is driving the daily technical operations for the GLOHSEN platform."
   },
     {
     name: "Dr Kadiri Adaba MD",
