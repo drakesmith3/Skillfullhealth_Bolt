@@ -1503,35 +1503,6 @@ const DiagnosisDetectiveGame = () => {
           </div>
         </div>
       )}
-      
-      {/* Exit Confirmation Modal */}
-      {showExitConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-slate-900 rounded-2xl p-8 border border-gray-700/70 shadow-2xl max-w-sm w-full">
-            <h3 className="text-xl font-bold text-white mb-4">Exit Game?</h3>
-            <p className="text-gray-300 mb-6">Are you sure you want to exit the game? Your progress for this session will be lost.</p>
-            <div className="flex gap-4 justify-end">
-              <button
-                onClick={() => setShowExitConfirm(false)}
-                className="px-4 py-2 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  setShowExitConfirm(false);
-                  setGameState('menu');
-                  setIsTimerActive(false);
-                  toast.info("Game exited successfully");
-                }}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition"
-              >
-                Yes, Exit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -2177,35 +2148,6 @@ const DiagnosisDetectiveGame = () => {
                 className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-bold text-white hover:opacity-90 transition-opacity"
               >
                 Close Curriculum
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Exit Confirmation Modal */}
-      {showExitConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-slate-900 rounded-2xl p-8 border border-gray-700/70 shadow-2xl max-w-sm w-full">
-            <h3 className="text-xl font-bold text-white mb-4">Exit Game?</h3>
-            <p className="text-gray-300 mb-6">Are you sure you want to exit the game? Your progress for this session will be lost.</p>
-            <div className="flex gap-4 justify-end">
-              <button
-                onClick={() => setShowExitConfirm(false)}
-                className="px-4 py-2 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  setShowExitConfirm(false);
-                  setGameState('menu');
-                  setIsTimerActive(false);
-                  toast.info("Game exited successfully");
-                }}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition"
-              >
-                Yes, Exit
               </button>
             </div>
           </div>
