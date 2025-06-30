@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import PreHeader from '@/components/PreHeader';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 type TabKey = UserRole;
 
@@ -25,6 +26,7 @@ const SignUpPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { signUp, loading, user } = useAuth(); // Added useAuth hook
+    const { isDark, theme } = useTheme(); // Added theme context
     const [activeTab, setActiveTab] = useState<TabKey>('student');
     const [formData, setFormData] = useState<SignUpFormData>({
         email: '',
@@ -207,14 +209,24 @@ const SignUpPage = () => {
     return (
         <>
             <PreHeader />
-            <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+            <div className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300 ${
+                isDark 
+                    ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
+                    : 'bg-gradient-to-br from-white via-gray-50 to-gray-100'
+            }`}>
                 <div className="max-w-4xl mx-auto pt-16">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl p-8 border border-gray-200"
+                        className={`rounded-xl shadow-xl p-8 border transition-all duration-300 ${
+                            isDark 
+                                ? 'bg-gray-800/90 backdrop-blur-sm border-gray-700' 
+                                : 'bg-white/80 backdrop-blur-sm border-gray-200'
+                        }`}
                     >
-                        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+                        <h2 className={`text-3xl font-bold text-center mb-8 transition-colors duration-300 ${
+                            isDark ? 'text-white' : 'text-gray-900'
+                        }`}>
                             Create Your Account
                         </h2>
 
@@ -226,15 +238,34 @@ const SignUpPage = () => {
                                         setActiveTab(tab.key);
                                         setFormData(prev => ({ ...prev, role: tab.key }));
                                     }}
-                                    className={`relative p-4 rounded-lg transition-all duration-200 ${
+                                    className={`group relative p-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary ${
                                         activeTab === tab.key
-                                            ? 'bg-primary text-white shadow-lg'
-                                            : 'bg-white text-gray-600 hover:bg-gray-50'
+                                            ? `shadow-lg ${isDark ? 'bg-white text-black ring-primary/50' : 'bg-primary text-primary-foreground ring-primary/30'}`
+                                            : `transition-colors duration-200 ${
+                                                isDark 
+                                                    ? 'bg-gray-700 text-gray-200 hover:bg-amber-500 hover:!text-black' 
+                                                    : 'bg-gray-100 text-gray-600 hover:bg-black hover:text-white'
+                                              }`
                                     }`}
+                                    style={{ 
+                                        backgroundColor: activeTab === tab.key && isDark ? '#FFFFFF' : undefined,
+                                     }}
                                     disabled={loading}
                                 >
-                                    <h3 className="text-lg font-semibold mb-1">{tab.label}</h3>
-                                    <p className="text-sm opacity-80">{tab.description}</p>
+                                    <h3 className={`text-lg font-semibold mb-1 transition-colors duration-200 ${
+                                        activeTab === tab.key 
+                                            ? isDark ? 'text-black' : 'text-primary-foreground'
+                                            : isDark 
+                                                ? 'text-gray-200 group-hover:!text-black' 
+                                                : 'text-gray-800 group-hover:text-white'
+                                    }`}>{tab.label}</h3>
+                                    <p className={`text-sm transition-colors duration-200 ${
+                                        activeTab === tab.key 
+                                            ? isDark ? 'text-black/80' : 'text-primary-foreground/90'
+                                            : isDark 
+                                                ? 'text-gray-400 group-hover:!text-black' 
+                                                : 'text-gray-600 group-hover:text-gray-300'
+                                    }`}>{tab.description}</p>
                                     {activeTab === tab.key && (
                                         <motion.div
                                             layoutId="active-tab"
@@ -258,7 +289,9 @@ const SignUpPage = () => {
                             >
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">
+                                        <label className={`block text-sm font-medium transition-colors duration-300 ${
+                                            isDark ? 'text-gray-200' : 'text-gray-700'
+                                        }`}>
                                             First Name
                                         </label>
                                         <input
@@ -266,12 +299,18 @@ const SignUpPage = () => {
                                             required
                                             value={formData.firstName}
                                             onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                            className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary ${
+                                                isDark 
+                                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 hover:bg-gray-600 hover:border-gray-500' 
+                                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400 hover:shadow-md'
+                                            }`}
                                             disabled={loading}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">
+                                        <label className={`block text-sm font-medium transition-colors duration-300 ${
+                                            isDark ? 'text-gray-200' : 'text-gray-700'
+                                        }`}>
                                             Last Name
                                         </label>
                                         <input
@@ -279,14 +318,20 @@ const SignUpPage = () => {
                                             required
                                             value={formData.lastName}
                                             onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                            className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary ${
+                                                isDark 
+                                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 hover:bg-gray-600 hover:border-gray-500' 
+                                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400 hover:shadow-md'
+                                            }`}
                                             disabled={loading}
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">
+                                    <label className={`block text-sm font-medium transition-colors duration-300 ${
+                                        isDark ? 'text-gray-200' : 'text-gray-700'
+                                    }`}>
                                         Email
                                     </label>
                                     <input
@@ -294,13 +339,19 @@ const SignUpPage = () => {
                                         required
                                         value={formData.email}
                                         onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                        className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary ${
+                                            isDark 
+                                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 hover:bg-gray-600 hover:border-gray-500' 
+                                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400 hover:shadow-md'
+                                        }`}
                                         disabled={loading}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">
+                                    <label className={`block text-sm font-medium transition-colors duration-300 ${
+                                        isDark ? 'text-gray-200' : 'text-gray-700'
+                                    }`}>
                                         Password (minimum 6 characters)
                                     </label>
                                     <input
@@ -309,13 +360,19 @@ const SignUpPage = () => {
                                         minLength={6}
                                         value={formData.password}
                                         onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                        className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary ${
+                                            isDark 
+                                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 hover:bg-gray-600 hover:border-gray-500' 
+                                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400 hover:shadow-md'
+                                        }`}
                                         disabled={loading}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">
+                                    <label className={`block text-sm font-medium transition-colors duration-300 ${
+                                        isDark ? 'text-gray-200' : 'text-gray-700'
+                                    }`}>
                                         Confirm Password
                                     </label>
                                     <input
@@ -323,13 +380,19 @@ const SignUpPage = () => {
                                         required
                                         value={formData.confirmPassword}
                                         onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                        className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary ${
+                                            isDark 
+                                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 hover:bg-gray-600 hover:border-gray-500' 
+                                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400 hover:shadow-md'
+                                        }`}
                                         disabled={loading}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">
+                                    <label className={`block text-sm font-medium transition-colors duration-300 ${
+                                        isDark ? 'text-gray-200' : 'text-gray-700'
+                                    }`}>
                                         Phone Number (Required for MLM verification)
                                     </label>
                                     <input
@@ -337,11 +400,17 @@ const SignUpPage = () => {
                                         required
                                         value={formData.phoneNumber}
                                         onChange={(e) => setFormData(prev => ({ ...prev, phoneNumber: e.target.value }))}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                        className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary ${
+                                            isDark 
+                                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 hover:bg-gray-600 hover:border-gray-500' 
+                                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400 hover:shadow-md'
+                                        }`}
                                         placeholder="+1234567890"
                                         disabled={loading}
                                     />
-                                    <p className="mt-1 text-xs text-gray-500">
+                                    <p className={`mt-1 text-xs transition-colors duration-300 ${
+                                        isDark ? 'text-gray-400' : 'text-gray-500'
+                                    }`}>
                                         A unique phone number is required for our MLM verification system
                                     </p>
                                 </div>
@@ -349,7 +418,9 @@ const SignUpPage = () => {
                                 {/* Affiliate Link Field - Only for professionals */}
                                 {activeTab === 'professional' && (
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">
+                                        <label className={`block text-sm font-medium transition-colors duration-300 ${
+                                            isDark ? 'text-gray-200' : 'text-gray-700'
+                                        }`}>
                                             Affiliate Link (Required for Professionals)
                                         </label>
                                         <input
@@ -357,12 +428,18 @@ const SignUpPage = () => {
                                             required
                                             value={formData.uplineUIN}
                                             onChange={(e) => setFormData(prev => ({ ...prev, uplineUIN: e.target.value }))}
-                                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                            className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary ${
+                                                isDark 
+                                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 hover:bg-gray-600 hover:border-gray-500' 
+                                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400 hover:shadow-md'
+                                            }`}
                                             placeholder="Enter UIN of referring professional (e.g., 1A2)"
                                             readOnly={!!formData.affiliateLink}
                                             disabled={loading}
                                         />
-                                        <p className="mt-1 text-xs text-gray-500">
+                                        <p className={`mt-1 text-xs transition-colors duration-300 ${
+                                            isDark ? 'text-gray-400' : 'text-gray-500'
+                                        }`}>
                                             You can only sign up as a professional using the affiliate link of an existing professional.
                                             {formData.affiliateLink && ' (Auto-populated from affiliate link)'}
                                         </p>
@@ -375,10 +452,16 @@ const SignUpPage = () => {
                                         id="setup-2fa"
                                         checked={formData.setup2FA}
                                         onChange={(e) => setFormData(prev => ({ ...prev, setup2FA: e.target.checked }))}
-                                        className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                        className={`h-4 w-4 text-primary border rounded focus:ring-primary transition-colors duration-300 ${
+                                            isDark 
+                                                ? 'bg-gray-700 border-gray-600 checked:bg-primary checked:border-primary' 
+                                                : 'bg-white border-gray-300 checked:bg-primary checked:border-primary'
+                                        }`}
                                         disabled={loading}
                                     />
-                                    <label htmlFor="setup-2fa" className="text-sm text-gray-700">
+                                    <label htmlFor="setup-2fa" className={`text-sm transition-colors duration-300 ${
+                                        isDark ? 'text-gray-200' : 'text-gray-700'
+                                    }`}>
                                         Set up Two-Factor Authentication (Recommended)
                                     </label>
                                 </div>
@@ -388,11 +471,11 @@ const SignUpPage = () => {
                                     whileTap={{ scale: loading ? 1 : 0.98 }}
                                     type="submit"
                                     disabled={loading}
-                                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
                                         loading
-                                            ? 'bg-gray-400 cursor-not-allowed'
-                                            : 'bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
-                                    }`}
+                                            ? 'bg-gray-400 cursor-not-allowed text-white'
+                                            : `bg-primary hover:bg-primary/90 hover:shadow-lg transform hover:-translate-y-0.5 text-primary-foreground ${isDark ? 'hover:bg-white hover:!text-black' : ''}`
+                                    } ${isDark ? 'focus:ring-offset-gray-800' : 'focus:ring-offset-white'}`}
                                 >
                                     {loading
                                         ? 'Creating Account...'
@@ -401,12 +484,18 @@ const SignUpPage = () => {
                                 </motion.button>
 
                                 <div className="text-center mt-6">
-                                    <p className="text-sm text-gray-600">
+                                    <p className={`text-sm transition-colors duration-300 ${
+                                        isDark ? 'text-gray-300' : 'text-gray-600'
+                                    }`}>
                                         Already have an account?{' '}
                                         <button
                                             type="button"
                                             onClick={() => navigate('/signin')}
-                                            className="text-primary hover:underline font-medium"
+                                            className={`font-medium transition-all duration-300 hover:underline focus:outline-none focus:underline focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded px-1 py-0.5 ${
+                                                isDark 
+                                                    ? 'text-primary hover:text-white hover:bg-primary focus:ring-offset-gray-800' 
+                                                    : 'text-primary hover:text-white hover:bg-primary focus:ring-offset-white'
+                                            }`}
                                             disabled={loading}
                                         >
                                             Sign in here
