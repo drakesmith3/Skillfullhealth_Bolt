@@ -1,23 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Globe } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import Footer from '../components/Footer';
 import { type UserRole } from "@/lib/unis";
 import PreHeader from '@/components/PreHeader';
+import { useAuth } from '../contexts/AuthContext';
 
 const SignInPage: React.FC = () => {
   const navigate = useNavigate();
+  const { signIn, loading, user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState<UserRole>('professional');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      const userRole = user.user_metadata?.user_type || 'professional';
+      navigate(`/dashboard/${userRole}`);
+    }
+  }, [user, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,21 +36,38 @@ const SignInPage: React.FC = () => {
       ...prev,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Sign in attempt:', { ...formData, userType });
-    
-    // Mock authentication logic
-    if (formData.email && formData.password) {
-      // Set authentication state
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userType', userType);
-      localStorage.setItem('userName', 'User Name'); // Mock user name
-      
-      // Navigate to appropriate dashboard
-      navigate(`/dashboard/${userType}`);
+    setError('');
+
+    try {
+      const { user: authUser, error: authError } = await signIn({
+        email: formData.email,
+        password: formData.password
+      });
+
+      if (authError) {
+        setError(authError.message);
+      } else if (authUser) {
+        // Get user type from metadata, fallback to selected userType
+        const userRole = authUser.user_metadata?.user_type || userType;
+
+        // Optional: Update user metadata if it doesn't exist
+        if (!authUser.user_metadata?.user_type) {
+          // You might want to update the user's metadata here
+          console.log('User type not set in metadata, using:', userType);
+        }
+
+        // Navigate to appropriate dashboard
+        navigate(`/dashboard/${userRole}`);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+      console.error('Sign in error:', err);
     }
   };
 
@@ -47,7 +75,7 @@ const SignInPage: React.FC = () => {
     <>
       <PreHeader />
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-amber-50 to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        
+
         <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 pt-20">
           <Card className="w-full max-w-md shadow-2xl">
             <CardHeader className="space-y-1 text-center">
@@ -60,6 +88,12 @@ const SignInPage: React.FC = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md">
+                    {error}
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="userType" className="text-base font-semibold">I am signing in as a</Label>
                   <Select value={userType} onValueChange={(value: UserRole) => setUserType(value)}>
@@ -87,6 +121,7 @@ const SignInPage: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     className="h-12"
+                    disabled={loading}
                   />
                 </div>
 
@@ -102,6 +137,7 @@ const SignInPage: React.FC = () => {
                       onChange={handleInputChange}
                       required
                       className="h-12 pr-12"
+                      disabled={loading}
                     />
                     <Button
                       type="button"
@@ -109,6 +145,7 @@ const SignInPage: React.FC = () => {
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
+                      disabled={loading}
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -125,8 +162,12 @@ const SignInPage: React.FC = () => {
                   </Link>
                 </div>
 
-                <Button type="submit" className="w-full h-12 bg-gradient-to-r from-[#ea384c] to-[#D4AF37] hover:from-[#d12e42] hover:to-[#B8941F] text-white font-semibold">
-                  Sign In
+                <Button
+                  type="submit"
+                  className="w-full h-12 bg-gradient-to-r from-[#ea384c] to-[#D4AF37] hover:from-[#d12e42] hover:to-[#B8941F] text-white font-semibold"
+                  disabled={loading}
+                >
+                  {loading ? 'Signing In...' : 'Sign In'}
                 </Button>
               </form>
 
@@ -141,7 +182,7 @@ const SignInPage: React.FC = () => {
             </CardContent>
           </Card>
         </div>
-        
+
         <Footer isActive={false} />
       </div>
     </>

@@ -1,4 +1,5 @@
 import React from "react";
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { BrowserRouter as Router, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -119,7 +120,7 @@ const getPageTitle = (pathname: string): string => {
   if (customTitles[pathname]) {
     return customTitles[pathname];
   }
-  
+
   if (pathname.includes('/dashboard/') && pathname.includes('/notifications')) title = "Notifications";
   if (pathname.includes('/dashboard/') && pathname.includes('/inbox')) title = "Inbox";
 
@@ -129,18 +130,26 @@ const getPageTitle = (pathname: string): string => {
 // Layout for authenticated users
 const AuthenticatedLayout = () => {
   const location = useLocation();
-  if (!isAuthenticated()) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
     return <Navigate to="/signin" replace />;
   }
-  const userType = getUserType();
-  const userName = getUserName();
 
-  const safeUserType = userType || 'student';
-  const safeUserName = userName || 'User';
+  const userType = user.user_metadata?.user_type || 'student';
+  const userName = user.user_metadata?.full_name || user.email || 'User';
   const pageTitle = getPageTitle(location.pathname);
 
   return (
-    <DashboardLayout userType={safeUserType} userName={safeUserName} pageTitle={pageTitle}>
+    <DashboardLayout userType={userType as UserType} userName={userName} pageTitle={pageTitle}>
       <Outlet />
     </DashboardLayout>
   );
@@ -149,6 +158,7 @@ const AuthenticatedLayout = () => {
 // Layout for public content that shows sidebar if logged in
 const PublicContentLayout = () => {
   const location = useLocation();
+
   if (isAuthenticated()) {
     const userType = getUserType();
     const userName = getUserName();
@@ -165,7 +175,8 @@ const PublicContentLayout = () => {
   return <Outlet />;
 };
 
-function App() {
+// Main App component wrapped with providers
+const AppContent = () => {
   // Sound management state
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
@@ -175,7 +186,7 @@ function App() {
   useEffect(() => {
     // Initially mute audioPlayer to comply with autoplay restrictions
     audioPlayer.muted = true;
-    
+
     // Preload common sound effects
     audioPlayer.preload(['/click.mp3', '/page-turn.mp3']);
 
@@ -185,12 +196,12 @@ function App() {
         setHasUserInteracted(true);
         audioPlayer.muted = false;
         setIsSoundEnabled(true);
-        
+
         // Play a click sound immediately upon enabling audio (first interaction)
         audioPlayer.play('/click.mp3', volume).catch(error => {
           console.warn('Failed to play initial click sound:', error);
         });
-        
+
         // Remove listeners after first interaction
         document.removeEventListener('click', enableAudio);
         document.removeEventListener('keydown', enableAudio);
@@ -209,7 +220,7 @@ function App() {
       document.removeEventListener('keydown', enableAudio);
       document.removeEventListener('touchstart', enableAudio);
     };
-  }, [hasUserInteracted]);
+  }, [hasUserInteracted, volume]);
 
   // Create click sound function
   const playClickSound = useCallback(() => {
@@ -220,7 +231,7 @@ function App() {
     }
   }, [isSoundEnabled, hasUserInteracted, volume]);
 
-  // Toggle sound function (for potential future use)
+  // Toggle sound function
   const toggleSound = useCallback(() => {
     const muted = audioPlayer.toggleMute();
     setIsSoundEnabled(!muted);
@@ -247,11 +258,17 @@ function App() {
       <AccessibilityProvider>
         <SecurityProvider>
           <GlohsenScoreProvider>
-            <SoundProvider playClickSound={playClickSound} isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} volume={volume} setVolume={setVolume}>
-              {/* Sound toggle UI accessible on all pages */}
+            <SoundProvider
+              playClickSound={playClickSound}
+              isSoundEnabled={isSoundEnabled}
+              toggleSound={toggleSound}
+              volume={volume}
+              setVolume={setVolume}
+            >
               <Router>
                 <Routes>
-                  {/* Fully Public Routes - No sidebar */}                <Route path="/" element={<Home />} />
+                  {/* Fully Public Routes - No sidebar */}
+                  <Route path="/" element={<Home />} />
                   <Route path="/about-us" element={<AboutUs />} />
                   <Route path="/contact-us" element={<ContactUs />} />
                   <Route path="/testimonials" element={<Testimonials />} />
@@ -260,15 +277,19 @@ function App() {
                   <Route path="/login" element={<SignInPage />} />
                   <Route path="/sitemap" element={<Sitemap />} />
                   <Route path="/signed-out" element={<SignedOutPage />} />
-                  
+
                   {/* Profile Completion Route */}
-                  <Route path="/profile-completion" element={<ProfileCompletion />} />                {/* Admin Routes */}
+                  <Route path="/profile-completion" element={<ProfileCompletion />} />
+
+                  {/* Admin Routes */}
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
                   {/* Account Settings Routes - No sidebar/footer */}
                   <Route path="/account-settings" element={<AccountSettings />} />
                   <Route path="/account-settings/professional" element={<AccountSettings />} />
-                  <Route path="/account-settings/:userType" element={<AccountSettings />} />                  {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
+                  <Route path="/account-settings/:userType" element={<AccountSettings />} />
+
+                  {/* Public Content Routes - Sidebar if logged in, otherwise no sidebar */}
                   <Route element={<PublicContentLayout />}>
                     <Route path="/particle-performance" element={<ParticlePerformanceTest />} />
                     <Route path="/butterfly-experience" element={<ParticleButterflyExperience />} />
@@ -277,7 +298,9 @@ function App() {
                     <Route path="/jobs" element={<JobBoard />} />
                     <Route path="/community-forum" element={<CommunityForum />} />
                     <Route path="/forum" element={<CommunityForum />} />
-                    <Route path="/community" element={<CommunityForum />} />                    <Route path="/discussion" element={<CommunityForum />} />                    <Route path="/games-quizzes" element={<GamesAndQuizzes />} />
+                    <Route path="/community" element={<CommunityForum />} />
+                    <Route path="/discussion" element={<CommunityForum />} />
+                    <Route path="/games-quizzes" element={<GamesAndQuizzes />} />
                     <Route path="/diagnosis-detective" element={<DiagnosisDetective />} />
                     <Route path="/medical-quizzes-games" element={<GamesAndQuizzes />} />
                     <Route path="/games" element={<GamesAndQuizzes />} />
@@ -296,14 +319,17 @@ function App() {
                     <Route path="/accessibility" element={<AccessibilityStatement />} />
                     <Route path="/support" element={<Support />} />
                     <Route path="/general-feedback" element={<GeneralFeedbackForm />} />
-                  </Route>                {/* Authenticated Routes - Always have sidebar */}
+                  </Route>
+
+                  {/* Authenticated Routes - Always have sidebar */}
                   <Route element={<AuthenticatedLayout />}>
                     <Route path="/professional-dashboard" element={<DashboardPage />} />
                     <Route path="/dashboard/professional" element={<DashboardPage />} />
                     <Route path="/dashboard/employer" element={<EmployerDashboard />} />
-                    <Route path="/dashboard/tutor" element={<TutorDashboard />} />                  <Route path="/dashboard/student" element={<StudentDashboard />} />
+                    <Route path="/dashboard/tutor" element={<TutorDashboard />} />
+                    <Route path="/dashboard/student" element={<StudentDashboard />} />
                     <Route path="/dashboard/client" element={<ClientDashboard />} />
-                    
+
                     <Route path="/dashboard/:userType/notifications" element={<NotificationsPage />} />
                     <Route path="/dashboard/:userType/inbox" element={<NotificationsPage />} />
                     <Route path="/notifications/professional" element={<NotificationsPage />} />
@@ -311,10 +337,10 @@ function App() {
                     <Route path="/score" element={<GlohsenScore />} />
                     <Route path="/score/calculate" element={<GlohsenScore />} />
                     <Route path="/score/details" element={<GlohsenScore />} />
-                    
+
                     <Route path="/employer/criteria" element={<EmployerCriteriaPage />} />
                     <Route path="/employer/payment" element={<EmployerPayment />} />
-                    
+
                     <Route path="/kpi-tracking" element={<KPITrackingPage />} />
                     <Route path="/kpi-dashboard" element={<KPIDashboard />} />
                     <Route path="/purse/professional" element={<ProfessionalPurse />} />
@@ -331,6 +357,15 @@ function App() {
         </SecurityProvider>
       </AccessibilityProvider>
     </ThemeProvider>
+  );
+};
+
+// Main App function that provides AuthProvider
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

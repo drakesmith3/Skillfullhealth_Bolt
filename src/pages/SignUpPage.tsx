@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserRole } from '../lib/unis';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { toast } from 'sonner'; // Assuming you're using sonner for toast, adjust if needed
-import PreHeader from '@/components/PreHeader'; // Added import
+import { toast } from 'sonner';
+import PreHeader from '@/components/PreHeader';
+import { useAuth } from '../contexts/AuthContext';
 
 type TabKey = UserRole;
 
@@ -14,35 +15,44 @@ interface SignUpFormData {
     firstName: string;
     lastName: string;
     role: UserRole;
-    phoneNumber?: string; // Added phoneNumber
-    setup2FA?: boolean; // Added for 2FA
-    affiliateLink?: string; // Added for MLM affiliate link
-    uplineUIN?: string; // Added for upline UIN
+    phoneNumber?: string;
+    setup2FA?: boolean;
+    affiliateLink?: string;
+    uplineUIN?: string;
 }
 
 const SignUpPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [activeTab, setActiveTab] = useState<TabKey>('student'); // Changed to lowercase
+    const { signUp, loading, user } = useAuth(); // Added useAuth hook
+    const [activeTab, setActiveTab] = useState<TabKey>('student');
     const [formData, setFormData] = useState<SignUpFormData>({
         email: '',
         password: '',
         confirmPassword: '',
         firstName: '',
         lastName: '',
-        role: 'student', // Changed to lowercase
-        phoneNumber: '', // Initialize phoneNumber
-        setup2FA: false, // Initialize 2FA option
-        affiliateLink: '', // Initialize affiliate link
-        uplineUIN: '' // Initialize upline UIN
+        role: 'student',
+        phoneNumber: '',
+        setup2FA: false,
+        affiliateLink: '',
+        uplineUIN: ''
     });
-    
+
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (user) {
+            const userRole = user.user_metadata?.user_type || 'student';
+            navigate(`/dashboard/${userRole}`);
+        }
+    }, [user, navigate]);
+
     // Check URL parameters for affiliate link
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search);
         const affiliateParam = urlParams.get('affiliate');
         const uinParam = urlParams.get('uin');
-        
+
         if (affiliateParam && uinParam) {
             setFormData(prev => ({
                 ...prev,
@@ -51,96 +61,142 @@ const SignUpPage = () => {
             }));
         }
     }, [location.search]);
-    
+
     // Check if we came from a session that should take us to profile completion
     useEffect(() => {
         const redirectToProfileCompletion = sessionStorage.getItem('redirectToProfileCompletion');
         const roleFromStorage = sessionStorage.getItem('userRole');
-        
+
         if (redirectToProfileCompletion === 'true' && roleFromStorage) {
-            // Clear session storage flags
             sessionStorage.removeItem('redirectToProfileCompletion');
             sessionStorage.removeItem('userRole');
-            
-            // Navigate to profile completion
-            navigate('/profile-completion', { 
-                state: { 
+
+            navigate('/profile-completion', {
+                state: {
                     userRole: roleFromStorage as UserRole,
                     isNewUser: true,
                     completionPercentage: 0
-                } 
+                }
             });
         }
     }, [navigate]);
 
     const tabs: { key: TabKey; label: string; description: string }[] = [
         {
-            key: 'student', // Changed to lowercase
+            key: 'student',
             label: 'Students',
             description: 'Access learning resources and connect with professionals'
         },
         {
-            key: 'professional', // Changed to lowercase
+            key: 'professional',
             label: 'Professionals',
             description: 'Share your expertise and grow your career'
         },
         {
-            key: 'tutor', // Changed to lowercase
+            key: 'tutor',
             label: 'Tutor/Expert Adviser',
             description: 'Guide and mentor students in their healthcare journey'
         },
         {
-            key: 'employer', // Changed to lowercase
+            key: 'employer',
             label: 'Employer',
             description: 'Find and hire qualified healthcare professionals'
         },
         {
-            key: 'client' as TabKey, // Added Client Tab
+            key: 'client' as TabKey,
             label: 'Client/Patient',
             description: 'Access community, share feedback, and play games'
         }
-    ];    const handleSubmit = async (e: React.FormEvent) => {
+    ];
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         // Validate form data
         if (formData.password !== formData.confirmPassword) {
             toast.error("Passwords do not match");
             return;
         }
-        
-        // Log for debugging
+
+        if (formData.password.length < 6) {
+            toast.error("Password must be at least 6 characters long");
+            return;
+        }
+
+        // Validate professional requirements
+        if (formData.role === 'professional' && !formData.uplineUIN) {
+            toast.error("Affiliate link (UIN) is required for professionals");
+            return;
+        }
+
+        if (!formData.phoneNumber) {
+            toast.error("Phone number is required for MLM verification");
+            return;
+        }
+
         console.log("Attempting to create account for role:", formData.role);
-        
-        // Simulate API call for registration
+
         try {
-            // Show loading state
             toast.loading("Creating your account...");
-            
-            // Simulate server delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Dismiss loading toast and show success
-            toast.dismiss();
-            toast.success("Account created successfully!");
-            
-            // Create state object for navigation
-            const profileState = { 
-                userRole: formData.role,
-                isNewUser: true,
-                completionPercentage: 0
+
+            // Prepare user metadata
+            const userMetadata = {
+                full_name: `${formData.firstName} ${formData.lastName}`,
+                first_name: formData.firstName,
+                last_name: formData.lastName,
+                user_type: formData.role,
+                phone_number: formData.phoneNumber,
+                setup_2fa: formData.setup2FA,
+                affiliate_link: formData.affiliateLink,
+                upline_uin: formData.uplineUIN,
+                registration_date: new Date().toISOString()
             };
-            
-            console.log("Redirecting to profile completion with state:", profileState);
-            
-            // Set fallback in session storage in case direct navigation fails
-            sessionStorage.setItem('redirectToProfileCompletion', 'true');
-            sessionStorage.setItem('userRole', formData.role);
-            
-            // After successful registration, redirect to profile completion page with state
-            // Use a slight delay to ensure toast is visible before navigation
-            setTimeout(() => {
-                navigate('/profile-completion', { state: profileState });
-            }, 300);
+
+            // Sign up with Supabase
+            const { user: newUser, error } = await signUp({
+                email: formData.email,
+                password: formData.password,
+                fullName: `${formData.firstName} ${formData.lastName}`,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                userType: formData.role,
+                PhoneNumber: formData.phoneNumber,
+                setup2FA: formData.setup2FA,
+                affiliateLink: formData.affiliateLink,
+                uplineUIN: formData.uplineUIN,
+                profession: formData.role,
+                institution: '',
+
+            });
+
+            toast.dismiss();
+
+            if (error) {
+                toast.error(error.message || "Registration failed. Please try again.");
+                return;
+            }
+
+            if (newUser) {
+                toast.success("Account created successfully! Please check your email to verify your account.");
+
+                // Create state object for navigation
+                const profileState = {
+                    userRole: formData.role,
+                    isNewUser: true,
+                    completionPercentage: 0
+                };
+
+                console.log("Redirecting to profile completion with state:", profileState);
+
+                // Set fallback in session storage
+                sessionStorage.setItem('redirectToProfileCompletion', 'true');
+                sessionStorage.setItem('userRole', formData.role);
+
+                // Navigate to profile completion after short delay
+                setTimeout(() => {
+                    navigate('/profile-completion', { state: profileState });
+                }, 1000);
+            }
         } catch (error) {
             toast.dismiss();
             toast.error("Registration failed. Please try again.");
@@ -152,7 +208,7 @@ const SignUpPage = () => {
         <>
             <PreHeader />
             <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-4xl mx-auto pt-16"> {/* Added pt-16 for PreHeader spacing */}
+                <div className="max-w-4xl mx-auto pt-16">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -162,7 +218,7 @@ const SignUpPage = () => {
                             Create Your Account
                         </h2>
 
-                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8"> {/* Changed md:grid-cols-4 to md:grid-cols-5 */}
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.key}
@@ -175,6 +231,7 @@ const SignUpPage = () => {
                                             ? 'bg-primary text-white shadow-lg'
                                             : 'bg-white text-gray-600 hover:bg-gray-50'
                                     }`}
+                                    disabled={loading}
                                 >
                                     <h3 className="text-lg font-semibold mb-1">{tab.label}</h3>
                                     <p className="text-sm opacity-80">{tab.description}</p>
@@ -210,6 +267,7 @@ const SignUpPage = () => {
                                             value={formData.firstName}
                                             onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                                             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                            disabled={loading}
                                         />
                                     </div>
                                     <div>
@@ -222,6 +280,7 @@ const SignUpPage = () => {
                                             value={formData.lastName}
                                             onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                                             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                            disabled={loading}
                                         />
                                     </div>
                                 </div>
@@ -236,19 +295,22 @@ const SignUpPage = () => {
                                         value={formData.email}
                                         onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                                         className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                        disabled={loading}
                                     />
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Password
+                                        Password (minimum 6 characters)
                                     </label>
                                     <input
                                         type="password"
                                         required
+                                        minLength={6}
                                         value={formData.password}
                                         onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                                         className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                        disabled={loading}
                                     />
                                 </div>
 
@@ -262,8 +324,11 @@ const SignUpPage = () => {
                                         value={formData.confirmPassword}
                                         onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                                         className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                        disabled={loading}
                                     />
-                                </div>                                <div>
+                                </div>
+
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700">
                                         Phone Number (Required for MLM verification)
                                     </label>
@@ -274,6 +339,7 @@ const SignUpPage = () => {
                                         onChange={(e) => setFormData(prev => ({ ...prev, phoneNumber: e.target.value }))}
                                         className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                                         placeholder="+1234567890"
+                                        disabled={loading}
                                     />
                                     <p className="mt-1 text-xs text-gray-500">
                                         A unique phone number is required for our MLM verification system
@@ -293,10 +359,11 @@ const SignUpPage = () => {
                                             onChange={(e) => setFormData(prev => ({ ...prev, uplineUIN: e.target.value }))}
                                             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                                             placeholder="Enter UIN of referring professional (e.g., 1A2)"
-                                            readOnly={!!formData.affiliateLink} // Make readonly if populated from URL
+                                            readOnly={!!formData.affiliateLink}
+                                            disabled={loading}
                                         />
                                         <p className="mt-1 text-xs text-gray-500">
-                                            You can only sign up as a professional using the affiliate link of an existing professional. 
+                                            You can only sign up as a professional using the affiliate link of an existing professional.
                                             {formData.affiliateLink && ' (Auto-populated from affiliate link)'}
                                         </p>
                                     </div>
@@ -309,6 +376,7 @@ const SignUpPage = () => {
                                         checked={formData.setup2FA}
                                         onChange={(e) => setFormData(prev => ({ ...prev, setup2FA: e.target.checked }))}
                                         className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                        disabled={loading}
                                     />
                                     <label htmlFor="setup-2fa" className="text-sm text-gray-700">
                                         Set up Two-Factor Authentication (Recommended)
@@ -316,13 +384,35 @@ const SignUpPage = () => {
                                 </div>
 
                                 <motion.button
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
+                                    whileHover={{ scale: loading ? 1 : 1.02 }}
+                                    whileTap={{ scale: loading ? 1 : 0.98 }}
                                     type="submit"
-                                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                                    disabled={loading}
+                                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                                        loading
+                                            ? 'bg-gray-400 cursor-not-allowed'
+                                            : 'bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
+                                    }`}
                                 >
-                                    Sign Up as {tabs.find(t => t.key === activeTab)?.label}
+                                    {loading
+                                        ? 'Creating Account...'
+                                        : `Sign Up as ${tabs.find(t => t.key === activeTab)?.label}`
+                                    }
                                 </motion.button>
+
+                                <div className="text-center mt-6">
+                                    <p className="text-sm text-gray-600">
+                                        Already have an account?{' '}
+                                        <button
+                                            type="button"
+                                            onClick={() => navigate('/signin')}
+                                            className="text-primary hover:underline font-medium"
+                                            disabled={loading}
+                                        >
+                                            Sign in here
+                                        </button>
+                                    </p>
+                                </div>
                             </motion.form>
                         </AnimatePresence>
                     </motion.div>
