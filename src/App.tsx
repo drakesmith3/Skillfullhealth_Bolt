@@ -267,7 +267,12 @@ const AppContent = () => {
               volume={volume}
               setVolume={setVolume}
             >
-              <Router>
+              <Router 
+                future={{
+                  v7_startTransition: true,
+                  v7_relativeSplatPath: true
+                }}
+              >
                 <Routes>
                   {/* Fully Public Routes - No sidebar */}
                   <Route path="/" element={<Home />} />
@@ -279,6 +284,13 @@ const AppContent = () => {
                   <Route path="/login" element={<SignInPage />} />
                   <Route path="/sitemap" element={<Sitemap />} />
                   <Route path="/signed-out" element={<SignedOutPage />} />
+
+                  {/* Legacy route redirects */}
+                  <Route path="/student-dashboard" element={<Navigate to="/dashboard/student" replace />} />
+                  <Route path="/professional-dashboard" element={<Navigate to="/dashboard/professional" replace />} />
+                  <Route path="/employer-dashboard" element={<Navigate to="/dashboard/employer" replace />} />
+                  <Route path="/tutor-dashboard" element={<Navigate to="/dashboard/tutor" replace />} />
+                  <Route path="/client-dashboard" element={<Navigate to="/dashboard/client" replace />} />
 
                   {/* Profile Completion Route */}
                   <Route path="/profile-completion" element={<ProfileCompletion />} />
@@ -325,7 +337,6 @@ const AppContent = () => {
 
                   {/* Authenticated Routes - Always have sidebar */}
                   <Route element={<AuthenticatedLayout />}>
-                    <Route path="/professional-dashboard" element={<DashboardPage />} />
                     <Route path="/dashboard/professional" element={<DashboardPage />} />
                     <Route path="/dashboard/employer" element={<EmployerDashboard />} />
                     <Route path="/dashboard/tutor" element={<TutorDashboard />} />

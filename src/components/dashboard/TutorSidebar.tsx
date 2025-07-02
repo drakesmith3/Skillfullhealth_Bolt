@@ -22,18 +22,17 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUserDisplay } from "../../hooks/useProfile";
+import { useAuth } from "../../contexts/AuthContext";
 
 const TutorSidebar: React.FC = () => {
   const location = useLocation();
+  const { displayName, userType, avatarUrl, profile } = useUserDisplay();
+  const { signOut } = useAuth();
 
-  // Mock tutor data - in real app, this would come from user context/API
-  const tutorData = {
-    name: "Dr. Nkechi Okafor",
-    currentEmployment: "Glohsen Health University",
-    address: "25 Shotade Street, Lagos, Nigeria, 11202",
-    workEmail: "nkechi.okafor@glohsen.com",
-    phone: "+234 803 123 4567",
-    profilePicture: "" // placeholder for profile picture
+  // Get user initials for avatar fallback
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
   const isActive = (path: string) => {
@@ -54,48 +53,60 @@ const TutorSidebar: React.FC = () => {
         <div className="text-center mb-4">
           <Avatar className="h-20 w-20 mx-auto mb-3 border-2 border-[#D4AF37]">
             <AvatarFallback className="bg-[#D4AF37] text-black text-lg font-semibold">
-              {tutorData.name.split(' ').map(word => word[0]).join('').substring(0, 2)}
+              {getInitials(displayName)}
             </AvatarFallback>
-            {tutorData.profilePicture && (
-              <AvatarImage src={tutorData.profilePicture} alt={tutorData.name} />
+            {avatarUrl && (
+              <AvatarImage src={avatarUrl} alt={displayName} />
             )}
           </Avatar>
-          <h3 className="text-red-500 font-bold text-sm mb-1">{tutorData.name}</h3>
-          <p className="text-[#D4AF37] text-xs">Content Creator / Tutor</p>
+          <h3 className="text-red-500 font-bold text-sm mb-1">{displayName}</h3>
+          <p className="text-[#D4AF37] text-xs">{profile?.specialty || "Content Creator / Tutor"}</p>
         </div>
 
         <div className="space-y-2 text-xs">
-          <div className="flex items-start gap-2">
-            <GraduationCap className="h-3 w-3 text-[#D4AF37] mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-gray-400 text-xs">Current Employment</p>
-              <p className="text-[#D4AF37]">{tutorData.currentEmployment}</p>
+          {profile?.bio && (
+            <div className="flex items-start gap-2">
+              <GraduationCap className="h-3 w-3 text-[#D4AF37] mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-gray-400 text-xs">Bio</p>
+                <p className="text-[#D4AF37]">{profile.bio}</p>
+              </div>
             </div>
-          </div>
+          )}
           
-          <div className="flex items-start gap-2">
-            <Mail className="h-3 w-3 text-[#D4AF37] mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-gray-400 text-xs">Work Email</p>
-              <p className="text-[#D4AF37] break-all">{tutorData.workEmail}</p>
+          {profile?.contact?.email && (
+            <div className="flex items-start gap-2">
+              <Mail className="h-3 w-3 text-[#D4AF37] mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-gray-400 text-xs">Email</p>
+                <p className="text-[#D4AF37] break-all">{profile.contact.email}</p>
+              </div>
             </div>
-          </div>
+          )}
           
-          <div className="flex items-start gap-2">
-            <Phone className="h-3 w-3 text-[#D4AF37] mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-gray-400 text-xs">Phone</p>
-              <p className="text-[#D4AF37]">{tutorData.phone}</p>
+          {profile?.contact?.phone && (
+            <div className="flex items-start gap-2">
+              <Phone className="h-3 w-3 text-[#D4AF37] mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-gray-400 text-xs">Phone</p>
+                <p className="text-[#D4AF37]">{profile.contact.phone}</p>
+              </div>
             </div>
-          </div>
+          )}
           
-          <div className="flex items-start gap-2">
-            <MapPin className="h-3 w-3 text-[#D4AF37] mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-gray-400 text-xs">Address</p>
-              <p className="text-[#D4AF37]">{tutorData.address}</p>
+          {profile?.location?.city && (
+            <div className="flex items-start gap-2">
+              <MapPin className="h-3 w-3 text-[#D4AF37] mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-gray-400 text-xs">Location</p>
+                <p className="text-[#D4AF37]">
+                  {[profile.location.city, profile.location.state, profile.location.country]
+                    .filter(Boolean)
+                    .join(', ')}
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="flex gap-2 mt-4">
@@ -241,13 +252,13 @@ const TutorSidebar: React.FC = () => {
             <Star size={20} />
             <span>FEEDBACK</span>
           </Link>
-          <Link 
-            to="/signed-out"
-            className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+          <button 
+            onClick={signOut}
+            className="flex items-center space-x-3 p-2 text-[#D4AF37] hover:text-red-500 hover:bg-gray-800 rounded cursor-pointer transition-colors w-full text-left"
           >
             <LogOut size={20} />
             <span>LOG OUT</span>
-          </Link>
+          </button>
         </nav>
       </div>
     </>
