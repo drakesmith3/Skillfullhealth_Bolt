@@ -108,8 +108,18 @@ export function useUserDisplay() {
   }
 
   const getAvatarUrl = (): string | null => {
-    return profile?.profilePicture || dbProfile?.profile_picture || null
-  }
+    const avatarPath = profile?.profilePicture || dbProfile?.profile_picture;
+    if (!avatarPath) return null;
+
+    // If it's already a full URL, return it
+    if (avatarPath.startsWith('http')) {
+      return avatarPath;
+    }
+
+    // Otherwise, construct the public URL from Supabase storage
+    const { data } = supabase.storage.from('profile-pictures').getPublicUrl(avatarPath);
+    return data?.publicUrl || null;
+  };
 
   const getUserType = (): string => {
     return dbProfile?.user_type || 'student'

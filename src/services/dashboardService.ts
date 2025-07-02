@@ -122,51 +122,52 @@ class DashboardService {
   private async getStudentStats(userId: string): Promise<DashboardStats> {
     try {
       // Get enrollments
-      const { data: enrollments } = await supabase
+      const { data: enrollments, error: enrollmentsError } = await supabase
         .from('enrollments')
-        .select('*, course:courses(*)')
-        .eq('student_id', userId)
+        .select('status, progress_percentage')
+        .eq('student_id', userId);
+      if (enrollmentsError) throw enrollmentsError;
 
-      const coursesEnrolled = enrollments?.length || 0
-      const coursesCompleted = enrollments?.filter(e => e.status === 'COMPLETED').length || 0
-      const totalProgress = enrollments?.reduce((sum, e) => sum + (e.progress_percentage || 0), 0) || 0
-      const overallProgress = coursesEnrolled > 0 ? Math.round(totalProgress / coursesEnrolled) : 0
+      const coursesEnrolled = enrollments?.length || 0;
+      const coursesCompleted = enrollments?.filter(e => e.status === 'COMPLETED').length || 0;
+      const totalProgress = enrollments?.reduce((sum, e) => sum + (e.progress_percentage || 0), 0) || 0;
+      const overallProgress = coursesEnrolled > 0 ? Math.round(totalProgress / coursesEnrolled) : 0;
 
-      // Get activities for study hours calculation
-      const { data: activities } = await supabase
+      // Get activities for study hours and quizzes
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      const { data: activities, error: activitiesError } = await supabase
         .from('activities')
-        .select('*')
+        .select('activity_type, metadata')
         .eq('user_id', userId)
-        .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()) // Last 7 days
+        .gte('created_at', sevenDaysAgo);
+      if (activitiesError) throw activitiesError;
 
-      // Calculate study hours from activities (rough estimate)
-      const studyActivities = activities?.filter(a => 
-        a.activity_type === 'course_view' || 
-        a.activity_type === 'module_complete' || 
-        a.activity_type === 'quiz_taken'
-      ) || []
-      const studyHours = Math.round((studyActivities.length * 0.5) * 10) / 10 // Estimate 30 min per activity
+      const studyActivities = activities?.filter(a => ['course_view', 'module_complete', 'quiz_taken'].includes(a.activity_type)) || [];
+      const studyHours = Math.round((studyActivities.length * 0.5) * 10) / 10; // Estimate 30 min per activity
 
-      // Get quiz/assessment data
-      const quizActivities = activities?.filter(a => a.activity_type === 'quiz_taken') || []
-      const quizzesTaken = quizActivities.length
+      const quizActivities = activities?.filter(a => a.activity_type === 'quiz_taken') || [];
+      const quizzesTaken = quizActivities.length;
+      
+      const totalScore = quizActivities.reduce((sum, a) => sum + ((a.metadata as any)?.score || 0), 0);
+      const avgScore = quizzesTaken > 0 ? Math.round(totalScore / quizzesTaken) : 0;
 
-      // Calculate average score (mock for now, would need assessment results table)
-      const avgScore = quizActivities.length > 0 ? 
-        Math.round(Math.random() * 20 + 75) : 0 // Mock: 75-95%
-
-      // Get achievements count (from any awards or badges)
-      const { count: achievements } = await supabase
+      // Get achievements count
+      const { count: achievements, error: awardsError } = await supabase
         .from('awards')
         .select('*', { count: 'exact', head: true })
-        .eq('profile_id', userId)
+        .eq('profile_id', userId);
+      if (awardsError) throw awardsError;
 
-      // Calculate study streak (mock for now)
-      const studyStreak = Math.floor(Math.random() * 20) + 5 // Mock: 5-25 days
+      // Get purse data
+      const { data: purse, error: purseError } = await supabase
+        .from('quid_purses')
+        .select('balance, scholarship_balance')
+        .eq('user_id', userId)
+        .single();
+      if (purseError && purseError.code !== 'PGRST116') throw purseError; // Ignore no rows found
 
-      // Get purse data (mock for now, would need payments/wallet table)
-      const balance = 15000
-      const scholarships = 45000
+      // Mock study streak for now as it requires more complex logic
+      const studyStreak = Math.floor(Math.random() * 20) + 5;
 
       return {
         coursesEnrolled,
@@ -177,12 +178,12 @@ class DashboardService {
         avgScore,
         achievements: achievements || 0,
         studyStreak,
-        balance,
-        scholarships
-      }
+        balance: purse?.balance || 0,
+        scholarships: purse?.scholarship_balance || 0,
+      };
     } catch (error) {
-      console.error('Error fetching student stats:', error)
-      return {}
+      console.error('Error fetching student stats:', error);
+      return {};
     }
   }
 
@@ -382,43 +383,37 @@ class DashboardService {
   // Get upcoming deadlines
   async getUpcomingDeadlines(): Promise<DeadlineData[]> {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return []
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
 
-      // Get course deadlines from enrollments
-      const { data: enrollments } = await supabase
-        .from('enrollments')
+      const { data: assignments, error } = await supabase
+        .from('assignments')
         .select(`
-          *,
-          course:courses(*)
+          id,
+          title,
+          due_date,
+          priority,
+          courses (
+            title
+          )
         `)
         .eq('student_id', user.id)
-        .eq('status', 'ENROLLED')
+        .in('status', ['PENDING', 'IN_PROGRESS'])
+        .order('due_date', { ascending: true });
 
-      // Mock deadlines based on enrollments
-      const deadlines: DeadlineData[] = []
-      
-      enrollments?.forEach(enrollment => {
-        // Generate mock deadlines for active courses
-        const course = enrollment.course
-        const now = new Date()
-        
-        // Add some mock deadlines
-        deadlines.push({
-          id: `${enrollment.id}-exam`,
-          course: course.title,
-          task: 'Final Exam',
-          date: new Date(now.getTime() + Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(),
-          status: Math.random() > 0.7 ? 'Urgent' : 'Upcoming',
-          priority: Math.random() > 0.7 ? 'high' : Math.random() > 0.5 ? 'medium' : 'low',
-          type: 'exam'
-        })
-      })
+      if (error) throw error;
 
-      return deadlines.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      return assignments.map(a => ({
+        id: a.id,
+        course: a.courses?.[0]?.title || 'General Task',
+        task: a.title,
+        date: a.due_date,
+        status: new Date(a.due_date) < new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) ? 'Urgent' : 'Upcoming',
+        priority: a.priority as 'high' | 'medium' | 'low' || 'medium',
+      }));
     } catch (error) {
-      console.error('Error fetching deadlines:', error)
-      return []
+      console.error('Error fetching deadlines:', error);
+      return [];
     }
   }
 
@@ -445,42 +440,29 @@ class DashboardService {
   // Get user transactions/purse data
   async getUserTransactions(limit = 10): Promise<TransactionData[]> {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return []
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
 
-      // For now, return mock data since we don't have a payments table yet
-      // In a real implementation, this would query a payments/transactions table
-      const mockTransactions: TransactionData[] = [
-        {
-          id: '1',
-          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          type: 'Course Payment',
-          amount: -15000,
-          description: 'Medical Terminology Course',
-          status: 'Completed'
-        },
-        {
-          id: '2',
-          date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-          type: 'Scholarship',
-          amount: 25000,
-          description: 'Academic Excellence Grant',
-          status: 'Received'
-        },
-        {
-          id: '3',
-          date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          type: 'Quiz Reward',
-          amount: 500,
-          description: 'High Score Bonus',
-          status: 'Received'
-        }
-      ]
+      const { data: transactions, error } = await supabase
+        .from('quid_transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-      return mockTransactions
+      if (error) throw error;
+
+      return transactions.map(t => ({
+        id: t.id,
+        date: t.created_at,
+        type: t.transaction_type,
+        amount: t.amount,
+        description: t.description || 'Transaction',
+        status: t.status,
+      }));
     } catch (error) {
-      console.error('Error fetching transactions:', error)
-      return []
+      console.error('Error fetching transactions:', error);
+      return [];
     }
   }
 
