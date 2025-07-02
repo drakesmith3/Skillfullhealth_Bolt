@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -48,11 +47,51 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({ title, children }) => (
 
 interface DashboardSidebarProps {
   userType: 'professional' | 'student' | 'employer' | 'tutor' | 'client';
+  userName?: string;
+  userTitle?: string;
+  avatarUrl?: string;
+  onLogout?: () => void;
 }
 
-export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ userType }) => {
+export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ 
+  userType, 
+  userName, 
+  userTitle, 
+  avatarUrl,
+  onLogout 
+}) => {
   const dashPath = `/dashboard/${userType}`;
   
+  // Get default values based on userType if not provided
+  const getDefaultUserName = () => {
+    if (userName) return userName;
+    switch (userType) {
+      case 'professional': return 'Medical Professional';
+      case 'student': return 'Medical Student';
+      case 'employer': return 'Healthcare Provider';
+      case 'tutor': return 'Medical Instructor';
+      case 'client': return 'Healthcare Client';
+      default: return 'User';
+    }
+  };
+
+  const getDefaultUserTitle = () => {
+    if (userTitle) return userTitle;
+    switch (userType) {
+      case 'professional': return 'Medical Doctor';
+      case 'student': return 'Medical Student';
+      case 'employer': return 'Healthcare Employer';
+      case 'tutor': return 'Medicine Professor';
+      case 'client': return 'Patient';
+      default: return '';
+    }
+  };
+
+  const getDefaultAvatar = () => {
+    if (avatarUrl) return avatarUrl;
+    return "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80";
+  };
+
   return (
     <aside className="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto">
       <div className="p-4">
@@ -60,25 +99,21 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ userType }) 
           <div className="flex items-center justify-center">
             <div className="w-20 h-20 rounded-full bg-gray-200 dark:bg-gray-700 mb-4 overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" 
+                src={getDefaultAvatar()} 
                 alt="Profile" 
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to default avatar if image fails to load
+                  e.currentTarget.src = "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80";
+                }}
               />
             </div>
           </div>
-          <h2 className="text-center font-semibold">
-            {userType === 'professional' && 'Dr. Olusiji'}
-            {userType === 'student' && 'Sarah Johnson'}
-            {userType === 'employer' && 'Hospital Corp.'}
-            {userType === 'tutor' && 'Dr. Nkechi'}
-            {userType === 'client' && 'James Miller'}
+          <h2 className="text-center font-semibold text-gray-900 dark:text-white">
+            {getDefaultUserName()}
           </h2>
           <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-            {userType === 'professional' && 'Medical Doctor'}
-            {userType === 'student' && 'Medical Student'}
-            {userType === 'employer' && 'Healthcare Provider'}
-            {userType === 'tutor' && 'Medicine Professor'}
-            {userType === 'client' && 'Patient'}
+            {getDefaultUserTitle()}
           </p>
         </div>
 
@@ -133,6 +168,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ userType }) 
           <Button 
             variant="ghost" 
             className="w-full justify-start px-4 text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-900 hover:text-red-600"
+            onClick={onLogout}
           >
             <LogOut size={18} className="mr-3" />
             Logout
