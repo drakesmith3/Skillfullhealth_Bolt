@@ -281,6 +281,47 @@ class JobService {
       return { total: 0, active: 0, closed: 0, draft: 0 }
     }
   }
+
+  // Apply to job
+  async applyToJob(jobId: string, applicationData: any): Promise<boolean> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('User not authenticated')
+
+      const { error } = await supabase
+        .from('job_applications')
+        .insert({
+          job_id: jobId,
+          applicant_id: user.id,
+          ...applicationData,
+          applied_at: new Date().toISOString()
+        })
+
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('Error applying to job:', error)
+      return false
+    }
+  }
+
+  // Check if user has applied to job
+  async hasUserApplied(jobId: string, userId: string): Promise<boolean> {
+    try {
+      const { data, error } = await supabase
+        .from('job_applications')
+        .select('id')
+        .eq('job_id', jobId)
+        .eq('applicant_id', userId)
+        .single()
+
+      if (error && error.code !== 'PGRST116') throw error
+      return !!data
+    } catch (error) {
+      console.error('Error checking application status:', error)
+      return false
+    }
+  }
 }
 
 export const jobService = new JobService()
