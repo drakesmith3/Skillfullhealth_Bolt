@@ -4,57 +4,41 @@ import { Card, CardContent } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { BookOpen, Users, CreditCard, ChartBar, Activity, Gamepad, MessageSquare, BarChart, Trophy, Calendar, Target, Clock, Star, TrendingUp, Award, Play, FileText, DollarSign, ArrowUpRight } from "lucide-react";
+import { BookOpen, Users, CreditCard, ChartBar, Activity, Gamepad, MessageSquare, BarChart, Trophy, Calendar, Target, Clock, Star, TrendingUp, Award, Play, FileText, DollarSign, ArrowUpRight, Loader } from "lucide-react";
 import { ChartContainer, ChartTooltip } from "../components/ui/chart";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from "recharts";
 import StandardDashboardLayout from "../components/dashboard/StandardDashboardLayout";
+import DashboardSidebar from "../components/dashboard/DashboardSidebar";
+import { useStudentDashboard } from "../hooks/useDashboard";
+import { useUserDisplay } from "../hooks/useProfile";
+import { useAuth } from "../contexts/AuthContext";
 
 const StudentDashboard: React.FC = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("overview");
+  
+  // Get real data from hooks
+  const { signOut } = useAuth();
+  const { displayName, userType, avatarUrl, profile } = useUserDisplay();
+  const {
+    stats,
+    courses,
+    activities,
+    deadlines,
+    transactions,
+    loading,
+    error,
+    progressData,
+    performanceData,
+    studyTimeData,
+    refreshDashboard
+  } = useStudentDashboard();
 
   useEffect(() => {
     if (location.state?.activeTab) {
       setActiveTab(location.state.activeTab);
     }
   }, [location.state]);
-  const studentStats = {
-    coursesEnrolled: 4,
-    coursesCompleted: 2,
-    overallProgress: 75,
-    studyHours: 12.5,
-    quizzesTaken: 8,
-    avgScore: 82,
-    achievements: 5,
-    studyStreak: 12
-  };
-
-  // Chart data
-  const progressData = [
-    { month: 'Jan', completed: 2, inProgress: 1 },
-    { month: 'Feb', completed: 3, inProgress: 2 },
-    { month: 'Mar', completed: 4, inProgress: 2 },
-    { month: 'Apr', completed: 5, inProgress: 3 },
-    { month: 'May', completed: 6, inProgress: 4 },
-  ];
-
-  const performanceData = [
-    { subject: 'Anatomy', score: 85 },
-    { subject: 'Physiology', score: 92 },
-    { subject: 'Terminology', score: 78 },
-    { subject: 'Ethics', score: 88 },
-    { subject: 'Pharmacology', score: 82 },
-  ];
-
-  const studyTimeData = [
-    { day: 'Mon', hours: 2.5 },
-    { day: 'Tue', hours: 3.2 },
-    { day: 'Wed', hours: 1.8 },
-    { day: 'Thu', hours: 4.1 },
-    { day: 'Fri', hours: 2.9 },
-    { day: 'Sat', hours: 3.5 },
-    { day: 'Sun', hours: 2.0 },
-  ];
 
   const gamePerformanceData = [
     { name: 'Quiz Games', value: 65, color: '#D4AF37' },
@@ -62,55 +46,7 @@ const StudentDashboard: React.FC = () => {
     { name: 'Simulation', value: 10, color: '#10B981' },
   ];
 
-  const coursesData = [
-    {
-      id: 1,
-      title: 'Medical Terminology',
-      instructor: 'Dr. Sarah Johnson',
-      progress: 85,
-      status: 'In Progress',
-      duration: '12 weeks',
-      nextClass: 'May 25, 2025 - 2:00 PM',
-      modules: { completed: 17, total: 20 }
-    },
-    {
-      id: 2,
-      title: 'Human Anatomy 101',
-      instructor: 'Prof. Michael Chen',
-      progress: 92,
-      status: 'Nearly Complete',
-      duration: '16 weeks',
-      nextClass: 'May 26, 2025 - 10:00 AM',
-      modules: { completed: 22, total: 24 }
-    },
-    {
-      id: 3,
-      title: 'Healthcare Ethics',
-      instructor: 'Dr. Emily Brown',
-      progress: 45,
-      status: 'In Progress',
-      duration: '8 weeks',
-      nextClass: 'May 27, 2025 - 3:00 PM',
-      modules: { completed: 9, total: 20 }
-    },
-    {
-      id: 4,
-      title: 'Pharmacology Basics',
-      instructor: 'Dr. Robert Davis',
-      progress: 15,
-      status: 'Just Started',
-      duration: '20 weeks',
-      nextClass: 'May 28, 2025 - 9:00 AM',
-      modules: { completed: 3, total: 20 }
-    }
-  ];
-
-  const transactionData = [
-    { date: '2025-05-20', type: 'Course Payment', amount: -15000, description: 'Medical Terminology Course', status: 'Completed' },
-    { date: '2025-05-18', type: 'Scholarship', amount: 25000, description: 'Academic Excellence Grant', status: 'Received' },
-    { date: '2025-05-15', type: 'Quiz Reward', amount: 500, description: 'High Score Bonus', status: 'Received' },
-    { date: '2025-05-10', type: 'Course Payment', amount: -12000, description: 'Anatomy 101 Course', status: 'Completed' },
-  ];
+  // Use real data from hooks
 
   const chartConfig = {
     completed: { label: "Completed", color: "#D4AF37" },
@@ -119,34 +55,61 @@ const StudentDashboard: React.FC = () => {
     hours: { label: "Hours", color: "#8B5CF6" },
   };
 
-  const upcomingDeadlines = [
-    { course: "Medical Terminology", task: "Final Exam", date: "May 25, 2025", status: "Urgent", priority: "high" },
-    { course: "Anatomy 101", task: "Assignment 3", date: "May 28, 2025", status: "Upcoming", priority: "medium" },
-    { course: "Healthcare Ethics", task: "Discussion Post", date: "June 1, 2025", status: "Upcoming", priority: "low" },
-  ];
+  // Real data is now available from hooks above
 
-  const recentActivities = [
-    { activity: "Completed quiz", course: "Medical Terminology", score: "85%", time: "Yesterday", type: "quiz" },
-    { activity: "Watched lecture", course: "Anatomy 101", duration: "45 minutes", time: "2 days ago", type: "lecture" },
-    { activity: "Submitted assignment", course: "Healthcare Ethics", status: "Graded: A", time: "3 days ago", type: "assignment" },
-    { activity: "Joined study group", course: "Pharmacology", members: "15 students", time: "5 days ago", type: "community" },
-  ];
+  // Show loading state
+  if (loading) {
+    return (
+      <StandardDashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <Loader className="w-8 h-8 animate-spin text-[#D4AF37]" />
+          <span className="ml-2 text-gray-600">Loading dashboard...</span>
+        </div>
+      </StandardDashboardLayout>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <StandardDashboardLayout>
+        <div className="text-center py-12">
+          <p className="text-red-600 mb-4">Error loading dashboard: {error}</p>
+          <Button onClick={refreshDashboard} variant="outline">
+            Try Again
+          </Button>
+        </div>
+      </StandardDashboardLayout>
+    )
+  }
+
+  // Create sidebar with real user data
+  const sidebar = (
+    <DashboardSidebar
+      userType="student"
+      userName={displayName}
+      userTitle={profile?.specialty || "Medical Student"}
+      avatarUrl={avatarUrl || undefined}
+      onLogout={signOut}
+    />
+  );
 
   return (
     <StandardDashboardLayout
       className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+      sidebar={sidebar}
     >
       <div className="space-y-6">
         {/* Welcome Header */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome back, Sarah!</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome back, {displayName}!</h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">Ready to continue your medical studies journey?</p>
             </div>
             <div className="flex items-center gap-3">
               <Badge variant="outline" className="border-[#D4AF37] text-[#D4AF37]">
-                {studentStats.studyStreak} Day Streak 🔥
+                {stats.studyStreak || 0} Day Streak 🔥
               </Badge>
               <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black font-semibold">
                 Continue Learning
@@ -176,16 +139,16 @@ const StudentDashboard: React.FC = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Enrolled</span>
-                      <span className="text-2xl font-bold text-[#D4AF37]">{studentStats.coursesEnrolled}</span>
+                      <span className="text-2xl font-bold text-[#D4AF37]">{stats.coursesEnrolled || 0}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Completed</span>
-                      <span className="text-xl font-semibold text-green-600">{studentStats.coursesCompleted}</span>
+                      <span className="text-xl font-semibold text-green-600">{stats.coursesCompleted || 0}</span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full">
-                      <div className="bg-[#D4AF37] h-2 rounded-full" style={{ width: `${studentStats.overallProgress}%` }}></div>
+                      <div className="bg-[#D4AF37] h-2 rounded-full" style={{ width: `${stats.overallProgress || 0}%` }}></div>
                     </div>
-                    <p className="text-xs text-gray-500 text-center">{studentStats.overallProgress}% Overall Progress</p>
+                    <p className="text-xs text-gray-500 text-center">{stats.overallProgress || 0}% Overall Progress</p>
                   </div>
                 </CardContent>
               </Card>
@@ -199,16 +162,16 @@ const StudentDashboard: React.FC = () => {
                   </div>
                   <div className="space-y-3">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">{studentStats.studyHours}</div>
+                      <div className="text-2xl font-bold text-blue-600">{stats.studyHours || 0}</div>
                       <p className="text-sm text-gray-500">Hours this week</p>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Avg. Score:</span>
-                      <span className="font-semibold text-green-600">{studentStats.avgScore}%</span>
+                      <span className="font-semibold text-green-600">{stats.avgScore || 0}%</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Quizzes:</span>
-                      <span className="font-semibold">{studentStats.quizzesTaken}</span>
+                      <span className="font-semibold">{stats.quizzesTaken || 0}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -222,7 +185,7 @@ const StudentDashboard: React.FC = () => {
                     <Trophy className="w-5 h-5 text-[#D4AF37]" />
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-[#D4AF37] mb-2">{studentStats.achievements}</div>
+                    <div className="text-3xl font-bold text-[#D4AF37] mb-2">{stats.achievements || 0}</div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Badges earned</p>
                     <Button size="sm" className="mt-3 w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black">
                       View All
@@ -239,11 +202,11 @@ const StudentDashboard: React.FC = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Balance</span>
-                      <span className="font-semibold">Q15,000</span>
+                      <span className="font-semibold">Q{stats.balance?.toLocaleString() || '0'}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Scholarships</span>
-                      <span className="text-green-600 font-semibold">Q45,000</span>
+                      <span className="text-green-600 font-semibold">Q{stats.scholarships?.toLocaleString() || '0'}</span>
                     </div>
                     <Button size="sm" className="w-full mt-2">Manage</Button>
                   </div>
@@ -259,8 +222,8 @@ const StudentDashboard: React.FC = () => {
                     Upcoming Deadlines
                   </h3>
                   <div className="space-y-4">
-                    {upcomingDeadlines.map((item, idx) => (
-                      <div key={idx} className="border-l-4 border-[#D4AF37] pl-4 py-3 bg-gray-50 dark:bg-gray-700 rounded-r-lg">
+                    {deadlines.length > 0 ? deadlines.map((item, idx) => (
+                      <div key={item.id || idx} className="border-l-4 border-[#D4AF37] pl-4 py-3 bg-gray-50 dark:bg-gray-700 rounded-r-lg">
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <div className="font-semibold text-gray-900 dark:text-white">{item.task}</div>
@@ -270,9 +233,16 @@ const StudentDashboard: React.FC = () => {
                             {item.status}
                           </Badge>
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{item.date}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {new Date(item.date).toLocaleDateString()}
+                        </div>
                       </div>
-                    ))}
+                    )) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                        <p>No upcoming deadlines</p>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -285,17 +255,19 @@ const StudentDashboard: React.FC = () => {
                     Recent Activities
                   </h3>
                   <div className="space-y-4">
-                    {recentActivities.map((item, idx) => (
-                      <div key={idx} className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    {activities.length > 0 ? activities.map((item, idx) => (
+                      <div key={item.id || idx} className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <div className="flex-shrink-0 w-8 h-8 bg-[#D4AF37] rounded-full flex items-center justify-center">
                           {item.type === 'quiz' && <ChartBar className="w-4 h-4 text-black" />}
                           {item.type === 'lecture' && <BookOpen className="w-4 h-4 text-black" />}
                           {item.type === 'assignment' && <Trophy className="w-4 h-4 text-black" />}
                           {item.type === 'community' && <Users className="w-4 h-4 text-black" />}
+                          {item.type === 'course' && <BookOpen className="w-4 h-4 text-black" />}
+                          {item.type === 'job' && <FileText className="w-4 h-4 text-black" />}
                         </div>
                         <div className="flex-1">
                           <p className="font-medium text-gray-900 dark:text-white">{item.activity}</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{item.course}</p>
+                          {item.course && <p className="text-sm text-gray-600 dark:text-gray-400">{item.course}</p>}
                           <div className="flex justify-between items-center mt-1">
                             <span className="text-xs text-gray-500">{item.time}</span>
                             <span className="text-sm font-medium text-[#D4AF37]">
@@ -304,7 +276,12 @@ const StudentDashboard: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    )) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <Activity className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                        <p>No recent activities</p>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -362,11 +339,11 @@ const StudentDashboard: React.FC = () => {
                   My Enrolled Courses
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {coursesData.map((course) => (
+                  {courses.length > 0 ? courses.map((course) => (
                     <div key={course.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-shadow">
                       <div className="flex justify-between items-start mb-3">
                         <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{course.title}</h3>
-                        <Badge variant={course.status === 'Nearly Complete' ? 'default' : 'secondary'}>
+                        <Badge variant={course.status === 'Nearly Complete' || course.status === 'Completed' ? 'default' : 'secondary'}>
                           {course.status}
                         </Badge>
                       </div>
@@ -391,7 +368,9 @@ const StudentDashboard: React.FC = () => {
                         <span className="text-sm text-gray-600 dark:text-gray-400">
                           Modules: {course.modules.completed}/{course.modules.total}
                         </span>
-                        <span className="text-xs text-gray-500">Next: {course.nextClass}</span>
+                        {course.nextClass && (
+                          <span className="text-xs text-gray-500">Next: {course.nextClass}</span>
+                        )}
                       </div>
 
                       <div className="flex gap-2">
@@ -403,7 +382,16 @@ const StudentDashboard: React.FC = () => {
                         </Button>
                       </div>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="col-span-full text-center py-12 text-gray-500">
+                      <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                      <h3 className="text-lg font-medium mb-2">No courses enrolled yet</h3>
+                      <p className="mb-4">Start your learning journey by enrolling in a course</p>
+                      <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
+                        Browse Courses
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -990,7 +978,7 @@ const StudentDashboard: React.FC = () => {
                     <CreditCard className="w-5 h-5 text-[#D4AF37]" />
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-[#D4AF37] mb-2">Q15,000</div>
+                    <div className="text-3xl font-bold text-[#D4AF37] mb-2">Q{stats.balance?.toLocaleString() || '0'}</div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Available</p>
                   </div>
                 </CardContent>
@@ -1003,7 +991,7 @@ const StudentDashboard: React.FC = () => {
                     <Award className="w-5 h-5 text-green-500" />
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600 mb-2">Q45,000</div>
+                    <div className="text-3xl font-bold text-green-600 mb-2">Q{stats.scholarships?.toLocaleString() || '0'}</div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Received</p>
                   </div>
                 </CardContent>
@@ -1127,8 +1115,8 @@ const StudentDashboard: React.FC = () => {
                   Recent Transactions
                 </h3>
                 <div className="space-y-3">
-                  {transactionData.map((transaction, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:shadow-md transition-shadow">
+                  {transactions.length > 0 ? transactions.map((transaction, idx) => (
+                    <div key={transaction.id || idx} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:shadow-md transition-shadow">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                           transaction.amount > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
@@ -1141,7 +1129,7 @@ const StudentDashboard: React.FC = () => {
                         <div>
                           <h4 className="font-medium text-gray-900 dark:text-white">{transaction.type}</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400">{transaction.description}</p>
-                          <p className="text-xs text-gray-500">{transaction.date}</p>
+                          <p className="text-xs text-gray-500">{new Date(transaction.date).toLocaleDateString()}</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -1155,7 +1143,12 @@ const StudentDashboard: React.FC = () => {
                         </Badge>
                       </div>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <CreditCard className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p>No recent transactions</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
