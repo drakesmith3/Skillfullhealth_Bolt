@@ -1,8 +1,8 @@
 // Environment variable validation and typing
 export const env = {
 supabase: {
-  url: import.meta.env.VITE_SUPABSE_URL,
-  anonKey: import.meta.env.VITE_SUPABSE_ANON_KEY,
+  url: import.meta.env.VITE_SUPABASE_URL,
+  anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 },
 app: {
   name: import.meta.env.VITE_APP_NAME || 'GLOSHEN',
@@ -20,6 +20,6 @@ const requiredEnvVars = [
 requiredEnvVars.forEach((envVar, index) => {
   if (!envVar) {
     const varNames = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY']
-    throw new Error('Missing required environment variable: ${varNames[index]}')
+    throw new Error(`Missing required environment variable: ${varNames[index]}`)
   }
 })

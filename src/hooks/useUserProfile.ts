@@ -1,5 +1,9 @@
 
 import { useState, useEffect } from 'react';
+import { profileService } from '../services/profileService';
+import { feedbackService } from '../services/feedbackService';
+import { authService } from '../services/authService';
+import type { ProfessionalProfile } from '../types/dashboard.d';
 
 interface UserProfile {
   userId: string;
@@ -30,52 +34,61 @@ export const useUserProfile = (userId?: string) => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      // In a real app, we would fetch from an API
-      // This is mocked data for demonstration
       try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Mock profile data
-        const mockProfile: UserProfile = {
-          userId: userId || 'user123',
-          fullName: 'Dr. Olusiji Williams',
-          email: 'dr.olusiji@example.com',
-          role: 'Professional',
-          specialty: 'Cardiology',
-          experience: 8,
-          education: [
-            'MBBS, University of Lagos, 2014',
-            'Fellowship in Cardiology, Johns Hopkins, 2018'
-          ],
-          certifications: [
-            'Advanced Cardiac Life Support (ACLS)',
-            'Board Certified in Cardiology'
-          ],
-          skills: [
-            'Echocardiography',
-            'Cardiac Catheterization',
-            'Clinical Research',
-            'Patient Care',
-            'Medical Training'
-          ],
-          profileCompleteness: 95,
-          profileViews: 432,
-          rating: 4.8,
-          totalReviews: 27,
+        setIsLoading(true);
+        setError(null);
+
+        let professionalProfile: ProfessionalProfile | null = null;
+
+        if (userId) {
+          // Fetch specific user's profile
+          professionalProfile = await profileService.getProfileByUserId(userId);
+        } else {
+          // Fetch current user's profile
+          professionalProfile = await profileService.getCurrentUserProfile();
+        }
+
+        if (!professionalProfile) {
+          throw new Error('Profile not found');
+        }
+
+        // Get additional data
+        const [rating, feedbackStats] = await Promise.all([
+          feedbackService.getAverageRating(professionalProfile.userId),
+          feedbackService.getFeedbackStats(professionalProfile.userId)
+        ]);
+
+        // Transform to UserProfile format for backward compatibility
+        const userProfile: UserProfile = {
+          userId: professionalProfile.userId,
+          fullName: professionalProfile.fullName,
+          email: professionalProfile.contact.email,
+          role: professionalProfile.specialty || 'Professional',
+          specialty: professionalProfile.specialty || '',
+          experience: professionalProfile.experience?.[0]?.startDate ? 
+            new Date().getFullYear() - new Date(professionalProfile.experience[0].startDate).getFullYear() : 0,
+          education: professionalProfile.education.map(edu => 
+            `${edu.degree}, ${edu.institution}, ${new Date(edu.startDate).getFullYear()}`
+          ),
+          certifications: professionalProfile.certificates.map(cert => cert.name),
+          skills: professionalProfile.skills.map(skill => skill.name),
+          profileCompleteness: professionalProfile.profileCompleteness || 0,
+          profileViews: 0, // Would be tracked separately in analytics
+          rating: rating,
+          totalReviews: feedbackStats.totalFeedback,
           location: {
-            city: 'Lagos',
-            country: 'Nigeria'
+            city: professionalProfile.location?.city || '',
+            country: professionalProfile.location?.country || ''
           },
-          joinDate: '2024-01-15',
-          avatar: 'https://randomuser.me/api/portraits/men/15.jpg'
+          joinDate: professionalProfile.userId, // Would need to be tracked separately
+          avatar: professionalProfile.profilePicture || undefined
         };
         
-        setProfile(mockProfile);
-        setIsLoading(false);
+        setProfile(userProfile);
       } catch (err) {
         console.error('Error fetching user profile:', err);
-        setError('Failed to load user profile');
+        setError(err instanceof Error ? err.message : 'Failed to load user profile');
+      } finally {
         setIsLoading(false);
       }
     };
@@ -85,19 +98,37 @@ export const useUserProfile = (userId?: string) => {
 
   const updateProfile = async (updatedData: Partial<UserProfile>) => {
     setIsLoading(true);
+    setError(null);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Map UserProfile updates to profile service format
+      const profileUpdates: any = {};
       
-      setProfile(prev => prev ? { ...prev, ...updatedData } : null);
-      setIsLoading(false);
-      return true;
+      if (updatedData.fullName) profileUpdates.full_name = updatedData.fullName;
+      if (updatedData.specialty) profileUpdates.specialty = updatedData.specialty;
+      if (updatedData.avatar) profileUpdates.profile_picture = updatedData.avatar;
+      if (updatedData.location?.city) profileUpdates.location_city = updatedData.location.city;
+      if (updatedData.location?.country) profileUpdates.location_country = updatedData.location.country;
+
+      const updatedProfile = await profileService.updateProfile(profileUpdates);
+      
+      if (updatedProfile) {
+        // Update local state
+        setProfile(prev => prev ? { ...prev, ...updatedData } : null);
+        
+        // Update profile completeness
+        await profileService.updateProfileCompleteness(updatedProfile.id);
+        
+        return true;
+      } else {
+        throw new Error('Failed to update profile');
+      }
     } catch (err) {
       console.error('Error updating user profile:', err);
-      setError('Failed to update user profile');
-      setIsLoading(false);
+      setError(err instanceof Error ? err.message : 'Failed to update user profile');
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
