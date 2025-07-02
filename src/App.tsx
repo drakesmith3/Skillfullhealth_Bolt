@@ -27,7 +27,9 @@ import GlohsenScore from "./pages/GlohsenScore";
 import EmployerCriteriaPage from "./pages/EmployerCriteriaPage";
 import Blog from "./pages/Blog";
 import CourseEnrollment from "./pages/CourseEnrollment";
+import CourseCreation from "./pages/CourseCreation";
 import JobBoard from "./pages/JobBoard";
+import JobApplication from "./pages/JobApplication";
 import CommunityForum from "./pages/CommunityForum";
 import GamesAndQuizzes from "./pages/GamesAndQuizzes";
 import DiagnosisDetective from "./pages/DiagnosisDetective";
@@ -329,6 +331,10 @@ const AppContent = () => {
                     <Route path="/dashboard/tutor" element={<TutorDashboard />} />
                     <Route path="/dashboard/student" element={<StudentDashboard />} />
                     <Route path="/dashboard/client" element={<ClientDashboard />} />
+                    
+                    {/* Course and Job Routes */}
+                    <Route path="/courses/create" element={<CourseCreation />} />
+                    <Route path="/jobs/:jobId/apply" element={<JobApplication />} />
 
                     <Route path="/dashboard/:userType/notifications" element={<NotificationsPage />} />
                     <Route path="/dashboard/:userType/inbox" element={<NotificationsPage />} />
