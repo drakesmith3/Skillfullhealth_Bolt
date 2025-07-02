@@ -38,6 +38,7 @@ import EmployerPayment from "./pages/EmployerPayment";
 import KPIDashboard from "./pages/KPIDashboard";
 import ProfessionalPurse from "./pages/ProfessionalPurse";
 import TutorPurse from "./pages/TutorPurse";
+import PurseTransaction from "./pages/PurseTransaction";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import AdminDashboard from "./pages/AdminDashboard";
 import Sitemap from "./pages/Sitemap";
@@ -60,6 +61,9 @@ import AccessibilityStatement from "./pages/AccessibilityStatement";
 import Support from "./pages/Support";
 import ParticlePerformanceTest from "./pages/ParticlePerformanceTest";
 import ParticleButterflyExperience from "./pages/ParticleButterflyExperience";
+import Profile from "./pages/Profile";
+import Messages from "./pages/Messages";
+import MyCourses from "./pages/MyCourses";
 
 // Helper functions to interact with localStorage
 const isAuthenticated = (): boolean => {
@@ -309,6 +313,8 @@ const AppContent = () => {
                     <Route path="/quizzes" element={<GamesAndQuizzes />} />
                     <Route path="/blog" element={<Blog />} />
                     <Route path="/feedback" element={<GeneralFeedbackForm />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/messages" element={<Messages />} />
                     <Route path="/ProfessionalsHandbook" element={<ProfessionalsHandbook />} />
                     <Route path="/EmployersHandbook" element={<EmployersHandbook />} />
                     <Route path="/TutorsHandbook" element={<TutorsHandbook />} />
@@ -351,7 +357,10 @@ const AppContent = () => {
                     <Route path="/kpi-dashboard" element={<KPIDashboard />} />
                     <Route path="/purse/professional" element={<ProfessionalPurse />} />
                     <Route path="/purse/tutor" element={<TutorPurse />} />
+                    <Route path="/purse-transaction" element={<PurseTransaction />} />
+                    <Route path="/tutor-purse" element={<TutorPurse />} />
                     <Route path="/activity" element={<ActivityHistoryPage />} />
+                    <Route path="/my-courses" element={<MyCourses />} />
                     <Route path="/mlm" element={<MLMDashboard userId="temp-user-id" userType="professional" />} />
                     <Route path="/mlm-tree" element={<MLMTreePage />} />
                   </Route>
