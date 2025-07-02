@@ -28,7 +28,13 @@ class ProfileService {
         .eq('id', user.id)
         .single()
 
-      if (error) throw error
+      if (error) {
+        // 406 indicates no profile found (acceptable for new users)
+        if ((error as any).code === '406' || (error as any).status === 406) {
+          return null
+        }
+        throw error
+      }
 
       return this.transformToProfileFormat(profile)
     } catch (error) {
@@ -55,7 +61,13 @@ class ProfileService {
         .eq('id', userId)
         .single()
 
-      if (error) throw error
+      if (error) {
+        // 406 indicates no profile found (acceptable for new users)
+        if ((error as any).code === '406' || (error as any).status === 406) {
+          return null
+        }
+        throw error
+      }
 
       return this.transformToProfileFormat(profile)
     } catch (error) {
