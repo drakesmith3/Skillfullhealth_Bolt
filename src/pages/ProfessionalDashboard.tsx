@@ -153,7 +153,7 @@ const DashboardPage: React.FC = () => {
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <PreHeader currentPage="Professional Dashboard" userName="Dr. Olusiji" />
+      <PreHeader currentPage="Professional Dashboard" />
       
       <div className="pt-20 pb-8">
         <div className="container mx-auto px-4">
@@ -425,7 +425,7 @@ const DashboardPage: React.FC = () => {
 
                         {/* EMR/EHR Systems */}
                         <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-lg border border-blue-200 dark:border-gray-600">
-                          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block flex items-center">
+                          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                             <Globe className="h-4 w-4 mr-2 text-blue-600" />
                             EMR/EHR Systems Experience:
                           </label>

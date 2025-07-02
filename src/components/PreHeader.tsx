@@ -6,13 +6,14 @@ import {
 } from 'lucide-react';
 import Logo3DHyperRealistic from './Logo3DHyperRealistic';
 import { useTheme } from '@/contexts/ThemeContext'; // Added useTheme
-
-interface PreHeaderProps {
-  currentPage?: string;
-  userName?: string;
-}
-
-const PreHeader: React.FC<PreHeaderProps> = ({ currentPage = '', userName = "Dr Olusiji" }) => {
+import { useUserDisplay } from '@/hooks/useProfile';
+ 
+ interface PreHeaderProps {
+   currentPage?: string;
+ }
+ 
+ const PreHeader: React.FC<PreHeaderProps> = ({ currentPage = '' }) => {
+  const { displayName, loading } = useUserDisplay();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dashboardLink, setDashboardLink] = useState('/dashboard');
@@ -153,12 +154,12 @@ const PreHeader: React.FC<PreHeaderProps> = ({ currentPage = '', userName = "Dr 
                 >
                   <item.icon className="h-5 w-5" />
                   {item.name === 'Notifications' && unreadNotifications > 0 && (
-                    <span className={`absolute top-0 right-0 block h-3 w-3 transform -translate-y-1/2 translate-x-1/2 rounded-full bg-red-500 text-white text-[8px] flex items-center justify-center ring-2 ${scrolled ? 'ring-gray-900' : 'ring-gray-50' }`}>
+                    <span className={`absolute top-0 right-0 h-3 w-3 transform -translate-y-1/2 translate-x-1/2 rounded-full bg-red-500 text-white text-[8px] flex items-center justify-center ring-2 ${scrolled ? 'ring-gray-900' : 'ring-gray-50' }`}>
                       {unreadNotifications}
                     </span>
                   )}
                   {item.name === 'Inbox' && unreadMessages > 0 && (
-                     <span className={`absolute top-0 right-0 block h-3 w-3 transform -translate-y-1/2 translate-x-1/2 rounded-full bg-red-500 text-white text-[8px] flex items-center justify-center ring-2 ${scrolled ? 'ring-gray-900' : 'ring-gray-50' }`}>
+                     <span className={`absolute top-0 right-0 h-3 w-3 transform -translate-y-1/2 translate-x-1/2 rounded-full bg-red-500 text-white text-[8px] flex items-center justify-center ring-2 ${scrolled ? 'ring-gray-900' : 'ring-gray-50' }`}>
                       {unreadMessages}
                     </span>
                   )}
@@ -172,7 +173,7 @@ const PreHeader: React.FC<PreHeaderProps> = ({ currentPage = '', userName = "Dr 
                 className={`flex items-center space-x-2 p-1 rounded-md ${scrolled ? 'hover:bg-white/20' : 'hover:bg-black/10'} ${scrolled || theme === 'dark' ? 'text-white' : 'text-gray-700'}`}
               >
                 <UserCircle className="h-6 w-6" /> 
-                <span className="text-sm font-medium">{userName}</span> 
+                <span className="text-sm font-medium">{loading ? 'Loading...' : displayName}</span>
                 <ChevronDown className={`h-4 w-4 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
               </button>
               {showUserMenu && (
@@ -233,7 +234,7 @@ const PreHeader: React.FC<PreHeaderProps> = ({ currentPage = '', userName = "Dr 
               <div className="flex items-center space-x-3">
                 <UserCircle className="h-8 w-8 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <div className="text-base font-medium text-gray-800 dark:text-gray-200">{userName}</div>
+                  <div className="text-base font-medium text-gray-800 dark:text-gray-200">{loading ? 'Loading...' : displayName}</div>
                   <button 
                     onClick={handleDashboardNavigation} 
                     className="text-sm font-medium text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300"
@@ -292,12 +293,12 @@ const PreHeader: React.FC<PreHeaderProps> = ({ currentPage = '', userName = "Dr 
                     <item.icon className="mr-3 h-5 w-5" />
                     {item.name}
                     {item.name === 'Notifications' && unreadNotifications > 0 && (
-                       <span className={`absolute top-1/2 right-3 transform -translate-y-1/2 block h-3 w-3 rounded-full bg-red-500 text-white text-[8px] flex items-center justify-center ring-2 ${theme === 'dark' ? 'ring-gray-900' : 'ring-white'}`}>
+                       <span className={`absolute top-1/2 right-3 transform -translate-y-1/2 h-3 w-3 rounded-full bg-red-500 text-white text-[8px] flex items-center justify-center ring-2 ${theme === 'dark' ? 'ring-gray-900' : 'ring-white'}`}>
                         {unreadNotifications}
                       </span>
                     )}
                     {item.name === 'Inbox' && unreadMessages > 0 && (
-                      <span className={`absolute top-1/2 right-3 transform -translate-y-1/2 block h-3 w-3 rounded-full bg-red-500 text-white text-[8px] flex items-center justify-center ring-2 ${theme === 'dark' ? 'ring-gray-900' : 'ring-white'}`}>
+                      <span className={`absolute top-1/2 right-3 transform -translate-y-1/2 h-3 w-3 rounded-full bg-red-500 text-white text-[8px] flex items-center justify-center ring-2 ${theme === 'dark' ? 'ring-gray-900' : 'ring-white'}`}>
                         {unreadMessages}
                       </span>
                     )}

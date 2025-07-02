@@ -94,7 +94,7 @@ export function useProfile(): UseProfileResult {
 // Hook for getting user's display name and avatar
 export function useUserDisplay() {
   const { user } = useAuth()
-  const { profile, dbProfile } = useProfile()
+  const { profile, dbProfile, loading } = useProfile()
 
   const getDisplayName = (): string => {
     if (profile?.fullName) return profile.fullName
@@ -140,6 +140,7 @@ export function useUserDisplay() {
     userType: getUserType(),
     initials: getInitials(),
     profile,
-    dbProfile
+    dbProfile,
+    loading
   }
   }

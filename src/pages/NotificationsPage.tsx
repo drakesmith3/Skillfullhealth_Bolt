@@ -94,7 +94,7 @@ const NotificationsPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
-      <PreHeader currentPage={`${userType} notifications`} userName={userType === 'employer' ? 'Hospital Corp.' : 'Dr. Olusiji'} />
+      <PreHeader currentPage={`${userType} notifications`} />
       
       <div className="flex-grow container mx-auto px-4 py-8 mt-16">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
