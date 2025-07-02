@@ -349,29 +349,82 @@ const AppContent = () => {
                     <Route path="/dashboard/student" element={<StudentDashboard />} />
                     <Route path="/dashboard/client" element={<ClientDashboard />} />
                     
+                    {/* Dashboard sub-routes for different user types */}
+                    <Route path="/dashboard/student/profile" element={<Profile />} />
+                    <Route path="/dashboard/professional/profile" element={<Profile />} />
+                    <Route path="/dashboard/tutor/profile" element={<Profile />} />
+                    <Route path="/dashboard/employer/profile" element={<Profile />} />
+                    <Route path="/dashboard/client/profile" element={<Profile />} />
+                    
+                    <Route path="/dashboard/student/transactions" element={<PurseTransaction />} />
+                    <Route path="/dashboard/professional/transactions" element={<PurseTransaction />} />
+                    <Route path="/dashboard/tutor/transactions" element={<TutorPurse />} />
+                    <Route path="/dashboard/employer/transactions" element={<PurseTransaction />} />
+                    <Route path="/dashboard/client/transactions" element={<PurseTransaction />} />
+                    
+                    <Route path="/dashboard/student/courses" element={<CourseEnrollment />} />
+                    <Route path="/dashboard/professional/courses" element={<CourseEnrollment />} />
+                    <Route path="/dashboard/tutor/courses" element={<MyCourses />} />
+                    <Route path="/dashboard/employer/courses" element={<CourseEnrollment />} />
+                    <Route path="/dashboard/client/courses" element={<CourseEnrollment />} />
+                    
+                    <Route path="/dashboard/student/performance" element={<KPIDashboard />} />
+                    <Route path="/dashboard/professional/performance" element={<KPIDashboard />} />
+                    <Route path="/dashboard/tutor/performance" element={<KPIDashboard />} />
+                    <Route path="/dashboard/employer/performance" element={<KPIDashboard />} />
+                    <Route path="/dashboard/client/performance" element={<KPIDashboard />} />
+
                     {/* Course and Job Routes */}
                     <Route path="/courses/create" element={<CourseCreation />} />
                     <Route path="/jobs/:jobId/apply" element={<JobApplication />} />
 
+                    {/* Inbox and Messages */}
+                    <Route path="/inbox" element={<Messages />} />
+                    <Route path="/dashboard/student/inbox" element={<Messages />} />
+                    <Route path="/dashboard/professional/inbox" element={<Messages />} />
+                    <Route path="/dashboard/tutor/inbox" element={<Messages />} />
+                    <Route path="/dashboard/employer/inbox" element={<Messages />} />
+                    <Route path="/dashboard/client/inbox" element={<Messages />} />
+
+                    {/* Notifications */}
                     <Route path="/dashboard/:userType/notifications" element={<NotificationsPage />} />
-                    <Route path="/dashboard/:userType/inbox" element={<NotificationsPage />} />
+                    <Route path="/dashboard/:userType/inbox" element={<Messages />} />
                     <Route path="/notifications/professional" element={<NotificationsPage />} />
                     <Route path="/notifications/:userType" element={<NotificationsPage />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
+                    
+                    {/* GLOHSEN Score */}
                     <Route path="/score" element={<GlohsenScore />} />
                     <Route path="/score/calculate" element={<GlohsenScore />} />
                     <Route path="/score/details" element={<GlohsenScore />} />
 
+                    {/* Employer specific */}
                     <Route path="/employer/criteria" element={<EmployerCriteriaPage />} />
                     <Route path="/employer/payment" element={<EmployerPayment />} />
 
+                    {/* KPI and Analytics */}
                     <Route path="/kpi-tracking" element={<KPITrackingPage />} />
                     <Route path="/kpi-dashboard" element={<KPIDashboard />} />
+                    
+                    {/* Purse and Financial */}
                     <Route path="/purse/professional" element={<ProfessionalPurse />} />
                     <Route path="/purse/tutor" element={<TutorPurse />} />
                     <Route path="/purse-transaction" element={<PurseTransaction />} />
                     <Route path="/tutor-purse" element={<TutorPurse />} />
-                    <Route path="/activity" element={<ActivityHistoryPage />} />
+                    
+                    {/* Tutor specific routes */}
                     <Route path="/my-courses" element={<MyCourses />} />
+                    <Route path="/teaching-schedule" element={<MyCourses />} />
+                    <Route path="/course-content" element={<MyCourses />} />
+                    <Route path="/student-progress" element={<KPIDashboard />} />
+                    <Route path="/my-students" element={<KPIDashboard />} />
+                    <Route path="/create-course" element={<CourseCreation />} />
+                    <Route path="/course-analytics" element={<KPIDashboard />} />
+                    <Route path="/earnings-analytics" element={<KPIDashboard />} />
+                    <Route path="/tutor-feedback" element={<GeneralFeedbackForm />} />
+                    
+                    {/* Other authenticated routes */}
+                    <Route path="/activity" element={<ActivityHistoryPage />} />
                     <Route path="/mlm" element={<MLMDashboard userId="temp-user-id" userType="professional" />} />
                     <Route path="/mlm-tree" element={<MLMTreePage />} />
                   </Route>

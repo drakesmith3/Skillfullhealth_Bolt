@@ -13,6 +13,44 @@ class ProfileService {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return null
 
+      // First check if profile exists
+      const { data: existingProfile, error: checkError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (checkError) {
+        console.error('Error checking profile existence:', checkError)
+        return null
+      }
+
+      // If profile doesn't exist, create a basic one
+      if (!existingProfile) {
+        const newProfile = await this.upsertProfile({
+          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          email: user.email!,
+          user_type: 'professional',
+          specialty: '',
+          profile_completeness: 10
+        })
+
+        if (!newProfile) return null
+
+        // Return the new profile with empty related data
+        return this.transformToProfileFormat({
+          ...newProfile,
+          skills: [],
+          certificates: [],
+          education: [],
+          experience: [],
+          awards: [],
+          publications: [],
+          languages: []
+        })
+      }
+
+      // Profile exists, fetch with related data
       const { data: profile, error } = await supabase
         .from('profiles')
         .select(`
@@ -28,7 +66,20 @@ class ProfileService {
         .eq('id', user.id)
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('Error fetching full profile:', error)
+        // Return basic profile if related data fetch fails
+        return this.transformToProfileFormat({
+          ...existingProfile,
+          skills: [],
+          certificates: [],
+          education: [],
+          experience: [],
+          awards: [],
+          publications: [],
+          languages: []
+        })
+      }
 
       return this.transformToProfileFormat(profile)
     } catch (error) {

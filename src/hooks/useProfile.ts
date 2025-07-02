@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { profileService } from '../services/profileService'
+import { supabase } from '../config/supabase'
 import type { ProfessionalProfile } from '../types/dashboard.d'
 import type { Tables } from '../types/database'
 
@@ -36,13 +37,18 @@ export function useProfile(): UseProfileResult {
       setProfile(userProfile)
 
       // Also fetch raw database profile for forms and updates
-      const { data: rawProfile } = await supabase
+      const { data: rawProfile, error: dbError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
       
-      setDbProfile(rawProfile)
+      if (dbError && dbError.code !== 'PGRST116') {
+        console.error('Database error:', dbError)
+        setError('Failed to fetch profile data')
+      } else {
+        setDbProfile(rawProfile)
+      }
     } catch (err) {
       console.error('Error fetching profile:', err)
       setError(err instanceof Error ? err.message : 'Failed to fetch profile')
@@ -126,6 +132,4 @@ export function useUserDisplay() {
     profile,
     dbProfile
   }
-}
-
-import { supabase } from '../config/supabase'
+  }
