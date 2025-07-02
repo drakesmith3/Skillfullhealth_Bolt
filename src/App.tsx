@@ -28,6 +28,7 @@ import EmployerCriteriaPage from "./pages/EmployerCriteriaPage";
 import Blog from "./pages/Blog";
 import CourseEnrollment from "./pages/CourseEnrollment";
 import CourseCreation from "./pages/CourseCreation";
+import CoursePlayer from "./pages/CoursePlayer";
 import JobBoard from "./pages/JobBoard";
 import JobApplication from "./pages/JobApplication";
 import CommunityForum from "./pages/CommunityForum";
@@ -376,6 +377,7 @@ const AppContent = () => {
 
                     {/* Course and Job Routes */}
                     <Route path="/courses/create" element={<CourseCreation />} />
+                    <Route path="/courses/player/:courseId" element={<CoursePlayer />} />
                     <Route path="/jobs/:jobId/apply" element={<JobApplication />} />
 
                     {/* Inbox and Messages */}
