@@ -117,8 +117,6 @@ const Logo3DHyperRealistic: React.FC<Logo3DHyperRealisticProps> = ({
         const centerY = size / 2;
         const orbitalPath = `M${centerX - icon.radius},${centerY} a${icon.radius},${icon.radius} 0 1,1 ${icon.radius * 2},0 a${icon.radius},${icon.radius} 0 1,1 -${icon.radius * 2},0`;
         
-        // Debug log to check radius values
-        console.log(`${icon.name}: radius=${icon.radius}, orbital path start at (${centerX - icon.radius}, ${centerY})`);
         
         gsap.to(iconRef, {
           motionPath: {

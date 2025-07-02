@@ -19,17 +19,16 @@ import {
   Gamepad
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useUserDisplay } from "../../hooks/useProfile";
+import { useAuth } from "../../contexts/AuthContext";
 
 const StudentSidebar = () => {
-  // Mock student data
-  const student = {
-    name: "Samuel Okafor",
-    course: "Medicine",
-    university: "University of Ibadan",
-    address: "College of Medicine, UI, Ibadan",
-    email: "samuel.okafor@ui.edu.ng",
-    phone: "+234 805 678 9012",
-    profilePic: "", // Placeholder for profile picture
+  const { displayName, userType, avatarUrl, profile } = useUserDisplay();
+  const { signOut } = useAuth();
+
+  // Get user initials for avatar fallback
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
   return (
@@ -38,29 +37,41 @@ const StudentSidebar = () => {
         <div className="p-4">
           <div className="flex flex-col items-center space-y-3">
             <Avatar className="h-16 w-16 border-2 border-[#D4AF37]">
-              <AvatarFallback className="bg-[#D4AF37] text-black text-lg">SO</AvatarFallback>
-              {student.profilePic && <AvatarImage src={student.profilePic} alt={student.name} />}
+              <AvatarFallback className="bg-[#D4AF37] text-black text-lg">
+                {getInitials(displayName)}
+              </AvatarFallback>
+              {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
             </Avatar>
             <div className="text-center">
-              <h3 className="font-bold text-lg">{student.name}</h3>
-              <p className="text-sm text-gray-400">{student.course}</p>
-              <p className="text-xs text-gray-500">{student.university}</p>
+              <h3 className="font-bold text-lg">{displayName}</h3>
+              <p className="text-sm text-gray-400">{profile?.specialty || "Medical Student"}</p>
+              <p className="text-xs text-gray-500">{"Healthcare Student"}</p>
             </div>
           </div>
           
           <div className="space-y-2 mt-3">
-            <div className="flex items-start gap-2">
-              <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm text-gray-300">{student.address}</p>
-            </div>
-            <div className="flex items-start gap-2">
-              <Mail className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm text-gray-300">{student.email}</p>
-            </div>
-            <div className="flex items-start gap-2">
-              <Phone className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm text-gray-300">{student.phone}</p>
-            </div>
+            {profile?.location?.city && (
+              <div className="flex items-start gap-2">
+                <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
+                <p className="text-sm text-gray-300">
+                  {[profile.location.city, profile.location.state, profile.location.country]
+                    .filter(Boolean)
+                    .join(', ')}
+                </p>
+              </div>
+            )}
+            {profile?.contact?.email && (
+              <div className="flex items-start gap-2">
+                <Mail className="h-4 w-4 text-gray-400 mt-0.5" />
+                <p className="text-sm text-gray-300">{profile.contact.email}</p>
+              </div>
+            )}
+            {profile?.contact?.phone && (
+              <div className="flex items-start gap-2">
+                <Phone className="h-4 w-4 text-gray-400 mt-0.5" />
+                <p className="text-sm text-gray-300">{profile.contact.phone}</p>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-between pt-3 gap-2">
@@ -145,7 +156,11 @@ const StudentSidebar = () => {
               <Bell className="mr-2 h-4 w-4" /> Notifications
             </Button>
           </Link>
-          <Button variant="ghost" className="w-full justify-start text-red-400 hover:bg-red-900/30 hover:text-red-300">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start text-red-400 hover:bg-red-900/30 hover:text-red-300"
+            onClick={signOut}
+          >
             <LogOut className="mr-2 h-4 w-4" /> Log Out
           </Button>
         </div>
